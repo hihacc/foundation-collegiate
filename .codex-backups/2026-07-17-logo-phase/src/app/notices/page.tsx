@@ -1,0 +1,71 @@
+import type { Metadata } from 'next';
+import SectionHeader from '@/components/ui/SectionHeader';
+import { Bell, Calendar, Pin } from 'lucide-react';
+
+export const metadata: Metadata = {
+  title: 'Notice Board | Announcements',
+  description: 'Stay updated with the latest notices, events, and announcements from The Foundation Collegiate.',
+};
+
+const notices = [
+  { id: 1, title: 'Admissions Open for Session 2026', content: 'We are pleased to announce that admissions are now open for the 2026 academic session. Apply early to secure your seat. Limited seats available.', date: 'Jul 15, 2026', type: 'important', pinned: true },
+  { id: 2, title: 'Monthly Test Result Announced', content: 'Results of the June 2026 Monthly Exam have been uploaded. Students can check their results through the Result Checker portal using their Roll Number and PIN.', date: 'Jul 10, 2026', type: 'result', pinned: false },
+  { id: 3, title: 'Parent-Teacher Meeting', content: 'A Parent-Teacher Meeting is scheduled for July 20, 2026. Parents are requested to attend and discuss their child\'s academic progress.', date: 'Jul 05, 2026', type: 'event', pinned: false },
+  { id: 4, title: 'Eid Holiday Notice', content: 'The institute will remain closed from July 22-27, 2026 for the Eid holidays. Classes will resume on July 28, 2026.', date: 'Jul 01, 2026', type: 'holiday', pinned: false },
+];
+
+const typeColors: Record<string, string> = {
+  important: 'bg-red-100 text-red-700 border-red-200',
+  result: 'bg-green-100 text-green-700 border-green-200',
+  event: 'bg-blue-100 text-blue-700 border-blue-200',
+  holiday: 'bg-amber-100 text-amber-700 border-amber-200',
+  general: 'bg-slate-100 text-slate-700 border-slate-200',
+};
+
+export default function NoticesPage() {
+  return (
+    <div className="py-20">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-4xl">
+        <SectionHeader
+          badge="Announcements"
+          title="Notice"
+          titleHighlight="Board"
+          description="Stay updated with the latest announcements, events, and important notices."
+          className="mb-12"
+        />
+
+        <div className="space-y-6">
+          {notices.map((notice) => (
+            <div
+              key={notice.id}
+              className={`glass-card rounded-2xl p-6 md:p-8 border transition-all hover:shadow-lg ${notice.pinned ? 'border-amber-200 dark:border-amber-900/30 bg-amber-50/50 dark:bg-amber-900/10' : 'border-border'}`}
+            >
+              <div className="flex items-start gap-4">
+                <div className={`w-12 h-12 rounded-xl flex items-center justify-center shrink-0 ${notice.pinned ? 'bg-amber-100 text-amber-600' : 'bg-primary/10 text-primary'}`}>
+                  {notice.pinned ? <Pin size={22} /> : <Bell size={22} />}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="flex flex-wrap items-center gap-3 mb-2">
+                    {notice.pinned && (
+                      <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-amber-100 text-amber-700 border border-amber-200">
+                        📌 Pinned
+                      </span>
+                    )}
+                    <span className={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full border ${typeColors[notice.type]}`}>
+                      {notice.type}
+                    </span>
+                    <span className="flex items-center gap-1 text-xs text-muted">
+                      <Calendar size={12} /> {notice.date}
+                    </span>
+                  </div>
+                  <h3 className="text-xl font-bold mb-2">{notice.title}</h3>
+                  <p className="text-muted leading-relaxed">{notice.content}</p>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
