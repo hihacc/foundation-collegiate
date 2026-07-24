@@ -27,7 +27,8 @@ export default function AdminResultsPage() {
 
   // Form state
   const [form, setForm] = useState({
-    student_id: '', roll_number: '', pin: '', exam_name: 'Monthly Test', 
+    student_id: '', student_name: 'Unknown Student', father_name: 'Unknown Father',
+    class_name: 'Unknown Class', roll_number: '', pin: '', exam_name: 'Monthly Test',
     total_marks: 0, marks_obtained: 0, grade: '', position: '', remarks: '',
   });
 
@@ -55,29 +56,63 @@ export default function AdminResultsPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSubmitting(true);
+
+    // Convert to exactly match the database schema
     const payload = {
-      ...form,
+      student_name: form.student_name,
+      father_name: form.father_name,
+      class_name: form.class_name,
+      roll_number: form.roll_number,
+      exam_name: form.exam_name,
       total_marks: Number(form.total_marks),
-      marks_obtained: Number(form.marks_obtained),
+      obtained_marks: Number(form.marks_obtained),
+      percentage: Number(form.total_marks) > 0 ? (Number(form.marks_obtained) / Number(form.total_marks)) * 100 : 0,
+      grade: form.grade,
+      position: form.position || null,
+      remarks: form.remarks || null,
     };
 
     try {
+      let resultId = editing?.id;
+
       if (editing) {
         const { error } = await supabase.from('results').update(payload).eq('id', editing.id);
         if (error) throw error;
         toast.success('Result updated!');
       } else {
-        const { error } = await supabase.from('results').insert([payload]);
+        const { data, error } = await supabase.from('results').insert([payload]).select().single();
         if (error) throw error;
+        resultId = data.id;
         toast.success('Result added successfully!');
       }
+
+      // Handle the separate PIN table
+      if (form.pin) {
+        // Find existing pin
+        const { data: existingPins } = await supabase.from('pins').select('*').eq('roll_number', form.roll_number);
+
+        if (existingPins && existingPins.length > 0) {
+          await supabase.from('pins').update({ pin_hash: form.pin }).eq('roll_number', form.roll_number);
+        } else if (resultId) {
+          await supabase.from('pins').insert([{
+            result_id: resultId,
+            roll_number: form.roll_number,
+            pin_hash: form.pin
+          }]);
+        }
+      }
+
       setShowForm(false);
       setEditing(null);
-      setForm({ student_id: '', roll_number: '', pin: '', exam_name: 'Monthly Test', total_marks: 0, marks_obtained: 0, grade: '', position: '', remarks: '' });
+      setForm({
+        student_id: '', student_name: 'Unknown Student', father_name: 'Unknown Father', class_name: 'Unknown Class',
+        roll_number: '', pin: '', exam_name: 'Monthly Test',
+        total_marks: 0, marks_obtained: 0, grade: '', position: '', remarks: '',
+      });
       fetchResults();
     } catch (err) {
       console.error(err);
-      toast.error('Failed to save result. Check database connection.');
+      toast.error(editing ? 'Update failed' : 'Insert failed');
     } finally {
       setSubmitting(false);
     }
@@ -96,20 +131,38 @@ export default function AdminResultsPage() {
     }
   };
 
-  const handleEdit = (result: Result) => {
+  const handleEdit = async (result: any) => {
     setEditing(result);
+
+    // Attempt to fetch the pin for this result
+    let pin = '----';
+    try {
+      const { data } = await supabase.from('pins').select('pin_hash').eq('roll_number', result.roll_number).single();
+      if (data) pin = data.pin_hash;
+    } catch (err) {
+      // Ignored
+    }
+
     setForm({
-      student_id: result.student_id || '', roll_number: result.roll_number,
-      pin: result.pin, exam_name: result.exam_name,
-      total_marks: result.total_marks, marks_obtained: result.marks_obtained,
-      grade: result.grade, position: result.position || '', remarks: result.remarks || '',
+      student_id: result.student_id || '',
+      student_name: result.student_name || 'Unknown',
+      father_name: result.father_name || 'Unknown',
+      class_name: result.class_name || 'Unknown',
+      roll_number: result.roll_number,
+      pin: pin,
+      exam_name: result.exam_name,
+      total_marks: result.total_marks,
+      marks_obtained: result.obtained_marks || result.marks_obtained || 0,
+      grade: result.grade,
+      position: result.position || '',
+      remarks: result.remarks || '',
     });
     setShowForm(true);
   };
 
   const filtered = results.filter(r =>
-    r.roll_number.toLowerCase().includes(search.toLowerCase()) ||
-    r.exam_name.toLowerCase().includes(search.toLowerCase())
+    r.roll_number?.toLowerCase().includes(search.toLowerCase()) ||
+    r.exam_name?.toLowerCase().includes(search.toLowerCase())
   );
 
   return (
@@ -166,6 +219,9 @@ export default function AdminResultsPage() {
               </h2>
               <form onSubmit={handleSubmit} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
                 {[
+                  { label: 'Student Name', key: 'student_name', placeholder: 'e.g. Ali Khan', required: true },
+                  { label: 'Father Name', key: 'father_name', placeholder: 'e.g. Ahmed Khan', required: true },
+                  { label: 'Class', key: 'class_name', placeholder: 'e.g. XI Pre-Eng', required: true },
                   { label: 'Roll Number', key: 'roll_number', placeholder: 'e.g. FC-26-001', required: true },
                   { label: 'Secret PIN (For Portal)', key: 'pin', placeholder: 'e.g. 1234', required: true },
                   { label: 'Exam Name', key: 'exam_name', placeholder: 'e.g. Mid Term', required: true },
@@ -228,8 +284,10 @@ export default function AdminResultsPage() {
                     No results found
                   </td>
                 </tr>
-              ) : filtered.map((r, idx) => {
-                const percentage = ((r.marks_obtained / r.total_marks) * 100).toFixed(1);
+              ) : filtered.map((r: any, idx) => {
+                const obtained = r.obtained_marks || r.marks_obtained || 0;
+                const total = r.total_marks || 1;
+                const percentage = ((obtained / total) * 100).toFixed(1);
                 return (
                   <motion.tr 
                     initial={{ opacity: 0, y: 10 }}
@@ -240,18 +298,18 @@ export default function AdminResultsPage() {
                   >
                     <td className="px-6 py-4">
                       <div className="font-mono font-bold text-white group-hover:text-[#0057FF] transition-colors">{r.roll_number}</div>
-                      <div className="text-xs text-white/40 mt-1 flex items-center gap-1">PIN: <span className="font-mono bg-white/10 px-1.5 py-0.5 rounded text-white/70">{r.pin}</span></div>
+                      <div className="text-xs text-white/40 mt-1 flex items-center gap-1">PIN: <span className="font-mono bg-white/10 px-1.5 py-0.5 rounded text-white/70">{r.pin || '****'}</span></div>
                     </td>
                     <td className="px-6 py-4">
                       <div className="text-white/80">{r.exam_name}</div>
                       {r.position && <div className="text-xs text-[#FFD700] mt-1 font-medium">{r.position} Position</div>}
                     </td>
                     <td className="px-6 py-4">
-                      <div className="text-white font-medium">{r.marks_obtained} <span className="text-white/30">/ {r.total_marks}</span></div>
+                      <div className="text-white font-medium">{obtained} <span className="text-white/30">/ {r.total_marks}</span></div>
                       <div className="text-xs text-white/50 mt-1">{percentage}%</div>
                     </td>
                     <td className="px-6 py-4">
-                      <span className={`text-xs font-bold px-2.5 py-1 rounded-full ${getGradeColor(r.grade)}`}>{r.grade}</span>
+                      <span className={`text-xs font-bold px-2.5 py-1 rounded-full ${getGradeColor(r.grade || '')}`}>{r.grade}</span>
                     </td>
                     <td className="px-6 py-4 text-white/60 text-xs max-w-[200px] truncate">
                       {r.remarks || '-'}

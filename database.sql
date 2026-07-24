@@ -361,3 +361,21 @@ CREATE POLICY "Public read results" ON public.results FOR SELECT USING (is_activ
 
 -- Pins: only via service role
 CREATE POLICY "Service role pins" ON public.pins USING (true);
+
+-- =============================================
+-- ADMIN FULL ACCESS (Authenticated users)
+-- =============================================
+CREATE POLICY "Admin full access results" ON public.results FOR ALL TO authenticated USING (true) WITH CHECK (true);
+CREATE POLICY "Admin full access admissions" ON public.admissions FOR ALL TO authenticated USING (true) WITH CHECK (true);
+CREATE POLICY "Admin full access messages" ON public.messages FOR ALL TO authenticated USING (true) WITH CHECK (true);
+CREATE POLICY "Admin full access gallery" ON public.gallery FOR ALL TO authenticated USING (true) WITH CHECK (true);
+CREATE POLICY "Admin full access notices" ON public.notices FOR ALL TO authenticated USING (true) WITH CHECK (true);
+CREATE POLICY "Admin full access courses" ON public.courses FOR ALL TO authenticated USING (true) WITH CHECK (true);
+CREATE POLICY "Admin full access downloads" ON public.downloads FOR ALL TO authenticated USING (true) WITH CHECK (true);
+CREATE POLICY "Admin full access testimonials" ON public.testimonials FOR ALL TO authenticated USING (true) WITH CHECK (true);
+CREATE POLICY "Admin full access events" ON public.events FOR ALL TO authenticated USING (true) WITH CHECK (true);
+CREATE POLICY "Admin full access sliders" ON public.sliders FOR ALL TO authenticated USING (true) WITH CHECK (true);
+CREATE POLICY "Admin full access teachers" ON public.teachers FOR ALL TO authenticated USING (true) WITH CHECK (true);
+CREATE POLICY "Admin full access students" ON public.students FOR ALL TO authenticated USING (true) WITH CHECK (true);
+CREATE POLICY "Admin full access settings" ON public.settings FOR ALL TO authenticated USING (true) WITH CHECK (true);
+CREATE POLICY "Admin full access pins" ON public.pins FOR ALL TO authenticated USING (true) WITH CHECK (true);
