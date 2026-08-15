@@ -40,13 +40,13 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className="scroll-smooth" data-scroll-behavior="smooth">
+    <html lang="en" className="scroll-smooth" data-scroll-behavior="smooth" suppressHydrationWarning>
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400;1,700&family=Crimson+Pro:ital,wght@0,400..700;1,400..700&display=swap" rel="stylesheet" />
       </head>
-      <body className="antialiased min-h-screen bg-[var(--background)] text-[var(--foreground)] font-sans">
+      <body className="antialiased min-h-screen bg-[var(--background)] text-[var(--foreground)] font-sans" suppressHydrationWarning>
         <SplashScreen />
         <Toaster position="top-right" richColors closeButton />
         <ClientLayout>{children}</ClientLayout>
