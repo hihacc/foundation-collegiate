@@ -1,0 +1,8 @@
+# Cloudflare Pages Redirects
+
+# Force HTTPS
+http://:project.pages.dev/* https://:project.pages.dev/:splat 301!
+
+# Legacy paths redirect
+/home /  301
+/index.html /  301
