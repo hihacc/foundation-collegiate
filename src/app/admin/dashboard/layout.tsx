@@ -10,7 +10,7 @@ import {
   LayoutDashboard, FileText, Users, Image as ImageIcon, MessageSquare, Bell,
   Download, BookOpen, LogOut, Menu, X, Home, ExternalLink, Trophy,
   Settings, BarChart3, UserCog, ClipboardList, ChevronRight, PanelLeftClose, PanelLeftOpen,
-  Banknote, Receipt, Wallet, Mail, SlidersHorizontal, UserCheck
+  Banknote, Receipt, Wallet, Mail, SlidersHorizontal, UserCheck, HardDrive
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -40,7 +40,8 @@ const navItems = [
   { name: 'Courses & Diplomas',href: '/admin/dashboard/courses',     icon: BookOpen },
   { name: 'Analytics',         href: '/admin/dashboard/analytics',   icon: BarChart3 },
   { name: 'Email Control',     href: '/admin/dashboard/email-control', icon: Mail, isControl: true },
-  { name: 'Settings',          href: '/admin/dashboard/settings',    icon: Settings },
+  { name: 'Drive & Backups',   href: '/admin/dashboard/backups',       icon: HardDrive },
+  { name: 'Settings',          href: '/admin/dashboard/settings',      icon: Settings },
 ];
 
 export default function AdminDashboardLayout({ children }: { children: React.ReactNode }) {
