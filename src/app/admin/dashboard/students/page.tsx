@@ -3,7 +3,7 @@ export const dynamic = 'force-dynamic';
 
 import { useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabase/client';
-import { Users, Search, GraduationCap, Plus, Pencil, Trash2, Loader2, Upload, Filter, UserCheck, Download, Printer, Mail, X, FileSpreadsheet } from 'lucide-react';
+import { Users, Search, GraduationCap, Plus, Pencil, Trash2, Loader2, Upload, Filter, UserCheck, Download, Printer, Mail, X, FileSpreadsheet, RotateCcw } from 'lucide-react';
 import { m, AnimatePresence } from 'framer-motion';
 import Button from '@/components/ui/Button';
 import { toast } from 'sonner';
@@ -260,6 +260,9 @@ export default function AdminStudentsPage() {
         if (!error && data && data.length > 0) {
           setStudents(data as Student[]);
           setStoredData('students', data);
+        } else if (!error && data && data.length === 0) {
+          const stored = getStoredData('students', defaultStudents);
+          setStudents(stored);
         } else {
           const stored = getStoredData('students', defaultStudents);
           setStudents(stored);
@@ -278,8 +281,6 @@ export default function AdminStudentsPage() {
 
   useEffect(() => {
     setMounted(true);
-    const stored = getStoredData('students', defaultStudents);
-    setStudents(stored);
     fetchClassesAndStudents();
   }, []);
 
@@ -568,8 +569,18 @@ export default function AdminStudentsPage() {
 
         <div className="flex flex-wrap items-center gap-3">
           <button
+            onClick={() => {
+              toast.loading('Fetching live students from database...', { id: 'sync-db' });
+              fetchClassesAndStudents().then(() => toast.success('Synced live data from database!', { id: 'sync-db' }));
+            }}
+            title="Sync Live from Database"
+            className="flex items-center gap-2 bg-slate-100 hover:bg-slate-200 text-slate-700 px-3.5 py-2.5 rounded-xl font-bold text-xs border border-slate-200 transition-all cursor-pointer"
+          >
+            <RotateCcw size={15} className={loading ? 'animate-spin text-blue-600' : 'text-slate-600'} /> Live Sync
+          </button>
+          <button
             onClick={handleExportCSV}
-            className="flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2.5 rounded-xl font-bold text-xs shadow-md shadow-emerald-500/20 transition-all active:scale-95"
+            className="flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2.5 rounded-xl font-bold text-xs shadow-md shadow-emerald-500/20 transition-all active:scale-95 cursor-pointer"
           >
             <FileSpreadsheet size={16} /> Export CSV
           </button>
