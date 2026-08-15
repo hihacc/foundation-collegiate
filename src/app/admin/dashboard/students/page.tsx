@@ -256,8 +256,8 @@ export default function AdminStudentsPage() {
       setDynamicClasses(mergedClasses);
 
       try {
-        const { data } = await supabase.from('students').select('*').order('created_at', { ascending: false });
-        if (data && data.length > 0) {
+        const { data, error } = await supabase.from('students').select('*').order('created_at', { ascending: false });
+        if (!error && data && data.length > 0) {
           setStudents(data as Student[]);
           setStoredData('students', data);
         } else {
@@ -983,7 +983,7 @@ export default function AdminStudentsPage() {
 
       {/* Table Card */}
       <div className="bg-white border border-slate-200 rounded-3xl overflow-hidden shadow-xs">
-        {loading && !mounted ? (
+        {loading ? (
           <div className="p-6 space-y-3">
             {[...Array(5)].map((_, i) => <div key={i} className="h-16 rounded-xl bg-slate-100 animate-pulse" />)}
           </div>
