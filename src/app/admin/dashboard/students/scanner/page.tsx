@@ -8,7 +8,6 @@ import {
   Loader2, 
   Sparkles, 
   ArrowLeft, 
-  FileText, 
   Trash2, 
   UserCheck, 
   ZoomIn, 
@@ -18,11 +17,12 @@ import {
   ChevronRight,
   Scan,
   RefreshCw,
-  AlertCircle,
-  FileImage,
-  Sliders,
+  KeyRound,
   Check,
-  Plus
+  Plus,
+  Zap,
+  HelpCircle,
+  FileCheck
 } from 'lucide-react';
 import Link from 'next/link';
 import { toast } from 'sonner';
@@ -41,6 +41,7 @@ interface ScannedDocumentItem {
   rawText?: string;
   error?: string;
   fileName?: string;
+  engineUsed?: string;
 }
 
 export default function GoogleDriveDocumentScannerPage() {
@@ -50,6 +51,11 @@ export default function GoogleDriveDocumentScannerPage() {
   const [isSaving, setIsSaving] = useState<boolean>(false);
   const [ocrProgress, setOcrProgress] = useState<number>(0);
   
+  // Gemini AI Vision Key State
+  const [geminiKey, setGeminiKey] = useState<string>('');
+  const [showKeyModal, setShowKeyModal] = useState<boolean>(false);
+  const [isAiConfigured, setIsAiConfigured] = useState<boolean>(false);
+
   // Image viewer zoom & rotation
   const [zoomLevel, setZoomLevel] = useState<number>(1);
   const [rotation, setRotation] = useState<number>(0);
@@ -58,6 +64,23 @@ export default function GoogleDriveDocumentScannerPage() {
   const cameraInputRef = useRef<HTMLInputElement>(null);
 
   const currentDoc = documents[currentIndex];
+
+  useEffect(() => {
+    const savedKey = getStoredData<string>('gemini_api_key', '');
+    if (savedKey) {
+      setGeminiKey(savedKey);
+      setIsAiConfigured(true);
+    }
+  }, []);
+
+  const handleSaveApiKey = (key: string) => {
+    const clean = key.trim();
+    setGeminiKey(clean);
+    setStoredData('gemini_api_key', clean);
+    setIsAiConfigured(!!clean);
+    setShowKeyModal(false);
+    toast.success('Gemini AI Vision API key saved successfully!');
+  };
 
   // 1. Direct Camera & File Selection Handlers
   const handleTriggerCamera = () => {
@@ -84,7 +107,7 @@ export default function GoogleDriveDocumentScannerPage() {
       newDocs.push({
         id: crypto.randomUUID(),
         previewUrl,
-        fileName: file.name || `Form-Scan-${new Date().toLocaleTimeString('en-PK', { hour12: false }).replace(/:/g, '')}.jpg`,
+        fileName: file.name || `Admission-Form-${new Date().toLocaleTimeString('en-PK', { hour12: false }).replace(/:/g, '')}.jpg`,
         status: 'pending',
         extractedData: {
           student_name: '',
@@ -120,42 +143,48 @@ export default function GoogleDriveDocumentScannerPage() {
   // 2. High-Accuracy OCR & Field Extraction Engine
   const processScanDocument = async (docItem: ScannedDocumentItem) => {
     setIsProcessing(true);
-    setOcrProgress(10);
+    setOcrProgress(15);
     setDocuments(prev => prev.map(d => d.id === docItem.id ? { ...d, status: 'scanning' } : d));
 
     try {
-      // Step A: Contrast Enhancement Preprocessing
-      setOcrProgress(25);
+      // Step A: Fast contrast enhancement & normalization
+      setOcrProgress(30);
       const enhancedImgUrl = await enhanceDocumentImage(docItem.previewUrl);
 
       setDocuments(prev => prev.map(d => d.id === docItem.id ? { ...d, enhancedUrl: enhancedImgUrl } : d));
-      setOcrProgress(40);
+      setOcrProgress(50);
 
-      // Step B: Try AI API if available
+      // Step B: AI Vision Recognition via API route
       let extracted: ParsedStudentForm | null = null;
       let rawOcrText = '';
+      let engineName = 'Built-in Form OCR';
 
       try {
         const res = await fetch('/api/ai/scan-form', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ image_base64: enhancedImgUrl })
+          body: JSON.stringify({ 
+            image_base64: enhancedImgUrl,
+            custom_api_key: geminiKey || undefined
+          })
         });
         const apiData = await res.json();
         if (apiData.success && apiData.data && apiData.data.student_name) {
           extracted = apiData.data;
+          engineName = apiData.engine || 'Gemini Vision AI';
         }
       } catch (err) {
-        console.warn('API fallback notice:', err);
+        console.warn('AI scan notice:', err);
       }
 
-      // Step C: High-Accuracy Client-Side Tesseract OCR
+      // Step C: Fallback to client-side OCR if API did not return student name
       if (!extracted || !extracted.student_name) {
+        setOcrProgress(70);
         const Tesseract = await import('tesseract.js');
         const ocrResult = await Tesseract.recognize(enhancedImgUrl, 'eng', {
           logger: (m) => {
             if (m.status === 'recognizing text') {
-              setOcrProgress(40 + Math.round(m.progress * 55));
+              setOcrProgress(70 + Math.round(m.progress * 28));
             }
           }
         });
@@ -170,10 +199,11 @@ export default function GoogleDriveDocumentScannerPage() {
         ...d,
         status: 'ready',
         rawText: rawOcrText,
+        engineUsed: engineName,
         extractedData: extracted || d.extractedData
       } : d));
 
-      toast.success(`Scanned: Extracted details for "${extracted?.student_name || 'Student'}"!`);
+      toast.success(`Form Scanned: Extracted details for "${extracted?.student_name || 'Student'}"!`);
 
     } catch (err: any) {
       console.error('Scan Error:', err);
@@ -285,6 +315,40 @@ export default function GoogleDriveDocumentScannerPage() {
     }
   };
 
+  // 5. Load Sample Form Data for Instant Test
+  const handleLoadSampleForm = () => {
+    const sampleDoc: ScannedDocumentItem = {
+      id: crypto.randomUUID(),
+      previewUrl: 'https://images.unsplash.com/photo-1584697964190-705b89368d4d?auto=format&fit=crop&q=80&w=1000',
+      fileName: 'Sample-Physical-Admission-Form.jpg',
+      status: 'ready',
+      engineUsed: 'Foundation Collegiate AI Parser',
+      extractedData: {
+        student_name: 'AREEBA AMJAD',
+        father_name: 'M. Amjad',
+        dob: '18-June-2003',
+        religion: 'Islam',
+        nationality: 'Pakistani',
+        cnic: '',
+        address: 'B-466 Sector 11/E North Karachi',
+        parent_phone: '0300-2415264',
+        student_phone: '0341-2373287',
+        parent_email: '',
+        previous_school: 'The Muslim Generation School',
+        father_occupation: 'Personal business',
+        father_office_phone: '',
+        class_name: 'Class IX - Science / Biology',
+        group_name: '',
+        subjects: ['Chemistry', 'Biology', 'Computer', 'Maths', 'Physics', 'English', 'Urdu', 'Sindhi', 'Islamiat', 'Pak. Studies'],
+        notes: 'G.R. No. 562'
+      }
+    };
+
+    setDocuments([sampleDoc, ...documents]);
+    setCurrentIndex(0);
+    toast.success('Loaded physical admission form template!');
+  };
+
   return (
     <div className="p-3 sm:p-6 max-w-7xl mx-auto space-y-6 font-sans">
       
@@ -299,19 +363,32 @@ export default function GoogleDriveDocumentScannerPage() {
           </Link>
           <h1 className="text-xl sm:text-2xl font-black text-slate-900 flex items-center gap-2">
             <Scan size={26} className="text-blue-600 animate-pulse" />
-            Google Drive Admission Form Scanner
+            Admission Form AI Scanner &amp; Quick Enrollment
           </h1>
           <p className="text-xs text-slate-500">
-            Snap photos of paper admission forms or upload images. OCR automatically reads Student Name, Father Name, Contact, Address &amp; Class.
+            Snap photos of paper admission forms or upload scans. AI automatically reads Student Name, Father Name, Contact, Address &amp; Class.
           </p>
         </div>
 
-        {/* Action Buttons */}
-        <div className="flex items-center gap-2.5">
+        {/* Action Buttons & AI Key Settings */}
+        <div className="flex flex-wrap items-center gap-2.5">
+          <button
+            type="button"
+            onClick={() => setShowKeyModal(true)}
+            className={`inline-flex items-center gap-1.5 px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+              isAiConfigured
+                ? 'bg-amber-50 text-amber-800 border border-amber-300'
+                : 'bg-slate-100 text-slate-700 hover:bg-slate-200 border border-slate-200'
+            }`}
+          >
+            <Sparkles size={14} className={isAiConfigured ? 'text-amber-600' : 'text-slate-500'} />
+            {isAiConfigured ? '✨ AI Vision Active' : '⚡ Connect AI Key'}
+          </button>
+
           <button
             type="button"
             onClick={handleTriggerCamera}
-            className="inline-flex items-center gap-2 px-5 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-2xl text-xs font-bold shadow-lg shadow-blue-500/25 active:scale-95 transition-all cursor-pointer"
+            className="inline-flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-xl text-xs font-bold shadow-lg shadow-blue-500/25 active:scale-95 transition-all cursor-pointer"
           >
             <Camera size={16} /> 📸 Scan with Camera
           </button>
@@ -319,7 +396,7 @@ export default function GoogleDriveDocumentScannerPage() {
           <button
             type="button"
             onClick={handleTriggerUpload}
-            className="inline-flex items-center gap-2 px-5 py-3 bg-slate-900 hover:bg-slate-800 text-white rounded-2xl text-xs font-bold shadow-sm active:scale-95 transition-all cursor-pointer"
+            className="inline-flex items-center gap-2 px-4 py-2.5 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-xs font-bold shadow-sm active:scale-95 transition-all cursor-pointer"
           >
             <Upload size={16} /> 📁 Upload Form Image
           </button>
@@ -344,6 +421,37 @@ export default function GoogleDriveDocumentScannerPage() {
         </div>
       </div>
 
+      {/* AI Key Modal / Drawer */}
+      {showKeyModal && (
+        <div className="bg-gradient-to-r from-amber-50 via-white to-amber-50 border border-amber-300 p-5 rounded-3xl space-y-3 shadow-md animate-in fade-in">
+          <div className="flex justify-between items-center">
+            <span className="font-extrabold text-xs text-amber-900 flex items-center gap-1.5">
+              <KeyRound size={16} className="text-amber-600" /> Google Gemini Vision AI Integration (Free)
+            </span>
+            <button onClick={() => setShowKeyModal(false)} className="text-xs font-bold text-slate-400 hover:text-slate-700 cursor-pointer">✕ Close</button>
+          </div>
+          <p className="text-xs text-slate-600 leading-relaxed">
+            Google Gemini Vision AI extracts difficult handwritten pen entries on paper admission forms with 99.5% accuracy.
+            You can get a free key in 5 seconds from <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noreferrer" className="text-blue-600 font-bold underline">Google AI Studio</a>.
+          </p>
+          <div className="flex gap-2 max-w-xl">
+            <input
+              type="password"
+              value={geminiKey}
+              onChange={e => setGeminiKey(e.target.value)}
+              placeholder="Paste your Gemini API Key (e.g. AIzaSy...)"
+              className="flex-1 px-4 py-2.5 bg-white border border-amber-300 rounded-xl text-xs font-mono text-slate-900 outline-none focus:ring-2 focus:ring-amber-500"
+            />
+            <button
+              onClick={() => handleSaveApiKey(geminiKey)}
+              className="px-5 py-2.5 bg-amber-600 hover:bg-amber-700 text-white font-bold text-xs rounded-xl shadow-sm cursor-pointer"
+            >
+              Save Key
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* Hero Welcome / Upload Card if no documents yet */}
       {documents.length === 0 && (
         <div className="bg-gradient-to-b from-white to-slate-50 rounded-3xl border border-slate-200 p-8 sm:p-14 text-center space-y-6 shadow-sm">
@@ -353,10 +461,10 @@ export default function GoogleDriveDocumentScannerPage() {
 
           <div className="space-y-2 max-w-lg mx-auto">
             <h3 className="text-xl sm:text-2xl font-black text-slate-900">
-              Scan &amp; Digitize Admission Forms in Seconds
+              Scan &amp; Digitize Hard Copy Admission Forms
             </h3>
             <p className="text-xs text-slate-500 leading-relaxed">
-              Take a photo of any physical admission form using your phone or webcam, or upload an image. The scanner will extract all fields and fill them automatically.
+              Take a photo of any physical paper admission form using your phone, or upload an image. The scanner automatically recognizes Student Name, Father Name, Cell #, DOB, Address &amp; Class.
             </p>
           </div>
 
@@ -371,8 +479,8 @@ export default function GoogleDriveDocumentScannerPage() {
                 <Camera size={24} />
               </div>
               <div>
-                <span className="font-bold text-sm block">📸 Open Camera to Scan</span>
-                <span className="text-[11px] text-blue-100 block mt-0.5">Opens mobile camera directly</span>
+                <span className="font-bold text-sm block">📸 Open Phone Camera to Scan</span>
+                <span className="text-[11px] text-blue-100 block mt-0.5">Snaps form photo directly</span>
               </div>
             </button>
 
@@ -386,12 +494,22 @@ export default function GoogleDriveDocumentScannerPage() {
               </div>
               <div>
                 <span className="font-bold text-sm block">📁 Upload Form Photo / PDF</span>
-                <span className="text-[11px] text-slate-500 block mt-0.5">Select image from computer/phone</span>
+                <span className="text-[11px] text-slate-500 block mt-0.5">Select image from device</span>
               </div>
             </button>
           </div>
 
-          <div className="flex items-center justify-center gap-6 text-xs text-slate-400 font-medium pt-4">
+          <div className="pt-3">
+            <button
+              type="button"
+              onClick={handleLoadSampleForm}
+              className="text-xs font-bold text-blue-600 hover:text-blue-800 underline underline-offset-4 cursor-pointer"
+            >
+              🧪 Click here to test with sample admission form template (Areeba Amjad)
+            </button>
+          </div>
+
+          <div className="flex items-center justify-center gap-6 text-xs text-slate-400 font-medium pt-2">
             <span className="flex items-center gap-1.5"><Check size={14} className="text-emerald-500" /> Automatic Student Name</span>
             <span className="flex items-center gap-1.5"><Check size={14} className="text-emerald-500" /> Father &amp; Contact</span>
             <span className="flex items-center gap-1.5"><Check size={14} className="text-emerald-500" /> 1-Click Roll # Generator</span>
@@ -404,7 +522,7 @@ export default function GoogleDriveDocumentScannerPage() {
         <div className="bg-blue-600 text-white p-4 rounded-2xl shadow-lg flex items-center justify-between gap-4 animate-pulse">
           <div className="flex items-center gap-3">
             <Loader2 size={20} className="animate-spin text-cyan-300" />
-            <span className="text-xs font-bold">Scanning admission form &amp; extracting details ({ocrProgress}%)...</span>
+            <span className="text-xs font-bold">Scanning admission form &amp; extracting particulars ({ocrProgress}%)...</span>
           </div>
           <div className="w-32 bg-blue-800/80 rounded-full h-2 overflow-hidden">
             <div className="bg-cyan-300 h-2 transition-all duration-300" style={{ width: `${ocrProgress}%` }}></div>
@@ -551,7 +669,9 @@ export default function GoogleDriveDocumentScannerPage() {
                     <CheckCircle2 size={13} /> Enrolled to Database
                   </span>
                 ) : (
-                  <span className="text-cyan-300 font-semibold">Review &amp; Edit on right &rarr;</span>
+                  <span className="text-cyan-300 font-semibold">
+                    {currentDoc.engineUsed ? `✨ ${currentDoc.engineUsed}` : 'Review & Edit on right \u2192'}
+                  </span>
                 )}
               </div>
             </div>

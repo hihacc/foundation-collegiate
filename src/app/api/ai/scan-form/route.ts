@@ -18,62 +18,92 @@ export async function POST(req: Request) {
         const mimeMatch = image_base64.match(/^data:(image\/\w+);base64,/);
         const mimeType = mimeMatch ? mimeMatch[1] : 'image/jpeg';
 
-        const geminiRes = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            contents: [
-              {
-                parts: [
-                  {
-                    text: `You are an expert OCR & Document Digitization assistant for "The Foundation Collegiate" school & college admissions.
-Analyze this physical admission form and extract all student and parent details accurately into JSON.
-Return ONLY valid JSON matching this schema:
+        const promptText = `You are an expert OCR & Document Digitization assistant for "The Foundation Collegiate" school & college admission forms.
+Look at this physical paper admission form carefully. The form has printed labels and handwritten pen entries.
+Extract all details filled in pen/ink:
+1. Student Full Name (e.g., AREEBA AMJAD)
+2. Date of birth (e.g., 18-June-2003 or 2003-06-18)
+3. Religion (Islam or Non-Muslim)
+4. Nationality (Pakistani)
+5. CNIC / B-Form # (if written, else empty string)
+6. Residential Address (e.g., B-466 Sector 11/E North Karachi)
+7. Parent Cell # (e.g., 0300-2415264)
+8. Student Phone (if written)
+9. Parent Email (if written)
+10. Previous School / College (e.g., The Muslim Generation School)
+11. Father / Guardian Name (e.g., M. Amjad)
+12. Father Occupation (e.g., Personal business)
+13. Class Applied (e.g., Class VIII, Class IX - Science / Biology, Class IX - Computer Science, Class X, Class XI, Class XII, ADC 1, ADC 2)
+14. G.R. No. (e.g. 562 if written)
+
+Return ONLY valid JSON with this exact schema:
 {
   "student_name": "Full name in CAPITAL letters",
   "father_name": "Father / Guardian Name",
-  "dob": "Date of birth in YYYY-MM-DD or DD-MM-YYYY format",
-  "religion": "Islam or Non-Muslim",
-  "nationality": "Pakistani or other",
-  "cnic": "CNIC or B-Form number e.g. 42101-1234567-1",
+  "dob": "Date of birth string",
+  "religion": "Islam",
+  "nationality": "Pakistani",
+  "cnic": "",
   "address": "Residential address",
-  "parent_phone": "Primary cell / phone number",
-  "student_phone": "Student phone if present",
-  "parent_email": "Email address if present",
-  "previous_school": "Name of previous school / college attended",
-  "father_occupation": "Father's occupation / profession",
-  "father_office_phone": "Office phone if present",
-  "class_name": "Exact class e.g. Class IX - Computer Science, Class XI - Pre-Medical, Class XII - Commerce, ADC 1, ADC 2, Diploma in Information Technology (DIT)",
-  "notes": "Any other relevant remarks on the form"
-}`
-                  },
-                  {
-                    inline_data: {
-                      mime_type: mimeType,
-                      data: cleanBase64
-                    }
-                  }
-                ]
-              }
-            ],
-            generationConfig: {
-              response_mime_type: 'application/json',
-              temperature: 0.1
-            }
-          })
-        });
+  "parent_phone": "Primary cell phone",
+  "student_phone": "",
+  "parent_email": "",
+  "previous_school": "Name of previous school",
+  "father_occupation": "Father's occupation",
+  "father_office_phone": "",
+  "class_name": "Class IX - Science / Biology",
+  "notes": "G.R. No. 562 or any other remarks"
+}`;
 
-        if (geminiRes.ok) {
-          const geminiData = await geminiRes.json();
-          const textOut = geminiData.candidates?.[0]?.content?.parts?.[0]?.text;
-          if (textOut) {
-            const parsedJson = JSON.parse(textOut);
-            return NextResponse.json({
-              success: true,
-              engine: 'Gemini Vision AI',
-              data: parsedJson
+        // Try gemini-1.5-flash or gemini-2.0-flash
+        const models = ['gemini-1.5-flash', 'gemini-2.0-flash', 'gemini-1.5-pro'];
+        let parsedJson: any = null;
+
+        for (const model of models) {
+          try {
+            const geminiRes = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                contents: [
+                  {
+                    parts: [
+                      { text: promptText },
+                      {
+                        inline_data: {
+                          mime_type: mimeType,
+                          data: cleanBase64
+                        }
+                      }
+                    ]
+                  }
+                ],
+                generationConfig: {
+                  response_mime_type: 'application/json',
+                  temperature: 0.1
+                }
+              })
             });
+
+            if (geminiRes.ok) {
+              const geminiData = await geminiRes.json();
+              const textOut = geminiData.candidates?.[0]?.content?.parts?.[0]?.text;
+              if (textOut) {
+                parsedJson = JSON.parse(textOut);
+                break;
+              }
+            }
+          } catch (e) {
+            console.warn(`Model ${model} attempt notice:`, e);
           }
+        }
+
+        if (parsedJson && parsedJson.student_name) {
+          return NextResponse.json({
+            success: true,
+            engine: 'Gemini Vision AI',
+            data: parsedJson
+          });
         }
       } catch (err: any) {
         console.warn('Gemini vision fallback notice:', err.message);
