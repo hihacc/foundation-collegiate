@@ -3,7 +3,7 @@ export const dynamic = 'force-dynamic';
 
 import { useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabase/client';
-import { Users, Search, GraduationCap, Plus, Pencil, Trash2, Loader2, Upload, Filter, UserCheck, Download, Printer, Mail, X, FileSpreadsheet, RotateCcw } from 'lucide-react';
+import { Users, Search, GraduationCap, Plus, Pencil, Trash2, Loader2, Upload, Filter, UserCheck, Download, Printer, Mail, X, FileSpreadsheet, RotateCcw, Sparkles } from 'lucide-react';
 import { m, AnimatePresence } from 'framer-motion';
 import Button from '@/components/ui/Button';
 import { toast } from 'sonner';

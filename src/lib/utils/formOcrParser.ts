@@ -56,21 +56,21 @@ export function parseAdmissionFormText(rawText: string): ParsedStudentForm {
 
   // 1. Search for CNIC / B-Form
   const cnicMatch = text.match(cnicRegex);
-  if (cnicMatch) {
+  if (cnicMatch && cnicMatch[1]) {
     result.cnic = cnicMatch[1].replace(/\s+/g, '-');
   }
 
   // 2. Search for Email
   const emailMatch = text.match(emailRegex);
-  if (emailMatch) {
+  if (emailMatch && emailMatch[1]) {
     result.parent_email = emailMatch[1].toLowerCase();
   }
 
   // 3. Search for Phones
   const phoneMatches = text.match(allPhonesRegex) || [];
-  if (phoneMatches.length > 0) {
+  if (phoneMatches.length > 0 && phoneMatches[0]) {
     result.parent_phone = phoneMatches[0].replace(/\s+/g, '-');
-    if (phoneMatches.length > 1) {
+    if (phoneMatches.length > 1 && phoneMatches[1]) {
       result.student_phone = phoneMatches[1].replace(/\s+/g, '-');
     }
   }
@@ -114,11 +114,11 @@ export function parseAdmissionFormText(rawText: string): ParsedStudentForm {
     // Date of Birth
     if (!result.dob && (lower.includes('date of birth') || lower.includes('dob') || lower.includes('d.o.b'))) {
       const match = line.match(dobRegex);
-      if (match) {
+      if (match && match[1]) {
         result.dob = normalizeDate(match[1]);
       } else if (i + 1 < lines.length) {
         const nextMatch = lines[i + 1].match(dobRegex);
-        if (nextMatch) result.dob = normalizeDate(nextMatch[1]);
+        if (nextMatch && nextMatch[1]) result.dob = normalizeDate(nextMatch[1]);
       }
     }
 
