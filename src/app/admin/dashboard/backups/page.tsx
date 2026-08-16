@@ -530,7 +530,17 @@ export default function AdminBackupsPage() {
                     <button
                       type="button"
                       onClick={() => {
-                        const scriptCode = `function doPost(e) {
+                        const scriptCode = `// Handles opening the URL in a browser (Verification check)
+function doGet(e) {
+  return ContentService.createTextOutput(JSON.stringify({
+    status: "online",
+    service: "The Foundation Collegiate Google Drive Backup Webhook",
+    message: "Webhook is connected and ready to receive database backups!"
+  })).setMimeType(ContentService.MimeType.JSON);
+}
+
+// Handles automatic database backup uploads
+function doPost(e) {
   try {
     var data = JSON.parse(e.postData.contents);
     var filename = data.filename || ("TFC-Backup-" + new Date().toISOString() + ".json");
@@ -553,7 +563,8 @@ export default function AdminBackupsPage() {
     return ContentService.createTextOutput(JSON.stringify({
       success: true,
       fileId: file.getId(),
-      fileName: file.getName()
+      fileName: file.getName(),
+      folderName: folder.getName()
     })).setMimeType(ContentService.MimeType.JSON);
   } catch (err) {
     return ContentService.createTextOutput(JSON.stringify({
@@ -571,14 +582,19 @@ export default function AdminBackupsPage() {
                     </button>
                   </div>
                   <pre className="bg-slate-900 text-amber-300 p-3 rounded-xl overflow-x-auto text-[11px] font-mono leading-relaxed">
-{`function doPost(e) {
+{`function doGet(e) {
+  return ContentService.createTextOutput(JSON.stringify({
+    status: "online",
+    message: "TFC Google Drive Backup Webhook is online!"
+  })).setMimeType(ContentService.MimeType.JSON);
+}
+
+function doPost(e) {
   try {
     var data = JSON.parse(e.postData.contents);
-    var filename = data.filename;
-    var content = data.fileContent;
     var folders = DriveApp.getFoldersByName("TFC Backups");
     var folder = folders.hasNext() ? folders.next() : DriveApp.createFolder("TFC Backups");
-    var file = folder.createFile(filename, content, MimeType.PLAIN_TEXT);
+    var file = folder.createFile(data.filename, data.fileContent, MimeType.PLAIN_TEXT);
     return ContentService.createTextOutput(JSON.stringify({ success: true, fileId: file.getId() })).setMimeType(ContentService.MimeType.JSON);
   } catch (err) {
     return ContentService.createTextOutput(JSON.stringify({ success: false, error: err.toString() })).setMimeType(ContentService.MimeType.JSON);
