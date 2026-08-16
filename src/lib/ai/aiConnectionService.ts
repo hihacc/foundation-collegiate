@@ -1,12 +1,12 @@
 import { supabase } from '@/lib/supabase/client';
 import { encryptApiKey, decryptApiKey, maskApiKey } from '@/lib/utils/encryption';
-import { AiConnectionConfig, AI_MODELS_REGISTRY } from './modelRegistry';
+import { AiConnectionConfig } from './modelRegistry';
 import fs from 'fs';
 import path from 'path';
 
 const LOCAL_AI_CONFIG_FILE = path.join(process.cwd(), '.system_ai_connections.json');
 
-// Default initial config with Local Engine & Hugging Face
+// Default initial config
 const DEFAULT_CONNECTIONS: AiConnectionConfig[] = [
   {
     id: 'default-local-engine',
@@ -25,17 +25,23 @@ const DEFAULT_CONNECTIONS: AiConnectionConfig[] = [
 ];
 
 export async function getAllAiConnections(): Promise<AiConnectionConfig[]> {
+  // 1. Try Supabase settings table
   try {
-    // 1. Try Supabase settings / ai_connections table
     const { data, error } = await supabase
-      .from('ai_connections')
+      .from('settings')
       .select('*')
-      .order('created_at', { ascending: false });
+      .eq('key', 'ai_connections')
+      .maybeSingle();
 
-    if (!error && data && data.length > 0) {
-      return data;
+    if (!error && data && data.value) {
+      const parsed = JSON.parse(data.value);
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        return parsed;
+      }
     }
-  } catch {}
+  } catch (supabaseErr) {
+    console.warn('Supabase fetch notice for ai_connections:', supabaseErr);
+  }
 
   // 2. Fallback to local encrypted config file
   try {
@@ -52,20 +58,34 @@ export async function getAllAiConnections(): Promise<AiConnectionConfig[]> {
 }
 
 export async function saveAiConnections(connections: AiConnectionConfig[]): Promise<boolean> {
+  const jsonString = JSON.stringify(connections, null, 2);
+
+  // 1. Save to Supabase settings table
   try {
-    // Save to local secure file
-    fs.writeFileSync(LOCAL_AI_CONFIG_FILE, JSON.stringify(connections, null, 2), 'utf8');
+    const { error } = await supabase
+      .from('settings')
+      .upsert(
+        {
+          key: 'ai_connections',
+          value: jsonString,
+          updated_at: new Date().toISOString()
+        },
+        { onConflict: 'key' }
+      );
 
-    // Also attempt Supabase upsert
-    try {
-      await supabase.from('ai_connections').upsert(connections);
-    } catch {}
-
-    return true;
-  } catch (err) {
-    console.error('Failed to save AI connections:', err);
-    return false;
+    if (error) {
+      console.warn('Supabase save error for ai_connections:', error.message);
+    }
+  } catch (err: any) {
+    console.warn('Supabase upsert exception for ai_connections:', err.message);
   }
+
+  // 2. Save to local fallback file
+  try {
+    fs.writeFileSync(LOCAL_AI_CONFIG_FILE, jsonString, 'utf8');
+  } catch {}
+
+  return true;
 }
 
 export async function getActiveAiConnection(): Promise<{ connection: AiConnectionConfig; decryptedKey: string }> {

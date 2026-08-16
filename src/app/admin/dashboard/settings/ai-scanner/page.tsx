@@ -443,6 +443,22 @@ export default function AiScannerSettingsPage() {
 
                   <button
                     type="button"
+                    onClick={() => {
+                      setEditingId(conn.id);
+                      setFormName(conn.name);
+                      setFormProvider(conn.provider);
+                      setFormKey('');
+                      setFormModel(conn.model_id);
+                      setFormIsDefault(conn.is_default);
+                      setShowAddModal(true);
+                    }}
+                    className="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-bold transition-all cursor-pointer"
+                  >
+                    Edit
+                  </button>
+
+                  <button
+                    type="button"
                     onClick={() => handleRunTest(conn.id, conn.model_id)}
                     className="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-1"
                   >

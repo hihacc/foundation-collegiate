@@ -1,5 +1,18 @@
 [
   {
+    "id": "452378fe-adc8-4324-a43c-d7ea1669c739",
+    "name": "Hugging Face - Account #2",
+    "provider": "huggingface",
+    "encrypted_key": "98335269514a89f9699619bf0b7cfc2b:387d3cb385b9795dde1e541deccf02cf320f7298fd42ae7419319ac5acd56c474d85080a66198ca984cb9a5dffddfe25",
+    "masked_key": "hf_V••••••••••••YaSK",
+    "model_id": "Qwen/Qwen2.5-VL-7B-Instruct",
+    "is_active": true,
+    "is_default": true,
+    "status": "not_tested",
+    "created_at": "2026-08-16T19:11:00.001Z",
+    "updated_at": "2026-08-16T19:11:00.001Z"
+  },
+  {
     "id": "default-local-engine",
     "name": "Unlimited Local Engine (100% Free)",
     "provider": "local",
@@ -7,7 +20,7 @@
     "masked_key": "No API Key Required",
     "model_id": "local-wasm-tesseract",
     "is_active": true,
-    "is_default": true,
+    "is_default": false,
     "status": "working",
     "latency_ms": 768,
     "created_at": "2026-08-16T19:10:18.176Z",
