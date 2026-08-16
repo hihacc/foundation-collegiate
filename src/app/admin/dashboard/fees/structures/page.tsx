@@ -70,6 +70,30 @@ const defaultStructures = [
   },
   { 
     id: '6', 
+    class_name: 'ADC 1 (Associate Degree in Commerce - Part 1)', 
+    admission_fee: 15000, 
+    monthly_tuition_fee: 9000, 
+    annual_charges: 8000, 
+    examination_fee: 3500,
+    registration_fee: 3000,
+    library_fee: 1500,
+    sports_fee: 1000,
+    lab_fee: 1500
+  },
+  { 
+    id: '7', 
+    class_name: 'ADC 2 (Associate Degree in Commerce - Part 2)', 
+    admission_fee: 15000, 
+    monthly_tuition_fee: 9000, 
+    annual_charges: 8000, 
+    examination_fee: 3500,
+    registration_fee: 3000,
+    library_fee: 1500,
+    sports_fee: 1000,
+    lab_fee: 1500
+  },
+  { 
+    id: '8', 
     class_name: 'Diploma in Information Technology (DIT)', 
     admission_fee: 8000, 
     monthly_tuition_fee: 5500, 

@@ -740,20 +740,28 @@ export default function AdminStudentsPage() {
                       className="w-full px-3.5 py-2 bg-slate-50 border border-slate-200 text-slate-800 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none font-semibold cursor-pointer text-xs"
                     >
                       <option value="None">None (Diploma Student Only)</option>
-                      <option value="Class IX - Science / Biology">Class IX - Science / Biology</option>
-                      <option value="Class IX - Computer Science">Class IX - Computer Science</option>
-                      <option value="Class X - Science / Biology">Class X - Science / Biology</option>
-                      <option value="Class X - Computer Science">Class X - Computer Science</option>
-                      <option value="Class XI - Pre-Medical">Class XI - Pre-Medical</option>
-                      <option value="Class XI - Pre-Engineering">Class XI - Pre-Engineering</option>
-                      <option value="Class XI - Computer Science">Class XI - Computer Science</option>
-                      <option value="Class XI - Commerce">Class XI - Commerce</option>
-                      <option value="Class XI - Arts">Class XI - Arts</option>
-                      <option value="Class XII - Pre-Medical">Class XII - Pre-Medical</option>
-                      <option value="Class XII - Pre-Engineering">Class XII - Pre-Engineering</option>
-                      <option value="Class XII - Computer Science">Class XII - Computer Science</option>
-                      <option value="Class XII - Commerce">Class XII - Commerce</option>
-                      <option value="Class XII - Arts">Class XII - Arts</option>
+                      <optgroup label="Matriculation (IX & X)">
+                        <option value="Class IX - Science / Biology">Class IX - Science / Biology</option>
+                        <option value="Class IX - Computer Science">Class IX - Computer Science</option>
+                        <option value="Class X - Science / Biology">Class X - Science / Biology</option>
+                        <option value="Class X - Computer Science">Class X - Computer Science</option>
+                      </optgroup>
+                      <optgroup label="Intermediate (XI & XII)">
+                        <option value="Class XI - Pre-Medical">Class XI - Pre-Medical</option>
+                        <option value="Class XI - Pre-Engineering">Class XI - Pre-Engineering</option>
+                        <option value="Class XI - Computer Science">Class XI - Computer Science</option>
+                        <option value="Class XI - Commerce">Class XI - Commerce</option>
+                        <option value="Class XI - Arts">Class XI - Arts</option>
+                        <option value="Class XII - Pre-Medical">Class XII - Pre-Medical</option>
+                        <option value="Class XII - Pre-Engineering">Class XII - Pre-Engineering</option>
+                        <option value="Class XII - Computer Science">Class XII - Computer Science</option>
+                        <option value="Class XII - Commerce">Class XII - Commerce</option>
+                        <option value="Class XII - Arts">Class XII - Arts</option>
+                      </optgroup>
+                      <optgroup label="Graduation / Associate Degree in Commerce (ADC)">
+                        <option value="ADC 1">ADC 1 (Associate Degree in Commerce - Part 1)</option>
+                        <option value="ADC 2">ADC 2 (Associate Degree in Commerce - Part 2)</option>
+                      </optgroup>
                     </select>
                   </div>
 
