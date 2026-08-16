@@ -1,7 +1,7 @@
 /**
  * Client-side Canvas Document Preprocessor
- * Runs 100% locally in browser to enhance phone photos of physical paper forms
- * for maximum OCR accuracy without any cloud or external API dependencies.
+ * Features Local Adaptive Background Normalization (Anti-Glare & Shadow Equalizer)
+ * Ensures crisp text extraction even under flash glare, uneven shadows, and low-light camera photos.
  */
 
 export type DocumentFilter = 'magic' | 'bw' | 'grayscale' | 'original';
@@ -9,10 +9,10 @@ export type DocumentFilter = 'magic' | 'bw' | 'grayscale' | 'original';
 export interface PreprocessOptions {
   filter?: DocumentFilter;
   rotation?: number; // 0, 90, 180, 270
-  contrast?: number; // -50 to 50 (default 0)
-  brightness?: number; // -50 to 50 (default 0)
-  threshold?: number; // 0 to 255 for custom binarization (default 128)
-  cropBox?: { x: number; y: number; width: number; height: number }; // percentage 0-1
+  contrast?: number; // -50 to 50
+  brightness?: number; // -50 to 50
+  threshold?: number; // 0 to 255
+  cropBox?: { x: number; y: number; width: number; height: number };
 }
 
 export function preprocessDocumentCanvas(
@@ -25,7 +25,7 @@ export function preprocessDocumentCanvas(
       rotation = 0,
       contrast = 0,
       brightness = 0,
-      threshold = 128,
+      threshold = 135,
       cropBox
     } = options;
 
@@ -37,7 +37,6 @@ export function preprocessDocumentCanvas(
         const naturalWidth = img.naturalWidth || img.width;
         const naturalHeight = img.naturalHeight || img.height;
 
-        // Apply crop bounds if specified
         let srcX = 0;
         let srcY = 0;
         let srcW = naturalWidth;
@@ -50,15 +49,13 @@ export function preprocessDocumentCanvas(
           srcH = Math.max(10, Math.min(naturalHeight - srcY, cropBox.height * naturalHeight));
         }
 
-        // Setup canvas with rotation dimensions
         const isRotated = rotation === 90 || rotation === 270;
         const targetWidth = isRotated ? srcH : srcW;
         const targetHeight = isRotated ? srcW : srcH;
 
-        // Cap max resolution for fast local OCR (max 2000px on long edge)
         let finalWidth = targetWidth;
         let finalHeight = targetHeight;
-        const maxDimension = 2200;
+        const maxDimension = 2000;
 
         if (finalWidth > maxDimension || finalHeight > maxDimension) {
           if (finalWidth > finalHeight) {
@@ -95,71 +92,69 @@ export function preprocessDocumentCanvas(
           return;
         }
 
-        // Pixel processing for Magic Color, B&W threshold, and Grayscale
         const imgData = ctx.getImageData(0, 0, finalWidth, finalHeight);
         const data = imgData.data;
-        const len = data.length;
+        const width = finalWidth;
+        const height = finalHeight;
 
-        // Compute contrast multiplier: factor = (259 * (contrast + 255)) / (255 * (259 - contrast))
-        const contrastFactor = (259 * (contrast + 255)) / (255 * (259 - contrast));
-
-        // Find min and max luminance for auto dynamic-range stretching
-        let minLum = 255;
-        let maxLum = 0;
-
-        for (let i = 0; i < len; i += 4) {
-          const lum = Math.round(0.299 * data[i] + 0.587 * data[i + 1] + 0.114 * data[i + 2]);
-          if (lum < minLum) minLum = lum;
-          if (lum > maxLum) maxLum = lum;
+        // Step 1: Create 2D Luminance Array
+        const lumGrid = new Uint8Array(width * height);
+        for (let i = 0, j = 0; i < data.length; i += 4, j++) {
+          lumGrid[j] = Math.round(0.299 * data[i] + 0.587 * data[i + 1] + 0.114 * data[i + 2]);
         }
-        const lumRange = Math.max(1, maxLum - minLum);
 
-        for (let i = 0; i < len; i += 4) {
-          let r = data[i];
-          let g = data[i + 1];
-          let b = data[i + 2];
+        // Step 2: Compute Integral Image for Fast Local Background Normalization (Anti-Glare)
+        // Integral image allows O(1) local mean background estimation over any window size
+        const integral = new Float64Array((width + 1) * (height + 1));
+        const intW = width + 1;
 
-          // 1. Calculate Grayscale Luminance
-          let lum = Math.round(0.299 * r + 0.587 * g + 0.114 * b);
-
-          // 2. Apply Brightness
-          if (brightness !== 0) {
-            r = Math.max(0, Math.min(255, r + brightness));
-            g = Math.max(0, Math.min(255, g + brightness));
-            b = Math.max(0, Math.min(255, b + brightness));
-            lum = Math.max(0, Math.min(255, lum + brightness));
+        for (let y = 0; y < height; y++) {
+          let rowSum = 0;
+          for (let x = 0; x < width; x++) {
+            rowSum += lumGrid[y * width + x];
+            integral[(y + 1) * intW + (x + 1)] = integral[y * intW + (x + 1)] + rowSum;
           }
+        }
 
-          // 3. Apply Contrast
-          if (contrast !== 0) {
-            r = Math.max(0, Math.min(255, Math.round(contrastFactor * (r - 128) + 128)));
-            g = Math.max(0, Math.min(255, Math.round(contrastFactor * (g - 128) + 128)));
-            b = Math.max(0, Math.min(255, Math.round(contrastFactor * (b - 128) + 128)));
-            lum = Math.max(0, Math.min(255, Math.round(contrastFactor * (lum - 128) + 128)));
-          }
+        // Local window radius (e.g. 24px) for background subtraction
+        const winRadius = Math.max(16, Math.round(width / 40));
 
-          if (filter === 'grayscale') {
-            data[i] = lum;
-            data[i + 1] = lum;
-            data[i + 2] = lum;
-          } else if (filter === 'bw') {
-            // High-contrast clean black & white binarization
-            const val = lum > threshold ? 255 : 0;
-            data[i] = val;
-            data[i + 1] = val;
-            data[i + 2] = val;
-          } else if (filter === 'magic') {
-            // Google Drive CamScanner style magic enhancement:
-            // Normalize paper background to bright white and darken ink/text
-            let stretched = Math.round(((lum - minLum) / lumRange) * 255);
-            if (stretched > 135) {
-              stretched = Math.min(255, Math.round(stretched * 1.15));
-            } else {
-              stretched = Math.max(0, Math.round(stretched * 0.8));
+        for (let y = 0; y < height; y++) {
+          const y0 = Math.max(0, y - winRadius);
+          const y1 = Math.min(height, y + winRadius + 1);
+
+          for (let x = 0; x < width; x++) {
+            const x0 = Math.max(0, x - winRadius);
+            const x1 = Math.min(width, x + winRadius + 1);
+
+            const count = (x1 - x0) * (y1 - y0);
+            const sum = integral[y1 * intW + x1] - integral[y0 * intW + x1] - integral[y1 * intW + x0] + integral[y0 * intW + x0];
+            const localMean = sum / count;
+
+            const idx = (y * width + x) * 4;
+            const currentLum = lumGrid[y * width + x];
+
+            if (filter === 'bw') {
+              // Adaptive thresholding: if significantly darker than local background, it is text
+              const isDark = currentLum < localMean * 0.88;
+              const val = isDark ? 0 : 255;
+              data[idx] = val;
+              data[idx + 1] = val;
+              data[idx + 2] = val;
+            } else if (filter === 'magic') {
+              // Magic color: equalize local background to white and boost text ink contrast
+              let normalized = Math.round((currentLum / Math.max(1, localMean)) * 240);
+              if (normalized > 200) normalized = 255;
+              else if (normalized < 140) normalized = Math.max(0, Math.round(normalized * 0.7));
+
+              data[idx] = normalized;
+              data[idx + 1] = normalized;
+              data[idx + 2] = normalized;
+            } else if (filter === 'grayscale') {
+              data[idx] = currentLum;
+              data[idx + 1] = currentLum;
+              data[idx + 2] = currentLum;
             }
-            data[i] = stretched;
-            data[i + 1] = stretched;
-            data[i + 2] = stretched;
           }
         }
 
@@ -170,8 +165,7 @@ export function preprocessDocumentCanvas(
       }
     };
 
-    img.onerror = (e) => reject(new Error('Failed to load image for preprocessing: ' + e));
-
+    img.onerror = (e) => reject(new Error('Image processing error: ' + e));
     img.src = typeof imageSource === 'string' ? imageSource : imageSource.src;
   });
 }

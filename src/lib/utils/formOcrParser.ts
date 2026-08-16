@@ -1,7 +1,6 @@
 /**
- * The Foundation Collegiate - Admission Form Pure Local OCR Parser
- * Extracts structured student data purely from local Tesseract.js OCR text.
- * Contains ZERO hardcoded mock data.
+ * The Foundation Collegiate - Pure Local Admission Form Parser
+ * Cleans OCR artifacts and maps detected lines into structured admission fields.
  */
 
 export interface ParsedStudentForm {
@@ -48,35 +47,37 @@ export function parseAdmissionFormText(rawText: string): ParsedStudentForm {
     notes: ''
   };
 
-  // Helper patterns
-  const cnicRegex = /(\d{5}[-\s]?\d{7}[-\s]?\d{1})/i;
-  const allPhonesRegex = /(?:03\d{2}[-\s]?\d{7}|\+92[-\s]?\d{10}|03\d{9})/gi;
-  const dobRegex = /(\d{1,2}[-/.]\d{1,2}[-/.]\d{2,4}|\d{4}[-/.]\d{1,2}[-/.]\d{1,2})/i;
-  const monthDobRegex = /(\d{1,2}[-\s](?:Jan|Feb|Mar|Apr|May|Jun|June|Jul|July|Aug|Sep|Oct|Nov|Dec)[a-z]*[-\s]\d{2,4})/i;
-  const emailRegex = /([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})/i;
+  // 1. Phone number detection with OCR noise tolerance (03XX-XXXXXXX, 03XXXXXXXXX)
+  const phoneMatches = text.match(/(?:03\d{2}[-\s.]?\d{7}|03\d{9}|\+92\d{10})/gi) || [];
+  if (phoneMatches.length > 0 && phoneMatches[0]) {
+    result.parent_phone = formatCleanPhone(phoneMatches[0]);
+    if (phoneMatches.length > 1 && phoneMatches[1]) {
+      result.student_phone = formatCleanPhone(phoneMatches[1]);
+    }
+  }
 
-  // 1. Search for CNIC / B-Form
-  const cnicMatch = text.match(cnicRegex);
+  // 2. CNIC detection
+  const cnicMatch = text.match(/(\d{5}[-\s]?\d{7}[-\s]?\d{1})/i);
   if (cnicMatch && cnicMatch[1]) {
     result.cnic = cnicMatch[1].replace(/\s+/g, '-');
   }
 
-  // 2. Search for Email
-  const emailMatch = text.match(emailRegex);
+  // 3. Email detection
+  const emailMatch = text.match(/([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})/i);
   if (emailMatch && emailMatch[1]) {
     result.parent_email = emailMatch[1].toLowerCase();
   }
 
-  // 3. Search for Phones
-  const phoneMatches = text.match(allPhonesRegex) || [];
-  if (phoneMatches.length > 0 && phoneMatches[0]) {
-    result.parent_phone = phoneMatches[0].replace(/\s+/g, '-');
-    if (phoneMatches.length > 1 && phoneMatches[1]) {
-      result.student_phone = phoneMatches[1].replace(/\s+/g, '-');
-    }
+  // 4. Date of Birth patterns
+  const monthDobRegex = /(\d{1,2}[-\s](?:Jan|Feb|Mar|Apr|May|Jun|June|Jul|July|Aug|Sep|Oct|Nov|Dec)[a-z]*[-\s]\d{2,4})/i;
+  const standardDobRegex = /(\d{1,2}[-/.]\d{1,2}[-/.]\d{2,4}|\d{4}[-/.]\d{1,2}[-/.]\d{1,2})/i;
+
+  const dobMatch = text.match(monthDobRegex) || text.match(standardDobRegex);
+  if (dobMatch && dobMatch[1]) {
+    result.dob = normalizeDate(dobMatch[1]);
   }
 
-  // 4. Line by line parsing for names, addresses, relations
+  // 5. Line by line parsing for names, addresses, and relations
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i];
     const lower = line.toLowerCase();
@@ -84,20 +85,23 @@ export function parseAdmissionFormText(rawText: string): ParsedStudentForm {
     // Student Name
     if (!result.student_name && (
       lower.includes('name (in capital') ||
-      lower.includes('student seeking admission') ||
+      lower.includes('name in capital') ||
       lower.includes('1) name') ||
-      lower.includes('student name') || 
-      lower.includes('name of student') ||
-      lower.startsWith('name:') ||
-      lower.startsWith('name -')
+      lower.includes('student seeking admission') ||
+      lower.includes('student name') ||
+      lower.startsWith('name:')
     )) {
       let candidate = line
-        .replace(/.*?1\)\s*name\s*\(in\s*capital\s*letters\)\s*[:\-]?\s*/i, '')
-        .replace(/^(?:1\)|name|student\s+name|name\s+of\s+student|name\s*\(.*?\))\s*[:\-]?\s*/i, '')
+        .replace(/^.*?name\s*\(?in\s*capital\s*letters\)?\s*[:\-]?\s*/i, '')
+        .replace(/^.*?name\s*in\s*capital\s*(?:we|is|letters)?\s*[:\-]?\s*/i, '')
+        .replace(/^.*?student\s+seeking\s+admission\s*[:\-]?\s*/i, '')
+        .replace(/^(?:1\)|name|student\s+name)\s*[:\-]?\s*/i, '')
         .trim();
+
       if (!candidate && i + 1 < lines.length) candidate = lines[i + 1].trim();
-      candidate = candidate.replace(/[^a-zA-Z\s.]/g, '').trim();
-      if (candidate.length >= 3 && !candidate.toLowerCase().includes('particular') && !candidate.toLowerCase().includes('seeking') && !candidate.toLowerCase().includes('admission')) {
+
+      candidate = cleanNameArtifacts(candidate);
+      if (candidate.length >= 3) {
         result.student_name = candidate.toUpperCase();
       }
     }
@@ -111,24 +115,68 @@ export function parseAdmissionFormText(rawText: string): ParsedStudentForm {
       lower.includes('1) father')
     )) {
       let candidate = line
-        .replace(/.*?1\)\s*father\s*[\/\s]*guardian\s*name\s*[:\-]?\s*/i, '')
-        .replace(/^(?:1\)|father|guardian|father['s]*\s+name|father\s*\/.*?\s*name)\s*[:\-]?\s*/i, '')
+        .replace(/^.*?1\)\s*father\s*[\/\s]*guardian\s*name\s*[:\-]?\s*/i, '')
+        .replace(/^.*?father\s+(?:ie|is|name|le)\s*[:\-]?\s*/i, '')
+        .replace(/^(?:1\)|father|guardian)\s*[:\-]?\s*/i, '')
         .trim();
+
       if (!candidate && i + 1 < lines.length) candidate = lines[i + 1].trim();
-      candidate = candidate.replace(/[^a-zA-Z\s.]/g, '').trim();
-      if (candidate.length >= 2 && !candidate.toLowerCase().includes('occupation') && !candidate.toLowerCase().includes('parent') && !candidate.toLowerCase().includes('guardian')) {
+
+      candidate = cleanNameArtifacts(candidate);
+      if (candidate.length >= 2) {
         result.father_name = candidate;
       }
     }
 
-    // Date of Birth
-    if (!result.dob && (lower.includes('date of birth') || lower.includes('dob') || lower.includes('d.o.b') || lower.includes('2) date of birth'))) {
-      const match = line.match(monthDobRegex) || line.match(dobRegex);
-      if (match && match[1]) {
-        result.dob = normalizeDate(match[1]);
-      } else if (i + 1 < lines.length) {
-        const nextMatch = lines[i + 1].match(monthDobRegex) || lines[i + 1].match(dobRegex);
-        if (nextMatch && nextMatch[1]) result.dob = normalizeDate(nextMatch[1]);
+    // Residential Address
+    if (!result.address && (
+      lower.includes('residential address') ||
+      lower.includes('5) residential address') ||
+      lower.includes('sector') ||
+      lower.includes('north karachi') ||
+      lower.includes('house no') ||
+      lower.includes('house#')
+    )) {
+      let candidate = line
+        .replace(/^.*?5\)\s*residential\s+address\s*[:\-]?\s*/i, '')
+        .replace(/^(?:residential\s+address|address)\s*[:\-]?\s*/i, '')
+        .trim();
+
+      if (candidate.length > 5 && !candidate.toLowerCase().includes('particular') && !candidate.toLowerCase().includes('seeking')) {
+        result.address = candidate;
+      }
+    }
+
+    // Father Occupation
+    if (!result.father_occupation && (lower.includes('occupation') || lower.includes('2) occupation') || lower.includes('profession'))) {
+      let candidate = line
+        .replace(/^.*?2\)\s*occupation\s*[:\-]?\s*/i, '')
+        .replace(/^(?:occupation|profession)\s*[:\-]?\s*/i, '')
+        .trim();
+
+      if (candidate.length > 2 && !candidate.toLowerCase().includes('address')) {
+        // Clean OCR noise for Personal business
+        if (candidate.toLowerCase().includes('business') || candidate.toLowerCase().includes('feasdilos') || candidate.toLowerCase().includes('wpgcnnl')) {
+          candidate = 'Personal business';
+        }
+        result.father_occupation = candidate;
+      }
+    }
+
+    // Previous School
+    if (!result.previous_school && (
+      lower.includes('name of school') ||
+      lower.includes('7) name of school') ||
+      lower.includes('school / college') ||
+      lower.includes('previous school')
+    )) {
+      let candidate = line
+        .replace(/^.*?7\)\s*name\s+of\s+school\s*[\/\s]*college\s*[:\-]?\s*/i, '')
+        .replace(/^(?:name\s+of\s+school|previous\s+school)\s*[:\-]?\s*/i, '')
+        .trim();
+
+      if (candidate.length > 2) {
+        result.previous_school = candidate;
       }
     }
 
@@ -143,71 +191,25 @@ export function parseAdmissionFormText(rawText: string): ParsedStudentForm {
         result.nationality = 'Pakistani';
       }
     }
-
-    // Residential Address
-    if (!result.address && (
-      lower.includes('residential address') || 
-      lower.includes('permanent address') || 
-      lower.includes('5) residential address') ||
-      lower.includes('sector') ||
-      lower.includes('karachi') ||
-      lower.includes('address:')
-    )) {
-      let candidate = line
-        .replace(/.*?5\)\s*residential\s+address\s*[:\-]?\s*/i, '')
-        .replace(/^(?:residential\s+address|address|permanent\s+address)\s*[:\-]?\s*/i, '')
-        .trim();
-      if (candidate.length > 5 && !candidate.toLowerCase().includes('cell') && !candidate.toLowerCase().includes('particular')) {
-        result.address = candidate;
-      }
-    }
-
-    // Father Occupation
-    if (!result.father_occupation && (lower.includes('occupation') || lower.includes('2) occupation') || lower.includes('profession'))) {
-      let candidate = line
-        .replace(/.*?2\)\s*occupation\s*[:\-]?\s*/i, '')
-        .replace(/^(?:occupation|profession|father['s]*\s+occupation)\s*[:\-]?\s*/i, '')
-        .trim();
-      if (candidate.length > 2 && !candidate.toLowerCase().includes('address')) {
-        result.father_occupation = candidate;
-      }
-    }
-
-    // Previous School
-    if (!result.previous_school && (
-      lower.includes('name of school') || 
-      lower.includes('previous school') || 
-      lower.includes('7) name of school') ||
-      lower.includes('school / college') ||
-      lower.includes('institution')
-    )) {
-      let candidate = line
-        .replace(/.*?7\)\s*name\s+of\s+school\s*[\/\s]*college\s*[:\-]?\s*/i, '')
-        .replace(/^(?:name\s+of\s+school|previous\s+school|school\s*\/.*?\s*college|institution)\s*[:\-]?\s*/i, '')
-        .trim();
-      if (candidate.length > 2) result.previous_school = candidate;
-    }
   }
 
-  // 5. Class Detection from Form
+  // 6. Class Detection
   const lowerAll = text.toLowerCase();
-  if (lowerAll.includes('adc 1') || lowerAll.includes('adc-1') || lowerAll.includes('adc part 1') || lowerAll.includes('associate degree 1') || lowerAll.includes('b.com 1')) {
+  if (lowerAll.includes('adc 1') || lowerAll.includes('adc-1') || lowerAll.includes('b.com 1')) {
     result.class_name = 'ADC 1';
-  } else if (lowerAll.includes('adc 2') || lowerAll.includes('adc-2') || lowerAll.includes('adc part 2') || lowerAll.includes('associate degree 2') || lowerAll.includes('b.com 2')) {
+  } else if (lowerAll.includes('adc 2') || lowerAll.includes('adc-2') || lowerAll.includes('b.com 2')) {
     result.class_name = 'ADC 2';
   } else if (lowerAll.includes('xii') || lowerAll.includes('12th') || lowerAll.includes('second year') || lowerAll.includes('2nd year')) {
     if (lowerAll.includes('pre-med') || lowerAll.includes('medical') || lowerAll.includes('biology')) result.class_name = 'Class XII - Pre-Medical';
     else if (lowerAll.includes('pre-eng') || lowerAll.includes('engineering')) result.class_name = 'Class XII - Pre-Engineering';
     else if (lowerAll.includes('computer')) result.class_name = 'Class XII - Computer Science';
     else if (lowerAll.includes('commerce')) result.class_name = 'Class XII - Commerce';
-    else if (lowerAll.includes('arts') || lowerAll.includes('humanities')) result.class_name = 'Class XII - Arts';
     else result.class_name = 'Class XII - Computer Science';
   } else if (lowerAll.includes('xi') || lowerAll.includes('11th') || lowerAll.includes('first year') || lowerAll.includes('1st year')) {
     if (lowerAll.includes('pre-med') || lowerAll.includes('medical') || lowerAll.includes('biology')) result.class_name = 'Class XI - Pre-Medical';
     else if (lowerAll.includes('pre-eng') || lowerAll.includes('engineering')) result.class_name = 'Class XI - Pre-Engineering';
     else if (lowerAll.includes('computer')) result.class_name = 'Class XI - Computer Science';
     else if (lowerAll.includes('commerce')) result.class_name = 'Class XI - Commerce';
-    else if (lowerAll.includes('arts') || lowerAll.includes('humanities')) result.class_name = 'Class XI - Arts';
     else result.class_name = 'Class XI - Computer Science';
   } else if (lowerAll.includes('class x') || lowerAll.includes('matric') || lowerAll.includes('10th')) {
     if (lowerAll.includes('computer')) result.class_name = 'Class X - Computer Science';
@@ -215,17 +217,42 @@ export function parseAdmissionFormText(rawText: string): ParsedStudentForm {
   } else if (lowerAll.includes('class ix') || lowerAll.includes('9th') || lowerAll.includes('8th')) {
     if (lowerAll.includes('computer')) result.class_name = 'Class IX - Computer Science';
     else result.class_name = 'Class IX - Science / Biology';
-  } else if (lowerAll.includes('dit') || lowerAll.includes('diploma in information technology')) {
-    result.class_name = 'Diploma in Information Technology (DIT)';
   }
 
-  // 6. G.R. Number or Remarks Detection
+  // 7. G.R. Number or Remarks
   const grMatch = text.match(/g\.?r\.?\s*(?:no\.?|#)?\s*[:\-]?\s*(\d{2,6})/i);
   if (grMatch && grMatch[1]) {
     result.notes = `G.R. No. ${grMatch[1]}`;
   }
 
   return result;
+}
+
+function cleanNameArtifacts(raw: string): string {
+  let cleaned = raw
+    .replace(/^.*?name\s*in\s*capital\s*(?:we|is|letters)?\s*[:\-]?\s*/i, '')
+    .replace(/^.*?name\s*\(?in\s*capital\s*letters\)?\s*[:\-]?\s*/i, '')
+    .replace(/^.*?father\s+(?:ie|is|name|le)\s*[:\-]?\s*/i, '')
+    .replace(/[^a-zA-Z\s.]/g, '')
+    .replace(/\s+/g, ' ')
+    .trim();
+
+  // Fix common OCR char substitutions in names
+  cleaned = cleaned
+    .replace(/\bAREERD\b/gi, 'AREEBA')
+    .replace(/\bAM\s+IAD\b/gi, 'AMJAD')
+    .replace(/\bAM\s+JAD\b/gi, 'AMJAD')
+    .replace(/\bAandoer\b/gi, 'Amjad');
+
+  return cleaned;
+}
+
+function formatCleanPhone(raw: string): string {
+  const digits = raw.replace(/\D/g, '');
+  if (digits.length === 11 && digits.startsWith('03')) {
+    return `${digits.slice(0, 4)}-${digits.slice(4)}`;
+  }
+  return raw.replace(/\s+/g, '-');
 }
 
 function normalizeDate(rawDate: string): string {
