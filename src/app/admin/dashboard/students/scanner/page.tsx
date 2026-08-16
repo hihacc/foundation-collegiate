@@ -166,6 +166,8 @@ export default function HuggingFaceAdmissionScannerPage() {
       rotation: 0
     });
 
+    const initialRoll = `FC-26-${Math.floor(1000 + Math.random() * 9000)}`;
+
     const newDoc: ScannedDocumentItem = {
       id: newDocId,
       originalUrl: imageUrl,
@@ -178,6 +180,8 @@ export default function HuggingFaceAdmissionScannerPage() {
       extractedData: {
         student_name: '',
         father_name: '',
+        roll_number: initialRoll,
+        enrollment_status: 'active',
         dob: '',
         religion: 'Islam',
         nationality: 'Pakistani',
@@ -341,18 +345,19 @@ export default function HuggingFaceAdmissionScannerPage() {
 
     try {
       const studentId = crypto.randomUUID();
-      const generatedRoll = `FC-26-${Math.floor(1000 + Math.random() * 9000)}`;
+      const finalRoll = form.roll_number?.trim() || `FC-26-${Math.floor(1000 + Math.random() * 9000)}`;
+      const finalStatus = form.enrollment_status === 'pending' ? 'inactive' : 'active';
 
       const newStudent: Student = {
         id: studentId,
         name: form.student_name.trim().toUpperCase(),
         father_name: form.father_name || 'N/A',
-        roll_number: generatedRoll,
+        roll_number: finalRoll,
         class_name: form.class_name || 'Class IX - Science / Biology',
         phone: form.parent_phone || '',
         email: form.parent_email || undefined,
-        status: 'active',
-        is_active: true,
+        status: finalStatus,
+        is_active: finalStatus === 'active',
         created_at: new Date().toISOString()
       };
 
@@ -377,7 +382,7 @@ export default function HuggingFaceAdmissionScannerPage() {
           previous_school: form.previous_school || '',
           father_occupation: form.father_occupation || '',
           class_applied: form.class_name,
-          status: 'approved',
+          status: form.enrollment_status === 'pending' ? 'pending' : 'approved',
           created_at: new Date().toISOString()
         }]);
       } catch {}
@@ -387,9 +392,17 @@ export default function HuggingFaceAdmissionScannerPage() {
       setStoredData('students', [newStudent, ...existing]);
 
       // 4. Mark document as enrolled
-      setDocuments(prev => prev.map((d, i) => i === currentIndex ? { ...d, status: 'enrolled' } : d));
+      setDocuments(prev => prev.map((d, i) => i === currentIndex ? { 
+        ...d, 
+        status: 'enrolled',
+        extractedData: {
+          ...d.extractedData,
+          roll_number: finalRoll,
+          enrollment_status: 'enrolled'
+        }
+      } : d));
 
-      toast.success(`Enrolled! ${form.student_name} registered with Roll #${generatedRoll}`, { id: toastId });
+      toast.success(`Enrolled! ${form.student_name} registered with Roll #${finalRoll}`, { id: toastId });
 
       // Move to next in queue if available
       if (currentIndex < documents.length - 1) {
@@ -899,11 +912,55 @@ export default function HuggingFaceAdmissionScannerPage() {
                 
                 {/* 1. Student Particulars */}
                 <div className="space-y-3">
-                  <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">
-                    1. Student Particulars
-                  </span>
+                  <div className="flex items-center justify-between">
+                    <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">
+                      1. Student Particulars &amp; Enrollment Info
+                    </span>
+                    <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider ${
+                      currentDoc.status === 'enrolled'
+                        ? 'bg-emerald-100 text-emerald-800 border border-emerald-300'
+                        : currentDoc.extractedData.enrollment_status === 'pending'
+                        ? 'bg-amber-100 text-amber-800 border border-amber-300'
+                        : 'bg-blue-100 text-blue-800 border border-blue-300'
+                    }`}>
+                      {currentDoc.status === 'enrolled' ? '✅ Enrolled in DB' : currentDoc.extractedData.enrollment_status === 'pending' ? '🟡 Pending Review' : '🟢 Ready to Enroll'}
+                    </span>
+                  </div>
+
+                  {/* ROLL NUMBER & ENROLLMENT STATUS BOXES */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 bg-gradient-to-r from-blue-50/80 via-slate-50 to-indigo-50/80 p-4 rounded-2xl border-2 border-blue-200 shadow-xs">
+                    <div>
+                      <label className="font-extrabold text-blue-950 block mb-1 text-xs flex items-center gap-1.5">
+                        🎟️ Official Roll Number *
+                      </label>
+                      <input
+                        type="text"
+                        value={currentDoc.extractedData.roll_number || ''}
+                        onChange={e => handleFieldChange('roll_number', e.target.value.toUpperCase())}
+                        placeholder="e.g. FC-26-1045"
+                        className="w-full px-3.5 py-2.5 bg-white border-2 border-blue-300 rounded-xl font-mono font-black text-blue-900 text-sm tracking-wide uppercase focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none shadow-xs"
+                      />
+                      <span className="text-[10px] text-blue-700 block mt-0.5">Assigned college roll number</span>
+                    </div>
+
+                    <div>
+                      <label className="font-extrabold text-blue-950 block mb-1 text-xs flex items-center gap-1.5">
+                        📌 Enrollment Status
+                      </label>
+                      <select
+                        value={currentDoc.extractedData.enrollment_status || (currentDoc.status === 'enrolled' ? 'enrolled' : 'active')}
+                        onChange={e => handleFieldChange('enrollment_status', e.target.value)}
+                        className="w-full px-3.5 py-2.5 bg-white border-2 border-blue-300 rounded-xl font-bold text-slate-800 text-xs focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none cursor-pointer shadow-xs"
+                      >
+                        <option value="active">🟢 Active / Regular Enrolled</option>
+                        <option value="pending">🟡 Pending Admission Review</option>
+                        <option value="enrolled">🔵 Confirmed Enrolled</option>
+                      </select>
+                      <span className="text-[10px] text-blue-700 block mt-0.5">Student database status</span>
+                    </div>
+                  </div>
                   
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
                     <div className="sm:col-span-2">
                       <label className="font-bold text-slate-700 block mb-1">Student Full Name (Capital Letters) *</label>
                       <input

@@ -6,6 +6,8 @@
 export interface ParsedStudentForm {
   student_name: string;
   father_name: string;
+  roll_number?: string;
+  enrollment_status?: 'active' | 'pending' | 'enrolled';
   dob: string;
   religion: string;
   nationality: string;
@@ -30,6 +32,8 @@ export function parseAdmissionFormText(rawText: string): ParsedStudentForm {
   const result: ParsedStudentForm = {
     student_name: '',
     father_name: '',
+    roll_number: '',
+    enrollment_status: 'active',
     dob: '',
     religion: 'Islam',
     nationality: 'Pakistani',
