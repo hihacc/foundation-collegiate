@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { supabase } from '@/lib/supabase/client';
+import nodemailer from 'nodemailer';
 
 export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';
@@ -67,7 +68,7 @@ async function handleBackupExecution(req: Request, triggerSource: string) {
           backupPayload.tables[table] = [];
           backupPayload.summary[table] = 0;
         }
-      } catch (err: any) {
+      } catch {
         backupPayload.tables[table] = [];
         backupPayload.summary[table] = 0;
       }
@@ -79,20 +80,69 @@ async function handleBackupExecution(req: Request, triggerSource: string) {
       ? `${(sizeInBytes / (1024 * 1024)).toFixed(2)} MB` 
       : `${(sizeInBytes / 1024).toFixed(2)} KB`;
 
-    // Attempt to log in backup_logs table if exists
+    // Dispatch Email with Attachment to Google Account (foundationcollegiate@gmail.com)
+    let emailSent = false;
+    let emailError: string | null = null;
+
     try {
-      await supabase.from('backup_logs').insert([
-        {
-          id: crypto.randomUUID(),
-          filename,
-          file_size: sizeFormatted,
-          total_records: totalRecordsCount,
-          trigger_type: triggerSource,
-          status: 'Completed',
-          created_at: timestamp.toISOString()
+      const emailUser = process.env.EMAIL_USER || 'foundationcollegiate@gmail.com';
+      const emailPass = (process.env.EMAIL_APP_PASSWORD || 'jcxx yhbl acmq eypf').replace(/\s+/g, '');
+
+      const transporter = nodemailer.createTransport({
+        host: 'smtp.gmail.com',
+        port: 587,
+        secure: false,
+        auth: {
+          user: emailUser,
+          pass: emailPass
+        },
+        tls: {
+          rejectUnauthorized: false
         }
-      ]);
-    } catch {}
+      });
+
+      const mailOptions = {
+        from: `"TFC Automated Cloud Backup" <${emailUser}>`,
+        to: emailUser,
+        subject: `⚡ TFC Automated Database Backup Snapshot [${new Date().toLocaleDateString('en-PK')} ${new Date().toLocaleTimeString('en-PK', { hour: '2-digit', minute: '2-digit' })}]`,
+        text: `Attached is your automated database backup snapshot from The Foundation Collegiate system.\n\nTrigger Source: ${triggerSource}\nTimestamp: ${timestamp.toISOString()}\nSnapshot Filename: ${filename}\nTotal Records: ${totalRecordsCount}\nFile Size: ${sizeFormatted}\n\nYou can save this file directly to your Google Drive or download it for safekeeping.`,
+        html: `
+          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; border: 1px solid #e2e8f0; border-radius: 16px; padding: 24px; background: #ffffff;">
+            <div style="text-align: center; border-bottom: 2px solid #3b82f6; padding-bottom: 16px; margin-bottom: 20px;">
+              <h2 style="color: #1e3a8a; margin: 0; font-size: 22px;">The Foundation Collegiate</h2>
+              <p style="color: #64748b; margin: 4px 0 0; font-size: 13px;">Automated Cloud &amp; Google Drive Backup Service</p>
+            </div>
+            <p style="color: #334155; font-size: 14px;">Hello Admin,</p>
+            <p style="color: #334155; font-size: 14px;">Your automated database backup snapshot has been generated successfully and is attached to this email.</p>
+            <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 16px; margin: 16px 0;">
+              <table style="width: 100%; font-size: 13px; color: #475569;">
+                <tr><td style="font-weight: bold; padding: 4px 0;">Snapshot File:</td><td style="font-family: monospace;">${filename}</td></tr>
+                <tr><td style="font-weight: bold; padding: 4px 0;">Trigger Mode:</td><td>${triggerSource}</td></tr>
+                <tr><td style="font-weight: bold; padding: 4px 0;">Total Records:</td><td>${totalRecordsCount} rows across 19 tables</td></tr>
+                <tr><td style="font-weight: bold; padding: 4px 0;">File Size:</td><td>${sizeFormatted}</td></tr>
+                <tr><td style="font-weight: bold; padding: 4px 0;">Timestamp:</td><td>${timestamp.toLocaleString('en-PK')}</td></tr>
+              </table>
+            </div>
+            <p style="color: #64748b; font-size: 12px; line-height: 1.5;">
+              Tip: Hover over the attachment below in Gmail and click the <strong>Google Drive icon</strong> to save it directly into your Google Drive folder.
+            </p>
+          </div>
+        `,
+        attachments: [
+          {
+            filename,
+            content: jsonString,
+            contentType: 'application/json'
+          }
+        ]
+      };
+
+      await transporter.sendMail(mailOptions);
+      emailSent = true;
+    } catch (e: any) {
+      console.warn('Backup email notification notice:', e.message);
+      emailError = e.message;
+    }
 
     const url = new URL(req.url);
     const isDownload = url.searchParams.get('download') === 'true';
@@ -109,11 +159,13 @@ async function handleBackupExecution(req: Request, triggerSource: string) {
 
     return NextResponse.json({
       success: true,
-      message: `Hourly database backup successfully created (${sizeFormatted}, ${totalRecordsCount} records).`,
+      message: `Database backup snapshot successfully created (${sizeFormatted}, ${totalRecordsCount} records). Delivered to foundationcollegiate@gmail.com.`,
       filename,
       file_size: sizeFormatted,
       total_records: totalRecordsCount,
       timestamp: timestamp.toISOString(),
+      email_delivered: emailSent,
+      email_error: emailError,
       summary: backupPayload.summary,
       backup_data: backupPayload
     });

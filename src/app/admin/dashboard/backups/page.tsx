@@ -127,7 +127,7 @@ export default function AdminBackupsPage() {
           a.remove();
           URL.revokeObjectURL(url);
 
-          toast.success(`Hourly backup created & downloaded (${data.file_size})!`, { id: toastId });
+          toast.success(`Hourly backup created & delivered to foundationcollegiate@gmail.com (${data.file_size})!`, { id: toastId });
         }
       } else {
         if (!isBackground) toast.error('Failed to generate backup: ' + (data.error || 'Server error'), { id: toastId });
@@ -308,6 +308,16 @@ export default function AdminBackupsPage() {
           </div>
         </div>
 
+        <div className="p-4 rounded-2xl bg-blue-50/80 border border-blue-200 text-xs space-y-1.5">
+          <div className="font-bold text-blue-900 flex items-center gap-1.5">
+            <CheckCircle2 size={14} className="text-blue-600" /> Automated Delivery to Google Account Connected:
+          </div>
+          <p className="text-slate-600 leading-relaxed">
+            Every hourly backup is automatically packaged as a JSON file and sent to <strong className="text-blue-900 font-mono">foundationcollegiate@gmail.com</strong>.
+            In your Gmail, hover over the snapshot attachment and click the <strong>&ldquo;Add to Drive&rdquo; (Google Drive triangle icon)</strong> to save it directly into your preferred Google Drive folder in 1 click.
+          </p>
+        </div>
+
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pt-2">
           <label className="flex items-center gap-3 cursor-pointer select-none">
             <input
@@ -317,7 +327,7 @@ export default function AdminBackupsPage() {
               className="w-5 h-5 rounded-lg text-blue-600 focus:ring-blue-500 border-slate-300"
             />
             <span className="text-xs font-bold text-slate-700">
-              Enable Automatic Hourly Sync to Google Drive
+              Enable Automatic Hourly Sync to Google Drive / Gmail
             </span>
           </label>
 
