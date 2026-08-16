@@ -7,7 +7,7 @@ export interface ParsedStudentForm {
   student_name: string;
   father_name: string;
   roll_number?: string;
-  enrollment_status?: 'active' | 'pending' | 'enrolled';
+  enrollment_status?: 'active' | 'inactive' | 'graduated';
   dob: string;
   religion: string;
   nationality: string;

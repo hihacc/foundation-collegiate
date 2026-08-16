@@ -346,7 +346,7 @@ export default function HuggingFaceAdmissionScannerPage() {
     try {
       const studentId = crypto.randomUUID();
       const finalRoll = form.roll_number?.trim() || `FC-26-${Math.floor(1000 + Math.random() * 9000)}`;
-      const finalStatus = form.enrollment_status === 'pending' ? 'inactive' : 'active';
+      const finalStatus = form.enrollment_status || 'active';
 
       const newStudent: Student = {
         id: studentId,
@@ -382,7 +382,7 @@ export default function HuggingFaceAdmissionScannerPage() {
           previous_school: form.previous_school || '',
           father_occupation: form.father_occupation || '',
           class_applied: form.class_name,
-          status: form.enrollment_status === 'pending' ? 'pending' : 'approved',
+          status: finalStatus === 'inactive' ? 'pending' : 'approved',
           created_at: new Date().toISOString()
         }]);
       } catch {}
@@ -398,11 +398,11 @@ export default function HuggingFaceAdmissionScannerPage() {
         extractedData: {
           ...d.extractedData,
           roll_number: finalRoll,
-          enrollment_status: 'enrolled'
+          enrollment_status: finalStatus
         }
       } : d));
 
-      toast.success(`Enrolled! ${form.student_name} registered with Roll #${finalRoll}`, { id: toastId });
+      toast.success(`Enrolled! ${form.student_name} saved as ${finalStatus.toUpperCase()} with Roll #${finalRoll}`, { id: toastId });
 
       // Move to next in queue if available
       if (currentIndex < documents.length - 1) {
@@ -917,13 +917,17 @@ export default function HuggingFaceAdmissionScannerPage() {
                       1. Student Particulars &amp; Enrollment Info
                     </span>
                     <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider ${
-                      currentDoc.status === 'enrolled'
-                        ? 'bg-emerald-100 text-emerald-800 border border-emerald-300'
-                        : currentDoc.extractedData.enrollment_status === 'pending'
-                        ? 'bg-amber-100 text-amber-800 border border-amber-300'
-                        : 'bg-blue-100 text-blue-800 border border-blue-300'
+                      currentDoc.extractedData.enrollment_status === 'inactive'
+                        ? 'bg-red-100 text-red-800 border border-red-300'
+                        : currentDoc.extractedData.enrollment_status === 'graduated'
+                        ? 'bg-purple-100 text-purple-800 border border-purple-300'
+                        : 'bg-emerald-100 text-emerald-800 border border-emerald-300'
                     }`}>
-                      {currentDoc.status === 'enrolled' ? '✅ Enrolled in DB' : currentDoc.extractedData.enrollment_status === 'pending' ? '🟡 Pending Review' : '🟢 Ready to Enroll'}
+                      {currentDoc.extractedData.enrollment_status === 'inactive'
+                        ? '🔴 Inactive'
+                        : currentDoc.extractedData.enrollment_status === 'graduated'
+                        ? '🎓 Graduated / Alumni'
+                        : '🟢 Active'}
                     </span>
                   </div>
 
@@ -948,13 +952,13 @@ export default function HuggingFaceAdmissionScannerPage() {
                         📌 Enrollment Status
                       </label>
                       <select
-                        value={currentDoc.extractedData.enrollment_status || (currentDoc.status === 'enrolled' ? 'enrolled' : 'active')}
+                        value={currentDoc.extractedData.enrollment_status || 'active'}
                         onChange={e => handleFieldChange('enrollment_status', e.target.value)}
                         className="w-full px-3.5 py-2.5 bg-white border-2 border-blue-300 rounded-xl font-bold text-slate-800 text-xs focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none cursor-pointer shadow-xs"
                       >
-                        <option value="active">🟢 Active / Regular Enrolled</option>
-                        <option value="pending">🟡 Pending Admission Review</option>
-                        <option value="enrolled">🔵 Confirmed Enrolled</option>
+                        <option value="active">🟢 Active</option>
+                        <option value="inactive">🔴 Inactive</option>
+                        <option value="graduated">🎓 Graduated / Alumni</option>
                       </select>
                       <span className="text-[10px] text-blue-700 block mt-0.5">Student database status</span>
                     </div>
