@@ -5,7 +5,7 @@
 export interface ClassDefinition {
   key: string;
   name: string;
-  category: 'Matriculation (IX & X)' | 'Intermediate (XI & XII)' | 'Diplomas & Others';
+  category: 'Matriculation (IX & X)' | 'Intermediate (XI & XII)' | 'Graduation / ADC (Part I & II)' | 'Diplomas & Others';
   defaultSubjects: { name: string; total_marks: number }[];
 }
 
@@ -174,6 +174,35 @@ export const OFFICIAL_CLASSES: ClassDefinition[] = [
       { name: 'Pakistan Studies', total_marks: 50 },
     ]
   },
+  // Associate Degree in Commerce (ADC)
+  {
+    key: 'ADC 1',
+    name: 'ADC 1 (Associate Degree in Commerce - Part 1)',
+    category: 'Graduation / ADC (Part I & II)',
+    defaultSubjects: [
+      { name: 'English (Compulsory)', total_marks: 100 },
+      { name: 'Urdu / Functional English', total_marks: 100 },
+      { name: 'Advanced Financial Accounting', total_marks: 100 },
+      { name: 'Business Statistics & Mathematics', total_marks: 100 },
+      { name: 'Introduction to Business & Commerce', total_marks: 100 },
+      { name: 'Economic Analysis & Policy', total_marks: 100 },
+      { name: 'Islamiat / Ethics', total_marks: 50 },
+    ]
+  },
+  {
+    key: 'ADC 2',
+    name: 'ADC 2 (Associate Degree in Commerce - Part 2)',
+    category: 'Graduation / ADC (Part I & II)',
+    defaultSubjects: [
+      { name: 'Pakistan Studies', total_marks: 50 },
+      { name: 'Cost Accounting', total_marks: 100 },
+      { name: 'Business & Industrial Law', total_marks: 100 },
+      { name: 'Business Communication & Report Writing', total_marks: 100 },
+      { name: 'Auditing & Taxation', total_marks: 100 },
+      { name: 'Banking & Financial Markets', total_marks: 100 },
+      { name: 'Economics of Pakistan', total_marks: 100 },
+    ]
+  },
   // Diplomas
   {
     key: 'Diploma in Information Technology (DIT)',
@@ -277,7 +306,16 @@ export function matchStudentToClass(studentClass: string | null | undefined, tar
     return true;
   }
 
-  // 6. Professional Diploma matches
+  // 6. ADC (Associate Degree in Commerce) matches
+  const isTargetAdc1 = t === 'adc 1' || t.includes('adc 1') || t.includes('adc-1') || t.includes('adc part 1') || t.includes('adc-i');
+  const isStudentAdc1 = s === 'adc 1' || s.includes('adc 1') || s.includes('adc-1') || s.includes('adc part 1') || s.includes('adc-i');
+  if (isTargetAdc1) return isStudentAdc1;
+
+  const isTargetAdc2 = t === 'adc 2' || t.includes('adc 2') || t.includes('adc-2') || t.includes('adc part 2') || t.includes('adc-ii');
+  const isStudentAdc2 = s === 'adc 2' || s.includes('adc 2') || s.includes('adc-2') || s.includes('adc part 2') || s.includes('adc-ii');
+  if (isTargetAdc2) return isStudentAdc2;
+
+  // 7. Professional Diploma matches
   if (t.includes('dit') || t.includes('information technology')) {
     return s.includes('dit') || s.includes('information technology');
   }
@@ -285,7 +323,7 @@ export function matchStudentToClass(studentClass: string | null | undefined, tar
     return s.includes('accounting') || s.includes('finance');
   }
 
-  // 7. General inclusion
+  // 8. General inclusion
   return s.includes(t) || t.includes(s);
 }
 
