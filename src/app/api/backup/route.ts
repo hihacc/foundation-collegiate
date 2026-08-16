@@ -5,6 +5,11 @@ import nodemailer from 'nodemailer';
 export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';
 
+const BACKUP_RECIPIENTS = [
+  'foundationcollegiate@gmail.com',
+  'hihacc36@gmail.com'
+];
+
 const TABLES_TO_BACKUP = [
   'settings',
   'students',
@@ -32,14 +37,10 @@ export async function GET(req: Request) {
 }
 
 export async function POST(req: Request) {
-  let bodyData: any = {};
-  try {
-    bodyData = await req.json();
-  } catch {}
-  return handleBackupExecution(req, 'Manual Admin Trigger', bodyData);
+  return handleBackupExecution(req, 'Manual Admin Trigger');
 }
 
-async function handleBackupExecution(req: Request, triggerSource: string, customBody?: any) {
+async function handleBackupExecution(req: Request, triggerSource: string) {
   try {
     const timestamp = new Date();
     const formattedDate = timestamp.toISOString().replace(/[:.]/g, '-');
@@ -55,6 +56,7 @@ async function handleBackupExecution(req: Request, triggerSource: string, custom
         exported_at: timestamp.toISOString(),
         trigger_source: triggerSource,
         schema_version: '2026.1',
+        recipients: BACKUP_RECIPIENTS,
       },
       tables: {},
       summary: {}
@@ -84,49 +86,7 @@ async function handleBackupExecution(req: Request, triggerSource: string, custom
       ? `${(sizeInBytes / (1024 * 1024)).toFixed(2)} MB` 
       : `${(sizeInBytes / 1024).toFixed(2)} KB`;
 
-    // 1. Check for Google Drive Direct Webhook in settings or body or env
-    let driveWebhookUrl = customBody?.drive_webhook_url || process.env.GOOGLE_DRIVE_WEBHOOK_URL || '';
-    let driveFolderId = customBody?.drive_folder_id || process.env.GOOGLE_DRIVE_FOLDER_ID || '';
-    let driveUploaded = false;
-    let driveUploadDetails: any = null;
-
-    try {
-      if (!driveWebhookUrl) {
-        const { data: dbSetting } = await supabase.from('settings').select('value').eq('key', 'google_drive_webhook_url').maybeSingle();
-        if (dbSetting?.value) driveWebhookUrl = dbSetting.value;
-      }
-      if (!driveFolderId) {
-        const { data: dbFolder } = await supabase.from('settings').select('value').eq('key', 'google_drive_folder_id').maybeSingle();
-        if (dbFolder?.value) driveFolderId = dbFolder.value;
-      }
-    } catch {}
-
-    if (driveWebhookUrl && driveWebhookUrl.startsWith('http')) {
-      try {
-        const driveRes = await fetch(driveWebhookUrl, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            filename,
-            fileContent: jsonString,
-            folderId: driveFolderId
-          })
-        });
-        const resText = await driveRes.text();
-        try {
-          driveUploadDetails = JSON.parse(resText);
-          driveUploaded = !!(driveUploadDetails.success || driveUploadDetails.fileId);
-        } catch {
-          driveUploadDetails = { raw: resText };
-          driveUploaded = driveRes.ok;
-        }
-      } catch (err: any) {
-        console.warn('Google Drive direct upload error:', err.message);
-        driveUploadDetails = { error: err.message };
-      }
-    }
-
-    // 2. Dispatch Email with Attachment to Google Account (foundationcollegiate@gmail.com)
+    // Dispatch Email with Attachment to BOTH emails: foundationcollegiate@gmail.com & hihacc36@gmail.com
     let emailSent = false;
     let emailError: string | null = null;
 
@@ -149,29 +109,29 @@ async function handleBackupExecution(req: Request, triggerSource: string, custom
 
       const mailOptions = {
         from: `"TFC Automated Cloud Backup" <${emailUser}>`,
-        to: emailUser,
+        to: BACKUP_RECIPIENTS.join(', '),
         subject: `⚡ TFC Automated Database Backup Snapshot [${new Date().toLocaleDateString('en-PK')} ${new Date().toLocaleTimeString('en-PK', { hour: '2-digit', minute: '2-digit' })}]`,
-        text: `Attached is your automated database backup snapshot from The Foundation Collegiate system.\n\nTrigger Source: ${triggerSource}\nTimestamp: ${timestamp.toISOString()}\nSnapshot Filename: ${filename}\nTotal Records: ${totalRecordsCount}\nFile Size: ${sizeFormatted}\nGoogle Drive Auto-Upload: ${driveUploaded ? 'Directly uploaded to Drive Folder' : 'Use Add to Drive in Gmail'}\n\nYou can save this file directly to your Google Drive or download it for safekeeping.`,
+        text: `Attached is your automated database backup snapshot from The Foundation Collegiate system.\n\nTrigger Source: ${triggerSource}\nTimestamp: ${timestamp.toISOString()}\nSnapshot Filename: ${filename}\nTotal Records: ${totalRecordsCount}\nFile Size: ${sizeFormatted}\n\nDelivered to:\n- foundationcollegiate@gmail.com\n- hihacc36@gmail.com`,
         html: `
           <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; border: 1px solid #e2e8f0; border-radius: 16px; padding: 24px; background: #ffffff;">
             <div style="text-align: center; border-bottom: 2px solid #3b82f6; padding-bottom: 16px; margin-bottom: 20px;">
               <h2 style="color: #1e3a8a; margin: 0; font-size: 22px;">The Foundation Collegiate</h2>
-              <p style="color: #64748b; margin: 4px 0 0; font-size: 13px;">Automated Cloud &amp; Google Drive Backup Service</p>
+              <p style="color: #64748b; margin: 4px 0 0; font-size: 13px;">Hourly Automated Cloud Database Backup Snapshot</p>
             </div>
             <p style="color: #334155; font-size: 14px;">Hello Admin,</p>
-            <p style="color: #334155; font-size: 14px;">Your automated database backup snapshot has been generated successfully and is attached to this email.</p>
+            <p style="color: #334155; font-size: 14px;">Your automated hourly database backup snapshot has been generated successfully and is attached to this email.</p>
             <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 16px; margin: 16px 0;">
               <table style="width: 100%; font-size: 13px; color: #475569;">
                 <tr><td style="font-weight: bold; padding: 4px 0;">Snapshot File:</td><td style="font-family: monospace;">${filename}</td></tr>
                 <tr><td style="font-weight: bold; padding: 4px 0;">Trigger Mode:</td><td>${triggerSource}</td></tr>
                 <tr><td style="font-weight: bold; padding: 4px 0;">Total Records:</td><td>${totalRecordsCount} rows across 19 tables</td></tr>
                 <tr><td style="font-weight: bold; padding: 4px 0;">File Size:</td><td>${sizeFormatted}</td></tr>
-                <tr><td style="font-weight: bold; padding: 4px 0;">Google Drive:</td><td style="color: ${driveUploaded ? '#16a34a' : '#2563eb'}; font-weight: bold;">${driveUploaded ? 'Directly uploaded to Google Drive' : 'Attached (Click Add to Drive)'}</td></tr>
+                <tr><td style="font-weight: bold; padding: 4px 0;">Delivered To:</td><td>foundationcollegiate@gmail.com, hihacc36@gmail.com</td></tr>
                 <tr><td style="font-weight: bold; padding: 4px 0;">Timestamp:</td><td>${timestamp.toLocaleString('en-PK')}</td></tr>
               </table>
             </div>
             <p style="color: #64748b; font-size: 12px; line-height: 1.5;">
-              Tip: Hover over the attachment below in Gmail and click the <strong>Google Drive icon</strong> to save it directly into your Google Drive folder.
+              This snapshot file contains the complete database state for student records, fee structures, admissions, marks, and academic configurations.
             </p>
           </div>
         `,
@@ -206,15 +166,14 @@ async function handleBackupExecution(req: Request, triggerSource: string, custom
 
     return NextResponse.json({
       success: true,
-      message: `Database backup snapshot successfully created (${sizeFormatted}, ${totalRecordsCount} records). Delivered to foundationcollegiate@gmail.com.`,
+      message: `Database backup snapshot successfully created (${sizeFormatted}, ${totalRecordsCount} records) and delivered to foundationcollegiate@gmail.com and hihacc36@gmail.com.`,
       filename,
       file_size: sizeFormatted,
       total_records: totalRecordsCount,
       timestamp: timestamp.toISOString(),
+      recipients: BACKUP_RECIPIENTS,
       email_delivered: emailSent,
       email_error: emailError,
-      drive_uploaded: driveUploaded,
-      drive_details: driveUploadDetails,
       summary: backupPayload.summary,
       backup_data: backupPayload
     });
