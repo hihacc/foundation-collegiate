@@ -33,6 +33,11 @@ export default function AdminBackupsPage() {
   const [generating, setGenerating] = useState(false);
   const [restoring, setRestoring] = useState(false);
   const [lastBackupTime, setLastBackupTime] = useState<string>('');
+  
+  // 1-minute timer settings for local testing
+  const [timerIntervalSec, setTimerIntervalSec] = useState<number>(60); // 1 minute default
+  const [secondsLeft, setSecondsLeft] = useState<number>(60);
+  const [isAutoTimerRunning, setIsAutoTimerRunning] = useState<boolean>(true);
 
   // Load existing backup logs
   useEffect(() => {
@@ -60,15 +65,25 @@ export default function AdminBackupsPage() {
     };
 
     fetchBackupLogs();
-
-    // Client-side automated hourly timer (every 60 minutes)
-    const hourlyTimer = setInterval(() => {
-      console.log('[Hourly Auto Backup] Triggering automated hourly database snapshot...');
-      handleGenerateBackup(true);
-    }, 60 * 60 * 1000);
-
-    return () => clearInterval(hourlyTimer);
   }, []);
+
+  // 1-minute countdown and auto-execution ticker
+  useEffect(() => {
+    if (!isAutoTimerRunning) return;
+
+    const ticker = setInterval(() => {
+      setSecondsLeft((prev) => {
+        if (prev <= 1) {
+          console.log('[1-Min Auto Backup] Triggering automated snapshot...');
+          handleGenerateBackup(true);
+          return timerIntervalSec;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+
+    return () => clearInterval(ticker);
+  }, [isAutoTimerRunning, timerIntervalSec]);
 
   const handleGenerateBackup = async (isBackground = false) => {
     if (!isBackground) setGenerating(true);
@@ -87,7 +102,7 @@ export default function AdminBackupsPage() {
           filename: data.filename,
           file_size: data.file_size,
           total_records: data.total_records,
-          trigger_type: isBackground ? 'Automated Hourly Cron' : 'Manual Admin Trigger',
+          trigger_type: isBackground ? `Auto Timer (${timerIntervalSec === 60 ? '1 Min' : '1 Hour'})` : 'Manual Admin Trigger',
           status: 'Completed',
           created_at: data.timestamp
         };
@@ -97,8 +112,13 @@ export default function AdminBackupsPage() {
         setStoredData('backup_vault_logs', updated);
         setLastBackupTime(data.timestamp);
 
-        // Auto-download JSON payload if triggered manually
-        if (!isBackground) {
+        // Reset countdown timer
+        setSecondsLeft(timerIntervalSec);
+
+        // Notification
+        if (isBackground) {
+          toast.success(`⚡ 1-Minute Automated Backup Snapshot emailed to foundationcollegiate@gmail.com & hihacc36@gmail.com! (${data.file_size})`);
+        } else {
           const blob = new Blob([JSON.stringify(data.backup_data, null, 2)], { type: 'application/json' });
           const url = URL.createObjectURL(blob);
           const a = document.createElement('a');
@@ -176,13 +196,13 @@ export default function AdminBackupsPage() {
           <div className="space-y-2 max-w-2xl">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/20 border border-blue-400/30 text-blue-300 text-xs font-bold uppercase tracking-wider">
               <ShieldCheck size={14} className="text-emerald-400" />
-              Automated Hourly Cloud Backups Active
+              Automated Cloud Backups Active
             </div>
             <h1 className="text-2xl sm:text-4xl font-extrabold tracking-tight text-white">
               Database Backup &amp; Email Vault
             </h1>
             <p className="text-slate-300 text-xs sm:text-sm leading-relaxed">
-              Every hour, a full JSON snapshot of all 19 database tables is automatically generated and emailed directly to your admin email addresses.
+              Automated full JSON snapshots of all 19 database tables are emailed directly to your admin email addresses.
             </p>
           </div>
 
@@ -211,15 +231,66 @@ export default function AdminBackupsPage() {
         </div>
       </div>
 
+      {/* 1-Minute Local Auto-Timer Live Controller Card */}
+      <div className="bg-gradient-to-r from-blue-50 via-indigo-50 to-emerald-50 border border-blue-200 rounded-3xl p-6 shadow-sm flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+        <div className="space-y-1">
+          <div className="flex items-center gap-2">
+            <span className="flex h-3 w-3 relative">
+              <span className={`animate-ping absolute inline-flex h-full w-full rounded-full ${isAutoTimerRunning ? 'bg-emerald-400' : 'bg-amber-400'} opacity-75`}></span>
+              <span className={`relative inline-flex rounded-full h-3 w-3 ${isAutoTimerRunning ? 'bg-emerald-500' : 'bg-amber-500'}`}></span>
+            </span>
+            <span className="text-xs font-bold text-blue-950 uppercase tracking-wider">
+              {timerIntervalSec === 60 ? '⚡ 1-Minute Local Test Timer Active' : 'Automated Hourly Timer Active'}
+            </span>
+          </div>
+          <p className="text-sm font-bold text-slate-800">
+            Next automated email snapshot in:{' '}
+            <span className="font-mono text-xl text-blue-700 font-extrabold">{secondsLeft}s</span>
+          </p>
+          <p className="text-xs text-slate-500">
+            Dispatches full snapshot to <strong className="text-slate-700">foundationcollegiate@gmail.com</strong> &amp; <strong className="text-slate-700">hihacc36@gmail.com</strong>
+          </p>
+        </div>
+
+        <div className="flex items-center gap-3 flex-wrap">
+          <select
+            value={timerIntervalSec}
+            onChange={(e) => {
+              const val = Number(e.target.value);
+              setTimerIntervalSec(val);
+              setSecondsLeft(val);
+            }}
+            className="px-3.5 py-2 bg-white border border-slate-300 text-slate-800 rounded-xl text-xs font-bold shadow-xs outline-none cursor-pointer"
+          >
+            <option value={60}>⚡ 1 Minute (Local Test Mode)</option>
+            <option value={120}>2 Minutes</option>
+            <option value={300}>5 Minutes</option>
+            <option value={3600}>60 Minutes (Standard Production)</option>
+          </select>
+
+          <button
+            type="button"
+            onClick={() => setIsAutoTimerRunning(!isAutoTimerRunning)}
+            className={`px-4 py-2 rounded-xl text-xs font-bold transition-all shadow-xs cursor-pointer ${
+              isAutoTimerRunning
+                ? 'bg-amber-100 hover:bg-amber-200 text-amber-900 border border-amber-300'
+                : 'bg-emerald-600 hover:bg-emerald-700 text-white'
+            }`}
+          >
+            {isAutoTimerRunning ? '⏸ Pause Timer' : '▶ Resume 1-Min Timer'}
+          </button>
+        </div>
+      </div>
+
       {/* Overview Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
         <div className="bg-white border border-slate-200 rounded-3xl p-6 shadow-sm">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">Hourly Email Delivery</span>
+            <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">Email Delivery Interval</span>
             <Mail size={16} className="text-emerald-500" />
           </div>
           <div className="text-xl font-bold text-emerald-600 flex items-center gap-1.5">
-            <CheckCircle2 size={18} /> Active (Every 60 Mins)
+            <CheckCircle2 size={18} /> {timerIntervalSec === 60 ? 'Every 1 Minute' : 'Every 60 Minutes'}
           </div>
           <p className="text-xs text-slate-500 mt-1">24/7 Automated email dispatch</p>
         </div>
