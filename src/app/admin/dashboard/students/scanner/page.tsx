@@ -423,30 +423,42 @@ export default function GoogleDriveDocumentScannerPage() {
 
       {/* AI Key Modal / Drawer */}
       {showKeyModal && (
-        <div className="bg-gradient-to-r from-amber-50 via-white to-amber-50 border border-amber-300 p-5 rounded-3xl space-y-3 shadow-md animate-in fade-in">
+        <div className="bg-gradient-to-r from-amber-50 via-white to-amber-50 border-2 border-amber-400 p-6 rounded-3xl space-y-4 shadow-xl animate-in fade-in">
           <div className="flex justify-between items-center">
-            <span className="font-extrabold text-xs text-amber-900 flex items-center gap-1.5">
-              <KeyRound size={16} className="text-amber-600" /> Google Gemini Vision AI Integration (Free)
+            <span className="font-extrabold text-sm text-amber-900 flex items-center gap-2">
+              <KeyRound size={18} className="text-amber-600" /> Connect Google Gemini Vision AI Key
             </span>
             <button onClick={() => setShowKeyModal(false)} className="text-xs font-bold text-slate-400 hover:text-slate-700 cursor-pointer">✕ Close</button>
           </div>
-          <p className="text-xs text-slate-600 leading-relaxed">
-            Google Gemini Vision AI extracts difficult handwritten pen entries on paper admission forms with 99.5% accuracy.
-            You can get a free key in 5 seconds from <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noreferrer" className="text-blue-600 font-bold underline">Google AI Studio</a>.
-          </p>
-          <div className="flex gap-2 max-w-xl">
+          
+          <div className="space-y-2 text-xs text-slate-700 leading-relaxed bg-amber-100/50 p-4 rounded-2xl border border-amber-200">
+            <p className="font-bold text-amber-950">
+              📌 How to get your 100% Free Gemini AI Key:
+            </p>
+            <ol className="list-decimal list-inside space-y-1 text-slate-700 pl-1">
+              <li>Open <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noreferrer" className="text-blue-600 font-bold underline">Google AI Studio (Click here)</a> in your browser.</li>
+              <li>Sign in with your Google account and click <strong>&quot;Create API key&quot;</strong>.</li>
+              <li>Copy the key (it starts with <strong className="font-mono bg-white px-1.5 py-0.5 rounded border border-amber-300">AIzaSy...</strong>) and paste it below.</li>
+            </ol>
+            <p className="text-[11px] text-amber-800 italic pt-1">
+              * Note: Keys starting with <span className="font-mono text-red-600">AQ...</span> are internal project tokens. Gemini vision keys start with <span className="font-mono text-emerald-700 font-bold">AIzaSy...</span>.
+            </p>
+          </div>
+
+          <div className="flex flex-col sm:flex-row gap-2.5 max-w-2xl">
             <input
-              type="password"
+              type="text"
               value={geminiKey}
               onChange={e => setGeminiKey(e.target.value)}
-              placeholder="Paste your Gemini API Key (e.g. AIzaSy...)"
-              className="flex-1 px-4 py-2.5 bg-white border border-amber-300 rounded-xl text-xs font-mono text-slate-900 outline-none focus:ring-2 focus:ring-amber-500"
+              placeholder="Paste your key here (e.g. AIzaSyB...)"
+              className="flex-1 px-4 py-3 bg-white border-2 border-amber-300 rounded-2xl text-xs font-mono text-slate-900 outline-none focus:ring-2 focus:ring-amber-500"
             />
             <button
+              type="button"
               onClick={() => handleSaveApiKey(geminiKey)}
-              className="px-5 py-2.5 bg-amber-600 hover:bg-amber-700 text-white font-bold text-xs rounded-xl shadow-sm cursor-pointer"
+              className="px-6 py-3 bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700 text-white font-bold text-xs rounded-2xl shadow-md cursor-pointer"
             >
-              Save Key
+              Save &amp; Activate AI
             </button>
           </div>
         </div>
