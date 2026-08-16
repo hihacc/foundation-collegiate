@@ -1112,6 +1112,12 @@ export default function HuggingFaceAdmissionScannerPage() {
                         onChange={e => handleFieldChange('class_name', e.target.value)}
                         className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl font-bold text-slate-900 focus:bg-white focus:ring-2 focus:ring-blue-500 outline-none cursor-pointer"
                       >
+                        <optgroup label="Junior Section (Class I to VIII)">
+                          <option value="Junior Section - Class VIII">Junior Section - Class VIII (8th)</option>
+                          <option value="Junior Section - Class VII">Junior Section - Class VII (7th)</option>
+                          <option value="Junior Section - Class VI">Junior Section - Class VI (6th)</option>
+                          <option value="Junior Section - Primary / General">Junior Section - Primary / General</option>
+                        </optgroup>
                         <optgroup label="Matriculation (IX & X)">
                           <option value="Class IX - Science / Biology">Class IX - Science / Biology</option>
                           <option value="Class IX - Computer Science">Class IX - Computer Science</option>

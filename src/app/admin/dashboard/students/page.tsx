@@ -746,6 +746,12 @@ export default function AdminStudentsPage() {
                       className="w-full px-3.5 py-2 bg-slate-50 border border-slate-200 text-slate-800 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none font-semibold cursor-pointer text-xs"
                     >
                       <option value="None">None (Diploma Student Only)</option>
+                      <optgroup label="Junior Section (Class I to VIII)">
+                        <option value="Junior Section - Class VIII">Junior Section - Class VIII (8th)</option>
+                        <option value="Junior Section - Class VII">Junior Section - Class VII (7th)</option>
+                        <option value="Junior Section - Class VI">Junior Section - Class VI (6th)</option>
+                        <option value="Junior Section - Primary / General">Junior Section - Primary / General</option>
+                      </optgroup>
                       <optgroup label="Matriculation (IX & X)">
                         <option value="Class IX - Science / Biology">Class IX - Science / Biology</option>
                         <option value="Class IX - Computer Science">Class IX - Computer Science</option>

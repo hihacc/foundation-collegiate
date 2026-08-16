@@ -58,7 +58,7 @@ Extract all details into structured JSON:
   "previous_school": "Name of previous school or college",
   "father_occupation": "Father's occupation / business",
   "father_office_phone": "Office phone",
-  "class_name": "Class applied (e.g. Class IX - Science / Biology, Class X, Class XI, Class XII, ADC 1, ADC 2, DIT)",
+  "class_name": "Class applied (e.g. Junior Section - Class VIII / VII / VI, Class IX - Science / Biology, Class X, Class XI, Class XII, ADC 1, ADC 2, DIT)",
   "notes": "G.R. No. and full transcription notes of any other visible text on this form"
 }
 

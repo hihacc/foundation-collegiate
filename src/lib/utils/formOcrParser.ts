@@ -199,7 +199,15 @@ export function parseAdmissionFormText(rawText: string): ParsedStudentForm {
 
   // 6. Class Detection
   const lowerAll = text.toLowerCase();
-  if (lowerAll.includes('adc 1') || lowerAll.includes('adc-1') || lowerAll.includes('b.com 1')) {
+  if (lowerAll.includes('class viii') || lowerAll.includes('class 8') || lowerAll.includes('8th class') || lowerAll.includes('grade 8') || lowerAll.includes('junior viii')) {
+    result.class_name = 'Junior Section - Class VIII';
+  } else if (lowerAll.includes('class vii') || lowerAll.includes('class 7') || lowerAll.includes('7th class') || lowerAll.includes('grade 7') || lowerAll.includes('junior vii')) {
+    result.class_name = 'Junior Section - Class VII';
+  } else if (lowerAll.includes('class vi') || lowerAll.includes('class 6') || lowerAll.includes('6th class') || lowerAll.includes('grade 6') || lowerAll.includes('junior vi')) {
+    result.class_name = 'Junior Section - Class VI';
+  } else if (lowerAll.includes('junior') || lowerAll.includes('primary') || lowerAll.includes('middle school')) {
+    result.class_name = 'Junior Section - Primary / General';
+  } else if (lowerAll.includes('adc 1') || lowerAll.includes('adc-1') || lowerAll.includes('b.com 1')) {
     result.class_name = 'ADC 1';
   } else if (lowerAll.includes('adc 2') || lowerAll.includes('adc-2') || lowerAll.includes('b.com 2')) {
     result.class_name = 'ADC 2';
@@ -218,7 +226,7 @@ export function parseAdmissionFormText(rawText: string): ParsedStudentForm {
   } else if (lowerAll.includes('class x') || lowerAll.includes('matric') || lowerAll.includes('10th')) {
     if (lowerAll.includes('computer')) result.class_name = 'Class X - Computer Science';
     else result.class_name = 'Class X - Science / Biology';
-  } else if (lowerAll.includes('class ix') || lowerAll.includes('9th') || lowerAll.includes('8th')) {
+  } else if (lowerAll.includes('class ix') || lowerAll.includes('9th')) {
     if (lowerAll.includes('computer')) result.class_name = 'Class IX - Computer Science';
     else result.class_name = 'Class IX - Science / Biology';
   }

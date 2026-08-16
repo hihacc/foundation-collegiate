@@ -5,11 +5,64 @@
 export interface ClassDefinition {
   key: string;
   name: string;
-  category: 'Matriculation (IX & X)' | 'Intermediate (XI & XII)' | 'Graduation / ADC (Part I & II)' | 'Diplomas & Others';
+  category: 'Junior Section (I to VIII)' | 'Matriculation (IX & X)' | 'Intermediate (XI & XII)' | 'Graduation / ADC (Part I & II)' | 'Diplomas & Others';
   defaultSubjects: { name: string; total_marks: number }[];
 }
 
 export const OFFICIAL_CLASSES: ClassDefinition[] = [
+  // Junior Section
+  {
+    key: 'Junior Section - Class VIII',
+    name: 'Junior Section - Class VIII (8th)',
+    category: 'Junior Section (I to VIII)',
+    defaultSubjects: [
+      { name: 'English', total_marks: 100 },
+      { name: 'Urdu', total_marks: 100 },
+      { name: 'Mathematics', total_marks: 100 },
+      { name: 'General Science', total_marks: 100 },
+      { name: 'Computer Science', total_marks: 100 },
+      { name: 'Social Studies', total_marks: 100 },
+      { name: 'Islamiat', total_marks: 50 },
+    ]
+  },
+  {
+    key: 'Junior Section - Class VII',
+    name: 'Junior Section - Class VII (7th)',
+    category: 'Junior Section (I to VIII)',
+    defaultSubjects: [
+      { name: 'English', total_marks: 100 },
+      { name: 'Urdu', total_marks: 100 },
+      { name: 'Mathematics', total_marks: 100 },
+      { name: 'General Science', total_marks: 100 },
+      { name: 'Social Studies', total_marks: 100 },
+      { name: 'Islamiat', total_marks: 50 },
+    ]
+  },
+  {
+    key: 'Junior Section - Class VI',
+    name: 'Junior Section - Class VI (6th)',
+    category: 'Junior Section (I to VIII)',
+    defaultSubjects: [
+      { name: 'English', total_marks: 100 },
+      { name: 'Urdu', total_marks: 100 },
+      { name: 'Mathematics', total_marks: 100 },
+      { name: 'General Science', total_marks: 100 },
+      { name: 'Social Studies', total_marks: 100 },
+      { name: 'Islamiat', total_marks: 50 },
+    ]
+  },
+  {
+    key: 'Junior Section - Primary / General',
+    name: 'Junior Section - Primary / General',
+    category: 'Junior Section (I to VIII)',
+    defaultSubjects: [
+      { name: 'English', total_marks: 100 },
+      { name: 'Urdu', total_marks: 100 },
+      { name: 'Mathematics', total_marks: 100 },
+      { name: 'General Science', total_marks: 100 },
+      { name: 'Islamiat', total_marks: 50 },
+    ]
+  },
   // Matric Class IX
   {
     key: 'Class IX - Computer Science',
@@ -243,6 +296,14 @@ export function matchStudentToClass(studentClass: string | null | undefined, tar
 
   // 1. Exact Direct match
   if (s === t) return true;
+
+  // Junior Section distinct matches
+  if (t.includes('junior') || t.includes('class viii') || t.includes('class vii') || t.includes('class vi') || t.includes('primary')) {
+    if (t.includes('viii') || t.includes('8')) return s.includes('viii') || s.includes('8th') || s.includes('class 8');
+    if (t.includes('vii') || t.includes('7')) return s.includes('vii') || s.includes('7th') || s.includes('class 7');
+    if (t.includes('vi') || t.includes('6')) return s.includes('vi') || s.includes('6th') || s.includes('class 6');
+    return s.includes('junior') || s.includes('primary');
+  }
 
   // 2. Class IX distinct matches
   const isTargetClass9 = t.includes('class ix') || t.startsWith('ix');
