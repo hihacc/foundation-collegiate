@@ -42,23 +42,39 @@ export default function AdminAchieversPage() {
     try { return JSON.parse(localStorage.getItem('tfc_deleted_achievers') || '[]'); } catch { return []; }
   };
 
+  const sanitizeAchievers = (list: Achiever[]): Achiever[] => {
+    const fallback = 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=800&q=80';
+    return list.map(a => {
+      if (a.photo_url && (a.photo_url.includes('AAAAGGZ0eXBoZWlj') || a.photo_url.includes('ftypheic'))) {
+        return { ...a, photo_url: fallback };
+      }
+      return a;
+    });
+  };
+
   const fetchAchievers = async () => {
     const deletedIds = getDeletedIds();
     try {
       setLoading(true);
       const { data, error } = await supabase.from('achievers').select('*').order('created_at', { ascending: false });
       if (!error && data && data.length > 0) {
-        const filteredData = data.filter((a: any) => !deletedIds.includes(a.id) && !deletedIds.includes(a.name));
-        setAchievers(filteredData as Achiever[]);
+        const filteredData = sanitizeAchievers(
+          data.filter((a: any) => !deletedIds.includes(a.id) && !deletedIds.includes(a.name)) as Achiever[]
+        );
+        setAchievers(filteredData);
         try { localStorage.setItem('tfc_achievers_cache', JSON.stringify(filteredData)); } catch {}
       } else {
         const local = JSON.parse(localStorage.getItem('tfc_achievers_cache') || '[]');
-        const filteredLocal = (local.length > 0 ? local : initialAchieversSeed).filter((a: any) => !deletedIds.includes(a.id) && !deletedIds.includes(a.name));
+        const filteredLocal = sanitizeAchievers(
+          (local.length > 0 ? local : initialAchieversSeed).filter((a: any) => !deletedIds.includes(a.id) && !deletedIds.includes(a.name))
+        );
         setAchievers(filteredLocal);
       }
     } catch {
       const local = JSON.parse(localStorage.getItem('tfc_achievers_cache') || '[]');
-      const filteredLocal = (local.length > 0 ? local : initialAchieversSeed).filter((a: any) => !deletedIds.includes(a.id) && !deletedIds.includes(a.name));
+      const filteredLocal = sanitizeAchievers(
+        (local.length > 0 ? local : initialAchieversSeed).filter((a: any) => !deletedIds.includes(a.id) && !deletedIds.includes(a.name))
+      );
       setAchievers(filteredLocal);
     } finally {
       setLoading(false);
@@ -315,21 +331,33 @@ export default function AdminAchieversPage() {
                   </div>
 
                   {form.photo_url && (
-                    <div className="mt-3 flex items-center gap-3 bg-amber-50/70 p-3 rounded-2xl border border-amber-200">
-                      <div className="w-14 h-14 rounded-xl overflow-hidden bg-slate-200 shrink-0 border border-slate-300 shadow-xs">
-                        {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img 
-                          src={form.photo_url} 
-                          alt="Live Preview" 
-                          className="w-full h-full object-cover" 
-                        />
+                    <div className="mt-3 flex items-center justify-between gap-3 bg-amber-50/70 p-3 rounded-2xl border border-amber-200">
+                      <div className="flex items-center gap-3">
+                        <div className="w-14 h-14 rounded-xl overflow-hidden bg-slate-200 shrink-0 border border-slate-300 shadow-xs">
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
+                          <img 
+                            src={form.photo_url} 
+                            alt="Live Preview" 
+                            onError={(e) => {
+                              e.currentTarget.src = 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=800&q=80';
+                            }}
+                            className="w-full h-full object-cover" 
+                          />
+                        </div>
+                        <div className="text-xs">
+                          <span className="font-bold text-amber-900 block flex items-center gap-1">
+                            <Check size={14} className="text-emerald-600" /> Your Picture Is Selected &amp; Ready
+                          </span>
+                          <span className="text-slate-500 text-[11px]">This photo will be displayed on the card.</span>
+                        </div>
                       </div>
-                      <div className="text-xs">
-                        <span className="font-bold text-amber-900 block flex items-center gap-1">
-                          <Check size={14} className="text-emerald-600" /> Your Picture Is Selected &amp; Ready
-                        </span>
-                        <span className="text-slate-500 text-[11px]">This exact photo will be displayed on the card.</span>
-                      </div>
+                      <button
+                        type="button"
+                        onClick={() => setForm(prev => ({ ...prev, photo_url: '' }))}
+                        className="px-3 py-1.5 bg-white hover:bg-red-50 text-red-600 border border-red-200 rounded-xl text-xs font-bold transition-colors cursor-pointer"
+                      >
+                        Remove
+                      </button>
                     </div>
                   )}
                 </div>
