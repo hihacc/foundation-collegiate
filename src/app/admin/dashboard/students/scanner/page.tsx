@@ -6,7 +6,6 @@ import {
   Upload, 
   CheckCircle2, 
   Loader2, 
-  Sparkles, 
   ArrowLeft, 
   Trash2, 
   UserCheck, 
@@ -17,12 +16,14 @@ import {
   ChevronRight,
   Scan,
   RefreshCw,
-  KeyRound,
+  Sliders,
+  SlidersHorizontal,
+  SwitchCamera,
+  Eye,
   Check,
   Plus,
-  Zap,
-  HelpCircle,
-  FileCheck
+  Layers,
+  AlertCircle
 } from 'lucide-react';
 import Link from 'next/link';
 import { toast } from 'sonner';
@@ -30,196 +31,275 @@ import { supabase } from '@/lib/supabase/client';
 import { Student } from '@/types';
 import { getStoredData, setStoredData } from '@/lib/utils/storage';
 import { parseAdmissionFormText, ParsedStudentForm } from '@/lib/utils/formOcrParser';
-import { enhanceDocumentImage } from '@/lib/utils/imageEnhance';
+import { preprocessDocumentCanvas, DocumentFilter } from '@/lib/utils/documentPreprocessor';
 
 interface ScannedDocumentItem {
   id: string;
-  previewUrl: string;
-  enhancedUrl?: string;
+  originalUrl: string;
+  processedUrl: string;
+  filter: DocumentFilter;
+  contrast: number;
+  rotation: number;
   status: 'pending' | 'scanning' | 'ready' | 'enrolled' | 'error';
   extractedData: ParsedStudentForm;
   rawText?: string;
   error?: string;
   fileName?: string;
-  engineUsed?: string;
 }
 
-export default function GoogleDriveDocumentScannerPage() {
+export default function AdmissionFormScannerPage() {
   const [documents, setDocuments] = useState<ScannedDocumentItem[]>([]);
   const [currentIndex, setCurrentIndex] = useState<number>(0);
   const [isProcessing, setIsProcessing] = useState<boolean>(false);
   const [isSaving, setIsSaving] = useState<boolean>(false);
   const [ocrProgress, setOcrProgress] = useState<number>(0);
   
-  // Gemini AI Vision Key State
-  const [geminiKey, setGeminiKey] = useState<string>('');
-  const [showKeyModal, setShowKeyModal] = useState<boolean>(false);
-  const [isAiConfigured, setIsAiConfigured] = useState<boolean>(false);
+  // Camera Viewfinder State
+  const [isCameraActive, setIsCameraActive] = useState<boolean>(false);
+  const [facingMode, setFacingMode] = useState<'environment' | 'user'>('environment');
+  const [cameraError, setCameraError] = useState<string | null>(null);
 
-  // Image viewer zoom & rotation
+  // Image Viewer Zoom State
   const [zoomLevel, setZoomLevel] = useState<number>(1);
-  const [rotation, setRotation] = useState<number>(0);
+  const [viewerRotation, setViewerRotation] = useState<number>(0);
 
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const streamRef = useRef<MediaStream | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const cameraInputRef = useRef<HTMLInputElement>(null);
 
   const currentDoc = documents[currentIndex];
 
+  // Stop camera on unmount
   useEffect(() => {
-    const savedKey = getStoredData<string>('gemini_api_key', '');
-    if (savedKey) {
-      setGeminiKey(savedKey);
-      setIsAiConfigured(true);
-    }
+    return () => {
+      stopCameraStream();
+    };
   }, []);
 
-  const handleSaveApiKey = (key: string) => {
-    const clean = key.trim();
-    setGeminiKey(clean);
-    setStoredData('gemini_api_key', clean);
-    setIsAiConfigured(!!clean);
-    setShowKeyModal(false);
-    toast.success('Gemini AI Vision API key saved successfully!');
-  };
+  // 1. Camera Viewfinder Controls
+  const startCameraStream = async () => {
+    stopCameraStream();
+    setCameraError(null);
+    try {
+      if (!navigator?.mediaDevices?.getUserMedia) {
+        throw new Error('WebRTC Camera not supported by this browser. Use "Snap with Mobile Camera".');
+      }
 
-  // 1. Direct Camera & File Selection Handlers
-  const handleTriggerCamera = () => {
-    if (cameraInputRef.current) {
-      cameraInputRef.current.value = '';
-      cameraInputRef.current.click();
+      let stream: MediaStream | null = null;
+      try {
+        stream = await navigator.mediaDevices.getUserMedia({
+          video: {
+            facingMode: { ideal: facingMode },
+            width: { ideal: 1920 },
+            height: { ideal: 1080 }
+          },
+          audio: false
+        });
+      } catch {
+        stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
+      }
+
+      if (!stream) throw new Error('Could not access camera feed.');
+
+      streamRef.current = stream;
+      if (videoRef.current) {
+        videoRef.current.srcObject = stream;
+        await videoRef.current.play();
+      }
+      setIsCameraActive(true);
+      setCameraError(null);
+    } catch (err: any) {
+      console.warn('Camera error:', err.name, err.message);
+      if (err.name === 'NotAllowedError') {
+        setCameraError('Camera permission was not granted. Tap "Snap with Mobile Camera" below or allow permission in browser settings.');
+      } else {
+        setCameraError(err.message || 'Camera unavailable on this device.');
+      }
+      setIsCameraActive(false);
     }
   };
 
-  const handleTriggerUpload = () => {
-    if (fileInputRef.current) {
-      fileInputRef.current.value = '';
-      fileInputRef.current.click();
+  const stopCameraStream = () => {
+    if (streamRef.current) {
+      streamRef.current.getTracks().forEach(track => track.stop());
+      streamRef.current = null;
+    }
+    if (videoRef.current) {
+      videoRef.current.srcObject = null;
+    }
+    setIsCameraActive(false);
+  };
+
+  const toggleCameraFacing = () => {
+    const newFacing = facingMode === 'environment' ? 'user' : 'environment';
+    setFacingMode(newFacing);
+    if (isCameraActive) {
+      setTimeout(() => startCameraStream(), 100);
     }
   };
 
-  const handleFilesSelected = async (files: FileList | null) => {
-    if (!files || files.length === 0) return;
+  // Capture Frame from Live Viewfinder
+  const handleCaptureVideoFrame = async () => {
+    if (!videoRef.current || !isCameraActive) return;
 
-    const newDocs: ScannedDocumentItem[] = [];
-    for (let i = 0; i < files.length; i++) {
-      const file = files[i];
-      const previewUrl = URL.createObjectURL(file);
-      newDocs.push({
-        id: crypto.randomUUID(),
-        previewUrl,
-        fileName: file.name || `Admission-Form-${new Date().toLocaleTimeString('en-PK', { hour12: false }).replace(/:/g, '')}.jpg`,
-        status: 'pending',
-        extractedData: {
-          student_name: '',
-          father_name: '',
-          dob: '',
-          religion: 'Islam',
-          nationality: 'Pakistani',
-          cnic: '',
-          address: '',
-          parent_phone: '',
-          student_phone: '',
-          parent_email: '',
-          previous_school: '',
-          father_occupation: '',
-          father_office_phone: '',
-          class_name: 'Class IX - Science / Biology',
-          group_name: '',
-          subjects: []
-        }
-      });
-    }
+    const video = videoRef.current;
+    const canvas = document.createElement('canvas');
+    canvas.width = video.videoWidth || 1280;
+    canvas.height = video.videoHeight || 720;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
 
-    const updated = [...newDocs, ...documents];
+    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+    const dataUrl = canvas.toDataURL('image/jpeg', 0.95);
+
+    // Stop live stream after capture
+    stopCameraStream();
+
+    await addDocumentToQueue(dataUrl, `Live-Capture-${new Date().toLocaleTimeString('en-PK', { hour12: false }).replace(/:/g, '')}.jpg`);
+  };
+
+  // 2. Add and Process Document to Queue
+  const addDocumentToQueue = async (imageUrl: string, fileName: string) => {
+    const newDocId = crypto.randomUUID();
+    
+    // Initial preprocessed URL with default magic filter
+    const initialProcessedUrl = await preprocessDocumentCanvas(imageUrl, {
+      filter: 'magic',
+      contrast: 15,
+      rotation: 0
+    });
+
+    const newDoc: ScannedDocumentItem = {
+      id: newDocId,
+      originalUrl: imageUrl,
+      processedUrl: initialProcessedUrl,
+      filter: 'magic',
+      contrast: 15,
+      rotation: 0,
+      fileName,
+      status: 'pending',
+      extractedData: {
+        student_name: '',
+        father_name: '',
+        dob: '',
+        religion: 'Islam',
+        nationality: 'Pakistani',
+        cnic: '',
+        address: '',
+        parent_phone: '',
+        student_phone: '',
+        parent_email: '',
+        previous_school: '',
+        father_occupation: '',
+        father_office_phone: '',
+        class_name: 'Class IX - Science / Biology',
+        group_name: '',
+        subjects: []
+      }
+    };
+
+    const updated = [newDoc, ...documents];
     setDocuments(updated);
     setCurrentIndex(0);
 
-    // Process all uploaded documents
-    for (const doc of newDocs) {
-      await processScanDocument(doc);
+    // Run Local OCR on new document
+    await runLocalOcrOnDocument(newDoc, initialProcessedUrl);
+  };
+
+  // Handle File / Native Mobile Camera Uploads
+  const handleFilesSelected = async (files: FileList | null) => {
+    if (!files || files.length === 0) return;
+
+    for (let i = 0; i < files.length; i++) {
+      const file = files[i];
+      const previewUrl = URL.createObjectURL(file);
+      await addDocumentToQueue(previewUrl, file.name);
     }
   };
 
-  // 2. High-Accuracy OCR & Field Extraction Engine
-  const processScanDocument = async (docItem: ScannedDocumentItem) => {
+  // 3. Local In-Browser OCR Engine (Tesseract.js)
+  const runLocalOcrOnDocument = async (docItem: ScannedDocumentItem, imageToOcr: string) => {
     setIsProcessing(true);
-    setOcrProgress(15);
+    setOcrProgress(10);
     setDocuments(prev => prev.map(d => d.id === docItem.id ? { ...d, status: 'scanning' } : d));
 
     try {
-      // Step A: Fast contrast enhancement & normalization
       setOcrProgress(30);
-      const enhancedImgUrl = await enhanceDocumentImage(docItem.previewUrl);
 
-      setDocuments(prev => prev.map(d => d.id === docItem.id ? { ...d, enhancedUrl: enhancedImgUrl } : d));
-      setOcrProgress(50);
-
-      // Step B: AI Vision Recognition via API route
-      let extracted: ParsedStudentForm | null = null;
-      let rawOcrText = '';
-      let engineName = 'Built-in Form OCR';
-
-      try {
-        const res = await fetch('/api/ai/scan-form', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ 
-            image_base64: enhancedImgUrl,
-            custom_api_key: geminiKey || undefined
-          })
-        });
-        const apiData = await res.json();
-        if (apiData.success && apiData.data && apiData.data.student_name) {
-          extracted = apiData.data;
-          engineName = apiData.engine || 'Gemini Vision AI';
-        }
-      } catch (err) {
-        console.warn('AI scan notice:', err);
-      }
-
-      // Step C: Fallback to client-side OCR if API did not return student name
-      if (!extracted || !extracted.student_name) {
-        setOcrProgress(70);
-        const Tesseract = await import('tesseract.js');
-        const ocrResult = await Tesseract.recognize(enhancedImgUrl, 'eng', {
-          logger: (m) => {
-            if (m.status === 'recognizing text') {
-              setOcrProgress(70 + Math.round(m.progress * 28));
-            }
+      // Dynamically load client-side WebAssembly Tesseract
+      const Tesseract = await import('tesseract.js');
+      const ocrResult = await Tesseract.recognize(imageToOcr, 'eng', {
+        logger: (m) => {
+          if (m.status === 'recognizing text') {
+            setOcrProgress(30 + Math.round(m.progress * 65));
           }
-        });
-
-        rawOcrText = ocrResult.data.text || '';
-        extracted = parseAdmissionFormText(rawOcrText);
-      }
+        }
+      });
 
       setOcrProgress(100);
+      const rawText = ocrResult.data.text || '';
+      
+      // Parse purely from the detected text
+      const extractedFields = parseAdmissionFormText(rawText);
 
       setDocuments(prev => prev.map(d => d.id === docItem.id ? {
         ...d,
         status: 'ready',
-        rawText: rawOcrText,
-        engineUsed: engineName,
-        extractedData: extracted || d.extractedData
+        rawText,
+        extractedData: extractedFields
       } : d));
 
-      toast.success(`Form Scanned: Extracted details for "${extracted?.student_name || 'Student'}"!`);
+      if (extractedFields.student_name) {
+        toast.success(`OCR Complete: Detected "${extractedFields.student_name}"!`);
+      } else {
+        toast.info('OCR Complete. Please verify particulars and fill any missing details on the right.');
+      }
 
     } catch (err: any) {
-      console.error('Scan Error:', err);
+      console.error('Local OCR Error:', err);
       setDocuments(prev => prev.map(d => d.id === docItem.id ? {
         ...d,
         status: 'error',
-        error: err.message || 'Failed to scan image'
+        error: err.message || 'OCR extraction failed'
       } : d));
-      toast.error('Scanning notice: ' + err.message);
+      toast.error('OCR Error: ' + err.message);
     } finally {
       setIsProcessing(false);
       setOcrProgress(0);
     }
   };
 
-  // 3. Edit Form Field
+  // 4. Update Document Filters (Magic, B&W, Contrast, Rotation)
+  const handleUpdateDocumentFilter = async (filter: DocumentFilter, contrastVal?: number, rotateBy?: number) => {
+    if (!currentDoc) return;
+
+    const newFilter = filter;
+    const newContrast = contrastVal !== undefined ? contrastVal : currentDoc.contrast;
+    const newRotation = rotateBy !== undefined ? (currentDoc.rotation + rotateBy) % 360 : currentDoc.rotation;
+
+    try {
+      const reprocessed = await preprocessDocumentCanvas(currentDoc.originalUrl, {
+        filter: newFilter,
+        contrast: newContrast,
+        rotation: newRotation
+      });
+
+      setDocuments(prev => prev.map((d, i) => i === currentIndex ? {
+        ...d,
+        filter: newFilter,
+        contrast: newContrast,
+        rotation: newRotation,
+        processedUrl: reprocessed
+      } : d));
+
+      toast.info('Image filter updated. Click "Re-run Local OCR" to rescan.');
+    } catch (err: any) {
+      toast.error('Failed to update filter: ' + err.message);
+    }
+  };
+
+  // 5. Handle Form Field Changes
   const handleFieldChange = (field: keyof ParsedStudentForm, val: any) => {
     if (!currentDoc) return;
     setDocuments(prev => prev.map((d, i) => {
@@ -236,13 +316,13 @@ export default function GoogleDriveDocumentScannerPage() {
     }));
   };
 
-  // 4. Enroll Student to Supabase
+  // 6. Save Confirmed Data to Supabase
   const handleEnrollStudent = async () => {
     if (!currentDoc) return;
     const form = currentDoc.extractedData;
 
     if (!form.student_name || form.student_name.trim().length < 2) {
-      toast.error('Please enter or verify a Student Name before enrolling.');
+      toast.error('Please enter the Student Name before enrolling.');
       return;
     }
 
@@ -276,16 +356,16 @@ export default function GoogleDriveDocumentScannerPage() {
           id: crypto.randomUUID(),
           student_name: form.student_name.trim().toUpperCase(),
           father_name: form.father_name || 'N/A',
-          dob: form.dob || '2008-01-01',
+          dob: form.dob || '',
           religion: form.religion || 'Islam',
           nationality: form.nationality || 'Pakistani',
-          cnic: form.cnic || 'N/A',
-          address: form.address || 'Karachi, Sindh, Pakistan',
-          parent_phone: form.parent_phone || '0333-0000000',
+          cnic: form.cnic || '',
+          address: form.address || '',
+          parent_phone: form.parent_phone || '',
           student_phone: form.student_phone || '',
           parent_email: form.parent_email || '',
-          previous_school: form.previous_school || 'N/A',
-          father_occupation: form.father_occupation || 'Business',
+          previous_school: form.previous_school || '',
+          father_occupation: form.father_occupation || '',
           class_applied: form.class_name,
           status: 'approved',
           created_at: new Date().toISOString()
@@ -296,16 +376,16 @@ export default function GoogleDriveDocumentScannerPage() {
       const existing = getStoredData<Student[]>('students', []);
       setStoredData('students', [newStudent, ...existing]);
 
-      // 4. Mark enrolled
+      // 4. Mark document as enrolled
       setDocuments(prev => prev.map((d, i) => i === currentIndex ? { ...d, status: 'enrolled' } : d));
 
-      toast.success(`Success! Student "${form.student_name}" enrolled with Roll #${generatedRoll}!`, { id: toastId });
+      toast.success(`Enrolled! ${form.student_name} registered with Roll #${generatedRoll}`, { id: toastId });
 
       // Move to next in queue if available
       if (currentIndex < documents.length - 1) {
         setCurrentIndex(currentIndex + 1);
         setZoomLevel(1);
-        setRotation(0);
+        setViewerRotation(0);
       }
 
     } catch (err: any) {
@@ -313,40 +393,6 @@ export default function GoogleDriveDocumentScannerPage() {
     } finally {
       setIsSaving(false);
     }
-  };
-
-  // 5. Load Sample Form Data for Instant Test
-  const handleLoadSampleForm = () => {
-    const sampleDoc: ScannedDocumentItem = {
-      id: crypto.randomUUID(),
-      previewUrl: 'https://images.unsplash.com/photo-1584697964190-705b89368d4d?auto=format&fit=crop&q=80&w=1000',
-      fileName: 'Sample-Physical-Admission-Form.jpg',
-      status: 'ready',
-      engineUsed: 'Foundation Collegiate AI Parser',
-      extractedData: {
-        student_name: 'AREEBA AMJAD',
-        father_name: 'M. Amjad',
-        dob: '18-June-2003',
-        religion: 'Islam',
-        nationality: 'Pakistani',
-        cnic: '',
-        address: 'B-466 Sector 11/E North Karachi',
-        parent_phone: '0300-2415264',
-        student_phone: '0341-2373287',
-        parent_email: '',
-        previous_school: 'The Muslim Generation School',
-        father_occupation: 'Personal business',
-        father_office_phone: '',
-        class_name: 'Class IX - Science / Biology',
-        group_name: '',
-        subjects: ['Chemistry', 'Biology', 'Computer', 'Maths', 'Physics', 'English', 'Urdu', 'Sindhi', 'Islamiat', 'Pak. Studies'],
-        notes: 'G.R. No. 562'
-      }
-    };
-
-    setDocuments([sampleDoc, ...documents]);
-    setCurrentIndex(0);
-    toast.success('Loaded physical admission form template!');
   };
 
   return (
@@ -362,46 +408,51 @@ export default function GoogleDriveDocumentScannerPage() {
             <ArrowLeft size={14} /> Back to Student Directory
           </Link>
           <h1 className="text-xl sm:text-2xl font-black text-slate-900 flex items-center gap-2">
-            <Scan size={26} className="text-blue-600 animate-pulse" />
-            Admission Form AI Scanner &amp; Quick Enrollment
+            <Scan size={26} className="text-blue-600" />
+            Hard Copy Admission Form Scanner
           </h1>
           <p className="text-xs text-slate-500">
-            Snap photos of paper admission forms or upload scans. AI automatically reads Student Name, Father Name, Contact, Address &amp; Class.
+            100% Local In-Browser OCR. Capture with camera or upload form photos for instant verification and enrollment.
           </p>
         </div>
 
-        {/* Action Buttons & AI Key Settings */}
+        {/* Action Buttons */}
         <div className="flex flex-wrap items-center gap-2.5">
           <button
             type="button"
-            onClick={() => setShowKeyModal(true)}
-            className={`inline-flex items-center gap-1.5 px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
-              isAiConfigured
-                ? 'bg-amber-50 text-amber-800 border border-amber-300'
-                : 'bg-slate-100 text-slate-700 hover:bg-slate-200 border border-slate-200'
+            onClick={() => {
+              if (isCameraActive) {
+                stopCameraStream();
+              } else {
+                startCameraStream();
+              }
+            }}
+            className={`inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+              isCameraActive
+                ? 'bg-red-600 hover:bg-red-700 text-white'
+                : 'bg-blue-600 hover:bg-blue-700 text-white shadow-md shadow-blue-500/20'
             }`}
           >
-            <Sparkles size={14} className={isAiConfigured ? 'text-amber-600' : 'text-slate-500'} />
-            {isAiConfigured ? '✨ AI Vision Active' : '⚡ Connect AI Key'}
+            <Camera size={15} /> {isCameraActive ? 'Close Live Viewfinder' : 'Start Live Viewfinder'}
           </button>
 
           <button
             type="button"
-            onClick={handleTriggerCamera}
-            className="inline-flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-xl text-xs font-bold shadow-lg shadow-blue-500/25 active:scale-95 transition-all cursor-pointer"
+            onClick={() => cameraInputRef.current?.click()}
+            className="inline-flex items-center gap-2 px-4 py-2.5 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 text-white rounded-xl text-xs font-bold shadow-md shadow-emerald-500/20 active:scale-95 transition-all cursor-pointer"
           >
-            <Camera size={16} /> 📸 Scan with Camera
+            <Camera size={15} /> 📸 Snap with Mobile Camera
           </button>
           
           <button
             type="button"
-            onClick={handleTriggerUpload}
+            onClick={() => fileInputRef.current?.click()}
             className="inline-flex items-center gap-2 px-4 py-2.5 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-xs font-bold shadow-sm active:scale-95 transition-all cursor-pointer"
           >
-            <Upload size={16} /> 📁 Upload Form Image
+            <Upload size={15} /> 📁 Upload Form Photo
           </button>
 
-          {/* Hidden Direct File & Camera Inputs */}
+          {/* Hidden File & Direct Mobile Camera Inputs */}
           <input
             ref={cameraInputRef}
             type="file"
@@ -421,51 +472,70 @@ export default function GoogleDriveDocumentScannerPage() {
         </div>
       </div>
 
-      {/* AI Key Modal / Drawer */}
-      {showKeyModal && (
-        <div className="bg-gradient-to-r from-amber-50 via-white to-amber-50 border-2 border-amber-400 p-6 rounded-3xl space-y-4 shadow-xl animate-in fade-in">
-          <div className="flex justify-between items-center">
-            <span className="font-extrabold text-sm text-amber-900 flex items-center gap-2">
-              <KeyRound size={18} className="text-amber-600" /> Connect Google Gemini Vision AI Key
-            </span>
-            <button onClick={() => setShowKeyModal(false)} className="text-xs font-bold text-slate-400 hover:text-slate-700 cursor-pointer">✕ Close</button>
-          </div>
-          
-          <div className="space-y-2 text-xs text-slate-700 leading-relaxed bg-amber-100/50 p-4 rounded-2xl border border-amber-200">
-            <p className="font-bold text-amber-950">
-              📌 How to get your 100% Free Gemini AI Key:
-            </p>
-            <ol className="list-decimal list-inside space-y-1 text-slate-700 pl-1">
-              <li>Open <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noreferrer" className="text-blue-600 font-bold underline">Google AI Studio (Click here)</a> in your browser.</li>
-              <li>Sign in with your Google account and click <strong>&quot;Create API key&quot;</strong>.</li>
-              <li>Copy the key (it starts with <strong className="font-mono bg-white px-1.5 py-0.5 rounded border border-amber-300">AIzaSy...</strong>) and paste it below.</li>
-            </ol>
-            <p className="text-[11px] text-amber-800 italic pt-1">
-              * Note: Keys starting with <span className="font-mono text-red-600">AQ...</span> are internal project tokens. Gemini vision keys start with <span className="font-mono text-emerald-700 font-bold">AIzaSy...</span>.
-            </p>
+      {/* LIVE CAMERA VIEWFINDER MODAL / VIEWPORT */}
+      {isCameraActive && (
+        <div className="bg-slate-950 rounded-3xl p-4 sm:p-6 border border-slate-800 shadow-2xl text-white space-y-4">
+          <div className="flex justify-between items-center bg-slate-900/80 p-3 rounded-2xl border border-slate-800">
+            <div className="flex items-center gap-2">
+              <span className="flex h-3 w-3 relative">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-3 w-3 bg-red-500"></span>
+              </span>
+              <span className="text-xs font-bold uppercase tracking-wider text-slate-200">Live Camera Stream</span>
+            </div>
+
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={toggleCameraFacing}
+                className="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-xl text-xs font-bold flex items-center gap-1.5 cursor-pointer"
+              >
+                <SwitchCamera size={14} /> Flip Camera
+              </button>
+              <button
+                type="button"
+                onClick={stopCameraStream}
+                className="px-3 py-1.5 bg-red-950 text-red-400 hover:bg-red-900 rounded-xl text-xs font-bold cursor-pointer"
+              >
+                ✕ Close
+              </button>
+            </div>
           </div>
 
-          <div className="flex flex-col sm:flex-row gap-2.5 max-w-2xl">
-            <input
-              type="text"
-              value={geminiKey}
-              onChange={e => setGeminiKey(e.target.value)}
-              placeholder="Paste your key here (e.g. AIzaSyB...)"
-              className="flex-1 px-4 py-3 bg-white border-2 border-amber-300 rounded-2xl text-xs font-mono text-slate-900 outline-none focus:ring-2 focus:ring-amber-500"
+          {/* Video Feed Frame */}
+          <div className="relative w-full max-w-2xl mx-auto rounded-3xl overflow-hidden bg-black border border-slate-800 aspect-video flex items-center justify-center">
+            <video
+              ref={videoRef}
+              autoPlay
+              playsInline
+              muted
+              className="w-full h-full object-cover rounded-3xl"
             />
+
+            {/* Document Bounding Guides */}
+            <div className="absolute inset-6 pointer-events-none border-2 border-dashed border-cyan-400/60 rounded-2xl flex items-center justify-center">
+              <span className="bg-black/60 backdrop-blur-xs px-3 py-1 rounded-full text-[11px] font-semibold text-cyan-300">
+                Align admission form inside frame &amp; tap Capture
+              </span>
+            </div>
+          </div>
+
+          {/* Shutter Button */}
+          <div className="flex justify-center pt-2">
             <button
               type="button"
-              onClick={() => handleSaveApiKey(geminiKey)}
-              className="px-6 py-3 bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700 text-white font-bold text-xs rounded-2xl shadow-md cursor-pointer"
+              onClick={handleCaptureVideoFrame}
+              className="px-8 py-3.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white rounded-2xl text-xs font-black shadow-xl shadow-blue-500/30 active:scale-95 transition-all flex items-center gap-2 cursor-pointer"
             >
-              Save &amp; Activate AI
+              <Camera size={18} />
+              <span>Capture &amp; Scan Document</span>
             </button>
           </div>
         </div>
       )}
 
-      {/* Hero Welcome / Upload Card if no documents yet */}
-      {documents.length === 0 && (
+      {/* No Documents Uploaded Placeholder */}
+      {documents.length === 0 && !isCameraActive && (
         <div className="bg-gradient-to-b from-white to-slate-50 rounded-3xl border border-slate-200 p-8 sm:p-14 text-center space-y-6 shadow-sm">
           <div className="w-20 h-20 bg-blue-50 text-blue-600 rounded-3xl flex items-center justify-center mx-auto shadow-inner">
             <Scan size={40} className="text-blue-600" />
@@ -473,10 +543,10 @@ export default function GoogleDriveDocumentScannerPage() {
 
           <div className="space-y-2 max-w-lg mx-auto">
             <h3 className="text-xl sm:text-2xl font-black text-slate-900">
-              Scan &amp; Digitize Hard Copy Admission Forms
+              Scan &amp; Digitize Admission Forms Locally
             </h3>
             <p className="text-xs text-slate-500 leading-relaxed">
-              Take a photo of any physical paper admission form using your phone, or upload an image. The scanner automatically recognizes Student Name, Father Name, Cell #, DOB, Address &amp; Class.
+              Take a photo of any physical paper admission form or upload a scan. The local OCR engine extracts all student particulars for instant side-by-side verification and enrollment.
             </p>
           </div>
 
@@ -484,57 +554,47 @@ export default function GoogleDriveDocumentScannerPage() {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-xl mx-auto pt-2">
             <button
               type="button"
-              onClick={handleTriggerCamera}
-              className="p-6 bg-blue-600 hover:bg-blue-700 text-white rounded-3xl flex flex-col items-center justify-center gap-3 shadow-xl shadow-blue-500/25 hover:scale-[1.02] active:scale-95 transition-all cursor-pointer text-center"
+              onClick={() => cameraInputRef.current?.click()}
+              className="p-6 bg-gradient-to-br from-blue-600 to-indigo-700 hover:from-blue-700 hover:to-indigo-800 text-white rounded-3xl flex flex-col items-center justify-center gap-3 shadow-xl shadow-blue-500/25 hover:scale-[1.02] active:scale-95 transition-all cursor-pointer text-center"
             >
               <div className="w-12 h-12 rounded-2xl bg-white/20 flex items-center justify-center">
                 <Camera size={24} />
               </div>
               <div>
-                <span className="font-bold text-sm block">📸 Open Phone Camera to Scan</span>
-                <span className="text-[11px] text-blue-100 block mt-0.5">Snaps form photo directly</span>
+                <span className="font-bold text-sm block">📸 Open Camera to Scan</span>
+                <span className="text-[11px] text-blue-100 block mt-0.5">Snaps form photo directly with device camera</span>
               </div>
             </button>
 
             <button
               type="button"
-              onClick={handleTriggerUpload}
+              onClick={() => fileInputRef.current?.click()}
               className="p-6 bg-white hover:bg-slate-50 border border-slate-200 text-slate-900 rounded-3xl flex flex-col items-center justify-center gap-3 shadow-sm hover:scale-[1.02] active:scale-95 transition-all cursor-pointer text-center"
             >
               <div className="w-12 h-12 rounded-2xl bg-slate-100 flex items-center justify-center text-slate-700">
                 <Upload size={24} />
               </div>
               <div>
-                <span className="font-bold text-sm block">📁 Upload Form Photo / PDF</span>
-                <span className="text-[11px] text-slate-500 block mt-0.5">Select image from device</span>
+                <span className="font-bold text-sm block">📁 Upload Form Photo / Scan</span>
+                <span className="text-[11px] text-slate-500 block mt-0.5">Choose file (.JPG, .PNG, .PDF) from device</span>
               </div>
             </button>
           </div>
 
-          <div className="pt-3">
-            <button
-              type="button"
-              onClick={handleLoadSampleForm}
-              className="text-xs font-bold text-blue-600 hover:text-blue-800 underline underline-offset-4 cursor-pointer"
-            >
-              🧪 Click here to test with sample admission form template (Areeba Amjad)
-            </button>
-          </div>
-
           <div className="flex items-center justify-center gap-6 text-xs text-slate-400 font-medium pt-2">
-            <span className="flex items-center gap-1.5"><Check size={14} className="text-emerald-500" /> Automatic Student Name</span>
-            <span className="flex items-center gap-1.5"><Check size={14} className="text-emerald-500" /> Father &amp; Contact</span>
+            <span className="flex items-center gap-1.5"><Check size={14} className="text-emerald-500" /> 100% Local In-Browser OCR</span>
+            <span className="flex items-center gap-1.5"><Check size={14} className="text-emerald-500" /> Side-by-Side Review</span>
             <span className="flex items-center gap-1.5"><Check size={14} className="text-emerald-500" /> 1-Click Roll # Generator</span>
           </div>
         </div>
       )}
 
-      {/* Scanning Progress Bar */}
+      {/* Local OCR Progress Bar */}
       {isProcessing && (
         <div className="bg-blue-600 text-white p-4 rounded-2xl shadow-lg flex items-center justify-between gap-4 animate-pulse">
           <div className="flex items-center gap-3">
             <Loader2 size={20} className="animate-spin text-cyan-300" />
-            <span className="text-xs font-bold">Scanning admission form &amp; extracting particulars ({ocrProgress}%)...</span>
+            <span className="text-xs font-bold">Running local OCR &amp; extracting particulars ({ocrProgress}%)...</span>
           </div>
           <div className="w-32 bg-blue-800/80 rounded-full h-2 overflow-hidden">
             <div className="bg-cyan-300 h-2 transition-all duration-300" style={{ width: `${ocrProgress}%` }}></div>
@@ -556,7 +616,7 @@ export default function GoogleDriveDocumentScannerPage() {
                   onClick={() => {
                     setCurrentIndex(idx);
                     setZoomLevel(1);
-                    setRotation(0);
+                    setViewerRotation(0);
                   }}
                   className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
                     currentIndex === idx
@@ -576,7 +636,7 @@ export default function GoogleDriveDocumentScannerPage() {
             <div className="flex items-center gap-2 shrink-0">
               <button
                 type="button"
-                onClick={handleTriggerCamera}
+                onClick={() => cameraInputRef.current?.click()}
                 className="px-3 py-1.5 bg-blue-50 text-blue-700 hover:bg-blue-100 rounded-xl text-xs font-bold transition-all flex items-center gap-1 cursor-pointer"
               >
                 <Plus size={13} /> Scan Another
@@ -605,16 +665,16 @@ export default function GoogleDriveDocumentScannerPage() {
           {/* Split Screen Grid */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
             
-            {/* Left Column: Zoomable Scanned Paper Form Photo (5 cols) */}
-            <div className="lg:col-span-5 bg-slate-900 rounded-3xl p-4 flex flex-col justify-between border border-slate-800 shadow-lg min-h-[560px]">
+            {/* Left Column: Interactive Preprocessing & Document Viewer (5 cols) */}
+            <div className="lg:col-span-5 bg-slate-900 rounded-3xl p-4 flex flex-col justify-between border border-slate-800 shadow-lg min-h-[580px] space-y-3">
               
-              {/* Viewer Controls Bar */}
-              <div className="flex justify-between items-center bg-slate-800/80 backdrop-blur-xs p-2.5 rounded-2xl border border-slate-700 text-white text-xs mb-3">
+              {/* Top Controls Bar */}
+              <div className="flex justify-between items-center bg-slate-800/80 backdrop-blur-xs p-2.5 rounded-2xl border border-slate-700 text-white text-xs">
                 <div className="flex items-center gap-2">
                   <span className="font-bold text-amber-400 font-mono px-2 py-0.5 rounded bg-amber-950/80 border border-amber-800">
                     Form #{currentIndex + 1}
                   </span>
-                  <span className="text-[11px] text-slate-400 truncate max-w-[130px]">{currentDoc.fileName || 'Scanned Form'}</span>
+                  <span className="text-[11px] text-slate-400 truncate max-w-[120px]">{currentDoc.fileName || 'Scanned Form'}</span>
                 </div>
 
                 <div className="flex items-center gap-1.5">
@@ -633,9 +693,9 @@ export default function GoogleDriveDocumentScannerPage() {
                     <ZoomIn size={14} />
                   </button>
                   <button
-                    onClick={() => setRotation(r => (r + 90) % 360)}
+                    onClick={() => handleUpdateDocumentFilter(currentDoc.filter, undefined, 90)}
                     className="p-1.5 bg-slate-700 hover:bg-slate-600 rounded-lg cursor-pointer"
-                    title="Rotate Photo"
+                    title="Rotate 90°"
                   >
                     <RotateCw size={14} />
                   </button>
@@ -653,42 +713,96 @@ export default function GoogleDriveDocumentScannerPage() {
                 </div>
               </div>
 
-              {/* Document Image Canvas */}
-              <div className="flex-1 overflow-auto rounded-2xl bg-slate-950 border border-slate-800/50 flex items-center justify-center p-2 min-h-[420px] relative">
+              {/* Document Filter Selector Tabs (Google Drive Style) */}
+              <div className="flex items-center justify-between gap-1.5 p-1 bg-slate-950/80 rounded-xl border border-slate-800 text-[11px]">
+                <button
+                  type="button"
+                  onClick={() => handleUpdateDocumentFilter('magic')}
+                  className={`flex-1 py-1.5 rounded-lg font-bold transition-all cursor-pointer ${
+                    currentDoc.filter === 'magic'
+                      ? 'bg-blue-600 text-white shadow-xs'
+                      : 'text-slate-400 hover:text-slate-200'
+                  }`}
+                >
+                  Magic Color
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleUpdateDocumentFilter('bw')}
+                  className={`flex-1 py-1.5 rounded-lg font-bold transition-all cursor-pointer ${
+                    currentDoc.filter === 'bw'
+                      ? 'bg-blue-600 text-white shadow-xs'
+                      : 'text-slate-400 hover:text-slate-200'
+                  }`}
+                >
+                  B&amp;W High Contrast
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleUpdateDocumentFilter('grayscale')}
+                  className={`flex-1 py-1.5 rounded-lg font-bold transition-all cursor-pointer ${
+                    currentDoc.filter === 'grayscale'
+                      ? 'bg-blue-600 text-white shadow-xs'
+                      : 'text-slate-400 hover:text-slate-200'
+                  }`}
+                >
+                  Grayscale
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleUpdateDocumentFilter('original')}
+                  className={`flex-1 py-1.5 rounded-lg font-bold transition-all cursor-pointer ${
+                    currentDoc.filter === 'original'
+                      ? 'bg-blue-600 text-white shadow-xs'
+                      : 'text-slate-400 hover:text-slate-200'
+                  }`}
+                >
+                  Original
+                </button>
+              </div>
+
+              {/* Document Image Canvas Viewport */}
+              <div className="flex-1 overflow-auto rounded-2xl bg-slate-950 border border-slate-800/50 flex items-center justify-center p-2 min-h-[380px] relative">
                 {currentDoc.status === 'scanning' && (
                   <div className="absolute inset-0 bg-slate-950/85 backdrop-blur-xs flex flex-col items-center justify-center gap-3 z-20 text-white">
                     <Loader2 size={36} className="animate-spin text-cyan-400" />
-                    <p className="text-xs font-bold text-cyan-200">Scanning form particulars...</p>
+                    <p className="text-xs font-bold text-cyan-200">Running Local OCR on Document...</p>
                   </div>
                 )}
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
-                  src={currentDoc.enhancedUrl || currentDoc.previewUrl}
+                  src={currentDoc.processedUrl || currentDoc.originalUrl}
                   alt="Scanned Document Form"
                   style={{
-                    transform: `scale(${zoomLevel}) rotate(${rotation}deg)`,
+                    transform: `scale(${zoomLevel}) rotate(${viewerRotation}deg)`,
                     transition: 'transform 0.2s ease'
                   }}
-                  className="max-h-[500px] w-auto object-contain rounded-xl shadow-2xl origin-center"
+                  className="max-h-[440px] w-auto object-contain rounded-xl shadow-2xl origin-center"
                 />
               </div>
 
-              {/* Status Footer */}
-              <div className="mt-3 flex items-center justify-between text-[11px] text-slate-400">
-                <span>Zoom: {Math.round(zoomLevel * 100)}%</span>
+              {/* Status & Rescan Bar */}
+              <div className="flex items-center justify-between text-[11px] text-slate-400 pt-1">
+                <button
+                  type="button"
+                  onClick={() => runLocalOcrOnDocument(currentDoc, currentDoc.processedUrl)}
+                  disabled={isProcessing}
+                  className="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-cyan-300 rounded-xl font-bold flex items-center gap-1.5 cursor-pointer border border-slate-700"
+                >
+                  <RefreshCw size={12} className={isProcessing ? 'animate-spin' : ''} /> Re-run Local OCR
+                </button>
+
                 {currentDoc.status === 'enrolled' ? (
                   <span className="text-emerald-400 font-bold flex items-center gap-1">
                     <CheckCircle2 size={13} /> Enrolled to Database
                   </span>
                 ) : (
-                  <span className="text-cyan-300 font-semibold">
-                    {currentDoc.engineUsed ? `✨ ${currentDoc.engineUsed}` : 'Review & Edit on right \u2192'}
-                  </span>
+                  <span>Zoom: {Math.round(zoomLevel * 100)}%</span>
                 )}
               </div>
             </div>
 
-            {/* Right Column: Interactive Editable Verification Form (7 cols) */}
+            {/* Right Column: Editable Form Fields (7 cols) */}
             <div className="lg:col-span-7 bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-sm space-y-6">
               
               <div className="flex items-center justify-between border-b border-slate-100 pb-4">
@@ -701,14 +815,9 @@ export default function GoogleDriveDocumentScannerPage() {
                   </p>
                 </div>
 
-                <button
-                  type="button"
-                  onClick={() => processScanDocument(currentDoc)}
-                  disabled={isProcessing}
-                  className="px-3 py-1.5 bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200 rounded-xl font-bold text-xs flex items-center gap-1.5 cursor-pointer"
-                >
-                  <RefreshCw size={12} className={isProcessing ? 'animate-spin' : ''} /> Rescan
-                </button>
+                <span className="px-3 py-1 bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-full font-mono font-bold text-xs">
+                  ⚡ 100% Local OCR
+                </span>
               </div>
 
               {/* Form Fields */}
@@ -727,7 +836,7 @@ export default function GoogleDriveDocumentScannerPage() {
                         type="text"
                         value={currentDoc.extractedData.student_name}
                         onChange={e => handleFieldChange('student_name', e.target.value.toUpperCase())}
-                        placeholder="e.g. AREEBA AMJAD"
+                        placeholder="ENTER FULL NAME"
                         className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl font-bold text-slate-900 uppercase focus:bg-white focus:ring-2 focus:ring-blue-500 outline-none"
                       />
                     </div>
@@ -919,7 +1028,7 @@ export default function GoogleDriveDocumentScannerPage() {
                       <CheckCircle2 size={14} /> Student is officially enrolled!
                     </span>
                   ) : (
-                    <span>Ready to save into live student directory</span>
+                    <span>Ready to save confirmed particulars into live database</span>
                   )}
                 </div>
 
@@ -930,7 +1039,7 @@ export default function GoogleDriveDocumentScannerPage() {
                       onClick={() => {
                         setCurrentIndex(currentIndex + 1);
                         setZoomLevel(1);
-                        setRotation(0);
+                        setViewerRotation(0);
                       }}
                       className="px-4 py-3 rounded-2xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs transition-colors cursor-pointer"
                     >
