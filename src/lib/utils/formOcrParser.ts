@@ -82,85 +82,108 @@ export function parseAdmissionFormText(rawText: string): ParsedStudentForm {
 
     // Student Name
     if (!result.student_name && (
-      lower.includes('student name') || 
-      lower.includes('name of student') || 
       lower.includes('name (in capital') ||
+      lower.includes('student seeking admission') ||
       lower.includes('1) name') ||
+      lower.includes('student name') || 
+      lower.includes('name of student') ||
       lower.startsWith('name:') ||
       lower.startsWith('name -')
     )) {
-      let candidate = line.replace(/^(?:1\)|name|student\s+name|name\s+of\s+student|name\s*\(.*?\))\s*[:\-]?\s*/i, '').trim();
+      let candidate = line
+        .replace(/.*?1\)\s*name\s*\(in\s*capital\s*letters\)\s*[:\-]?\s*/i, '')
+        .replace(/^(?:1\)|name|student\s+name|name\s+of\s+student|name\s*\(.*?\))\s*[:\-]?\s*/i, '')
+        .trim();
       if (!candidate && i + 1 < lines.length) candidate = lines[i + 1].trim();
-      candidate = candidate.replace(/[^a-zA-Z\s]/g, '').trim();
-      if (candidate.length >= 3) result.student_name = candidate.toUpperCase();
+      candidate = candidate.replace(/[^a-zA-Z\s.]/g, '').trim();
+      if (candidate.length >= 3 && !candidate.toLowerCase().includes('particular') && !candidate.toLowerCase().includes('seeking')) {
+        result.student_name = candidate.toUpperCase();
+      }
     }
 
     // Father Name
     if (!result.father_name && (
-      lower.includes('father') || 
-      lower.includes('guardian') || 
-      lower.includes("father's name") ||
       lower.includes('father / guardian') ||
-      lower.includes('father/guardian')
+      lower.includes('father/guardian') ||
+      lower.includes('father / guardianname') ||
+      lower.includes("father's name") ||
+      lower.includes('1) father')
     )) {
-      let candidate = line.replace(/^(?:1\)|father|guardian|father['s]*\s+name|father\s*\/.*?\s*name)\s*[:\-]?\s*/i, '').trim();
+      let candidate = line
+        .replace(/.*?1\)\s*father\s*[\/\s]*guardian\s*name\s*[:\-]?\s*/i, '')
+        .replace(/^(?:1\)|father|guardian|father['s]*\s+name|father\s*\/.*?\s*name)\s*[:\-]?\s*/i, '')
+        .trim();
       if (!candidate && i + 1 < lines.length) candidate = lines[i + 1].trim();
-      candidate = candidate.replace(/[^a-zA-Z\s]/g, '').trim();
-      if (candidate.length >= 3 && !candidate.toLowerCase().includes('occupation')) {
+      candidate = candidate.replace(/[^a-zA-Z\s.]/g, '').trim();
+      if (candidate.length >= 2 && !candidate.toLowerCase().includes('occupation') && !candidate.toLowerCase().includes('parent')) {
         result.father_name = candidate;
       }
     }
 
     // Date of Birth
-    if (!result.dob && (lower.includes('date of birth') || lower.includes('dob') || lower.includes('d.o.b'))) {
-      const match = line.match(dobRegex);
+    if (!result.dob && (lower.includes('date of birth') || lower.includes('dob') || lower.includes('d.o.b') || lower.includes('2) date of birth'))) {
+      const match = line.match(dobRegex) || line.match(/(\d{1,2}[-\s][a-zA-Z]{3,9}[-\s]\d{2,4})/i);
       if (match && match[1]) {
         result.dob = normalizeDate(match[1]);
       } else if (i + 1 < lines.length) {
-        const nextMatch = lines[i + 1].match(dobRegex);
+        const nextMatch = lines[i + 1].match(dobRegex) || lines[i + 1].match(/(\d{1,2}[-\s][a-zA-Z]{3,9}[-\s]\d{2,4})/i);
         if (nextMatch && nextMatch[1]) result.dob = normalizeDate(nextMatch[1]);
       }
     }
 
-    // Religion
-    if (lower.includes('religion')) {
+    // Religion & Nationality
+    if (lower.includes('religion') || lower.includes('nationality')) {
       if (lower.includes('non-muslim') || lower.includes('christian') || lower.includes('hindu')) {
         result.religion = 'Non-Muslim';
-      } else {
+      } else if (lower.includes('islam')) {
         result.religion = 'Islam';
+      }
+      if (lower.includes('pakistan')) {
+        result.nationality = 'Pakistani';
       }
     }
 
-    // Address
+    // Residential Address
     if (!result.address && (
       lower.includes('residential address') || 
       lower.includes('permanent address') || 
-      lower.includes('address:') ||
-      lower.includes('house#') ||
-      lower.includes('house no') ||
+      lower.includes('5) residential address') ||
       lower.includes('sector') ||
-      lower.includes('karachi')
+      lower.includes('north karachi') ||
+      lower.includes('address:')
     )) {
-      let candidate = line.replace(/^(?:residential\s+address|address|permanent\s+address)\s*[:\-]?\s*/i, '').trim();
-      if (candidate.length > 8) {
+      let candidate = line
+        .replace(/.*?5\)\s*residential\s+address\s*[:\-]?\s*/i, '')
+        .replace(/^(?:residential\s+address|address|permanent\s+address)\s*[:\-]?\s*/i, '')
+        .trim();
+      if (candidate.length > 5 && !candidate.toLowerCase().includes('cell') && !candidate.toLowerCase().includes('particular')) {
         result.address = candidate;
       }
     }
 
     // Occupation
-    if (!result.father_occupation && (lower.includes('occupation') || lower.includes('profession') || lower.includes('job'))) {
-      let candidate = line.replace(/^(?:occupation|profession|father['s]*\s+occupation)\s*[:\-]?\s*/i, '').trim();
-      if (candidate.length > 2) result.father_occupation = candidate;
+    if (!result.father_occupation && (lower.includes('occupation') || lower.includes('2) occupation') || lower.includes('profession'))) {
+      let candidate = line
+        .replace(/.*?2\)\s*occupation\s*[:\-]?\s*/i, '')
+        .replace(/^(?:occupation|profession|father['s]*\s+occupation)\s*[:\-]?\s*/i, '')
+        .trim();
+      if (candidate.length > 2 && !candidate.toLowerCase().includes('address')) {
+        result.father_occupation = candidate;
+      }
     }
 
     // Previous School
     if (!result.previous_school && (
       lower.includes('name of school') || 
       lower.includes('previous school') || 
-      lower.includes('last attended') ||
+      lower.includes('7) name of school') ||
+      lower.includes('school / college') ||
       lower.includes('institution')
     )) {
-      let candidate = line.replace(/^(?:name\s+of\s+school|previous\s+school|school\s*\/.*?\s*college|institution)\s*[:\-]?\s*/i, '').trim();
+      let candidate = line
+        .replace(/.*?7\)\s*name\s+of\s+school\s*[\/\s]*college\s*[:\-]?\s*/i, '')
+        .replace(/^(?:name\s+of\s+school|previous\s+school|school\s*\/.*?\s*college|institution)\s*[:\-]?\s*/i, '')
+        .trim();
       if (candidate.length > 2) result.previous_school = candidate;
     }
   }
