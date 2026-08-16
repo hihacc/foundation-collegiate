@@ -10,7 +10,7 @@ import {
   LayoutDashboard, FileText, Users, Image as ImageIcon, MessageSquare, Bell,
   Download, BookOpen, LogOut, Menu, X, Home, ExternalLink, Trophy,
   Settings, BarChart3, UserCog, ClipboardList, ChevronRight, PanelLeftClose, PanelLeftOpen,
-  Banknote, Receipt, Wallet, Mail, SlidersHorizontal, UserCheck, HardDrive, Cake
+  Banknote, Receipt, Wallet, Mail, SlidersHorizontal, UserCheck, HardDrive, Cake, Camera
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -32,6 +32,7 @@ const navItems = [
   { name: 'Academic Groups',   href: '/admin/dashboard/academics/groups',  icon: Users },
   { name: 'Academic Subjects', href: '/admin/dashboard/academics/subjects',icon: FileText },
   { name: 'Students',          href: '/admin/dashboard/students',    icon: Users },
+  { name: 'Scan Paper Forms',  href: '/admin/dashboard/students/scanner', icon: Camera },
   { name: 'Student Birthdays', href: '/admin/dashboard/students/birthdays', icon: Cake },
   { name: 'Teachers',          href: '/admin/dashboard/teachers',    icon: UserCog },
   { name: 'Gallery',           href: '/admin/dashboard/gallery',     icon: ImageIcon },

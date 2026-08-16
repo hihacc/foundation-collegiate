@@ -570,6 +570,12 @@ export default function AdminStudentsPage() {
         </div>
 
         <div className="flex flex-wrap items-center gap-3">
+          <Link
+            href="/admin/dashboard/students/scanner"
+            className="flex items-center gap-2 bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white px-4 py-2.5 rounded-xl font-bold text-xs shadow-md shadow-amber-500/20 transition-all active:scale-95"
+          >
+            <Sparkles size={16} /> 📸 Scan Paper Forms (AI/OCR)
+          </Link>
           <button
             onClick={() => {
               toast.loading('Fetching live students from database...', { id: 'sync-db' });
