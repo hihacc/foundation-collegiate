@@ -43,36 +43,25 @@ export default function AdminBackupsPage() {
 
   // Load existing backup logs
   useEffect(() => {
-    const fetchBackupLogs = async () => {
+    const fetchBackupLogs = () => {
       setLoading(true);
       try {
-        const { data, error } = await supabase
-          .from('backup_logs')
-          .select('*')
-          .order('created_at', { ascending: false });
-
-        if (!error && data && data.length > 0) {
-          setBackups(data as BackupLog[]);
-          setLastBackupTime(data[0].created_at);
-        } else {
-          const localLogs = getStoredData<BackupLog[]>('backup_vault_logs', [
-            {
-              id: 'b-init-1',
-              filename: 'TFC-Backup-Hourly-Snapshot-2026.json',
-              file_size: '248.50 KB',
-              total_records: 48,
-              trigger_type: 'Hourly Auto Cron',
-              status: 'Completed',
-              created_at: new Date(Date.now() - 3600000).toISOString(),
-              drive_synced: true
-            }
-          ]);
-          setBackups(localLogs);
-          if (localLogs.length > 0) setLastBackupTime(localLogs[0].created_at);
-        }
-      } catch {
-        const localLogs = getStoredData<BackupLog[]>('backup_vault_logs', []);
+        const localLogs = getStoredData<BackupLog[]>('backup_vault_logs', [
+          {
+            id: 'b-init-1',
+            filename: 'TFC-Backup-Snapshot-2026.json',
+            file_size: '248.50 KB',
+            total_records: 48,
+            trigger_type: 'Hourly Auto Cron',
+            status: 'Completed',
+            created_at: new Date(Date.now() - 3600000).toISOString(),
+            drive_synced: true
+          }
+        ]);
         setBackups(localLogs);
+        if (localLogs.length > 0) setLastBackupTime(localLogs[0].created_at);
+      } catch {
+        setBackups([]);
       } finally {
         setLoading(false);
       }

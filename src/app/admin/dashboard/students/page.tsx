@@ -561,6 +561,8 @@ export default function AdminStudentsPage() {
           <div className="flex items-center gap-2 mb-1">
             <span className="text-sm font-semibold text-slate-500">Active Directory</span>
             <span className="text-slate-400">/</span>
+            <Link href="/admin/dashboard/students/birthdays" className="text-sm font-semibold text-rose-600 hover:underline flex items-center gap-1">🎂 Student Birthdays</Link>
+            <span className="text-slate-400">/</span>
             <Link href="/admin/dashboard/students/old" className="text-sm font-semibold text-blue-600 hover:underline">View Archive (Old Students)</Link>
           </div>
           <h1 className="text-2xl sm:text-3xl font-display font-bold text-slate-800">Student Directory</h1>
