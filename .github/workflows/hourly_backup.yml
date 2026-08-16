@@ -1,0 +1,14 @@
+name: Hourly Database & Cloud Backup
+
+on:
+  schedule:
+    - cron: '0 * * * *'
+  workflow_dispatch:
+
+jobs:
+  backup:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger Automated Hourly Backup Endpoint
+        run: |
+          curl -s -X POST "https://foundation-collegiate-git-main-ebs4.vercel.app/api/backup" || true
