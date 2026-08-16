@@ -308,14 +308,28 @@ export default function AdminBackupsPage() {
           </div>
         </div>
 
-        <div className="p-4 rounded-2xl bg-blue-50/80 border border-blue-200 text-xs space-y-1.5">
-          <div className="font-bold text-blue-900 flex items-center gap-1.5">
-            <CheckCircle2 size={14} className="text-blue-600" /> Automated Delivery to Google Account Connected:
+        <div className="p-4 rounded-2xl bg-gradient-to-r from-amber-50 to-blue-50 border border-amber-200 text-xs space-y-3">
+          <div className="font-bold text-slate-900 flex items-center gap-2">
+            <Cloud size={16} className="text-blue-600" />
+            <span>How to have files drop directly into your Google Drive Folder automatically:</span>
           </div>
-          <p className="text-slate-600 leading-relaxed">
-            Every hourly backup is automatically packaged as a JSON file and sent to <strong className="text-blue-900 font-mono">foundationcollegiate@gmail.com</strong>.
-            In your Gmail, hover over the snapshot attachment and click the <strong>&ldquo;Add to Drive&rdquo; (Google Drive triangle icon)</strong> to save it directly into your preferred Google Drive folder in 1 click.
-          </p>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-slate-700">
+            <div className="bg-white/80 p-3 rounded-xl border border-slate-200 space-y-1">
+              <strong className="text-blue-900 block font-semibold">Method 1: Check your Gmail (Instant)</strong>
+              <p className="text-slate-600">
+                Open <a href="https://mail.google.com" target="_blank" rel="noopener noreferrer" className="text-blue-600 underline font-bold">mail.google.com</a> on your account <strong>foundationcollegiate@gmail.com</strong>.
+                You will see your automated backup email with the JSON file. Hover on the attachment and click the <strong>&ldquo;Add to Drive&rdquo; icon</strong>.
+              </p>
+            </div>
+
+            <div className="bg-white/80 p-3 rounded-xl border border-slate-200 space-y-1">
+              <strong className="text-indigo-900 block font-semibold">Method 2: Create a &quot;TFC Backups&quot; Folder in Drive</strong>
+              <p className="text-slate-600">
+                In Google Drive, click <strong>+ New &rarr; New folder</strong> &rarr; name it <strong>TFC Backups</strong>. Every downloaded backup can be saved or synced directly into this folder.
+              </p>
+            </div>
+          </div>
         </div>
 
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pt-2">
