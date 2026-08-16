@@ -70,57 +70,60 @@ export default function GoogleLensFormScannerPage() {
 
   const currentDoc = documents[currentIndex];
 
-  // Initialize Camera cleanly only on user demand or secure context
+  // Clean up camera stream on unmount
   useEffect(() => {
-    if (activeTab === 'lens') {
-      // Check if secure context
-      if (typeof window !== 'undefined') {
-        const isLocalOrSecure = window.isSecureContext || window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
-        if (isLocalOrSecure) {
-          startCamera();
-        } else {
-          setCameraError('Insecure IP Context (HTTP): Use the "Snap Photo with Phone Camera" button below for direct camera access without HTTPS.');
-        }
-      }
-    } else {
-      stopCamera();
-    }
     return () => {
       stopCamera();
     };
-  }, [activeTab, facingMode]);
+  }, []);
 
   const startCamera = async () => {
     stopCamera();
     setCameraError(null);
     try {
       if (!navigator?.mediaDevices?.getUserMedia) {
-        throw new Error('Live camera streaming not supported by this browser. Use Native Camera button.');
+        throw new Error('Camera not supported by this browser. Use Native Camera button.');
       }
 
-      const constraints: MediaStreamConstraints = {
-        video: {
-          facingMode: facingMode,
-          width: { ideal: 1920 },
-          height: { ideal: 1080 }
-        },
-        audio: false
-      };
+      let stream: MediaStream | null = null;
 
-      const stream = await navigator.mediaDevices.getUserMedia(constraints);
+      // Try preferred constraints first
+      try {
+        stream = await navigator.mediaDevices.getUserMedia({
+          video: {
+            facingMode: { ideal: facingMode },
+            width: { ideal: 1920 },
+            height: { ideal: 1080 }
+          },
+          audio: false
+        });
+      } catch (e) {
+        // Fallback to basic video constraint if specific resolution rejected
+        stream = await navigator.mediaDevices.getUserMedia({
+          video: true,
+          audio: false
+        });
+      }
+
+      if (!stream) throw new Error('Could not access camera stream');
+
       streamRef.current = stream;
       if (videoRef.current) {
         videoRef.current.srcObject = stream;
         await videoRef.current.play();
       }
       setIsCameraActive(true);
+      setCameraError(null);
+      toast.success('Camera connected!');
     } catch (err: any) {
-      console.warn('Live camera stream notice:', err.name || err.message);
-      setCameraError(
-        err.name === 'NotAllowedError' 
-          ? 'Camera permission denied. Tap "Snap Photo with Phone Camera" below to take photos directly!'
-          : (err.message || 'Camera not available.')
-      );
+      console.warn('Live camera stream error:', err.name, err.message);
+      if (err.name === 'NotAllowedError' || err.name === 'PermissionDeniedError') {
+        setCameraError('Permission Denied: Please click the lock/settings icon in your browser URL bar and allow Camera permission.');
+      } else if (err.name === 'NotFoundError' || err.name === 'DevicesNotFoundError') {
+        setCameraError('No camera device detected on this device.');
+      } else {
+        setCameraError(err.message || 'Camera could not be started.');
+      }
       setIsCameraActive(false);
     }
   };
@@ -530,7 +533,7 @@ export default function GoogleLensFormScannerPage() {
           )}
 
           {/* Live Video Feed & Framing Brackets */}
-          <div className="relative w-full max-w-3xl flex-1 flex items-center justify-center my-4 overflow-hidden rounded-3xl bg-black border border-slate-800">
+          <div className="relative w-full max-w-3xl flex-1 flex items-center justify-center my-4 overflow-hidden rounded-3xl bg-black border border-slate-800 min-h-[380px]">
             
             {cameraError ? (
               <div className="p-8 text-center space-y-4 max-w-md">
@@ -538,25 +541,53 @@ export default function GoogleLensFormScannerPage() {
                   <Camera size={32} />
                 </div>
                 <div className="space-y-1">
-                  <h4 className="text-base font-bold text-white">Direct Phone Camera Mode</h4>
+                  <h4 className="text-base font-bold text-white">Camera Permission / Direct Mode</h4>
                   <p className="text-xs text-slate-300 leading-relaxed">
-                    Browser security blocks live video streaming over local network IP (192.168.100.67). Tap below to open your phone camera directly to snap form photos!
+                    {cameraError}
                   </p>
                 </div>
                 <div className="pt-2 flex flex-col sm:flex-row justify-center gap-3">
                   <button
                     type="button"
-                    onClick={() => nativeCameraInputRef.current?.click()}
-                    className="px-5 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white rounded-xl text-xs font-bold shadow-lg shadow-blue-500/25 active:scale-95 transition-all cursor-pointer flex items-center justify-center gap-2"
+                    onClick={startCamera}
+                    className="px-5 py-3 bg-blue-600 hover:bg-blue-500 text-white rounded-xl text-xs font-bold shadow-lg shadow-blue-500/25 active:scale-95 transition-all cursor-pointer flex items-center justify-center gap-2"
                   >
-                    <Camera size={16} /> 📸 Snap Photo with Phone Camera
+                    <RefreshCw size={15} /> Request Camera Permission
                   </button>
                   <button
                     type="button"
-                    onClick={() => fileInputRef.current?.click()}
-                    className="px-5 py-3 bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center justify-center gap-2"
+                    onClick={() => nativeCameraInputRef.current?.click()}
+                    className="px-5 py-3 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 text-white rounded-xl text-xs font-bold shadow-lg active:scale-95 transition-all cursor-pointer flex items-center justify-center gap-2"
                   >
-                    <Upload size={16} /> Choose Photo from Gallery
+                    <Camera size={15} /> 📸 Snap with Phone Camera
+                  </button>
+                </div>
+              </div>
+            ) : !isCameraActive ? (
+              <div className="p-8 text-center space-y-5 max-w-md">
+                <div className="w-20 h-20 bg-blue-500/20 text-cyan-400 rounded-3xl flex items-center justify-center mx-auto border border-cyan-500/30 animate-pulse">
+                  <Scan size={40} />
+                </div>
+                <div className="space-y-1.5">
+                  <h4 className="text-lg font-bold text-white">Turn On Google Lens Scanner</h4>
+                  <p className="text-xs text-slate-300 leading-relaxed">
+                    Click the button below. Your browser will ask for camera permission to stream the live document viewfinder.
+                  </p>
+                </div>
+                <div className="pt-2 flex flex-col sm:flex-row justify-center gap-3">
+                  <button
+                    type="button"
+                    onClick={startCamera}
+                    className="px-6 py-3.5 bg-gradient-to-r from-blue-600 via-cyan-500 to-indigo-600 hover:opacity-90 text-white rounded-2xl text-xs font-black shadow-xl shadow-blue-500/30 active:scale-95 transition-all cursor-pointer flex items-center justify-center gap-2"
+                  >
+                    <Camera size={18} /> Turn On Live Viewfinder
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => nativeCameraInputRef.current?.click()}
+                    className="px-5 py-3.5 bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 rounded-2xl text-xs font-bold transition-all cursor-pointer flex items-center justify-center gap-2"
+                  >
+                    <Camera size={16} /> Snap Photo
                   </button>
                 </div>
               </div>
