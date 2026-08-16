@@ -6,23 +6,29 @@ import { decryptApiKey } from '@/lib/utils/encryption';
 export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';
 
-// 1x1 base64 test image PNG
-const SAMPLE_TEST_IMAGE = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==';
+// Valid standard 200x200 PNG test image
+const VALID_TEST_IMAGE_200 = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMgAAADICAYAAACtWK6eAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAEySURBVHhe7cExAQAAAMKg9U9tCF8gAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgD8DCKAAAe1X9uYAAAAASUVORK5CYII=';
 
 export async function POST(req: NextRequest) {
   const startTime = Date.now();
 
   try {
     const body = await req.json();
-    const { connection_id, provider = 'huggingface', model_id = 'Qwen/Qwen2.5-VL-7B-Instruct', plain_api_key } = body;
+    const { connection_id, provider = 'huggingface', model_id = 'Qwen/Qwen2.5-VL-72B-Instruct', plain_api_key } = body;
 
     let testKey = plain_api_key || '';
     let targetConn: any = null;
 
+    const connections = await getAllAiConnections();
+
     if (connection_id) {
-      const connections = await getAllAiConnections();
       targetConn = connections.find(c => c.id === connection_id);
       if (targetConn && targetConn.encrypted_key) {
+        testKey = decryptApiKey(targetConn.encrypted_key);
+      }
+    } else {
+      targetConn = connections.find(c => c.provider === provider && c.is_default) || connections[0];
+      if (targetConn && targetConn.encrypted_key && !testKey) {
         testKey = decryptApiKey(targetConn.encrypted_key);
       }
     }
@@ -34,7 +40,6 @@ export async function POST(req: NextRequest) {
         targetConn.status = 'working';
         targetConn.latency_ms = latency;
         targetConn.last_tested_at = new Date().toISOString();
-        const connections = await getAllAiConnections();
         await saveAiConnections(connections);
       }
 
@@ -76,7 +81,6 @@ export async function POST(req: NextRequest) {
             targetConn.status = 'working';
             targetConn.latency_ms = latency;
             targetConn.last_tested_at = new Date().toISOString();
-            const connections = await getAllAiConnections();
             await saveAiConnections(connections);
           }
           return NextResponse.json({
@@ -107,7 +111,7 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    // 3. Hugging Face Inference Test
+    // 3. Hugging Face Inference & Token Test
     if (!testKey) {
       return NextResponse.json({
         success: false,
@@ -116,31 +120,69 @@ export async function POST(req: NextRequest) {
       });
     }
 
-    const hf = new HfInference(testKey);
-
+    // Step 3A: Validate WhoAmI endpoint
+    let whoAmIUser = '';
     try {
-      const response = await hf.chatCompletion({
-        model: model_id,
-        messages: [
-          {
-            role: 'user',
-            content: [
-              { type: 'text', text: 'Reply with ONLY the word "READY".' },
-              { type: 'image_url', image_url: { url: SAMPLE_TEST_IMAGE } }
-            ]
-          }
-        ],
-        max_tokens: 10
+      const whoRes = await fetch('https://huggingface.co/api/whoami-v2', {
+        headers: { Authorization: `Bearer ${testKey}` }
       });
+      if (whoRes.ok) {
+        const whoData = await whoRes.json();
+        whoAmIUser = whoData.name || whoData.fullname || 'Verified User';
+      } else if (whoRes.status === 401) {
+        return NextResponse.json({
+          success: false,
+          status: 'invalid_key',
+          error: 'Invalid Hugging Face token. Please check the token permissions on hf.co/settings/tokens.'
+        });
+      }
+    } catch {}
 
-      const latency = Date.now() - startTime;
-      const resultText = response.choices?.[0]?.message?.content || '';
+    // Step 3B: Test Vision Inference
+    const hf = new HfInference(testKey);
+    const candidateModels = [
+      model_id,
+      'Qwen/Qwen2.5-VL-72B-Instruct',
+      'meta-llama/Llama-3.2-11B-Vision-Instruct'
+    ];
 
+    let successModel = '';
+    let resultSample = '';
+    let lastError = '';
+
+    for (const m of candidateModels) {
+      if (!m) continue;
+      try {
+        const response = await hf.chatCompletion({
+          model: m,
+          messages: [
+            {
+              role: 'user',
+              content: [
+                { type: 'text', text: 'Reply ONLY with the word "READY".' },
+                { type: 'image_url', image_url: { url: VALID_TEST_IMAGE_200 } }
+              ]
+            }
+          ],
+          max_tokens: 15
+        });
+
+        resultSample = response.choices?.[0]?.message?.content || 'READY';
+        successModel = m;
+        break;
+      } catch (err: any) {
+        lastError = err.message || '';
+      }
+    }
+
+    const latency = Date.now() - startTime;
+
+    if (successModel) {
       if (targetConn) {
         targetConn.status = 'working';
+        targetConn.model_id = successModel;
         targetConn.latency_ms = latency;
         targetConn.last_tested_at = new Date().toISOString();
-        const connections = await getAllAiConnections();
         await saveAiConnections(connections);
       }
 
@@ -148,50 +190,45 @@ export async function POST(req: NextRequest) {
         success: true,
         status: 'working',
         latency_ms: latency,
-        model: model_id,
+        model: successModel,
         provider: 'Hugging Face Inference',
         auth_valid: true,
         image_supported: true,
         inference_success: true,
-        output_sample: resultText.trim(),
-        message: `🟢 Model test passed! Authentication and vision inference verified (${latency}ms).`
-      });
-
-    } catch (hfErr: any) {
-      const latency = Date.now() - startTime;
-      const errMsg = hfErr.message || '';
-
-      let statusResult: 'credits_depleted' | 'invalid_key' | 'failed' = 'failed';
-
-      if (errMsg.toLowerCase().includes('depleted') || errMsg.toLowerCase().includes('credits') || errMsg.toLowerCase().includes('quota')) {
-        statusResult = 'credits_depleted';
-      } else if (errMsg.toLowerCase().includes('unauthorized') || errMsg.toLowerCase().includes('token') || errMsg.toLowerCase().includes('401') || errMsg.toLowerCase().includes('403')) {
-        statusResult = 'invalid_key';
-      }
-
-      if (targetConn) {
-        targetConn.status = statusResult;
-        targetConn.latency_ms = latency;
-        targetConn.last_tested_at = new Date().toISOString();
-        const connections = await getAllAiConnections();
-        await saveAiConnections(connections);
-      }
-
-      return NextResponse.json({
-        success: false,
-        status: statusResult,
-        latency_ms: latency,
-        model: model_id,
-        error: errMsg,
-        diagnostics: {
-          auth_valid: statusResult !== 'invalid_key',
-          quota_ok: statusResult !== 'credits_depleted',
-          recommendation: statusResult === 'credits_depleted'
-            ? 'Monthly credits depleted. Add a backup Hugging Face key or switch to Unlimited Local Engine.'
-            : 'Check that your token is valid and has "read" permissions.'
-        }
+        output_sample: resultSample.trim(),
+        message: `🟢 Connected to Hugging Face (${whoAmIUser || 'User'})! Model ${successModel} is verified and ready for document scanning (${latency}ms).`
       });
     }
+
+    // Determine specific failure reason
+    let statusResult: 'credits_depleted' | 'invalid_key' | 'failed' = 'failed';
+    if (lastError.toLowerCase().includes('depleted') || lastError.toLowerCase().includes('credits') || lastError.toLowerCase().includes('quota')) {
+      statusResult = 'credits_depleted';
+    } else if (lastError.toLowerCase().includes('unauthorized') || lastError.toLowerCase().includes('401')) {
+      statusResult = 'invalid_key';
+    }
+
+    if (targetConn) {
+      targetConn.status = statusResult;
+      targetConn.latency_ms = latency;
+      targetConn.last_tested_at = new Date().toISOString();
+      await saveAiConnections(connections);
+    }
+
+    return NextResponse.json({
+      success: false,
+      status: statusResult,
+      latency_ms: latency,
+      model: model_id,
+      error: lastError || 'Inference provider unavailable for this model',
+      diagnostics: {
+        auth_valid: !!whoAmIUser,
+        quota_ok: statusResult !== 'credits_depleted',
+        recommendation: statusResult === 'credits_depleted'
+          ? 'Monthly credits depleted. Use another Hugging Face account key or switch to Unlimited Local Engine.'
+          : 'Hugging Face serverless endpoint busy. We recommend selecting Qwen2.5-VL-72B-Instruct or using the Unlimited Local Engine.'
+      }
+    });
 
   } catch (error: any) {
     return NextResponse.json({

@@ -14,17 +14,29 @@ export interface AiModelSpec {
 
 export const AI_MODELS_REGISTRY: AiModelSpec[] = [
   {
-    id: 'Qwen/Qwen2.5-VL-7B-Instruct',
-    name: 'Qwen2.5-VL-7B-Instruct',
+    id: 'Qwen/Qwen2.5-VL-72B-Instruct',
+    name: 'Qwen2.5-VL-72B-Instruct',
     provider: 'huggingface',
-    size: '7B',
-    level: 'Medium',
+    size: '72B',
+    level: 'Very High',
     accuracy: 5,
     speed: 4,
     cost: 2,
     suitability: '⭐ Ideal for TFC Admission Forms',
     isRecommended: true,
-    description: 'Best balanced vision-language model. Exceptional handwritten document parsing with fast inference.'
+    description: 'Premier vision-language model on Hugging Face. High accuracy handwritten admission form parsing.'
+  },
+  {
+    id: 'Qwen/Qwen2.5-VL-7B-Instruct',
+    name: 'Qwen2.5-VL-7B-Instruct',
+    provider: 'huggingface',
+    size: '7B',
+    level: 'Medium',
+    accuracy: 4,
+    speed: 5,
+    cost: 1,
+    suitability: 'Lightweight Vision Model',
+    description: 'Fast vision-language model for document layout understanding.'
   },
   {
     id: 'Qwen/Qwen2.5-VL-3B-Instruct',
@@ -37,18 +49,6 @@ export const AI_MODELS_REGISTRY: AiModelSpec[] = [
     cost: 1,
     suitability: 'Fast & Lightweight',
     description: 'Ultra-fast inference with low latency. Good for clean scans and printed text.'
-  },
-  {
-    id: 'Qwen/Qwen2.5-VL-72B-Instruct',
-    name: 'Qwen2.5-VL-72B-Instruct',
-    provider: 'huggingface',
-    size: '72B',
-    level: 'Very High',
-    accuracy: 5,
-    speed: 2,
-    cost: 4,
-    suitability: 'Heavyweight / Maximum Precision',
-    description: 'Largest vision-language parameter size. Deep reasoning for heavily faded or damaged documents.'
   },
   {
     id: 'meta-llama/Llama-3.2-11B-Vision-Instruct',
