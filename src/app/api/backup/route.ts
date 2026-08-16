@@ -32,10 +32,14 @@ export async function GET(req: Request) {
 }
 
 export async function POST(req: Request) {
-  return handleBackupExecution(req, 'Manual Admin Trigger');
+  let bodyData: any = {};
+  try {
+    bodyData = await req.json();
+  } catch {}
+  return handleBackupExecution(req, 'Manual Admin Trigger', bodyData);
 }
 
-async function handleBackupExecution(req: Request, triggerSource: string) {
+async function handleBackupExecution(req: Request, triggerSource: string, customBody?: any) {
   try {
     const timestamp = new Date();
     const formattedDate = timestamp.toISOString().replace(/[:.]/g, '-');
@@ -80,7 +84,49 @@ async function handleBackupExecution(req: Request, triggerSource: string) {
       ? `${(sizeInBytes / (1024 * 1024)).toFixed(2)} MB` 
       : `${(sizeInBytes / 1024).toFixed(2)} KB`;
 
-    // Dispatch Email with Attachment to Google Account (foundationcollegiate@gmail.com)
+    // 1. Check for Google Drive Direct Webhook in settings or body or env
+    let driveWebhookUrl = customBody?.drive_webhook_url || process.env.GOOGLE_DRIVE_WEBHOOK_URL || '';
+    let driveFolderId = customBody?.drive_folder_id || process.env.GOOGLE_DRIVE_FOLDER_ID || '';
+    let driveUploaded = false;
+    let driveUploadDetails: any = null;
+
+    try {
+      if (!driveWebhookUrl) {
+        const { data: dbSetting } = await supabase.from('settings').select('value').eq('key', 'google_drive_webhook_url').maybeSingle();
+        if (dbSetting?.value) driveWebhookUrl = dbSetting.value;
+      }
+      if (!driveFolderId) {
+        const { data: dbFolder } = await supabase.from('settings').select('value').eq('key', 'google_drive_folder_id').maybeSingle();
+        if (dbFolder?.value) driveFolderId = dbFolder.value;
+      }
+    } catch {}
+
+    if (driveWebhookUrl && driveWebhookUrl.startsWith('http')) {
+      try {
+        const driveRes = await fetch(driveWebhookUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            filename,
+            fileContent: jsonString,
+            folderId: driveFolderId
+          })
+        });
+        const resText = await driveRes.text();
+        try {
+          driveUploadDetails = JSON.parse(resText);
+          driveUploaded = !!(driveUploadDetails.success || driveUploadDetails.fileId);
+        } catch {
+          driveUploadDetails = { raw: resText };
+          driveUploaded = driveRes.ok;
+        }
+      } catch (err: any) {
+        console.warn('Google Drive direct upload error:', err.message);
+        driveUploadDetails = { error: err.message };
+      }
+    }
+
+    // 2. Dispatch Email with Attachment to Google Account (foundationcollegiate@gmail.com)
     let emailSent = false;
     let emailError: string | null = null;
 
@@ -105,7 +151,7 @@ async function handleBackupExecution(req: Request, triggerSource: string) {
         from: `"TFC Automated Cloud Backup" <${emailUser}>`,
         to: emailUser,
         subject: `⚡ TFC Automated Database Backup Snapshot [${new Date().toLocaleDateString('en-PK')} ${new Date().toLocaleTimeString('en-PK', { hour: '2-digit', minute: '2-digit' })}]`,
-        text: `Attached is your automated database backup snapshot from The Foundation Collegiate system.\n\nTrigger Source: ${triggerSource}\nTimestamp: ${timestamp.toISOString()}\nSnapshot Filename: ${filename}\nTotal Records: ${totalRecordsCount}\nFile Size: ${sizeFormatted}\n\nYou can save this file directly to your Google Drive or download it for safekeeping.`,
+        text: `Attached is your automated database backup snapshot from The Foundation Collegiate system.\n\nTrigger Source: ${triggerSource}\nTimestamp: ${timestamp.toISOString()}\nSnapshot Filename: ${filename}\nTotal Records: ${totalRecordsCount}\nFile Size: ${sizeFormatted}\nGoogle Drive Auto-Upload: ${driveUploaded ? 'Directly uploaded to Drive Folder' : 'Use Add to Drive in Gmail'}\n\nYou can save this file directly to your Google Drive or download it for safekeeping.`,
         html: `
           <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; border: 1px solid #e2e8f0; border-radius: 16px; padding: 24px; background: #ffffff;">
             <div style="text-align: center; border-bottom: 2px solid #3b82f6; padding-bottom: 16px; margin-bottom: 20px;">
@@ -120,6 +166,7 @@ async function handleBackupExecution(req: Request, triggerSource: string) {
                 <tr><td style="font-weight: bold; padding: 4px 0;">Trigger Mode:</td><td>${triggerSource}</td></tr>
                 <tr><td style="font-weight: bold; padding: 4px 0;">Total Records:</td><td>${totalRecordsCount} rows across 19 tables</td></tr>
                 <tr><td style="font-weight: bold; padding: 4px 0;">File Size:</td><td>${sizeFormatted}</td></tr>
+                <tr><td style="font-weight: bold; padding: 4px 0;">Google Drive:</td><td style="color: ${driveUploaded ? '#16a34a' : '#2563eb'}; font-weight: bold;">${driveUploaded ? 'Directly uploaded to Google Drive' : 'Attached (Click Add to Drive)'}</td></tr>
                 <tr><td style="font-weight: bold; padding: 4px 0;">Timestamp:</td><td>${timestamp.toLocaleString('en-PK')}</td></tr>
               </table>
             </div>
@@ -166,6 +213,8 @@ async function handleBackupExecution(req: Request, triggerSource: string) {
       timestamp: timestamp.toISOString(),
       email_delivered: emailSent,
       email_error: emailError,
+      drive_uploaded: driveUploaded,
+      drive_details: driveUploadDetails,
       summary: backupPayload.summary,
       backup_data: backupPayload
     });

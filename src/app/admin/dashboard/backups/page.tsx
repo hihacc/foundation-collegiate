@@ -35,11 +35,15 @@ export default function AdminBackupsPage() {
     getStoredData('drive_folder_url', 'https://drive.google.com/drive/folders/1TFC_Automated_Backups_2026')
   );
   const [driveFolderId, setDriveFolderId] = useState<string>(() => 
-    getStoredData('drive_folder_id', '1TFC_Automated_Backups_2026')
+    getStoredData('drive_folder_id', '')
+  );
+  const [driveWebhookUrl, setDriveWebhookUrl] = useState<string>(() => 
+    getStoredData('google_drive_webhook_url', '')
   );
   const [autoHourlySync, setAutoHourlySync] = useState<boolean>(() => 
     getStoredData('auto_hourly_sync', true)
   );
+  const [showScriptModal, setShowScriptModal] = useState(false);
 
   // Load existing backup logs
   useEffect(() => {
@@ -80,11 +84,53 @@ export default function AdminBackupsPage() {
     return () => clearInterval(hourlyTimer);
   }, []);
 
-  const handleSaveDriveSettings = () => {
+  const handleSaveDriveSettings = async () => {
     setStoredData('drive_folder_url', driveFolderUrl);
     setStoredData('drive_folder_id', driveFolderId);
+    setStoredData('google_drive_webhook_url', driveWebhookUrl);
     setStoredData('auto_hourly_sync', autoHourlySync);
+
+    try {
+      if (driveWebhookUrl) {
+        await supabase.from('settings').upsert({ key: 'google_drive_webhook_url', value: driveWebhookUrl, type: 'text', updated_at: new Date().toISOString() });
+      }
+      if (driveFolderId) {
+        await supabase.from('settings').upsert({ key: 'google_drive_folder_id', value: driveFolderId, type: 'text', updated_at: new Date().toISOString() });
+      }
+    } catch {}
+
     toast.success('Google Drive backup settings saved successfully!');
+  };
+
+  const handleTestDirectDriveUpload = async () => {
+    if (!driveWebhookUrl) {
+      setShowScriptModal(true);
+      toast.error('Please set up your Google Drive Webhook URL first (see script guide below).');
+      return;
+    }
+
+    const toastId = toast.loading('Sending test snapshot directly to Google Drive...');
+    try {
+      const res = await fetch('/api/backup', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          drive_webhook_url: driveWebhookUrl,
+          drive_folder_id: driveFolderId
+        })
+      });
+
+      const data = await res.json();
+      if (data.drive_uploaded) {
+        toast.success(`Success! File "${data.filename}" saved directly into your Google Drive!`, { id: toastId });
+      } else if (data.email_delivered) {
+        toast.success(`Backup generated & delivered to foundationcollegiate@gmail.com!`, { id: toastId });
+      } else {
+        toast.error('Google Drive notice: ' + (data.error || 'Check webhook URL permissions'), { id: toastId });
+      }
+    } catch (err: any) {
+      toast.error('Drive upload failed: ' + err.message, { id: toastId });
+    }
   };
 
   const handleGenerateBackup = async (isBackground = false) => {
@@ -280,56 +326,60 @@ export default function AdminBackupsPage() {
           </a>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-          <div>
-            <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
-              Google Drive Folder Link / Destination URL
-            </label>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+          <div className="md:col-span-2">
+            <div className="flex items-center justify-between mb-1.5">
+              <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider">
+                Google Drive Direct Webhook URL (Recommended for Auto-Upload)
+              </label>
+              <button
+                type="button"
+                onClick={() => setShowScriptModal(true)}
+                className="text-[11px] font-bold text-blue-600 hover:text-blue-800 underline cursor-pointer"
+              >
+                Get 30-Second Setup Script &rarr;
+              </button>
+            </div>
             <input
               type="text"
-              value={driveFolderUrl}
-              onChange={e => setDriveFolderUrl(e.target.value)}
-              placeholder="https://drive.google.com/drive/folders/..."
-              className="w-full px-4 py-3 bg-slate-50 border border-slate-200 text-slate-800 rounded-2xl text-xs font-medium focus:ring-2 focus:ring-blue-500 outline-none"
+              value={driveWebhookUrl}
+              onChange={e => setDriveWebhookUrl(e.target.value)}
+              placeholder="https://script.google.com/macros/s/.../exec"
+              className="w-full px-4 py-3 bg-slate-50 border border-slate-200 text-slate-800 rounded-2xl text-xs font-mono focus:ring-2 focus:ring-blue-500 outline-none"
             />
           </div>
 
           <div>
             <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
-              Google Drive Folder ID
+              Target Folder ID (Optional)
             </label>
             <input
               type="text"
               value={driveFolderId}
               onChange={e => setDriveFolderId(e.target.value)}
-              placeholder="e.g. 1TFC_Automated_Backups_2026"
+              placeholder="Leave blank for 'TFC Backups'"
               className="w-full px-4 py-3 bg-slate-50 border border-slate-200 text-slate-800 rounded-2xl text-xs font-mono focus:ring-2 focus:ring-blue-500 outline-none"
             />
           </div>
         </div>
 
         <div className="p-4 rounded-2xl bg-gradient-to-r from-amber-50 to-blue-50 border border-amber-200 text-xs space-y-3">
-          <div className="font-bold text-slate-900 flex items-center gap-2">
-            <Cloud size={16} className="text-blue-600" />
-            <span>How to have files drop directly into your Google Drive Folder automatically:</span>
+          <div className="font-bold text-slate-900 flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Cloud size={16} className="text-blue-600" />
+              <span>Direct Google Drive Auto-Upload Setup</span>
+            </div>
+            <button
+              onClick={() => setShowScriptModal(true)}
+              className="px-3 py-1 bg-white border border-slate-200 text-blue-700 font-bold rounded-lg hover:bg-blue-50 transition-colors cursor-pointer text-[11px]"
+            >
+              View 3-Step Setup Guide
+            </button>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-slate-700">
-            <div className="bg-white/80 p-3 rounded-xl border border-slate-200 space-y-1">
-              <strong className="text-blue-900 block font-semibold">Method 1: Check your Gmail (Instant)</strong>
-              <p className="text-slate-600">
-                Open <a href="https://mail.google.com" target="_blank" rel="noopener noreferrer" className="text-blue-600 underline font-bold">mail.google.com</a> on your account <strong>foundationcollegiate@gmail.com</strong>.
-                You will see your automated backup email with the JSON file. Hover on the attachment and click the <strong>&ldquo;Add to Drive&rdquo; icon</strong>.
-              </p>
-            </div>
-
-            <div className="bg-white/80 p-3 rounded-xl border border-slate-200 space-y-1">
-              <strong className="text-indigo-900 block font-semibold">Method 2: Create a &quot;TFC Backups&quot; Folder in Drive</strong>
-              <p className="text-slate-600">
-                In Google Drive, click <strong>+ New &rarr; New folder</strong> &rarr; name it <strong>TFC Backups</strong>. Every downloaded backup can be saved or synced directly into this folder.
-              </p>
-            </div>
-          </div>
+          <p className="text-slate-600 leading-relaxed">
+            With your Google Webhook URL set above, every hourly backup will automatically be saved <strong>directly into your Google Drive folder (&quot;TFC Backups&quot;)</strong> without requiring you to click anything!
+          </p>
         </div>
 
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pt-2">
@@ -341,16 +391,26 @@ export default function AdminBackupsPage() {
               className="w-5 h-5 rounded-lg text-blue-600 focus:ring-blue-500 border-slate-300"
             />
             <span className="text-xs font-bold text-slate-700">
-              Enable Automatic Hourly Sync to Google Drive / Gmail
+              Enable Automatic Hourly Sync to Google Drive &amp; Gmail
             </span>
           </label>
 
-          <button
-            onClick={handleSaveDriveSettings}
-            className="px-5 py-2.5 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-xs font-bold transition-all shadow-sm cursor-pointer"
-          >
-            Save Drive Configuration
-          </button>
+          <div className="flex items-center gap-3 w-full sm:w-auto">
+            <button
+              type="button"
+              onClick={handleTestDirectDriveUpload}
+              className="px-4 py-2.5 bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200 rounded-xl text-xs font-bold transition-all shadow-xs cursor-pointer"
+            >
+              ⚡ Test Direct Drive Upload
+            </button>
+
+            <button
+              onClick={handleSaveDriveSettings}
+              className="px-5 py-2.5 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-xs font-bold transition-all shadow-sm cursor-pointer"
+            >
+              Save Drive Configuration
+            </button>
+          </div>
         </div>
       </div>
 
@@ -428,6 +488,129 @@ export default function AdminBackupsPage() {
           </table>
         </div>
       </div>
+
+      {/* 30-Second Google Drive Direct Upload Setup Modal */}
+      {showScriptModal && (
+        <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="bg-white rounded-3xl max-w-2xl w-full p-6 sm:p-8 space-y-6 shadow-2xl border border-slate-200 max-h-[90vh] overflow-y-auto">
+            <div className="flex justify-between items-start border-b border-slate-100 pb-4">
+              <div className="flex items-center gap-3">
+                <div className="p-3 bg-amber-50 rounded-2xl border border-amber-200">
+                  <Cloud size={24} className="text-amber-600" />
+                </div>
+                <div>
+                  <h3 className="text-lg font-bold text-slate-900">Direct Google Drive Auto-Upload Setup</h3>
+                  <p className="text-xs text-slate-500">Takes 30 seconds to connect your Google Drive directly</p>
+                </div>
+              </div>
+              <button
+                onClick={() => setShowScriptModal(false)}
+                className="p-2 text-slate-400 hover:text-slate-700 rounded-xl hover:bg-slate-100 cursor-pointer"
+              >
+                ✕
+              </button>
+            </div>
+
+            <div className="space-y-4 text-xs text-slate-700">
+              <div className="flex items-start gap-3 p-3 bg-slate-50 rounded-xl border border-slate-200">
+                <span className="w-6 h-6 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold shrink-0">1</span>
+                <div>
+                  <p className="font-bold text-slate-900">Open Google Apps Script</p>
+                  <p className="text-slate-500">
+                    Go to <a href="https://script.google.com/home/start" target="_blank" rel="noopener noreferrer" className="text-blue-600 underline font-bold">script.google.com</a> logged into <strong className="text-slate-800">foundationcollegiate@gmail.com</strong> and click <strong>&quot;+ New Project&quot;</strong>.
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-start gap-3 p-3 bg-slate-50 rounded-xl border border-slate-200">
+                <span className="w-6 h-6 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold shrink-0">2</span>
+                <div className="w-full space-y-2">
+                  <div className="flex justify-between items-center">
+                    <p className="font-bold text-slate-900">Paste This 10-Line Code:</p>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const scriptCode = `function doPost(e) {
+  try {
+    var data = JSON.parse(e.postData.contents);
+    var filename = data.filename || ("TFC-Backup-" + new Date().toISOString() + ".json");
+    var content = data.fileContent;
+    var folderId = data.folderId;
+    
+    var folder;
+    if (folderId && folderId.trim() !== "") {
+      folder = DriveApp.getFolderById(folderId);
+    } else {
+      var folders = DriveApp.getFoldersByName("TFC Backups");
+      if (folders.hasNext()) {
+        folder = folders.next();
+      } else {
+        folder = DriveApp.createFolder("TFC Backups");
+      }
+    }
+    
+    var file = folder.createFile(filename, content, MimeType.PLAIN_TEXT);
+    return ContentService.createTextOutput(JSON.stringify({
+      success: true,
+      fileId: file.getId(),
+      fileName: file.getName()
+    })).setMimeType(ContentService.MimeType.JSON);
+  } catch (err) {
+    return ContentService.createTextOutput(JSON.stringify({
+      success: false,
+      error: err.toString()
+    })).setMimeType(ContentService.MimeType.JSON);
+  }
+}`;
+                        navigator.clipboard.writeText(scriptCode);
+                        toast.success('Google Apps Script code copied to clipboard!');
+                      }}
+                      className="px-2.5 py-1 bg-blue-600 text-white rounded-lg font-bold text-[10px] hover:bg-blue-700 cursor-pointer"
+                    >
+                      📋 Copy Script Code
+                    </button>
+                  </div>
+                  <pre className="bg-slate-900 text-amber-300 p-3 rounded-xl overflow-x-auto text-[11px] font-mono leading-relaxed">
+{`function doPost(e) {
+  try {
+    var data = JSON.parse(e.postData.contents);
+    var filename = data.filename;
+    var content = data.fileContent;
+    var folders = DriveApp.getFoldersByName("TFC Backups");
+    var folder = folders.hasNext() ? folders.next() : DriveApp.createFolder("TFC Backups");
+    var file = folder.createFile(filename, content, MimeType.PLAIN_TEXT);
+    return ContentService.createTextOutput(JSON.stringify({ success: true, fileId: file.getId() })).setMimeType(ContentService.MimeType.JSON);
+  } catch (err) {
+    return ContentService.createTextOutput(JSON.stringify({ success: false, error: err.toString() })).setMimeType(ContentService.MimeType.JSON);
+  }
+}`}
+                  </pre>
+                </div>
+              </div>
+
+              <div className="flex items-start gap-3 p-3 bg-slate-50 rounded-xl border border-slate-200">
+                <span className="w-6 h-6 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold shrink-0">3</span>
+                <div>
+                  <p className="font-bold text-slate-900">Deploy as Web App &amp; Paste URL</p>
+                  <p className="text-slate-500">
+                    Click <strong>Deploy &rarr; New deployment &rarr; Select type: Web app</strong>.<br />
+                    Set <strong>Who has access: Anyone</strong> &rarr; Click <strong>Deploy</strong> &rarr; Copy the <strong>Web App URL</strong> and paste it into the Webhook field on this page!
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div className="flex justify-end pt-2">
+              <button
+                onClick={() => setShowScriptModal(false)}
+                className="px-6 py-2.5 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-xs font-bold transition-all cursor-pointer"
+              >
+                I Have Pasted the URL &rarr;
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
     </div>
   );
