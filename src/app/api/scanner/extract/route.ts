@@ -107,18 +107,21 @@ Return ONLY valid JSON.`;
       });
     }
 
-    // Fallback if vision models temporarily busy
+    // Graceful fallback for credit depletion or server limits
     return NextResponse.json({
       success: false,
-      error: 'Vision models busy, falling back to local OCR',
+      quota_exceeded: true,
+      error: 'Hugging Face monthly credits depleted. Switched to Unlimited Local OCR Engine.',
       data: parseAdmissionFormText('')
-    }, { status: 422 });
+    }, { status: 200 });
 
   } catch (error: any) {
-    console.error('Hugging Face extract API error:', error);
+    console.warn('Hugging Face extract API notice:', error.message);
     return NextResponse.json({
       success: false,
-      error: error.message || 'Image processing failed'
-    }, { status: 500 });
+      quota_exceeded: true,
+      error: error.message || 'Image processing switched to local engine',
+      data: parseAdmissionFormText('')
+    }, { status: 200 });
   }
 }

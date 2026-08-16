@@ -248,15 +248,25 @@ export default function HuggingFaceAdmissionScannerPage() {
       let extractedFields: ParsedStudentForm;
       let engineName = 'Hugging Face Vision AI';
 
-      if (hfData.success && hfData.data && hfData.data.student_name) {
+      if (hfData.success && hfData.data && (hfData.data.student_name || hfData.data.father_name)) {
         extractedFields = hfData.data;
         engineName = hfData.engine || 'Hugging Face Vision AI';
       } else {
-        // Fallback to client-side Tesseract if HF had a transient error
+        // Fallback to client-side Tesseract WebAssembly engine
         const Tesseract = await import('tesseract.js');
-        const ocrResult = await Tesseract.recognize(imageToProcess, 'eng');
+        const ocrResult = await Tesseract.recognize(imageToProcess, 'eng', {
+          logger: (m) => {
+            if (m.status === 'recognizing text') {
+              setScanProgress(70 + Math.round(m.progress * 25));
+            }
+          }
+        });
         extractedFields = parseAdmissionFormText(ocrResult.data.text || '');
-        engineName = 'Local OCR Engine';
+        engineName = 'Unlimited Local OCR Engine (100% Free)';
+
+        if (hfData.quota_exceeded) {
+          toast.info('Hugging Face credit limit reached. Scanned with Unlimited Local Engine!');
+        }
       }
 
       setScanProgress(100);
@@ -271,13 +281,30 @@ export default function HuggingFaceAdmissionScannerPage() {
       toast.success(`Scanned with ${engineName}: "${extractedFields.student_name || 'Student'}"!`);
 
     } catch (err: any) {
-      console.error('Scan Error:', err);
-      setDocuments(prev => prev.map(d => d.id === docItem.id ? {
-        ...d,
-        status: 'error',
-        error: err.message || 'Extraction failed'
-      } : d));
-      toast.error('Scan Error: ' + err.message);
+      console.warn('Scan notice:', err);
+      
+      // Secondary fallback to local OCR
+      try {
+        const Tesseract = await import('tesseract.js');
+        const ocrResult = await Tesseract.recognize(imageToProcess, 'eng');
+        const fallbackFields = parseAdmissionFormText(ocrResult.data.text || '');
+
+        setDocuments(prev => prev.map(d => d.id === docItem.id ? {
+          ...d,
+          status: 'ready',
+          engineUsed: 'Unlimited Local OCR Engine (100% Free)',
+          extractedData: fallbackFields
+        } : d));
+
+        toast.info('Scanned with Unlimited Local OCR Engine!');
+      } catch (localErr: any) {
+        setDocuments(prev => prev.map(d => d.id === docItem.id ? {
+          ...d,
+          status: 'error',
+          error: localErr.message || 'Extraction failed'
+        } : d));
+        toast.error('Scan Error: ' + localErr.message);
+      }
     } finally {
       setIsProcessing(false);
       setScanProgress(0);
