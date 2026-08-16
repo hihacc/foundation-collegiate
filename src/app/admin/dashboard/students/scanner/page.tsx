@@ -16,14 +16,11 @@ import {
   ChevronRight,
   Scan,
   RefreshCw,
-  Sliders,
-  SlidersHorizontal,
   SwitchCamera,
-  Eye,
   Check,
   Plus,
-  Layers,
-  AlertCircle
+  Sparkles,
+  Bot
 } from 'lucide-react';
 import Link from 'next/link';
 import { toast } from 'sonner';
@@ -43,16 +40,17 @@ interface ScannedDocumentItem {
   status: 'pending' | 'scanning' | 'ready' | 'enrolled' | 'error';
   extractedData: ParsedStudentForm;
   rawText?: string;
+  engineUsed?: string;
   error?: string;
   fileName?: string;
 }
 
-export default function AdmissionFormScannerPage() {
+export default function HuggingFaceAdmissionScannerPage() {
   const [documents, setDocuments] = useState<ScannedDocumentItem[]>([]);
   const [currentIndex, setCurrentIndex] = useState<number>(0);
   const [isProcessing, setIsProcessing] = useState<boolean>(false);
   const [isSaving, setIsSaving] = useState<boolean>(false);
-  const [ocrProgress, setOcrProgress] = useState<number>(0);
+  const [scanProgress, setScanProgress] = useState<number>(0);
   
   // Camera Viewfinder State
   const [isCameraActive, setIsCameraActive] = useState<boolean>(false);
@@ -70,7 +68,6 @@ export default function AdmissionFormScannerPage() {
 
   const currentDoc = documents[currentIndex];
 
-  // Stop camera on unmount
   useEffect(() => {
     return () => {
       stopCameraStream();
@@ -153,13 +150,11 @@ export default function AdmissionFormScannerPage() {
     ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
     const dataUrl = canvas.toDataURL('image/jpeg', 0.95);
 
-    // Stop live stream after capture
     stopCameraStream();
-
     await addDocumentToQueue(dataUrl, `Live-Capture-${new Date().toLocaleTimeString('en-PK', { hour12: false }).replace(/:/g, '')}.jpg`);
   };
 
-  // 2. Add and Process Document to Queue
+  // 2. Add and Process Document in Queue
   const addDocumentToQueue = async (imageUrl: string, fileName: string) => {
     const newDocId = crypto.randomUUID();
     
@@ -203,8 +198,8 @@ export default function AdmissionFormScannerPage() {
     setDocuments(updated);
     setCurrentIndex(0);
 
-    // Run Local OCR on new document
-    await runLocalOcrOnDocument(newDoc, initialProcessedUrl);
+    // Run Hugging Face Extraction
+    await runHuggingFaceExtraction(newDoc, initialProcessedUrl);
   };
 
   // Handle File / Native Mobile Camera Uploads
@@ -218,55 +213,69 @@ export default function AdmissionFormScannerPage() {
     }
   };
 
-  // 3. Local In-Browser OCR Engine (Tesseract.js)
-  const runLocalOcrOnDocument = async (docItem: ScannedDocumentItem, imageToOcr: string) => {
+  // 3. Hugging Face Document Vision & OCR Pipeline
+  const runHuggingFaceExtraction = async (docItem: ScannedDocumentItem, imageToProcess: string) => {
     setIsProcessing(true);
-    setOcrProgress(10);
+    setScanProgress(20);
     setDocuments(prev => prev.map(d => d.id === docItem.id ? { ...d, status: 'scanning' } : d));
 
     try {
-      setOcrProgress(30);
+      setScanProgress(45);
 
-      // Dynamically load client-side WebAssembly Tesseract
-      const Tesseract = await import('tesseract.js');
-      const ocrResult = await Tesseract.recognize(imageToOcr, 'eng', {
-        logger: (m) => {
-          if (m.status === 'recognizing text') {
-            setOcrProgress(30 + Math.round(m.progress * 65));
-          }
-        }
+      // Convert dataUrl to Blob for FormData transmission
+      const resBlob = await fetch(imageToProcess);
+      const blob = await resBlob.blob();
+
+      const formData = new FormData();
+      formData.append('image', blob, 'scanned_form.jpg');
+
+      setScanProgress(60);
+
+      // Call Hugging Face API route
+      const hfResponse = await fetch('/api/scanner/extract', {
+        method: 'POST',
+        body: formData
       });
 
-      setOcrProgress(100);
-      const rawText = ocrResult.data.text || '';
-      
-      // Parse purely from the detected text
-      const extractedFields = parseAdmissionFormText(rawText);
+      setScanProgress(85);
+      const hfData = await hfResponse.json();
+
+      let extractedFields: ParsedStudentForm;
+      let engineName = 'Hugging Face Vision AI';
+
+      if (hfData.success && hfData.data && hfData.data.student_name) {
+        extractedFields = hfData.data;
+        engineName = hfData.engine || 'Hugging Face Vision AI';
+      } else {
+        // Fallback to client-side Tesseract if HF had a transient error
+        const Tesseract = await import('tesseract.js');
+        const ocrResult = await Tesseract.recognize(imageToProcess, 'eng');
+        extractedFields = parseAdmissionFormText(ocrResult.data.text || '');
+        engineName = 'Local OCR Engine';
+      }
+
+      setScanProgress(100);
 
       setDocuments(prev => prev.map(d => d.id === docItem.id ? {
         ...d,
         status: 'ready',
-        rawText,
+        engineUsed: engineName,
         extractedData: extractedFields
       } : d));
 
-      if (extractedFields.student_name) {
-        toast.success(`OCR Complete: Detected "${extractedFields.student_name}"!`);
-      } else {
-        toast.info('OCR Complete. Please verify particulars and fill any missing details on the right.');
-      }
+      toast.success(`Scanned with ${engineName}: "${extractedFields.student_name || 'Student'}"!`);
 
     } catch (err: any) {
-      console.error('Local OCR Error:', err);
+      console.error('Scan Error:', err);
       setDocuments(prev => prev.map(d => d.id === docItem.id ? {
         ...d,
         status: 'error',
-        error: err.message || 'OCR extraction failed'
+        error: err.message || 'Extraction failed'
       } : d));
-      toast.error('OCR Error: ' + err.message);
+      toast.error('Scan Error: ' + err.message);
     } finally {
       setIsProcessing(false);
-      setOcrProgress(0);
+      setScanProgress(0);
     }
   };
 
@@ -293,7 +302,7 @@ export default function AdmissionFormScannerPage() {
         processedUrl: reprocessed
       } : d));
 
-      toast.info('Image filter updated. Click "Re-run Local OCR" to rescan.');
+      toast.info('Image filter updated. Click "Re-run Hugging Face Scan" to re-extract.');
     } catch (err: any) {
       toast.error('Failed to update filter: ' + err.message);
     }
@@ -408,11 +417,11 @@ export default function AdmissionFormScannerPage() {
             <ArrowLeft size={14} /> Back to Student Directory
           </Link>
           <h1 className="text-xl sm:text-2xl font-black text-slate-900 flex items-center gap-2">
-            <Scan size={26} className="text-blue-600" />
-            Hard Copy Admission Form Scanner
+            <Bot size={26} className="text-blue-600 animate-pulse" />
+            Hugging Face Admission Form Scanner
           </h1>
           <p className="text-xs text-slate-500">
-            100% Local In-Browser OCR. Capture with camera or upload form photos for instant verification and enrollment.
+            Powered by Hugging Face Vision AI. Point camera at physical paper admission forms for instant handwriting extraction.
           </p>
         </div>
 
@@ -433,7 +442,7 @@ export default function AdmissionFormScannerPage() {
                 : 'bg-blue-600 hover:bg-blue-700 text-white shadow-md shadow-blue-500/20'
             }`}
           >
-            <Camera size={15} /> {isCameraActive ? 'Close Live Viewfinder' : 'Start Live Viewfinder'}
+            <Camera size={15} /> {isCameraActive ? 'Close Live Camera' : 'Start Live Camera'}
           </button>
 
           <button
@@ -528,7 +537,7 @@ export default function AdmissionFormScannerPage() {
               className="px-8 py-3.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white rounded-2xl text-xs font-black shadow-xl shadow-blue-500/30 active:scale-95 transition-all flex items-center gap-2 cursor-pointer"
             >
               <Camera size={18} />
-              <span>Capture &amp; Scan Document</span>
+              <span>Capture &amp; Send to Hugging Face</span>
             </button>
           </div>
         </div>
@@ -543,10 +552,10 @@ export default function AdmissionFormScannerPage() {
 
           <div className="space-y-2 max-w-lg mx-auto">
             <h3 className="text-xl sm:text-2xl font-black text-slate-900">
-              Scan &amp; Digitize Admission Forms Locally
+              Scan &amp; Digitize Admission Forms with Hugging Face AI
             </h3>
             <p className="text-xs text-slate-500 leading-relaxed">
-              Take a photo of any physical paper admission form or upload a scan. The local OCR engine extracts all student particulars for instant side-by-side verification and enrollment.
+              Take a photo of any physical paper admission form or upload a scan. Hugging Face Vision AI accurately reads handwritten pen entries for instant side-by-side verification and enrollment.
             </p>
           </div>
 
@@ -582,22 +591,22 @@ export default function AdmissionFormScannerPage() {
           </div>
 
           <div className="flex items-center justify-center gap-6 text-xs text-slate-400 font-medium pt-2">
-            <span className="flex items-center gap-1.5"><Check size={14} className="text-emerald-500" /> 100% Local In-Browser OCR</span>
-            <span className="flex items-center gap-1.5"><Check size={14} className="text-emerald-500" /> Side-by-Side Review</span>
+            <span className="flex items-center gap-1.5"><Check size={14} className="text-emerald-500" /> Hugging Face Vision AI</span>
+            <span className="flex items-center gap-1.5"><Check size={14} className="text-emerald-500" /> Accurate Handwriting OCR</span>
             <span className="flex items-center gap-1.5"><Check size={14} className="text-emerald-500" /> 1-Click Roll # Generator</span>
           </div>
         </div>
       )}
 
-      {/* Local OCR Progress Bar */}
+      {/* Progress Bar */}
       {isProcessing && (
         <div className="bg-blue-600 text-white p-4 rounded-2xl shadow-lg flex items-center justify-between gap-4 animate-pulse">
           <div className="flex items-center gap-3">
             <Loader2 size={20} className="animate-spin text-cyan-300" />
-            <span className="text-xs font-bold">Running local OCR &amp; extracting particulars ({ocrProgress}%)...</span>
+            <span className="text-xs font-bold">Processing with Hugging Face Vision AI ({scanProgress}%)...</span>
           </div>
           <div className="w-32 bg-blue-800/80 rounded-full h-2 overflow-hidden">
-            <div className="bg-cyan-300 h-2 transition-all duration-300" style={{ width: `${ocrProgress}%` }}></div>
+            <div className="bg-cyan-300 h-2 transition-all duration-300" style={{ width: `${scanProgress}%` }}></div>
           </div>
         </div>
       )}
@@ -713,7 +722,7 @@ export default function AdmissionFormScannerPage() {
                 </div>
               </div>
 
-              {/* Document Filter Selector Tabs (Google Drive Style) */}
+              {/* Document Filter Selector Tabs */}
               <div className="flex items-center justify-between gap-1.5 p-1 bg-slate-950/80 rounded-xl border border-slate-800 text-[11px]">
                 <button
                   type="button"
@@ -766,7 +775,7 @@ export default function AdmissionFormScannerPage() {
                 {currentDoc.status === 'scanning' && (
                   <div className="absolute inset-0 bg-slate-950/85 backdrop-blur-xs flex flex-col items-center justify-center gap-3 z-20 text-white">
                     <Loader2 size={36} className="animate-spin text-cyan-400" />
-                    <p className="text-xs font-bold text-cyan-200">Running Local OCR on Document...</p>
+                    <p className="text-xs font-bold text-cyan-200">Extracting handwriting with Hugging Face AI...</p>
                   </div>
                 )}
                 {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -785,11 +794,11 @@ export default function AdmissionFormScannerPage() {
               <div className="flex items-center justify-between text-[11px] text-slate-400 pt-1">
                 <button
                   type="button"
-                  onClick={() => runLocalOcrOnDocument(currentDoc, currentDoc.processedUrl)}
+                  onClick={() => runHuggingFaceExtraction(currentDoc, currentDoc.processedUrl)}
                   disabled={isProcessing}
                   className="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-cyan-300 rounded-xl font-bold flex items-center gap-1.5 cursor-pointer border border-slate-700"
                 >
-                  <RefreshCw size={12} className={isProcessing ? 'animate-spin' : ''} /> Re-run Local OCR
+                  <RefreshCw size={12} className={isProcessing ? 'animate-spin' : ''} /> Re-run Hugging Face Scan
                 </button>
 
                 {currentDoc.status === 'enrolled' ? (
@@ -815,8 +824,8 @@ export default function AdmissionFormScannerPage() {
                   </p>
                 </div>
 
-                <span className="px-3 py-1 bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-full font-mono font-bold text-xs">
-                  ⚡ 100% Local OCR
+                <span className="px-3 py-1 bg-blue-50 text-blue-700 border border-blue-200 rounded-full font-mono font-bold text-xs flex items-center gap-1">
+                  <Sparkles size={12} /> {currentDoc.engineUsed || 'Hugging Face AI'}
                 </span>
               </div>
 
