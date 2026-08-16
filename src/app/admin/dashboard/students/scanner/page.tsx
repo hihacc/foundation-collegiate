@@ -65,14 +65,23 @@ export default function GoogleLensFormScannerPage() {
   const videoRef = useRef<HTMLVideoElement>(null);
   const streamRef = useRef<MediaStream | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const nativeCameraInputRef = useRef<HTMLInputElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   const currentDoc = documents[currentIndex];
 
-  // Initialize Camera on Mount if on Lens tab
+  // Initialize Camera cleanly only on user demand or secure context
   useEffect(() => {
     if (activeTab === 'lens') {
-      startCamera();
+      // Check if secure context
+      if (typeof window !== 'undefined') {
+        const isLocalOrSecure = window.isSecureContext || window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+        if (isLocalOrSecure) {
+          startCamera();
+        } else {
+          setCameraError('Insecure IP Context (HTTP): Use the "Snap Photo with Phone Camera" button below for direct camera access without HTTPS.');
+        }
+      }
     } else {
       stopCamera();
     }
@@ -85,6 +94,10 @@ export default function GoogleLensFormScannerPage() {
     stopCamera();
     setCameraError(null);
     try {
+      if (!navigator?.mediaDevices?.getUserMedia) {
+        throw new Error('Live camera streaming not supported by this browser. Use Native Camera button.');
+      }
+
       const constraints: MediaStreamConstraints = {
         video: {
           facingMode: facingMode,
@@ -102,8 +115,12 @@ export default function GoogleLensFormScannerPage() {
       }
       setIsCameraActive(true);
     } catch (err: any) {
-      console.warn('Camera access warning:', err);
-      setCameraError(err.message || 'Camera permission denied or device not supported.');
+      console.warn('Live camera stream notice:', err.name || err.message);
+      setCameraError(
+        err.name === 'NotAllowedError' 
+          ? 'Camera permission denied. Tap "Snap Photo with Phone Camera" below to take photos directly!'
+          : (err.message || 'Camera not available.')
+      );
       setIsCameraActive(false);
     }
   };
@@ -516,24 +533,30 @@ export default function GoogleLensFormScannerPage() {
           <div className="relative w-full max-w-3xl flex-1 flex items-center justify-center my-4 overflow-hidden rounded-3xl bg-black border border-slate-800">
             
             {cameraError ? (
-              <div className="p-8 text-center space-y-3 max-w-md">
-                <AlertCircle size={40} className="text-amber-500 mx-auto" />
-                <h4 className="text-base font-bold text-white">Camera Permission Needed</h4>
-                <p className="text-xs text-slate-400">
-                  Please allow camera access in your browser, or switch to the <strong>&quot;Upload Photos / PDF&quot;</strong> tab to upload paper form photos directly.
-                </p>
-                <div className="pt-2 flex justify-center gap-2">
+              <div className="p-8 text-center space-y-4 max-w-md">
+                <div className="w-16 h-16 bg-amber-500/20 text-amber-400 rounded-2xl flex items-center justify-center mx-auto border border-amber-500/30">
+                  <Camera size={32} />
+                </div>
+                <div className="space-y-1">
+                  <h4 className="text-base font-bold text-white">Direct Phone Camera Mode</h4>
+                  <p className="text-xs text-slate-300 leading-relaxed">
+                    Browser security blocks live video streaming over local network IP (192.168.100.67). Tap below to open your phone camera directly to snap form photos!
+                  </p>
+                </div>
+                <div className="pt-2 flex flex-col sm:flex-row justify-center gap-3">
                   <button
-                    onClick={startCamera}
-                    className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold cursor-pointer"
+                    type="button"
+                    onClick={() => nativeCameraInputRef.current?.click()}
+                    className="px-5 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white rounded-xl text-xs font-bold shadow-lg shadow-blue-500/25 active:scale-95 transition-all cursor-pointer flex items-center justify-center gap-2"
                   >
-                    Retry Camera
+                    <Camera size={16} /> 📸 Snap Photo with Phone Camera
                   </button>
                   <button
-                    onClick={() => setActiveTab('upload')}
-                    className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-xl text-xs font-bold cursor-pointer"
+                    type="button"
+                    onClick={() => fileInputRef.current?.click()}
+                    className="px-5 py-3 bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center justify-center gap-2"
                   >
-                    Upload Photos Instead
+                    <Upload size={16} /> Choose Photo from Gallery
                   </button>
                 </div>
               </div>
@@ -575,40 +598,71 @@ export default function GoogleLensFormScannerPage() {
           </div>
 
           {/* Bottom Google Lens Shutter Bar */}
-          <div className="w-full flex items-center justify-center gap-6 z-30 pt-2 pb-2">
+          <div className="w-full flex items-center justify-center gap-4 sm:gap-6 z-30 pt-2 pb-2">
             <button
-              onClick={() => setActiveTab('upload')}
+              onClick={() => fileInputRef.current?.click()}
               className="p-3.5 bg-slate-900 hover:bg-slate-800 border border-slate-700 text-slate-300 rounded-2xl text-xs font-bold flex items-center gap-2 cursor-pointer"
             >
-              <Upload size={16} /> Choose File
+              <Upload size={16} /> Gallery
             </button>
 
-            {/* Google Lens Large Round Shutter Button */}
-            <button
-              type="button"
-              onClick={handleCaptureLensPhoto}
-              disabled={!isCameraActive || isProcessing}
-              className="relative p-1.5 rounded-full bg-gradient-to-tr from-blue-600 via-cyan-500 to-indigo-500 shadow-2xl hover:scale-105 active:scale-95 transition-all disabled:opacity-50 cursor-pointer"
-            >
-              <div className="w-20 h-20 sm:w-22 sm:h-22 rounded-full bg-white flex flex-col items-center justify-center text-slate-950 font-black text-[11px] uppercase tracking-wider shadow-inner gap-1">
-                {isProcessing ? (
-                  <Loader2 size={24} className="animate-spin text-blue-600" />
-                ) : (
-                  <>
-                    <Scan size={22} className="text-blue-600" />
-                    <span>Scan</span>
-                  </>
-                )}
-              </div>
-            </button>
+            {/* If camera is active, show live capture shutter, otherwise show direct phone camera button */}
+            {isCameraActive ? (
+              <button
+                type="button"
+                onClick={handleCaptureLensPhoto}
+                disabled={isProcessing}
+                className="relative p-1.5 rounded-full bg-gradient-to-tr from-blue-600 via-cyan-500 to-indigo-500 shadow-2xl hover:scale-105 active:scale-95 transition-all disabled:opacity-50 cursor-pointer"
+              >
+                <div className="w-20 h-20 sm:w-22 sm:h-22 rounded-full bg-white flex flex-col items-center justify-center text-slate-950 font-black text-[11px] uppercase tracking-wider shadow-inner gap-1">
+                  {isProcessing ? (
+                    <Loader2 size={24} className="animate-spin text-blue-600" />
+                  ) : (
+                    <>
+                      <Scan size={22} className="text-blue-600" />
+                      <span>Scan</span>
+                    </>
+                  )}
+                </div>
+              </button>
+            ) : (
+              <button
+                type="button"
+                onClick={() => nativeCameraInputRef.current?.click()}
+                disabled={isProcessing}
+                className="px-6 py-4 rounded-2xl bg-gradient-to-r from-blue-600 via-cyan-500 to-indigo-600 text-white font-bold text-xs shadow-xl shadow-blue-500/30 hover:scale-105 active:scale-95 transition-all flex items-center gap-2 cursor-pointer"
+              >
+                <Camera size={18} />
+                <span>📸 Snap Form with Phone Camera</span>
+              </button>
+            )}
 
-            <button
-              onClick={toggleCamera}
-              className="p-3.5 bg-slate-900 hover:bg-slate-800 border border-slate-700 text-slate-300 rounded-2xl text-xs font-bold flex items-center gap-2 cursor-pointer"
-            >
-              <SwitchCamera size={16} /> Flip
-            </button>
+            {isCameraActive && (
+              <button
+                onClick={toggleCamera}
+                className="p-3.5 bg-slate-900 hover:bg-slate-800 border border-slate-700 text-slate-300 rounded-2xl text-xs font-bold flex items-center gap-2 cursor-pointer"
+              >
+                <SwitchCamera size={16} /> Flip
+              </button>
+            )}
           </div>
+
+          <input
+            ref={nativeCameraInputRef}
+            type="file"
+            accept="image/*"
+            capture="environment"
+            onChange={e => handleFilesSelected(e.target.files)}
+            className="hidden"
+          />
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/*,.pdf"
+            multiple
+            onChange={e => handleFilesSelected(e.target.files)}
+            className="hidden"
+          />
 
         </div>
       )}
