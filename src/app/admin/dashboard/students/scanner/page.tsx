@@ -51,6 +51,7 @@ export default function HuggingFaceAdmissionScannerPage() {
   const [isProcessing, setIsProcessing] = useState<boolean>(false);
   const [isSaving, setIsSaving] = useState<boolean>(false);
   const [scanProgress, setScanProgress] = useState<number>(0);
+  const [activeTab, setActiveTab] = useState<'form' | 'raw'>('form');
   
   // Camera Viewfinder State
   const [isCameraActive, setIsCameraActive] = useState<boolean>(false);
@@ -829,8 +830,72 @@ export default function HuggingFaceAdmissionScannerPage() {
                 </span>
               </div>
 
-              {/* Form Fields */}
-              <div className="space-y-5 text-xs">
+              {/* View Mode Tabs */}
+              <div className="flex items-center gap-2 border-b border-slate-100 pb-2">
+                <button
+                  type="button"
+                  onClick={() => setActiveTab('form')}
+                  className={`px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+                    activeTab === 'form'
+                      ? 'bg-blue-600 text-white shadow-xs'
+                      : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                  }`}
+                >
+                  📋 Form Fields
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setActiveTab('raw')}
+                  className={`px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+                    activeTab === 'raw'
+                      ? 'bg-blue-600 text-white shadow-xs'
+                      : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                  }`}
+                >
+                  📜 Full Raw Document Text
+                </button>
+              </div>
+
+              {/* Tab 2: Full Document Raw Text Transcription */}
+              {activeTab === 'raw' && (
+                <div className="space-y-3 bg-slate-50 p-4 rounded-2xl border border-slate-200 animate-in fade-in">
+                  <div className="flex justify-between items-center">
+                    <span className="font-bold text-xs text-slate-700">Full Text Extracted from Document:</span>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const raw = currentDoc.rawText || JSON.stringify(currentDoc.extractedData, null, 2);
+                        navigator.clipboard.writeText(raw);
+                        toast.success('Document text copied to clipboard!');
+                      }}
+                      className="px-3 py-1 bg-white border border-slate-300 hover:bg-slate-100 rounded-lg text-xs font-bold text-slate-700 cursor-pointer"
+                    >
+                      📋 Copy All Text
+                    </button>
+                  </div>
+                  <pre className="text-[11px] font-mono bg-white p-3.5 rounded-xl border border-slate-200 text-slate-800 whitespace-pre-wrap max-h-96 overflow-y-auto leading-relaxed">
+                    {currentDoc.rawText || (
+                      `Student Name: ${currentDoc.extractedData.student_name || 'N/A'}\n` +
+                      `Father / Guardian Name: ${currentDoc.extractedData.father_name || 'N/A'}\n` +
+                      `Date of Birth: ${currentDoc.extractedData.dob || 'N/A'}\n` +
+                      `Religion: ${currentDoc.extractedData.religion || 'Islam'}\n` +
+                      `Nationality: ${currentDoc.extractedData.nationality || 'Pakistani'}\n` +
+                      `CNIC: ${currentDoc.extractedData.cnic || 'N/A'}\n` +
+                      `Residential Address: ${currentDoc.extractedData.address || 'N/A'}\n` +
+                      `Parent Cell: ${currentDoc.extractedData.parent_phone || 'N/A'}\n` +
+                      `Student Phone: ${currentDoc.extractedData.student_phone || 'N/A'}\n` +
+                      `Previous School: ${currentDoc.extractedData.previous_school || 'N/A'}\n` +
+                      `Father Occupation: ${currentDoc.extractedData.father_occupation || 'N/A'}\n` +
+                      `Target Class: ${currentDoc.extractedData.class_name || 'N/A'}\n` +
+                      `Remarks / Notes: ${currentDoc.extractedData.notes || 'N/A'}`
+                    )}
+                  </pre>
+                </div>
+              )}
+
+              {/* Tab 1: Form Fields */}
+              {activeTab === 'form' && (
+                <div className="space-y-5 text-xs">
                 
                 {/* 1. Student Particulars */}
                 <div className="space-y-3">
@@ -1028,6 +1093,7 @@ export default function HuggingFaceAdmissionScannerPage() {
                 </div>
 
               </div>
+              )}
 
               {/* Enrollment Action Buttons */}
               <div className="pt-4 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-3">

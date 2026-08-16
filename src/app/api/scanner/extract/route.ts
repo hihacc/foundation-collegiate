@@ -34,49 +34,35 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Missing image data' }, { status: 400 });
     }
 
-    // Vision Models on Hugging Face
     const visionModels = [
       'Qwen/Qwen2.5-VL-72B-Instruct',
-      'Qwen/Qwen2.5-VL-7B-Instruct',
       'meta-llama/Llama-3.2-11B-Vision-Instruct',
       'meta-llama/Llama-3.2-90B-Vision-Instruct'
     ];
 
     const promptText = `You are an expert OCR Document Digitizer for "The Foundation Collegiate" school & college admission forms.
-Analyze this physical paper admission form carefully. The form has printed labels and handwritten pen entries.
-Extract all student and parent details accurately from the handwriting:
-1. Student Full Name (in capital letters)
-2. Date of birth (e.g. 18-June-2003 or YYYY-MM-DD)
-3. Religion (Islam or Non-Muslim)
-4. Nationality (Pakistani)
-5. CNIC / B-Form #
-6. Residential Address
-7. Parent Cell # (Phone)
-8. Student Cell #
-9. Previous School / College
-10. Father / Guardian Name
-11. Father Occupation
-12. Class Applied (e.g. Class IX - Science / Biology, Class VIII, Class X, Class XI, Class XII, ADC 1, ADC 2, DIT)
-13. G.R. No. (if written)
+Read every millimeter of this physical paper admission form photograph, including printed titles, labels, handwritten pen entries, tables, and notes.
 
-Return ONLY valid JSON matching this schema:
+Extract all details into structured JSON:
 {
-  "student_name": "Full name in CAPITAL letters",
+  "student_name": "Full student name in CAPITAL letters",
   "father_name": "Father / Guardian Name",
-  "dob": "Date of birth",
+  "dob": "Date of birth (e.g. 18-June-2003)",
   "religion": "Islam",
   "nationality": "Pakistani",
-  "cnic": "",
+  "cnic": "CNIC / B-Form number",
   "address": "Residential address",
-  "parent_phone": "Primary cell phone",
-  "student_phone": "",
-  "parent_email": "",
-  "previous_school": "Name of previous school",
-  "father_occupation": "Father's occupation",
-  "father_office_phone": "",
-  "class_name": "Class IX - Science / Biology",
-  "notes": "G.R. No. or remarks"
-}`;
+  "parent_phone": "Primary parent cell phone",
+  "student_phone": "Student phone",
+  "parent_email": "Email address",
+  "previous_school": "Name of previous school or college",
+  "father_occupation": "Father's occupation / business",
+  "father_office_phone": "Office phone",
+  "class_name": "Class applied (e.g. Class IX - Science / Biology, Class X, Class XI, Class XII, ADC 1, ADC 2, DIT)",
+  "notes": "G.R. No. and full transcription notes of any other visible text on this form"
+}
+
+Return ONLY valid JSON.`;
 
     let parsedResult: any = null;
     let successfulModel = '';
@@ -97,7 +83,8 @@ Return ONLY valid JSON matching this schema:
               ]
             }
           ],
-          max_tokens: 800
+          max_tokens: 800,
+          temperature: 0.1
         });
 
         const rawContent = response.choices?.[0]?.message?.content || '';
@@ -108,11 +95,11 @@ Return ONLY valid JSON matching this schema:
           break;
         }
       } catch (err: any) {
-        console.warn(`Hugging Face model ${model} attempt notice:`, err.message);
+        console.warn(`Hugging Face model ${model} notice:`, err.message);
       }
     }
 
-    if (parsedResult && parsedResult.student_name) {
+    if (parsedResult && (parsedResult.student_name || parsedResult.father_name)) {
       return NextResponse.json({
         success: true,
         engine: `Hugging Face (${successfulModel})`,
@@ -120,10 +107,10 @@ Return ONLY valid JSON matching this schema:
       });
     }
 
-    // Fallback: Return empty schema structure if vision models were unreachable
+    // Fallback if vision models temporarily busy
     return NextResponse.json({
       success: false,
-      error: 'Could not extract text with Hugging Face models',
+      error: 'Vision models busy, falling back to local OCR',
       data: parseAdmissionFormText('')
     }, { status: 422 });
 
