@@ -468,6 +468,14 @@ export default function HuggingFaceAdmissionScannerPage() {
 
         {/* Action Buttons */}
         <div className="flex flex-wrap items-center gap-2.5">
+          <Link
+            href="/admin/dashboard/settings/ai-scanner"
+            className="inline-flex items-center gap-1.5 px-3.5 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-bold transition-all cursor-pointer border border-slate-200"
+          >
+            <Bot size={15} className="text-blue-600" />
+            <span>⚙️ AI Settings &amp; Models</span>
+          </Link>
+
           <button
             type="button"
             onClick={() => {

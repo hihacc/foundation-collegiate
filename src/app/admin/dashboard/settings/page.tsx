@@ -2,9 +2,10 @@
 export const dynamic = 'force-dynamic';
 
 import { useEffect, useState } from 'react';
+import Link from 'next/link';
 import { supabase } from '@/lib/supabase/client';
 import { toast } from 'sonner';
-import { Save, Settings, KeyRound, UserPlus, Shield, Trash2, Eye, EyeOff, Loader2, RefreshCw, BookOpen, X, Award, UserCheck, Database, Download, Upload, CheckCircle2 } from 'lucide-react';
+import { Save, Settings, KeyRound, UserPlus, Shield, Trash2, Eye, EyeOff, Loader2, RefreshCw, BookOpen, X, Award, UserCheck, Database, Download, Upload, CheckCircle2, Bot } from 'lucide-react';
 import Button from '@/components/ui/Button';
 import { getStoredData, setStoredData } from '@/lib/utils/storage';
 
@@ -345,6 +346,7 @@ export default function AdminSettingsPage() {
 
       <div className="flex flex-wrap gap-2 mb-6">
         <button onClick={() => setActiveTab('general')} className={`px-5 py-2.5 rounded-xl font-semibold text-sm transition-all flex items-center gap-2 shadow-sm ${activeTab === 'general' ? 'bg-blue-600 text-white' : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-50'}`}><Settings size={16} /> General Settings</button>
+        <Link href="/admin/dashboard/settings/ai-scanner" className="px-5 py-2.5 rounded-xl font-semibold text-sm transition-all flex items-center gap-2 shadow-sm bg-gradient-to-r from-blue-600 to-indigo-600 text-white hover:from-blue-700 hover:to-indigo-700 shadow-blue-500/20"><Bot size={16} /> 🤖 AI Scanner &amp; Models</Link>
         <button onClick={() => setActiveTab('principal')} className={`px-5 py-2.5 rounded-xl font-semibold text-sm transition-all flex items-center gap-2 shadow-sm ${activeTab === 'principal' ? 'bg-blue-600 text-white' : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-50'}`}><UserCheck size={16} /> Principal Profile</button>
         <button onClick={() => setActiveTab('database')} className={`px-5 py-2.5 rounded-xl font-semibold text-sm transition-all flex items-center gap-2 shadow-sm ${activeTab === 'database' ? 'bg-blue-600 text-white' : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-50'}`}><Database size={16} /> Database Backup &amp; Restore</button>
         <button onClick={() => setActiveTab('programs')} className={`px-5 py-2.5 rounded-xl font-semibold text-sm transition-all flex items-center gap-2 shadow-sm ${activeTab === 'programs' ? 'bg-blue-600 text-white' : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-50'}`}><BookOpen size={16} /> Programs &amp; Subjects</button>

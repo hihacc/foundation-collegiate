@@ -1,12 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { HfInference } from '@huggingface/inference';
 import { parseAdmissionFormText } from '@/lib/utils/formOcrParser';
+import { getActiveAiConnection, getAllAiConnections } from '@/lib/ai/aiConnectionService';
+import { decryptApiKey } from '@/lib/utils/encryption';
 
 export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';
-
-const HF_TOKEN = process.env.HF_TOKEN || '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';
-const hf = new HfInference(HF_TOKEN);
 
 export async function POST(request: NextRequest) {
   try {
@@ -34,12 +33,21 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Missing image data' }, { status: 400 });
     }
 
-    const visionModels = [
-      'Qwen/Qwen2.5-VL-72B-Instruct',
-      'meta-llama/Llama-3.2-11B-Vision-Instruct',
-      'meta-llama/Llama-3.2-90B-Vision-Instruct'
-    ];
+    // 1. Fetch Dynamic AI Connection Settings
+    const { connection, decryptedKey } = await getActiveAiConnection();
+    const allConnections = await getAllAiConnections();
 
+    // 2. If Local Engine is selected as default
+    if (connection.provider === 'local' || connection.model_id === 'local-wasm-tesseract') {
+      return NextResponse.json({
+        success: false,
+        use_local_engine: true,
+        message: 'Unlimited Local Engine active',
+        data: parseAdmissionFormText('')
+      });
+    }
+
+    // 3. Prompt for Document Extraction
     const promptText = `You are an expert OCR Document Digitizer for "The Foundation Collegiate" school & college admission forms.
 Read every millimeter of this physical paper admission form photograph, including printed titles, labels, handwritten pen entries, tables, and notes.
 
@@ -65,21 +73,22 @@ Extract all details into structured JSON:
 Return ONLY valid JSON.`;
 
     let parsedResult: any = null;
-    let successfulModel = '';
+    let engineUsed = connection.name || 'Hugging Face Vision AI';
 
-    for (const model of visionModels) {
+    // 4. Try Active Hugging Face Connection
+    if (connection.provider === 'huggingface' && decryptedKey) {
+      const hf = new HfInference(decryptedKey);
+      const modelToUse = connection.model_id || 'Qwen/Qwen2.5-VL-7B-Instruct';
+
       try {
         const response = await hf.chatCompletion({
-          model: model,
+          model: modelToUse,
           messages: [
             {
               role: 'user',
               content: [
                 { type: 'text', text: promptText },
-                {
-                  type: 'image_url',
-                  image_url: { url: base64DataUrl }
-                }
+                { type: 'image_url', image_url: { url: base64DataUrl } }
               ]
             }
           ],
@@ -91,36 +100,71 @@ Return ONLY valid JSON.`;
         const jsonMatch = rawContent.match(/\{[\s\S]*\}/);
         if (jsonMatch) {
           parsedResult = JSON.parse(jsonMatch[0]);
-          successfulModel = model;
-          break;
+          engineUsed = `${connection.name} (${modelToUse})`;
         }
       } catch (err: any) {
-        console.warn(`Hugging Face model ${model} notice:`, err.message);
+        console.warn(`Primary connection ${connection.name} failed:`, err.message);
+
+        // Try Backup Hugging Face Connections if available
+        const backupConns = allConnections.filter(c => c.id !== connection.id && c.is_active && c.provider === 'huggingface' && c.encrypted_key);
+        for (const backup of backupConns) {
+          const backupKey = decryptApiKey(backup.encrypted_key);
+          if (!backupKey) continue;
+
+          try {
+            const hfBackup = new HfInference(backupKey);
+            const backupModel = backup.model_id || 'Qwen/Qwen2.5-VL-7B-Instruct';
+            const resBackup = await hfBackup.chatCompletion({
+              model: backupModel,
+              messages: [
+                {
+                  role: 'user',
+                  content: [
+                    { type: 'text', text: promptText },
+                    { type: 'image_url', image_url: { url: base64DataUrl } }
+                  ]
+                }
+              ],
+              max_tokens: 800,
+              temperature: 0.1
+            });
+
+            const rawB = resBackup.choices?.[0]?.message?.content || '';
+            const jsonB = rawB.match(/\{[\s\S]*\}/);
+            if (jsonB) {
+              parsedResult = JSON.parse(jsonB[0]);
+              engineUsed = `${backup.name} (Backup)`;
+              break;
+            }
+          } catch {}
+        }
       }
     }
 
     if (parsedResult && (parsedResult.student_name || parsedResult.father_name)) {
       return NextResponse.json({
         success: true,
-        engine: `Hugging Face (${successfulModel})`,
+        engine: engineUsed,
         data: parsedResult
       });
     }
 
-    // Graceful fallback for credit depletion or server limits
+    // 5. Automatic Fallback to Local Engine if cloud limits reached
     return NextResponse.json({
       success: false,
       quota_exceeded: true,
-      error: 'Hugging Face monthly credits depleted. Switched to Unlimited Local OCR Engine.',
+      use_local_engine: true,
+      error: 'Cloud inference credits exhausted. Falling back to Unlimited Local Engine.',
       data: parseAdmissionFormText('')
     }, { status: 200 });
 
   } catch (error: any) {
-    console.warn('Hugging Face extract API notice:', error.message);
+    console.warn('Scanner extract route notice:', error.message);
     return NextResponse.json({
       success: false,
       quota_exceeded: true,
-      error: error.message || 'Image processing switched to local engine',
+      use_local_engine: true,
+      error: error.message || 'Switched to Unlimited Local OCR Engine',
       data: parseAdmissionFormText('')
     }, { status: 200 });
   }
