@@ -23,7 +23,8 @@ import {
   KeyRound,
   RefreshCw,
   Zap,
-  Maximize2
+  Maximize2,
+  AlertCircle
 } from 'lucide-react';
 import Link from 'next/link';
 import { toast } from 'sonner';
