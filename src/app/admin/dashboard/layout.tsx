@@ -11,7 +11,8 @@ import {
   LayoutDashboard, FileText, Users, Image as ImageIcon, MessageSquare, Bell,
   Download, BookOpen, LogOut, Menu, X, Home, ExternalLink, Trophy,
   Settings, BarChart3, UserCog, ClipboardList, ChevronRight, PanelLeftClose, PanelLeftOpen,
-  Banknote, Receipt, Wallet, Mail, SlidersHorizontal, UserCheck, HardDrive, Cake, Camera, Sparkles, ShieldCheck, MessageCircle, Lock
+  Banknote, Receipt, Wallet, Mail, SlidersHorizontal, UserCheck, HardDrive, Cake, Camera, Sparkles, ShieldCheck, MessageCircle, Lock,
+  ClipboardCheck
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { logAdminActivity } from '@/lib/utils/auditLogger';
@@ -31,6 +32,7 @@ const navItems = [
   { name: 'Top Achievers',     href: '/admin/dashboard/achievers',   icon: Trophy },
   { name: 'Results',           href: '/admin/dashboard/results',     icon: FileText },
   { name: 'Attendance',        href: '/admin/dashboard/attendance',  icon: UserCheck },
+  { name: 'Inquiry Register',  href: '/admin/dashboard/inquiries',   icon: ClipboardCheck },
   { name: 'Admissions',        href: '/admin/dashboard/admissions',  icon: ClipboardList },
   { name: 'Academic Classes',  href: '/admin/dashboard/academics/classes', icon: BookOpen },
   { name: 'Academic Groups',   href: '/admin/dashboard/academics/groups',  icon: Users },

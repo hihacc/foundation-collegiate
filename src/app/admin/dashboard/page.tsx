@@ -223,14 +223,14 @@ export default function AdminDashboardPage() {
 
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
           <Link
-            href="/admin/dashboard/ai-copilot"
+            href="/admin/dashboard/inquiries"
             className="p-4 rounded-2xl bg-gradient-to-br from-emerald-50 to-teal-100/60 border border-emerald-200 hover:border-emerald-400 hover:shadow-md transition-all group"
           >
             <div className="w-10 h-10 rounded-xl bg-emerald-600 text-white flex items-center justify-center font-bold mb-3 shadow-md group-hover:scale-110 transition-transform">
-              <Sparkles size={20} />
+              <ClipboardList size={20} />
             </div>
-            <div className="font-bold text-slate-900 text-xs sm:text-sm">🤖 AI Copilot</div>
-            <div className="text-[11px] text-emerald-700 mt-0.5">Database Assistant</div>
+            <div className="font-bold text-slate-900 text-xs sm:text-sm">📋 Inquiry Register</div>
+            <div className="text-[11px] text-emerald-700 mt-0.5">AI Ledger &amp; Walk-ins</div>
           </Link>
 
           <Link
@@ -245,14 +245,14 @@ export default function AdminDashboardPage() {
           </Link>
 
           <Link
-            href="/admin/dashboard/logs"
-            className="p-4 rounded-2xl bg-gradient-to-br from-indigo-50 to-indigo-100/50 border border-indigo-200 hover:border-indigo-400 hover:shadow-md transition-all group"
+            href="/admin/dashboard/ai-copilot"
+            className="p-4 rounded-2xl bg-gradient-to-br from-purple-50 to-indigo-100/60 border border-purple-200 hover:border-purple-400 hover:shadow-md transition-all group"
           >
-            <div className="w-10 h-10 rounded-xl bg-indigo-600 text-white flex items-center justify-center font-bold mb-3 shadow-md group-hover:scale-110 transition-transform">
-              <Activity size={20} />
+            <div className="w-10 h-10 rounded-xl bg-purple-600 text-white flex items-center justify-center font-bold mb-3 shadow-md group-hover:scale-110 transition-transform">
+              <Sparkles size={20} />
             </div>
-            <div className="font-bold text-slate-900 text-xs sm:text-sm">🛡️ Audit Logs</div>
-            <div className="text-[11px] text-indigo-700 mt-0.5">Telemetry &amp; Visits</div>
+            <div className="font-bold text-slate-900 text-xs sm:text-sm">🤖 AI Copilot</div>
+            <div className="text-[11px] text-purple-700 mt-0.5">Database Assistant</div>
           </Link>
 
           <Link
@@ -279,13 +279,13 @@ export default function AdminDashboardPage() {
 
           <Link
             href="/admin/dashboard/fees"
-            className="p-4 rounded-2xl bg-gradient-to-br from-purple-50 to-purple-100/50 border border-purple-200 hover:border-purple-400 hover:shadow-md transition-all group"
+            className="p-4 rounded-2xl bg-gradient-to-br from-teal-50 to-teal-100/50 border border-teal-200 hover:border-teal-400 hover:shadow-md transition-all group"
           >
-            <div className="w-10 h-10 rounded-xl bg-purple-600 text-white flex items-center justify-center font-bold mb-3 shadow-md group-hover:scale-110 transition-transform">
+            <div className="w-10 h-10 rounded-xl bg-teal-600 text-white flex items-center justify-center font-bold mb-3 shadow-md group-hover:scale-110 transition-transform">
               <Wallet size={20} />
             </div>
             <div className="font-bold text-slate-900 text-xs sm:text-sm">Fee Center</div>
-            <div className="text-[11px] text-purple-700 mt-0.5">Challans &amp; Payments</div>
+            <div className="text-[11px] text-teal-700 mt-0.5">Challans &amp; Payments</div>
           </Link>
         </div>
       </div>
