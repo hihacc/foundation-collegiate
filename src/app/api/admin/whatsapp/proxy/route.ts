@@ -35,6 +35,11 @@ export async function POST(req: NextRequest) {
         return NextResponse.json(res);
       }
 
+      case 'CONFIRM_ACCOUNT': {
+        const res = await TfcWhatsAppService.confirmAccount(payload.accountId, payload.phoneNumber);
+        return NextResponse.json(res);
+      }
+
       case 'DISCONNECT_ACCOUNT': {
         const res = await TfcWhatsAppService.disconnectAccount(payload.accountId);
         return NextResponse.json(res);

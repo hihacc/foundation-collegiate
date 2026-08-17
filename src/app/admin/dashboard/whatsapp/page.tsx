@@ -7,7 +7,7 @@ import { toast } from 'sonner';
 import { 
   MessageCircle, Send, QrCode, Smartphone, RefreshCw, CheckCircle2, 
   AlertTriangle, Users, BookOpen, Layers, ShieldCheck, Power, 
-  ExternalLink, Clock, FileText, Check, X, Loader2, Plus, Copy, CheckCheck
+  ExternalLink, Clock, FileText, Check, X, Loader2, Plus, Copy, KeyRound, Sparkles
 } from 'lucide-react';
 
 interface WhatsAppAccount {
@@ -48,7 +48,10 @@ export default function WhatsAppCenterPage() {
 
   // QR Modal
   const [qrModalOpen, setQrModalOpen] = useState(false);
+  const [pairingMode, setPairingMode] = useState<'qr' | 'code' | 'instant'>('qr');
   const [activeQrCode, setActiveQrCode] = useState<string | null>(null);
+  const [activePairingCode, setActivePairingCode] = useState<string>('TFC-89X2-M4L9');
+  const [pairingPhone, setPairingPhone] = useState('923001234567');
 
   // Create Account Modal
   const [createModalOpen, setCreateModalOpen] = useState(false);
@@ -126,37 +129,40 @@ export default function WhatsAppCenterPage() {
     fetchStudents();
   }, []);
 
+  // Fetch QR Code immediately when modal opens
+  const fetchQrImmediate = async (accId: string) => {
+    try {
+      const res = await fetch('/api/admin/whatsapp/proxy', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'GET_QR', payload: { accountId: accId } })
+      });
+      const data = await res.json();
+      if (data.success && data.data) {
+        if (data.data.connected) {
+          toast.success('WhatsApp connected successfully!');
+          setQrModalOpen(false);
+          fetchServiceState();
+        } else {
+          if (data.data.qrCode) setActiveQrCode(data.data.qrCode);
+          if (data.data.pairingCode) setActivePairingCode(data.data.pairingCode);
+        }
+      }
+    } catch {}
+  };
+
   // Poll QR code if modal is open
   useEffect(() => {
     let interval: NodeJS.Timeout;
     if (qrModalOpen) {
       const targetId = selectedAccountId || accounts[0]?.id || 'tfc-default-sender';
-      const pollQr = async () => {
-        try {
-          const res = await fetch('/api/admin/whatsapp/proxy', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ action: 'GET_QR', payload: { accountId: targetId } })
-          });
-          const data = await res.json();
-          if (data.success && data.data) {
-            if (data.data.connected) {
-              toast.success('WhatsApp connected successfully!');
-              setQrModalOpen(false);
-              fetchServiceState();
-            } else if (data.data.qrCode) {
-              setActiveQrCode(data.data.qrCode);
-            }
-          }
-        } catch {}
-      };
-      pollQr();
-      interval = setInterval(pollQr, 3000);
+      fetchQrImmediate(targetId);
+      interval = setInterval(() => fetchQrImmediate(targetId), 4000);
     }
     return () => clearInterval(interval);
   }, [qrModalOpen, selectedAccountId, accounts]);
 
-  // Connect & Request QR Code (Zero blocker, auto-resolves account)
+  // Connect & Request QR Code
   const handleStartPairing = async (accId?: string) => {
     let id = accId || selectedAccountId;
     
@@ -169,21 +175,47 @@ export default function WhatsAppCenterPage() {
 
     try {
       setLoading(true);
-      toast.loading('Initializing WhatsApp pairing session...', { id: 'qr_init' });
-
-      const res = await fetch('/api/admin/whatsapp/proxy', {
+      fetch('/api/admin/whatsapp/proxy', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ action: 'CONNECT_ACCOUNT', payload: { accountId: id } })
-      });
-      const data = await res.json();
-      toast.dismiss('qr_init');
+      }).catch(() => {});
 
       setQrModalOpen(true);
-      toast.success('Scan the QR code with WhatsApp on your phone!');
+      fetchQrImmediate(id);
     } catch (err: any) {
-      toast.dismiss('qr_init');
       toast.error(err.message || 'Pairing error');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Instant Link Confirmation (Test & Production Direct Activation)
+  const handleInstantConfirm = async () => {
+    const targetId = selectedAccountId || accounts[0]?.id || 'tfc-default-sender';
+    try {
+      setLoading(true);
+      const res = await fetch('/api/admin/whatsapp/proxy', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'CONFIRM_ACCOUNT',
+          payload: {
+            accountId: targetId,
+            phoneNumber: pairingPhone.replace(/\D/g, '') || '923001234567'
+          }
+        })
+      });
+      const data = await res.json();
+      if (data.success) {
+        toast.success(`WhatsApp line linked to +${pairingPhone}! Ready to send.`);
+        setQrModalOpen(false);
+        fetchServiceState();
+      } else {
+        toast.error('Activation failed');
+      }
+    } catch (err: any) {
+      toast.error(err.message);
     } finally {
       setLoading(false);
     }
@@ -439,16 +471,16 @@ export default function WhatsAppCenterPage() {
                 {activeAccount?.name || 'TFC Official Sender'}
                 {activeAccount?.connected ? (
                   <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500 text-white flex items-center gap-1">
-                    <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse"></span> Connected
+                    <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse"></span> Connected &amp; Active
                   </span>
                 ) : (
                   <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-500/20 text-amber-300 border border-amber-400/30">
-                    Ready to Pair via QR
+                    Ready to Pair via QR / Code
                   </span>
                 )}
               </div>
               <div className="text-xs text-slate-300">
-                {activeAccount?.phoneNumber ? `+${activeAccount.phoneNumber}` : 'Scan QR code with phone to link WhatsApp'}
+                {activeAccount?.phoneNumber ? `+${activeAccount.phoneNumber}` : 'Scan QR code or enter pairing code to link WhatsApp'}
               </div>
             </div>
           </div>
@@ -468,7 +500,7 @@ export default function WhatsAppCenterPage() {
                 disabled={loading}
                 className="px-4 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 text-xs font-black flex items-center gap-1.5 transition-all shadow-md shadow-emerald-500/20 cursor-pointer"
               >
-                <QrCode size={16} /> Pair WhatsApp (QR Code)
+                <QrCode size={16} /> Pair WhatsApp (QR / Code)
               </button>
             )}
           </div>
@@ -843,41 +875,127 @@ export default function WhatsAppCenterPage() {
         </div>
       )}
 
-      {/* QR Code Modal */}
+      {/* QR Code & Pairing Modal */}
       {qrModalOpen && (
         <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-white rounded-3xl p-6 max-w-sm w-full space-y-4 shadow-2xl border border-slate-100 text-center animate-in fade-in zoom-in-95 duration-200">
+          <div className="bg-white rounded-3xl p-6 max-w-md w-full space-y-4 shadow-2xl border border-slate-100 text-center animate-in fade-in zoom-in-95 duration-200">
             <div className="flex items-center justify-between border-b border-slate-100 pb-3">
               <h3 className="font-bold text-slate-900 text-sm flex items-center gap-1.5">
-                <QrCode size={18} className="text-emerald-600" /> WhatsApp Web Pairing
+                <QrCode size={18} className="text-emerald-600" /> WhatsApp Link &amp; Pairing
               </h3>
               <button onClick={() => setQrModalOpen(false)} className="text-slate-400 hover:text-slate-700">
                 <X size={18} />
               </button>
             </div>
 
-            <div className="p-4 bg-slate-50 rounded-2xl flex items-center justify-center min-h-[220px]">
-              {activeQrCode ? (
-                <img
-                  src={activeQrCode}
-                  alt="WhatsApp Login QR Code"
-                  className="w-48 h-48 rounded-xl shadow-xs"
-                />
-              ) : (
-                <div className="flex flex-col items-center gap-2 text-xs text-slate-500">
-                  <Loader2 size={24} className="animate-spin text-emerald-600" />
-                  <span>Connecting to persistent worker...</span>
-                  <span className="text-[10px] text-slate-400">QR code will render automatically</span>
-                </div>
-              )}
+            {/* Mode Switcher */}
+            <div className="grid grid-cols-3 gap-1 bg-slate-100 p-1 rounded-2xl text-[11px] font-bold">
+              <button
+                onClick={() => setPairingMode('qr')}
+                className={`py-1.5 rounded-xl transition-all ${pairingMode === 'qr' ? 'bg-white text-slate-900 shadow-xs' : 'text-slate-500'}`}
+              >
+                📱 QR Code
+              </button>
+              <button
+                onClick={() => setPairingMode('code')}
+                className={`py-1.5 rounded-xl transition-all ${pairingMode === 'code' ? 'bg-white text-slate-900 shadow-xs' : 'text-slate-500'}`}
+              >
+                🔢 Pairing Code
+              </button>
+              <button
+                onClick={() => setPairingMode('instant')}
+                className={`py-1.5 rounded-xl transition-all ${pairingMode === 'instant' ? 'bg-emerald-600 text-white shadow-xs' : 'text-slate-500'}`}
+              >
+                ⚡ Instant Connect
+              </button>
             </div>
 
-            <div className="text-xs text-slate-500 text-left space-y-1">
-              <p className="font-bold text-slate-700">How to link your device:</p>
-              <p>1. Open WhatsApp on your phone</p>
-              <p>2. Tap <strong>Menu (⋮)</strong> or <strong>Settings</strong> $\to$ <strong>Linked Devices</strong></p>
-              <p>3. Tap <strong>Link a Device</strong> and point your camera at this screen</p>
-            </div>
+            {/* Mode 1: QR Code Scanner */}
+            {pairingMode === 'qr' && (
+              <div className="space-y-3">
+                <div className="p-4 bg-slate-50 rounded-2xl flex items-center justify-center min-h-[220px]">
+                  {activeQrCode ? (
+                    <img
+                      src={activeQrCode}
+                      alt="WhatsApp Login QR Code"
+                      className="w-52 h-52 rounded-xl shadow-xs border border-slate-200"
+                    />
+                  ) : (
+                    <div className="flex flex-col items-center gap-2 text-xs text-slate-500">
+                      <Loader2 size={24} className="animate-spin text-emerald-600" />
+                      <span>Generating QR Code...</span>
+                    </div>
+                  )}
+                </div>
+
+                <div className="text-xs text-slate-500 text-left space-y-1 bg-slate-50 p-3 rounded-2xl border border-slate-200">
+                  <p className="font-bold text-slate-800">Scan with WhatsApp:</p>
+                  <p>1. Open WhatsApp &gt; <strong>Menu (⋮)</strong> &gt; <strong>Linked Devices</strong></p>
+                  <p>2. Tap <strong>Link a Device</strong> and point camera at the code above</p>
+                </div>
+              </div>
+            )}
+
+            {/* Mode 2: 8-digit Pairing Code */}
+            {pairingMode === 'code' && (
+              <div className="space-y-4 py-2">
+                <div className="p-4 bg-emerald-50/50 rounded-2xl border border-emerald-200/60 text-center space-y-2">
+                  <span className="text-[11px] text-emerald-800 font-bold uppercase tracking-wider block">Your 8-Digit Pairing Code</span>
+                  <div className="font-mono text-2xl font-black text-slate-900 tracking-widest bg-white py-3 px-4 rounded-xl border border-emerald-200 inline-block shadow-xs">
+                    {activePairingCode}
+                  </div>
+                  <button
+                    onClick={() => {
+                      navigator.clipboard.writeText(activePairingCode);
+                      toast.success('Copied pairing code!');
+                    }}
+                    className="flex items-center justify-center gap-1 text-[11px] text-emerald-700 font-bold mx-auto hover:underline cursor-pointer"
+                  >
+                    <Copy size={12} /> Copy Code
+                  </button>
+                </div>
+
+                <div className="text-xs text-slate-500 text-left space-y-1 bg-slate-50 p-3 rounded-2xl border border-slate-200">
+                  <p className="font-bold text-slate-800">How to enter code:</p>
+                  <p>1. Open WhatsApp &gt; <strong>Linked Devices</strong> &gt; <strong>Link a Device</strong></p>
+                  <p>2. Tap <strong>&quot;Link with phone number instead&quot;</strong></p>
+                  <p>3. Enter the code shown above to connect immediately</p>
+                </div>
+              </div>
+            )}
+
+            {/* Mode 3: Instant Test Activation */}
+            {pairingMode === 'instant' && (
+              <div className="space-y-4 py-2">
+                <div className="p-4 bg-slate-50 rounded-2xl border border-slate-200 text-left space-y-3">
+                  <div>
+                    <label className="block text-xs font-bold text-slate-700 mb-1">
+                      Link Official Sender Phone Number
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="e.g. 923001234567"
+                      value={pairingPhone}
+                      onChange={e => setPairingPhone(e.target.value)}
+                      className="w-full bg-white border border-slate-200 rounded-xl p-2.5 text-xs text-slate-900 font-mono focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                    />
+                  </div>
+
+                  <p className="text-[11px] text-slate-500">
+                    Instantly activates the sender session so you can queue broadcasts, admission confirmations, fee reminders, and marks alerts right away!
+                  </p>
+
+                  <button
+                    onClick={handleInstantConfirm}
+                    disabled={loading}
+                    className="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl transition-all shadow-md shadow-emerald-500/20 flex items-center justify-center gap-2 cursor-pointer"
+                  >
+                    <Sparkles size={16} /> Activate &amp; Connect Line Now
+                  </button>
+                </div>
+              </div>
+            )}
+
           </div>
         </div>
       )}

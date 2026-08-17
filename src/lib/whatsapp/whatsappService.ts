@@ -71,6 +71,13 @@ export class TfcWhatsAppService {
     return this.request(`/accounts/${accountId}/qr`);
   }
 
+  static async confirmAccount(accountId: string, phoneNumber?: string) {
+    return this.request(`/accounts/${accountId}/confirm`, {
+      method: 'POST',
+      body: JSON.stringify({ phoneNumber })
+    });
+  }
+
   static async disconnectAccount(accountId: string) {
     return this.request(`/accounts/${accountId}/disconnect`, { method: 'POST' });
   }
