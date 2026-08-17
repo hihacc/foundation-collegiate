@@ -12,6 +12,8 @@ import {
 } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { getStoredData, setStoredData } from '@/lib/utils/storage';
+import { logAdminActivity } from '@/lib/utils/auditLogger';
 
 function renderInlineMarkdown(text: string): string {
   let out = text;
@@ -185,12 +187,14 @@ export default function AiCopilotPage() {
     setLoading(true);
 
     try {
+      const storedStudents = getStoredData<any[]>('students', []);
       const response = await fetch('/api/admin/ai-copilot', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           prompt: text.trim(),
-          history: messages.slice(-8)
+          history: messages.slice(-8),
+          clientStudents: storedStudents
         })
       });
 
@@ -239,6 +243,28 @@ export default function AiCopilotPage() {
       if (!response.ok) {
         throw new Error(data.error || 'Failed to execute modification');
       }
+
+      // If modification was on students table, sync local storage
+      if (proposal.table === 'students') {
+        const storedStudents = getStoredData<any[]>('students', []);
+        if (proposal.action === 'DELETE') {
+          const updated = storedStudents.filter(s => s.id !== proposal.record_id && s.roll_number !== proposal.record_id && s.name !== proposal.record_id);
+          setStoredData('students', updated);
+        } else if (proposal.action === 'UPDATE') {
+          const updated = storedStudents.map(s => (s.id === proposal.record_id || s.roll_number === proposal.record_id) ? { ...s, ...proposal.changes } : s);
+          setStoredData('students', updated);
+        } else if (proposal.action === 'INSERT' && data.data) {
+          const updated = [data.data[0] || proposal.changes, ...storedStudents];
+          setStoredData('students', updated);
+        }
+      }
+
+      logAdminActivity({
+        category: 'AI_COPILOT',
+        action: 'AI_MUTATION_EXECUTED',
+        details: `Approved and executed AI action ${proposal.action} on ${proposal.table}: ${proposal.description}`,
+        severity: proposal.action === 'DELETE' ? 'WARNING' : 'SUCCESS'
+      });
 
       toast.success(data.message || 'Database successfully updated!');
       setMessages(prev =>

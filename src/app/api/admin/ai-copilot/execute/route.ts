@@ -4,9 +4,12 @@ import { supabase } from '@/lib/supabase/client';
 export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';
 
+const isUUID = (str: any) => typeof str === 'string' && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(str);
+
 export async function POST(req: NextRequest) {
   try {
-    const { action, table, record_id, changes } = await req.json();
+    const { proposal } = await req.json();
+    const { action, table, record_id, changes, description } = proposal || {};
 
     const allowedTables = ['students', 'results', 'fee_challans', 'admissions', 'notices', 'achievers', 'teachers', 'courses'];
 
@@ -19,11 +22,16 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({ error: 'Record ID is required for UPDATE action.' }, { status: 400 });
       }
 
-      const { data, error } = await supabase
-        .from(table)
-        .update(changes)
-        .eq('id', record_id)
-        .select();
+      let query = supabase.from(table).update(changes);
+      if (isUUID(record_id)) {
+        query = query.eq('id', record_id);
+      } else if (table === 'students') {
+        query = query.eq('roll_number', record_id);
+      } else {
+        query = query.eq('id', record_id);
+      }
+
+      const { data, error } = await query.select();
 
       if (error) {
         return NextResponse.json({ error: error.message }, { status: 500 });
@@ -41,10 +49,16 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({ error: 'Record ID is required for DELETE action.' }, { status: 400 });
       }
 
-      const { error } = await supabase
-        .from(table)
-        .delete()
-        .eq('id', record_id);
+      let query = supabase.from(table).delete();
+      if (isUUID(record_id)) {
+        query = query.eq('id', record_id);
+      } else if (table === 'students') {
+        query = query.eq('roll_number', record_id);
+      } else {
+        query = query.eq('id', record_id);
+      }
+
+      const { error } = await query;
 
       if (error) {
         return NextResponse.json({ error: error.message }, { status: 500 });
