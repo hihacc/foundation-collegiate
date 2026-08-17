@@ -155,22 +155,38 @@ export default function AdminAuditLogsPage() {
     toast.success('Audit logs exported to JSON!');
   };
 
-  // Handle Clear Logs
+  // Handle Clear Logs with Server-side PIN verification
   const handleConfirmClearLogs = async () => {
-    if (securityPinInput !== '1234' && securityPinInput !== 'admin') {
-      return toast.error('Invalid Security PIN. Access denied.');
+    if (!securityPinInput) {
+      return toast.error('Please enter the Master Security PIN');
     }
-    await clearAuditLogs();
-    await logAdminActivity({
-      category: 'SECURITY',
-      action: 'AUDIT_LOGS_FLUSHED',
-      details: 'Audit log entries were purged by administrator with verified master PIN',
-      severity: 'WARNING'
-    });
-    setShowClearModal(false);
-    setSecurityPinInput('');
-    fetchLogs();
-    toast.success('Audit logs cleared.');
+
+    try {
+      const res = await fetch('/api/admin/security/verify-pin', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ pin: securityPinInput.trim() })
+      });
+      const data = await res.json();
+
+      if (!res.ok || !data.success) {
+        return toast.error(data.error || 'Invalid Master Security PIN. Action denied.');
+      }
+
+      await clearAuditLogs();
+      await logAdminActivity({
+        category: 'SECURITY',
+        action: 'AUDIT_LOGS_FLUSHED',
+        details: 'Audit log entries were purged by administrator with verified master PIN',
+        severity: 'CRITICAL'
+      });
+      setShowClearModal(false);
+      setSecurityPinInput('');
+      fetchLogs();
+      toast.success('Audit logs cleared successfully with verified authorization.');
+    } catch (err: any) {
+      toast.error('Security verification error: ' + err.message);
+    }
   };
 
   const getCategoryBadge = (cat: AuditCategory) => {
