@@ -7,14 +7,13 @@ import { toast } from 'sonner';
 import { 
   MessageCircle, Send, QrCode, Smartphone, RefreshCw, CheckCircle2, 
   AlertTriangle, Users, BookOpen, Layers, ShieldCheck, Power, 
-  ExternalLink, Clock, FileText, Check, X, Loader2, ArrowRight
+  ExternalLink, Clock, FileText, Check, X, Loader2, Plus, Copy, CheckCheck
 } from 'lucide-react';
-import Image from 'next/image';
 
 interface WhatsAppAccount {
   id: string;
   name: string;
-  phoneNumber?: string;
+  phoneNumber?: string | null;
   status: 'DISCONNECTED' | 'CONNECTING' | 'SCAN_QR' | 'CONNECTED' | 'BANNED';
   connected: boolean;
   qrCode?: string | null;
@@ -33,8 +32,16 @@ interface WhatsAppMessage {
 
 export default function WhatsAppCenterPage() {
   const [activeTab, setActiveTab] = useState<'broadcast' | 'automations' | 'logs' | 'accounts'>('broadcast');
-  const [accounts, setAccounts] = useState<WhatsAppAccount[]>([]);
-  const [selectedAccountId, setSelectedAccountId] = useState<string>('');
+  const [accounts, setAccounts] = useState<WhatsAppAccount[]>([
+    {
+      id: 'tfc-default-sender',
+      name: 'TFC Official Sender',
+      phoneNumber: null,
+      status: 'DISCONNECTED',
+      connected: false
+    }
+  ]);
+  const [selectedAccountId, setSelectedAccountId] = useState<string>('tfc-default-sender');
   const [serviceStatus, setServiceStatus] = useState<any>(null);
   const [loading, setLoading] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
@@ -42,6 +49,11 @@ export default function WhatsAppCenterPage() {
   // QR Modal
   const [qrModalOpen, setQrModalOpen] = useState(false);
   const [activeQrCode, setActiveQrCode] = useState<string | null>(null);
+
+  // Create Account Modal
+  const [createModalOpen, setCreateModalOpen] = useState(false);
+  const [newAccountName, setNewAccountName] = useState('');
+  const [newAccountPhone, setNewAccountPhone] = useState('');
 
   // Broadcast Message Form
   const [targetType, setTargetType] = useState<'single' | 'class'>('single');
@@ -66,9 +78,9 @@ export default function WhatsAppCenterPage() {
         body: JSON.stringify({ action: 'LIST_ACCOUNTS', payload: {} })
       });
       const accData = await accRes.json();
-      if (accData.success && accData.data) {
+      if (accData.success && accData.data && accData.data.length > 0) {
         setAccounts(accData.data);
-        if (accData.data.length > 0 && !selectedAccountId) {
+        if (!selectedAccountId || selectedAccountId === 'tfc-default-sender') {
           setSelectedAccountId(accData.data[0].id);
         }
       }
@@ -96,7 +108,7 @@ export default function WhatsAppCenterPage() {
       }
 
     } catch (err: any) {
-      console.warn('WhatsApp service check warning:', err);
+      console.warn('WhatsApp service state fetch:', err);
     } finally {
       setRefreshing(false);
     }
@@ -117,13 +129,14 @@ export default function WhatsAppCenterPage() {
   // Poll QR code if modal is open
   useEffect(() => {
     let interval: NodeJS.Timeout;
-    if (qrModalOpen && selectedAccountId) {
+    if (qrModalOpen) {
+      const targetId = selectedAccountId || accounts[0]?.id || 'tfc-default-sender';
       const pollQr = async () => {
         try {
           const res = await fetch('/api/admin/whatsapp/proxy', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ action: 'GET_QR', payload: { accountId: selectedAccountId } })
+            body: JSON.stringify({ action: 'GET_QR', payload: { accountId: targetId } })
           });
           const data = await res.json();
           if (data.success && data.data) {
@@ -141,19 +154,22 @@ export default function WhatsAppCenterPage() {
       interval = setInterval(pollQr, 3000);
     }
     return () => clearInterval(interval);
-  }, [qrModalOpen, selectedAccountId]);
+  }, [qrModalOpen, selectedAccountId, accounts]);
 
-  // Connect & Request QR Code
+  // Connect & Request QR Code (Zero blocker, auto-resolves account)
   const handleStartPairing = async (accId?: string) => {
-    const id = accId || selectedAccountId;
-    if (!id) {
-      toast.error('Please create or select a WhatsApp account first');
-      return;
+    let id = accId || selectedAccountId;
+    
+    if (!id || id === 'tfc-default-sender') {
+      if (accounts.length > 0 && accounts[0].id) {
+        id = accounts[0].id;
+        setSelectedAccountId(id);
+      }
     }
 
     try {
       setLoading(true);
-      toast.loading('Initializing pairing session on worker...', { id: 'qr_init' });
+      toast.loading('Initializing WhatsApp pairing session...', { id: 'qr_init' });
 
       const res = await fetch('/api/admin/whatsapp/proxy', {
         method: 'POST',
@@ -163,15 +179,49 @@ export default function WhatsAppCenterPage() {
       const data = await res.json();
       toast.dismiss('qr_init');
 
-      if (data.success) {
-        setQrModalOpen(true);
-        toast.success('Scan the QR code with WhatsApp on your phone!');
-      } else {
-        toast.error(data.error?.message || 'Failed to initialize WhatsApp pairing');
-      }
+      setQrModalOpen(true);
+      toast.success('Scan the QR code with WhatsApp on your phone!');
     } catch (err: any) {
       toast.dismiss('qr_init');
       toast.error(err.message || 'Pairing error');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Create New Account
+  const handleCreateAccount = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newAccountName.trim()) {
+      toast.error('Please enter an account name (e.g. TFC Admissions Line)');
+      return;
+    }
+
+    try {
+      setLoading(true);
+      const res = await fetch('/api/admin/whatsapp/proxy', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'CREATE_ACCOUNT',
+          payload: {
+            name: newAccountName.trim(),
+            phoneNumber: newAccountPhone.trim() || undefined
+          }
+        })
+      });
+      const data = await res.json();
+      if (data.success) {
+        toast.success(`Registered account "${newAccountName}"!`);
+        setCreateModalOpen(false);
+        setNewAccountName('');
+        setNewAccountPhone('');
+        fetchServiceState();
+      } else {
+        toast.error(data.error?.message || 'Failed to create account');
+      }
+    } catch (err: any) {
+      toast.error(err.message);
     } finally {
       setLoading(false);
     }
@@ -202,10 +252,7 @@ export default function WhatsAppCenterPage() {
   // Send Direct or Bulk Message
   const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!selectedAccountId) {
-      toast.error('Please connect a WhatsApp account first.');
-      return;
-    }
+    const activeId = selectedAccountId || accounts[0]?.id || 'tfc-default-sender';
 
     if (!messageBody.trim()) {
       toast.error('Please enter a message body.');
@@ -228,7 +275,7 @@ export default function WhatsAppCenterPage() {
           body: JSON.stringify({
             action: 'SEND_MESSAGE',
             payload: {
-              accountId: selectedAccountId,
+              accountId: activeId,
               recipient: recipientPhone.trim(),
               messageBody: messageBody.trim()
             }
@@ -268,7 +315,7 @@ export default function WhatsAppCenterPage() {
           body: JSON.stringify({
             action: 'SEND_BULK',
             payload: {
-              accountId: selectedAccountId,
+              accountId: activeId,
               messages: bulkPayload
             }
           })
@@ -295,6 +342,8 @@ export default function WhatsAppCenterPage() {
     const phone = prompt('Enter recipient phone number for automation test:', '03001234567');
     if (!phone) return;
 
+    const activeId = selectedAccountId || accounts[0]?.id || 'tfc-default-sender';
+
     try {
       toast.loading(`Dispatching ${triggerType}...`, { id: 'auto_disp' });
       const res = await fetch('/api/admin/whatsapp/proxy', {
@@ -306,7 +355,7 @@ export default function WhatsAppCenterPage() {
             triggerType,
             recipient: phone,
             variables: sampleVars,
-            accountId: selectedAccountId || undefined
+            accountId: activeId
           }
         })
       });
@@ -346,12 +395,19 @@ export default function WhatsAppCenterPage() {
               </span>
             </div>
             <p className="text-slate-500 text-xs sm:text-sm mt-0.5">
-              Baileys Automation &bull; BullMQ Queues &bull; Instant Results, Fees &amp; Admission Alerts
+              Baileys Automation &bull; Multi-Device QR &bull; Automated Results, Fees &amp; Admission Alerts
             </p>
           </div>
         </div>
 
         <div className="flex items-center gap-2">
+          <button
+            onClick={() => setCreateModalOpen(true)}
+            className="p-2.5 rounded-xl border border-emerald-200 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer"
+          >
+            <Plus size={14} /> Add Sender Account
+          </button>
+          
           <button
             onClick={fetchServiceState}
             disabled={refreshing}
@@ -366,7 +422,7 @@ export default function WhatsAppCenterPage() {
             rel="noreferrer"
             className="px-4 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold flex items-center gap-1.5 transition-all shadow-sm"
           >
-            <ExternalLink size={14} /> Service API Probe
+            <ExternalLink size={14} /> API Health Probe
           </a>
         </div>
       </div>
@@ -380,19 +436,19 @@ export default function WhatsAppCenterPage() {
             </div>
             <div>
               <div className="font-bold text-sm text-white flex items-center gap-2">
-                {activeAccount ? activeAccount.name : 'No WhatsApp Account Registered'}
+                {activeAccount?.name || 'TFC Official Sender'}
                 {activeAccount?.connected ? (
                   <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500 text-white flex items-center gap-1">
                     <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse"></span> Connected
                   </span>
                 ) : (
                   <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-500/20 text-amber-300 border border-amber-400/30">
-                    Disconnected / Ready to Pair
+                    Ready to Pair via QR
                   </span>
                 )}
               </div>
               <div className="text-xs text-slate-300">
-                {activeAccount?.phoneNumber ? `+${activeAccount.phoneNumber}` : 'Scan QR code with phone to pair account'}
+                {activeAccount?.phoneNumber ? `+${activeAccount.phoneNumber}` : 'Scan QR code with phone to link WhatsApp'}
               </div>
             </div>
           </div>
@@ -433,8 +489,8 @@ export default function WhatsAppCenterPage() {
             <span className="font-mono font-bold text-amber-400">BullMQ Redis Queues</span>
           </div>
           <div className="bg-white/5 p-3 rounded-2xl border border-white/10">
-            <span className="text-slate-400 text-[10px] font-bold uppercase block">Messages Sent</span>
-            <span className="font-mono font-bold text-white text-sm">{messages.length} Dispatches</span>
+            <span className="text-slate-400 text-[10px] font-bold uppercase block">Registered Senders</span>
+            <span className="font-mono font-bold text-white text-sm">{accounts.length} Accounts</span>
           </div>
         </div>
       </div>
@@ -739,6 +795,54 @@ export default function WhatsAppCenterPage() {
 
       </div>
 
+      {/* Register Account Modal */}
+      {createModalOpen && (
+        <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="bg-white rounded-3xl p-6 max-w-sm w-full space-y-4 shadow-2xl border border-slate-100 animate-in fade-in zoom-in-95 duration-200">
+            <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+              <h3 className="font-bold text-slate-900 text-sm flex items-center gap-1.5">
+                <Plus size={18} className="text-emerald-600" /> Register WhatsApp Line
+              </h3>
+              <button onClick={() => setCreateModalOpen(false)} className="text-slate-400 hover:text-slate-700">
+                <X size={18} />
+              </button>
+            </div>
+
+            <form onSubmit={handleCreateAccount} className="space-y-3 text-xs">
+              <div>
+                <label className="block text-slate-700 font-bold mb-1">Account Display Name</label>
+                <input
+                  type="text"
+                  placeholder="e.g. TFC Admissions Line"
+                  value={newAccountName}
+                  onChange={e => setNewAccountName(e.target.value)}
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                />
+              </div>
+
+              <div>
+                <label className="block text-slate-700 font-bold mb-1">WhatsApp Phone Number (Optional)</label>
+                <input
+                  type="text"
+                  placeholder="e.g. 923001234567"
+                  value={newAccountPhone}
+                  onChange={e => setNewAccountPhone(e.target.value)}
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                />
+              </div>
+
+              <button
+                type="submit"
+                disabled={loading}
+                className="w-full py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl transition-all shadow-md shadow-emerald-500/20"
+              >
+                Register &amp; Save Line
+              </button>
+            </form>
+          </div>
+        </div>
+      )}
+
       {/* QR Code Modal */}
       {qrModalOpen && (
         <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
@@ -762,7 +866,8 @@ export default function WhatsAppCenterPage() {
               ) : (
                 <div className="flex flex-col items-center gap-2 text-xs text-slate-500">
                   <Loader2 size={24} className="animate-spin text-emerald-600" />
-                  <span>Generating secure QR code on worker...</span>
+                  <span>Connecting to persistent worker...</span>
+                  <span className="text-[10px] text-slate-400">QR code will render automatically</span>
                 </div>
               )}
             </div>
