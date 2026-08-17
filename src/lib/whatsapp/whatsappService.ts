@@ -3,7 +3,7 @@
  * Calls the dedicated microservice at https://foundation-whatsapp.vercel.app
  */
 
-const WHATSAPP_SERVICE_BASE_URL = process.env.WHATSAPP_SERVICE_URL || 'https://foundation-whatsapp.vercel.app';
+const WHATSAPP_SERVICE_BASE_URL = process.env.WHATSAPP_SERVICE_URL || 'https://foundation-whatsapp1-production.up.railway.app';
 const WHATSAPP_SERVICE_API_KEY = process.env.TFC_SERVICE_API_KEY || 'tfc_whatsapp_sec_key_2026_live_99x';
 
 export interface WhatsAppResponse<T = any> {

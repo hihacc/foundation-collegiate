@@ -449,7 +449,7 @@ export default function WhatsAppCenterPage() {
           </button>
           
           <a
-            href="https://foundation-whatsapp.vercel.app/api/v1/health"
+            href="https://foundation-whatsapp1-production.up.railway.app/api/v1/health"
             target="_blank"
             rel="noreferrer"
             className="px-4 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold flex items-center gap-1.5 transition-all shadow-sm"
