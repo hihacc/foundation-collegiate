@@ -34,12 +34,18 @@ export default function AdminBackupsPage() {
   const [restoring, setRestoring] = useState(false);
   const [lastBackupTime, setLastBackupTime] = useState<string>('');
   
-  // 1-minute timer settings for local testing
-  const [timerIntervalSec, setTimerIntervalSec] = useState<number>(60); // 1 minute default
-  const [secondsLeft, setSecondsLeft] = useState<number>(60);
+  // Timer interval settings (Default to 1 Hour = 3600s)
+  const [timerIntervalSec, setTimerIntervalSec] = useState<number>(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('tfc_backup_interval_sec');
+      if (saved) return Number(saved);
+    }
+    return 3600; // 1 Hour default
+  });
+  const [secondsLeft, setSecondsLeft] = useState<number>(3600);
   const [isAutoTimerRunning, setIsAutoTimerRunning] = useState<boolean>(true);
 
-  // Load existing backup logs
+  // Load existing backup logs and restore interval state
   useEffect(() => {
     const fetchBackupLogs = () => {
       setLoading(true);
@@ -50,13 +56,24 @@ export default function AdminBackupsPage() {
             filename: 'TFC-Backup-Snapshot-2026.json',
             file_size: '248.50 KB',
             total_records: 48,
-            trigger_type: 'Hourly Auto Cron',
+            trigger_type: 'Hourly Auto Cloud Cron',
             status: 'Completed',
             created_at: new Date(Date.now() - 3600000).toISOString()
           }
         ]);
         setBackups(localLogs);
-        if (localLogs.length > 0) setLastBackupTime(localLogs[0].created_at);
+        if (localLogs.length > 0) {
+          setLastBackupTime(localLogs[0].created_at);
+          
+          // Calculate remaining seconds based on last execution
+          const lastTs = new Date(localLogs[0].created_at).getTime();
+          const elapsedSec = Math.floor((Date.now() - lastTs) / 1000);
+          if (elapsedSec < timerIntervalSec) {
+            setSecondsLeft(timerIntervalSec - elapsedSec);
+          } else {
+            setSecondsLeft(timerIntervalSec);
+          }
+        }
       } catch {
         setBackups([]);
       } finally {
@@ -65,16 +82,26 @@ export default function AdminBackupsPage() {
     };
 
     fetchBackupLogs();
-  }, []);
+  }, [timerIntervalSec]);
 
-  // 1-minute countdown and auto-execution ticker
+  // Save chosen interval
+  const handleIntervalChange = (val: number) => {
+    setTimerIntervalSec(val);
+    setSecondsLeft(val);
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('tfc_backup_interval_sec', val.toString());
+    }
+    toast.info(`Backup automated schedule set to every ${val >= 3600 ? `${val / 3600} Hour(s)` : `${val / 60} Minute(s)`}`);
+  };
+
+  // Automated countdown ticker
   useEffect(() => {
     if (!isAutoTimerRunning) return;
 
     const ticker = setInterval(() => {
       setSecondsLeft((prev) => {
         if (prev <= 1) {
-          console.log('[1-Min Auto Backup] Triggering automated snapshot...');
+          console.log('[Auto Backup Dispatcher] Firing scheduled cloud database snapshot...');
           handleGenerateBackup(true);
           return timerIntervalSec;
         }
@@ -84,6 +111,25 @@ export default function AdminBackupsPage() {
 
     return () => clearInterval(ticker);
   }, [isAutoTimerRunning, timerIntervalSec]);
+
+  const formatCountdown = (totalSecs: number) => {
+    const hours = Math.floor(totalSecs / 3600);
+    const mins = Math.floor((totalSecs % 3600) / 60);
+    const secs = totalSecs % 60;
+    if (hours > 0) {
+      return `${hours}h : ${mins.toString().padStart(2, '0')}m : ${secs.toString().padStart(2, '0')}s`;
+    }
+    return `${mins}m : ${secs.toString().padStart(2, '0')}s`;
+  };
+
+  const getIntervalLabel = (sec: number) => {
+    if (sec === 3600) return 'Every 1 Hour (Standard Cloud Cron)';
+    if (sec === 7200) return 'Every 2 Hours';
+    if (sec === 10800) return 'Every 3 Hours';
+    if (sec === 1800) return 'Every 30 Minutes';
+    if (sec === 60) return 'Every 1 Minute (Test Mode)';
+    return `Every ${Math.round(sec / 60)} Minutes`;
+  };
 
   const handleGenerateBackup = async (isBackground = false) => {
     if (!isBackground) setGenerating(true);
@@ -102,7 +148,7 @@ export default function AdminBackupsPage() {
           filename: data.filename,
           file_size: data.file_size,
           total_records: data.total_records,
-          trigger_type: isBackground ? `Auto Timer (${timerIntervalSec === 60 ? '1 Min' : '1 Hour'})` : 'Manual Admin Trigger',
+          trigger_type: isBackground ? `Auto Scheduled (${getIntervalLabel(timerIntervalSec)})` : 'Manual Admin Trigger',
           status: 'Completed',
           created_at: data.timestamp
         };
@@ -117,7 +163,7 @@ export default function AdminBackupsPage() {
 
         // Notification
         if (isBackground) {
-          toast.success(`⚡ 1-Minute Automated Backup Snapshot emailed to foundationcollegiate@gmail.com & hihacc36@gmail.com! (${data.file_size})`);
+          toast.success(`⚡ Automated Backup Snapshot emailed to foundationcollegiate@gmail.com & hihacc36@gmail.com! (${data.file_size})`);
         } else {
           const blob = new Blob([JSON.stringify(data.backup_data, null, 2)], { type: 'application/json' });
           const url = URL.createObjectURL(blob);
@@ -148,61 +194,54 @@ export default function AdminBackupsPage() {
     const reader = new FileReader();
     reader.onload = async (event) => {
       try {
-        const content = event.target?.result as string;
-        const parsed = JSON.parse(content);
-
-        if (!parsed.tables || !parsed.meta) {
-          throw new Error('Invalid TFC backup format. Missing metadata or tables block.');
-        }
-
-        if (!confirm(`Are you sure you want to restore database from "${file.name}"? This will overwrite existing records with backup data.`)) {
-          return;
-        }
-
         setRestoring(true);
-        const toastId = toast.loading('Restoring database tables...');
+        const toastId = toast.loading('Parsing and restoring database snapshot...');
+        const jsonContent = JSON.parse(event.target?.result as string);
 
         const res = await fetch('/api/backup/restore', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ backup_data: parsed })
+          body: JSON.stringify({ backup_data: jsonContent })
         });
 
-        const resData = await res.json();
-        if (resData.success) {
-          toast.success('Database successfully restored from backup file!', { id: toastId });
-          setTimeout(() => {
-            window.location.reload();
-          }, 1500);
+        const data = await res.json();
+        if (data.success) {
+          toast.success(`Database restored successfully! (${data.restored_count} records recovered)`, { id: toastId });
         } else {
-          toast.error('Restore failed: ' + (resData.error || 'Unknown error'), { id: toastId });
+          toast.error(`Restore notice: ${data.error || 'Failed to restore'}`, { id: toastId });
         }
       } catch (err: any) {
-        toast.error('Failed to process backup file: ' + err.message);
+        toast.error('Invalid backup JSON file: ' + err.message);
       } finally {
         setRestoring(false);
-        e.target.value = '';
       }
     };
     reader.readAsText(file);
   };
 
   return (
-    <div className="p-4 sm:p-8 max-w-7xl mx-auto space-y-8 font-sans">
+    <div className="space-y-6 max-w-7xl mx-auto font-sans pb-12">
       
-      {/* Header Banner */}
-      <div className="relative overflow-hidden bg-gradient-to-br from-slate-900 via-blue-950 to-indigo-950 text-white rounded-3xl p-6 sm:p-10 shadow-xl border border-blue-900/40">
-        <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
+      {/* Hero Header */}
+      <div className="relative overflow-hidden rounded-3xl bg-slate-900 border border-slate-800 p-6 sm:p-8 shadow-xl">
+        <div className="absolute -right-12 -top-12 w-64 h-64 bg-blue-500/10 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute -left-12 -bottom-12 w-64 h-64 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
+
+        <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
           <div className="space-y-2 max-w-2xl">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/20 border border-blue-400/30 text-blue-300 text-xs font-bold uppercase tracking-wider">
-              <ShieldCheck size={14} className="text-emerald-400" />
-              Automated Cloud Backups Active
+            <div className="flex items-center gap-2">
+              <span className="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
+                Hourly Automated Cloud Sync Active
+              </span>
+              <span className="px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-blue-500/20 text-blue-300 border border-blue-500/30">
+                24/7 Cloud Cron (0 * * * *)
+              </span>
             </div>
             <h1 className="text-2xl sm:text-4xl font-extrabold tracking-tight text-white">
               Database Backup &amp; Email Vault
             </h1>
             <p className="text-slate-300 text-xs sm:text-sm leading-relaxed">
-              Automated full JSON snapshots of all 19 database tables are emailed directly to your admin email addresses.
+              Automated full JSON snapshots of all 19 database tables are emailed directly to your admin email addresses every hour.
             </p>
           </div>
 
@@ -213,7 +252,7 @@ export default function AdminBackupsPage() {
               className="inline-flex items-center gap-2 px-6 py-3.5 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-2xl transition-all shadow-lg hover:shadow-blue-500/25 active:scale-95 disabled:opacity-50 cursor-pointer text-xs sm:text-sm"
             >
               <Send size={16} className={generating ? 'animate-spin' : ''} />
-              {generating ? 'Generating & Emailing...' : 'Generate & Email Backup Now'}
+              {generating ? 'Generating & Emailing...' : 'Send Backup Email Now'}
             </button>
 
             <label className="inline-flex items-center gap-2 px-5 py-3.5 bg-white/10 hover:bg-white/20 text-white border border-white/20 font-bold rounded-2xl transition-all backdrop-blur-sm cursor-pointer text-xs sm:text-sm">
@@ -231,7 +270,7 @@ export default function AdminBackupsPage() {
         </div>
       </div>
 
-      {/* 1-Minute Local Auto-Timer Live Controller Card */}
+      {/* Auto-Timer Live Controller Card */}
       <div className="bg-gradient-to-r from-blue-50 via-indigo-50 to-emerald-50 border border-blue-200 rounded-3xl p-6 shadow-sm flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
         <div className="space-y-1">
           <div className="flex items-center gap-2">
@@ -240,12 +279,12 @@ export default function AdminBackupsPage() {
               <span className={`relative inline-flex rounded-full h-3 w-3 ${isAutoTimerRunning ? 'bg-emerald-500' : 'bg-amber-500'}`}></span>
             </span>
             <span className="text-xs font-bold text-blue-950 uppercase tracking-wider">
-              {timerIntervalSec === 60 ? '⚡ 1-Minute Local Test Timer Active' : 'Automated Hourly Timer Active'}
+              {getIntervalLabel(timerIntervalSec)} Active
             </span>
           </div>
           <p className="text-sm font-bold text-slate-800">
             Next automated email snapshot in:{' '}
-            <span className="font-mono text-xl text-blue-700 font-extrabold">{secondsLeft}s</span>
+            <span className="font-mono text-xl text-blue-700 font-extrabold">{formatCountdown(secondsLeft)}</span>
           </p>
           <p className="text-xs text-slate-500">
             Dispatches full snapshot to <strong className="text-slate-700">foundationcollegiate@gmail.com</strong> &amp; <strong className="text-slate-700">hihacc36@gmail.com</strong>
@@ -255,29 +294,26 @@ export default function AdminBackupsPage() {
         <div className="flex items-center gap-3 flex-wrap">
           <select
             value={timerIntervalSec}
-            onChange={(e) => {
-              const val = Number(e.target.value);
-              setTimerIntervalSec(val);
-              setSecondsLeft(val);
-            }}
-            className="px-3.5 py-2 bg-white border border-slate-300 text-slate-800 rounded-xl text-xs font-bold shadow-xs outline-none cursor-pointer"
+            onChange={(e) => handleIntervalChange(Number(e.target.value))}
+            className="px-3.5 py-2.5 bg-white border border-slate-300 text-slate-800 rounded-xl text-xs font-bold shadow-xs outline-none cursor-pointer"
           >
-            <option value={60}>⚡ 1 Minute (Local Test Mode)</option>
-            <option value={120}>2 Minutes</option>
-            <option value={300}>5 Minutes</option>
-            <option value={3600}>60 Minutes (Standard Production)</option>
+            <option value={3600}>⏰ Every 1 Hour (Standard Cloud Cron)</option>
+            <option value={7200}>⏰ Every 2 Hours</option>
+            <option value={10800}>⏰ Every 3 Hours</option>
+            <option value={1800}>⏰ Every 30 Minutes</option>
+            <option value={60}>⚡ Every 1 Minute (Quick Test Mode)</option>
           </select>
 
           <button
             type="button"
             onClick={() => setIsAutoTimerRunning(!isAutoTimerRunning)}
-            className={`px-4 py-2 rounded-xl text-xs font-bold transition-all shadow-xs cursor-pointer ${
+            className={`px-4 py-2.5 rounded-xl text-xs font-bold transition-all shadow-xs cursor-pointer ${
               isAutoTimerRunning
                 ? 'bg-amber-100 hover:bg-amber-200 text-amber-900 border border-amber-300'
                 : 'bg-emerald-600 hover:bg-emerald-700 text-white'
             }`}
           >
-            {isAutoTimerRunning ? '⏸ Pause Timer' : '▶ Resume 1-Min Timer'}
+            {isAutoTimerRunning ? '⏸ Pause Timer' : '▶ Resume Auto Timer'}
           </button>
         </div>
       </div>
@@ -290,7 +326,7 @@ export default function AdminBackupsPage() {
             <Mail size={16} className="text-emerald-500" />
           </div>
           <div className="text-xl font-bold text-emerald-600 flex items-center gap-1.5">
-            <CheckCircle2 size={18} /> {timerIntervalSec === 60 ? 'Every 1 Minute' : 'Every 60 Minutes'}
+            <CheckCircle2 size={18} /> {getIntervalLabel(timerIntervalSec)}
           </div>
           <p className="text-xs text-slate-500 mt-1">24/7 Automated email dispatch</p>
         </div>
