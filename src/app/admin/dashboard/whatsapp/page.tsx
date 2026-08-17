@@ -1264,18 +1264,31 @@ export default function WhatsAppCenterPage() {
                 )}
               </div>
 
-              <button
-                type="submit"
-                disabled={sending}
-                className="px-6 py-3 rounded-2xl bg-emerald-600 hover:bg-emerald-700 disabled:opacity-50 text-white font-bold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-sm shadow-emerald-600/20 transition-all cursor-pointer"
-              >
-                {sending ? <Loader2 size={16} className="animate-spin" /> : <Send size={16} />}
-                <span>
-                  {targetType === 'single' ? 'Send Instant Message' : 
-                   targetType === 'class' ? `Broadcast to Class ${selectedClass}` : 
-                   `Blast Broadcast List (${broadcastLists.find(l => l.id === selectedListId)?.contacts.length || 0})`}
-                </span>
-              </button>
+              <div className="flex items-center gap-2 flex-wrap">
+                {targetType === 'single' && recipientPhone && (
+                  <a
+                    href={`https://web.whatsapp.com/send?phone=${recipientPhone.replace(/[^0-9]/g, '').replace(/^0/, '92')}&text=${encodeURIComponent(messageBody)}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="px-5 py-3 rounded-2xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-xs transition-all cursor-pointer"
+                  >
+                    <ExternalLink size={16} /> Open in WhatsApp Web
+                  </a>
+                )}
+
+                <button
+                  type="submit"
+                  disabled={sending}
+                  className="px-6 py-3 rounded-2xl bg-emerald-600 hover:bg-emerald-700 disabled:opacity-50 text-white font-bold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-sm shadow-emerald-600/20 transition-all cursor-pointer"
+                >
+                  {sending ? <Loader2 size={16} className="animate-spin" /> : <Send size={16} />}
+                  <span>
+                    {targetType === 'single' ? 'Send Instant Message' : 
+                     targetType === 'class' ? `Broadcast to Class ${selectedClass}` : 
+                     `Blast Broadcast List (${broadcastLists.find(l => l.id === selectedListId)?.contacts.length || 0})`}
+                  </span>
+                </button>
+              </div>
             </div>
           </form>
         </div>
