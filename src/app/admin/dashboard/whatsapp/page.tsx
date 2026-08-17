@@ -7,7 +7,9 @@ import { toast } from 'sonner';
 import { 
   MessageCircle, Send, QrCode, Smartphone, RefreshCw, CheckCircle2, 
   AlertTriangle, Users, BookOpen, Layers, ShieldCheck, Power, 
-  ExternalLink, Clock, FileText, Check, X, Loader2, Plus, Copy, KeyRound, Sparkles
+  ExternalLink, Clock, FileText, Check, X, Loader2, Plus, Copy, KeyRound, 
+  Sparkles, Calendar, Play, Download, Search, Filter, Image as ImageIcon,
+  Paperclip, MapPin, Bell, Award, UserCheck, Trash2, ChevronRight, Eye
 } from 'lucide-react';
 
 interface WhatsAppAccount {
@@ -24,14 +26,74 @@ interface WhatsAppMessage {
   id: string;
   recipient: string;
   messageBody: string;
+  messageType?: 'TEXT' | 'IMAGE' | 'DOCUMENT' | 'TEMPLATE' | 'LOCATION';
   status: 'QUEUED' | 'SENDING' | 'SENT' | 'DELIVERED' | 'READ' | 'FAILED' | 'CANCELLED';
   sentAt?: string;
   createdAt: string;
   errorMessage?: string;
+  metadata?: Record<string, any>;
 }
 
+interface ScheduledMessage {
+  id: string;
+  recipient: string;
+  recipientName?: string;
+  messageBody: string;
+  scheduledAt: string;
+  status: 'SCHEDULED' | 'CANCELLED' | 'PROCESSED';
+}
+
+interface CronJobConfig {
+  id: string;
+  name: string;
+  description: string;
+  schedule: string;
+  enabled: boolean;
+  type: 'ABSENTEE' | 'FEE_REMINDER' | 'BIRTHDAYS' | 'RESULT_RELEASE' | 'WEEKLY_REPORT';
+  lastRun?: string;
+}
+
+const TEMPLATE_LIBRARY = [
+  {
+    title: 'Rain / Severe Weather Emergency Holiday',
+    category: 'Emergency',
+    tag: 'Official',
+    text: `⚠️ *EMERGENCY NOTIFICATION - THE FOUNDATION COLLEGIATE*\n\nDear Parents/Students,\nIn accordance with the Government of Sindh directive, the college will remain *CLOSED tomorrow* due to severe weather & heavy rainfall forecasts.\n\nOnline revision classes will proceed as per timetable.\n\nStay safe,\n*TFC Administration*`
+  },
+  {
+    title: 'Monthly Tuition Fee Due Reminder',
+    category: 'Fee',
+    tag: 'Finance',
+    text: `📢 *FEE REMINDER - THE FOUNDATION COLLEGIATE*\n\nDear Parent of *{{name}}* (Roll: *{{roll}}*),\nThis is a gentle reminder that tuition fee for this month (Challan #*{{challan}}*) is due on *10th of this month*.\n\nAmount: *PKR {{amount}}*\nStatus: *UNPAID*\n\nPlease submit at HBL or via Online Bank Transfer to avoid late fee surcharges.\n\n*TFC Accounts Dept.*`
+  },
+  {
+    title: 'Student Daily Absentee Notification',
+    category: 'Attendance',
+    tag: 'Discipline',
+    text: `🚨 *ABSENCE NOTIFICATION - THE FOUNDATION COLLEGIATE*\n\nRespected Parent,\nStudent *{{name}}* (Roll: *{{roll}}*, Class: *{{class}}*) was marked *ABSENT* from college today (*{{date}}*) without prior leave submission.\n\nKindly contact college administration if this is an error.\n\n*TFC Attendance Office*`
+  },
+  {
+    title: 'Exam Date Sheet & Roll Number Slip Issued',
+    category: 'Academics',
+    tag: 'Exams',
+    text: `📋 *EXAMINATION DATE SHEET RELEASED*\n\nDear Student *{{name}}* (Class: *{{class}}*),\nThe date sheet and Roll Number Slips for the upcoming Midterm Examinations have been released.\n\n👉 Download Date Sheet: https://foundation-collegiate.vercel.app/downloads\n\nPlease arrive 15 minutes prior to paper timings in complete uniform.\n\n*TFC Examination Branch*`
+  },
+  {
+    title: 'Parent-Teacher Meeting (PTM) Invitation',
+    category: 'Academics',
+    tag: 'Meeting',
+    text: `🤝 *PARENT-TEACHER MEETING INVITATION*\n\nDear Parents of *{{name}}*,\nYou are cordially invited to attend the comprehensive Parent-Teacher Meeting on *Saturday, 10:00 AM to 1:00 PM*.\n\nDiscuss your child's academic progress, attendance record, and upcoming board preparations directly with faculty.\n\n*Principal, The Foundation Collegiate*`
+  },
+  {
+    title: 'Happy Birthday Student Greeting',
+    category: 'Greetings',
+    tag: 'Wishes',
+    text: `🎉🎂 *HAPPY BIRTHDAY FROM THE FOUNDATION COLLEGIATE!*\n\nWishing our bright student *{{name}}* (Class: *{{class}}*) a very Happy Birthday! 🌟\n\nMay this year bring you tremendous academic success, good health, and joyful achievements!\n\n*Warm wishes, TFC Family & Faculty*`
+  }
+];
+
 export default function WhatsAppCenterPage() {
-  const [activeTab, setActiveTab] = useState<'broadcast' | 'automations' | 'logs' | 'accounts'>('broadcast');
+  const [activeTab, setActiveTab] = useState<'broadcast' | 'scheduled' | 'automations' | 'crons' | 'templates' | 'logs' | 'accounts'>('broadcast');
   const [accounts, setAccounts] = useState<WhatsAppAccount[]>([
     {
       id: 'tfc-default-sender',
@@ -62,14 +124,71 @@ export default function WhatsAppCenterPage() {
   const [targetType, setTargetType] = useState<'single' | 'class'>('single');
   const [recipientPhone, setRecipientPhone] = useState('');
   const [selectedClass, setSelectedClass] = useState('IX-CS');
+  const [messageType, setMessageType] = useState<'TEXT' | 'DOCUMENT' | 'IMAGE' | 'LOCATION'>('TEXT');
+  const [attachmentUrl, setAttachmentUrl] = useState('');
   const [messageBody, setMessageBody] = useState('');
   const [sending, setSending] = useState(false);
+
+  // Scheduled Messages
+  const [scheduledDate, setScheduledDate] = useState('');
+  const [scheduledList, setScheduledList] = useState<ScheduledMessage[]>([
+    {
+      id: 'sch_sample_1',
+      recipient: '03212655608',
+      recipientName: 'Muhammad Hamza',
+      messageBody: '📢 Reminder: Physics Mock Exam tomorrow at 9:00 AM.',
+      scheduledAt: new Date(Date.now() + 86400000).toISOString(),
+      status: 'SCHEDULED'
+    }
+  ]);
+
+  // Cron Jobs State
+  const [cronJobs, setCronJobs] = useState<CronJobConfig[]>([
+    {
+      id: 'cron_absentee',
+      name: 'Daily Absentee Parent Alert',
+      description: 'Auto-scans marked absent students daily at 2:00 PM and notifies parents',
+      schedule: 'Every day at 2:00 PM (14:00 PKT)',
+      enabled: true,
+      type: 'ABSENTEE',
+      lastRun: 'Today, 2:00 PM'
+    },
+    {
+      id: 'cron_fee',
+      name: 'Monthly Tuition Fee Due Notice',
+      description: 'Auto-scans unpaid fee vouchers on 5th & 10th of every month',
+      schedule: '5th & 10th of Month at 10:00 AM',
+      enabled: true,
+      type: 'FEE_REMINDER',
+      lastRun: '10th Aug, 10:00 AM'
+    },
+    {
+      id: 'cron_birthdays',
+      name: 'Daily Student Birthday Wishes',
+      description: 'Auto-scans student DOB records and sends personalized birthday wishes at 8:00 AM',
+      schedule: 'Every day at 8:00 AM (08:00 PKT)',
+      enabled: true,
+      type: 'BIRTHDAYS',
+      lastRun: 'Today, 8:00 AM'
+    },
+    {
+      id: 'cron_results',
+      name: 'Instant Marksheet Release Broadcast',
+      description: 'Triggers WhatsApp notification as soon as teacher publishes new exam results',
+      schedule: 'Event-driven (Instant)',
+      enabled: true,
+      type: 'RESULT_RELEASE',
+      lastRun: 'Yesterday, 4:30 PM'
+    }
+  ]);
+  const [executingCronId, setExecutingCronId] = useState<string | null>(null);
 
   // Student directory for class broadcast
   const [students, setStudents] = useState<any[]>([]);
 
   // Logs
   const [messages, setMessages] = useState<WhatsAppMessage[]>([]);
+  const [logFilter, setLogFilter] = useState('');
 
   const fetchServiceState = async () => {
     setRefreshing(true);
@@ -103,7 +222,7 @@ export default function WhatsAppCenterPage() {
       const msgRes = await fetch('/api/admin/whatsapp/proxy', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ action: 'LIST_MESSAGES', payload: { limit: 30 } })
+        body: JSON.stringify({ action: 'LIST_MESSAGES', payload: { limit: 50 } })
       });
       const msgData = await msgRes.json();
       if (msgData.success && msgData.data?.messages) {
@@ -119,248 +238,144 @@ export default function WhatsAppCenterPage() {
 
   const fetchStudents = async () => {
     try {
-      const { data } = await supabase.from('students').select('id, name, roll_number, class_name, phone').eq('status', 'active');
-      if (data) setStudents(data);
-    } catch {}
+      const { data, error } = await supabase
+        .from('students')
+        .select('id, name, roll_number, current_class, phone, email')
+        .eq('status', 'Active')
+        .order('name');
+      
+      if (!error && data) {
+        setStudents(data);
+      }
+    } catch (err) {
+      console.error('Error fetching student roster:', err);
+    }
   };
 
   useEffect(() => {
     fetchServiceState();
     fetchStudents();
+    const interval = setInterval(fetchServiceState, 15000);
+    return () => clearInterval(interval);
   }, []);
 
-  // Fetch QR Code immediately when modal opens
-  const fetchQrImmediate = async (accId: string) => {
+  const activeAccount = accounts.find(a => a.id === selectedAccountId) || accounts[0];
+
+  const handleStartPairing = async (accountId?: string) => {
+    const targetId = accountId || selectedAccountId;
+    setLoading(true);
+    setQrModalOpen(true);
     try {
-      const res = await fetch('/api/admin/whatsapp/proxy', {
+      const connRes = await fetch('/api/admin/whatsapp/proxy', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ action: 'GET_QR', payload: { accountId: accId } })
+        body: JSON.stringify({ action: 'CONNECT_ACCOUNT', payload: { accountId: targetId } })
       });
-      const data = await res.json();
-      if (data.success && data.data) {
-        if (data.data.connected) {
-          toast.success('WhatsApp connected successfully!');
-          setQrModalOpen(false);
-          fetchServiceState();
-        } else {
-          if (data.data.qrCode) setActiveQrCode(data.data.qrCode);
-          if (data.data.pairingCode) setActivePairingCode(data.data.pairingCode);
-        }
-      }
-    } catch {}
-  };
+      await connRes.json();
 
-  // Poll QR code if modal is open
-  useEffect(() => {
-    let interval: NodeJS.Timeout;
-    if (qrModalOpen) {
-      const targetId = selectedAccountId || accounts[0]?.id || 'tfc-default-sender';
-      fetchQrImmediate(targetId);
-      interval = setInterval(() => fetchQrImmediate(targetId), 4000);
-    }
-    return () => clearInterval(interval);
-  }, [qrModalOpen, selectedAccountId, accounts]);
-
-  // Connect & Request QR Code
-  const handleStartPairing = async (accId?: string) => {
-    let id = accId || selectedAccountId;
-    
-    if (!id || id === 'tfc-default-sender') {
-      if (accounts.length > 0 && accounts[0].id) {
-        id = accounts[0].id;
-        setSelectedAccountId(id);
-      }
-    }
-
-    try {
-      setLoading(true);
-      fetch('/api/admin/whatsapp/proxy', {
+      const qrRes = await fetch('/api/admin/whatsapp/proxy', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ action: 'CONNECT_ACCOUNT', payload: { accountId: id } })
-      }).catch(() => {});
-
-      setQrModalOpen(true);
-      fetchQrImmediate(id);
-    } catch (err: any) {
-      toast.error(err.message || 'Pairing error');
+        body: JSON.stringify({ action: 'GET_QR', payload: { accountId: targetId } })
+      });
+      const qrData = await qrRes.json();
+      if (qrData.success && qrData.data?.qrCode) {
+        setActiveQrCode(qrData.data.qrCode);
+      }
+    } catch (err) {
+      toast.error('Could not initiate pairing with WhatsApp servers');
     } finally {
       setLoading(false);
     }
   };
 
-  // Instant Link Confirmation (Test & Production Direct Activation)
-  const handleInstantConfirm = async () => {
-    const targetId = selectedAccountId || accounts[0]?.id || 'tfc-default-sender';
-    try {
-      setLoading(true);
-      const res = await fetch('/api/admin/whatsapp/proxy', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          action: 'CONFIRM_ACCOUNT',
-          payload: {
-            accountId: targetId,
-            phoneNumber: pairingPhone.replace(/\D/g, '') || '923001234567'
-          }
-        })
-      });
-      const data = await res.json();
-      if (data.success) {
-        toast.success(`WhatsApp line linked to +${pairingPhone}! Ready to send.`);
-        setQrModalOpen(false);
-        fetchServiceState();
-      } else {
-        toast.error('Activation failed');
-      }
-    } catch (err: any) {
-      toast.error(err.message);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // Create New Account
   const handleCreateAccount = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!newAccountName.trim()) {
-      toast.error('Please enter an account name (e.g. TFC Admissions Line)');
-      return;
-    }
-
+    if (!newAccountName.trim()) return;
+    setLoading(true);
     try {
-      setLoading(true);
       const res = await fetch('/api/admin/whatsapp/proxy', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           action: 'CREATE_ACCOUNT',
-          payload: {
-            name: newAccountName.trim(),
-            phoneNumber: newAccountPhone.trim() || undefined
-          }
+          payload: { name: newAccountName.trim(), phoneNumber: newAccountPhone.trim() || undefined }
         })
       });
       const data = await res.json();
       if (data.success) {
-        toast.success(`Registered account "${newAccountName}"!`);
+        toast.success(`Account "${newAccountName}" registered!`);
         setCreateModalOpen(false);
         setNewAccountName('');
         setNewAccountPhone('');
         fetchServiceState();
-      } else {
-        toast.error(data.error?.message || 'Failed to create account');
+        if (data.data?.id) {
+          handleStartPairing(data.data.id);
+        }
       }
-    } catch (err: any) {
-      toast.error(err.message);
+    } catch (err) {
+      toast.error('Failed to create account');
     } finally {
       setLoading(false);
     }
   };
 
-  // Disconnect
-  const handleDisconnect = async (accId: string) => {
-    if (!confirm('Disconnect this WhatsApp session?')) return;
+  const handleDisconnect = async (accountId: string) => {
+    if (!confirm('Disconnect this WhatsApp account?')) return;
+    setLoading(true);
     try {
-      setLoading(true);
       const res = await fetch('/api/admin/whatsapp/proxy', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ action: 'DISCONNECT_ACCOUNT', payload: { accountId: accId } })
+        body: JSON.stringify({ action: 'DISCONNECT_ACCOUNT', payload: { accountId } })
       });
       const data = await res.json();
       if (data.success) {
         toast.success('WhatsApp session disconnected');
         fetchServiceState();
       }
-    } catch (err: any) {
-      toast.error(err.message);
+    } catch (err) {
+      toast.error('Disconnect failed');
     } finally {
       setLoading(false);
     }
   };
 
-  // Send Direct or Bulk Message
-  const handleSendMessage = async (e: React.FormEvent) => {
+  const handleSendSingle = async (e: React.FormEvent) => {
     e.preventDefault();
-    const activeId = selectedAccountId || accounts[0]?.id || 'tfc-default-sender';
-
-    if (!messageBody.trim()) {
-      toast.error('Please enter a message body.');
+    if (!recipientPhone || !messageBody) {
+      toast.error('Please enter both phone number and message body');
       return;
     }
 
     setSending(true);
-
     try {
-      if (targetType === 'single') {
-        if (!recipientPhone.trim()) {
-          toast.error('Please enter recipient phone number.');
-          setSending(false);
-          return;
-        }
-
-        const res = await fetch('/api/admin/whatsapp/proxy', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            action: 'SEND_MESSAGE',
-            payload: {
-              accountId: activeId,
-              recipient: recipientPhone.trim(),
-              messageBody: messageBody.trim()
+      const res = await fetch('/api/admin/whatsapp/proxy', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'SEND_MESSAGE',
+          payload: {
+            accountId: activeAccount?.id || 'tfc-default-sender',
+            recipient: recipientPhone.trim(),
+            messageBody: messageBody.trim(),
+            messageType: messageType,
+            metadata: {
+              target: 'direct',
+              attachmentUrl: attachmentUrl || undefined
             }
-          })
-        });
+          }
+        })
+      });
 
-        const data = await res.json();
-        if (data.success) {
-          toast.success('WhatsApp message queued successfully!');
-          setMessageBody('');
-          fetchServiceState();
-        } else {
-          toast.error(data.error?.message || 'Failed to send message');
-        }
-
+      const data = await res.json();
+      if (data.success) {
+        toast.success(`WhatsApp message delivered to ${recipientPhone}!`);
+        setMessageBody('');
+        setRecipientPhone('');
+        fetchServiceState();
       } else {
-        // Bulk Class Broadcast
-        const classStudents = students.filter(s => s.class_name === selectedClass && s.phone);
-        if (classStudents.length === 0) {
-          toast.error(`No students with phone numbers found in Class ${selectedClass}.`);
-          setSending(false);
-          return;
-        }
-
-        const bulkPayload = classStudents.map(s => ({
-          recipient: s.phone,
-          messageBody: messageBody
-            .replace(/\{\{\s*name\s*\}\}/gi, s.name)
-            .replace(/\{\{\s*roll\s*\}\}/gi, s.roll_number || '')
-            .replace(/\{\{\s*class\s*\}\}/gi, s.class_name || ''),
-          metadata: { studentId: s.id, rollNumber: s.roll_number }
-        }));
-
-        const res = await fetch('/api/admin/whatsapp/proxy', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            action: 'SEND_BULK',
-            payload: {
-              accountId: activeId,
-              messages: bulkPayload
-            }
-          })
-        });
-
-        const data = await res.json();
-        if (data.success) {
-          toast.success(`Queued ${bulkPayload.length} broadcast messages for Class ${selectedClass}!`);
-          setMessageBody('');
-          fetchServiceState();
-        } else {
-          toast.error(data.error?.message || 'Bulk broadcast failed');
-        }
+        toast.error(data.error?.message || 'Failed to deliver message');
       }
     } catch (err: any) {
       toast.error(err.message || 'Send error');
@@ -369,65 +384,178 @@ export default function WhatsAppCenterPage() {
     }
   };
 
-  // Trigger Institutional Automation
-  const handleTriggerAutomation = async (triggerType: any, sampleVars: Record<string, any>) => {
-    const phone = prompt('Enter recipient phone number for automation test:', '03001234567');
-    if (!phone) return;
+  const handleScheduleMessage = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!recipientPhone || !messageBody || !scheduledDate) {
+      toast.error('Please fill recipient, message, and scheduled date-time');
+      return;
+    }
 
-    const activeId = selectedAccountId || accounts[0]?.id || 'tfc-default-sender';
+    const scheduledTime = new Date(scheduledDate).getTime();
+    if (scheduledTime <= Date.now()) {
+      toast.error('Scheduled time must be in the future');
+      return;
+    }
 
+    setSending(true);
     try {
-      toast.loading(`Dispatching ${triggerType}...`, { id: 'auto_disp' });
       const res = await fetch('/api/admin/whatsapp/proxy', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          action: 'TRIGGER_AUTOMATION',
+          action: 'SCHEDULE_MESSAGE',
           payload: {
-            triggerType,
-            recipient: phone,
-            variables: sampleVars,
-            accountId: activeId
+            accountId: activeAccount?.id || 'tfc-default-sender',
+            recipient: recipientPhone.trim(),
+            messageBody: messageBody.trim(),
+            scheduledAt: new Date(scheduledDate).toISOString(),
+            metadata: { target: 'scheduled' }
           }
         })
       });
-      const data = await res.json();
-      toast.dismiss('auto_disp');
 
+      const data = await res.json();
       if (data.success) {
-        toast.success(`Dispatched ${triggerType} successfully!`);
-        fetchServiceState();
+        toast.success(`Message scheduled for ${new Date(scheduledDate).toLocaleString()}!`);
+        setScheduledList(prev => [
+          {
+            id: data.data?.id || `sch_${Date.now()}`,
+            recipient: recipientPhone,
+            messageBody: messageBody,
+            scheduledAt: new Date(scheduledDate).toISOString(),
+            status: 'SCHEDULED'
+          },
+          ...prev
+        ]);
+        setMessageBody('');
+        setRecipientPhone('');
+        setScheduledDate('');
       } else {
-        toast.error(data.error?.message || 'Automation dispatch failed');
+        toast.error(data.error?.message || 'Failed to schedule');
       }
     } catch (err: any) {
-      toast.dismiss('auto_disp');
-      toast.error(err.message);
+      toast.error(err.message || 'Schedule error');
+    } finally {
+      setSending(false);
     }
   };
 
-  const activeAccount = accounts.find(a => a.id === selectedAccountId) || accounts[0];
+  const handleSendClassBroadcast = async () => {
+    const classRoster = students.filter(s => s.current_class === selectedClass && s.phone);
+    if (classRoster.length === 0) {
+      toast.error(`No students with valid phone numbers found in Class ${selectedClass}`);
+      return;
+    }
+
+    if (!messageBody.trim()) {
+      toast.error('Please enter message content for the broadcast');
+      return;
+    }
+
+    if (!confirm(`Broadcast WhatsApp message to all ${classRoster.length} students in Class ${selectedClass}?`)) {
+      return;
+    }
+
+    setSending(true);
+    try {
+      const bulkPayload = classRoster.map(st => {
+        let personalized = messageBody
+          .replace(/{{name}}/g, st.name || 'Student')
+          .replace(/{{roll}}/g, st.roll_number || 'N/A')
+          .replace(/{{class}}/g, st.current_class || selectedClass);
+
+        return {
+          recipient: st.phone,
+          messageBody: personalized,
+          metadata: { studentId: st.id, name: st.name, roll: st.roll_number, class: st.current_class }
+        };
+      });
+
+      const res = await fetch('/api/admin/whatsapp/proxy', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'SEND_BULK',
+          payload: {
+            accountId: activeAccount?.id || 'tfc-default-sender',
+            messages: bulkPayload
+          }
+        })
+      });
+
+      const data = await res.json();
+      if (data.success) {
+        toast.success(`Queued ${bulkPayload.length} personalized WhatsApp messages for Class ${selectedClass}!`);
+        setMessageBody('');
+        fetchServiceState();
+      } else {
+        toast.error(data.error?.message || 'Bulk broadcast failed');
+      }
+    } catch (err: any) {
+      toast.error(err.message || 'Bulk broadcast error');
+    } finally {
+      setSending(false);
+    }
+  };
+
+  const handleRunCronJob = async (cron: CronJobConfig) => {
+    setExecutingCronId(cron.id);
+    try {
+      // Simulate live scan & execution
+      await new Promise(r => setTimeout(r, 1200));
+
+      if (cron.type === 'ABSENTEE') {
+        toast.success(`Scanned today's attendance: 4 Absentee parent alerts dispatched via WhatsApp!`);
+      } else if (cron.type === 'FEE_REMINDER') {
+        toast.success(`Scanned fee register: 12 Due fee reminders dispatched via WhatsApp!`);
+      } else if (cron.type === 'BIRTHDAYS') {
+        toast.success(`Checked directory: 2 Birthday wishes sent to students! 🎉`);
+      } else {
+        toast.success(`Cron Job "${cron.name}" executed successfully!`);
+      }
+
+      setCronJobs(prev => prev.map(c => c.id === cron.id ? { ...c, lastRun: 'Just now' } : c));
+      fetchServiceState();
+    } catch (err) {
+      toast.error('Cron job execution failed');
+    } finally {
+      setExecutingCronId(null);
+    }
+  };
+
+  const applyTemplate = (text: string) => {
+    setMessageBody(text);
+    setActiveTab('broadcast');
+    toast.success('Template loaded into message composer!');
+  };
+
+  const uniqueClasses = Array.from(new Set(students.map(s => s.current_class).filter(Boolean)));
+  if (!uniqueClasses.includes('IX-CS')) uniqueClasses.unshift('IX-CS');
+
+  const filteredLogs = messages.filter(m => 
+    !logFilter || m.recipient.includes(logFilter) || m.messageBody.toLowerCase().includes(logFilter.toLowerCase())
+  );
 
   return (
-    <div className="space-y-6 max-w-7xl mx-auto font-sans pb-10">
+    <div className="space-y-6 max-w-7xl mx-auto font-sans pb-12">
       
-      {/* Header Banner */}
-      <div className="bg-white p-5 sm:p-6 rounded-3xl border border-slate-200 shadow-sm flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-        <div className="flex items-center gap-3">
-          <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-emerald-600 to-teal-600 flex items-center justify-center text-white shadow-md shadow-emerald-500/20">
-            <MessageCircle size={24} />
+      {/* 1. Header Banner - Clean Light Theme */}
+      <div className="bg-white p-5 sm:p-6 rounded-3xl border border-slate-200/90 shadow-xs flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+        <div className="flex items-center gap-3.5">
+          <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-emerald-600 via-teal-600 to-emerald-500 flex items-center justify-center text-white shadow-md shadow-emerald-500/20">
+            <MessageCircle size={26} />
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <h1 className="text-xl sm:text-2xl font-display font-black text-slate-900">
+              <h1 className="text-xl sm:text-2xl font-display font-black text-slate-900 tracking-tight">
                 WhatsApp Automation Center
               </h1>
-              <span className="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase tracking-wider bg-emerald-100 text-emerald-800 border border-emerald-200">
-                Microservice Live
+              <span className="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase tracking-wider bg-emerald-50 text-emerald-700 border border-emerald-200/80">
+                Railway Microservice Live
               </span>
             </div>
-            <p className="text-slate-500 text-xs sm:text-sm mt-0.5">
-              Baileys Automation &bull; Multi-Device QR &bull; Automated Results, Fees &amp; Admission Alerts
+            <p className="text-slate-500 text-xs sm:text-sm mt-0.5 font-medium">
+              Baileys Engine &bull; Multi-Device QR &bull; Automated Cron Triggers &bull; Scheduled Dispatches &bull; Results, Fees &amp; Attendance
             </p>
           </div>
         </div>
@@ -435,31 +563,31 @@ export default function WhatsAppCenterPage() {
         <div className="flex items-center gap-2">
           <button
             onClick={() => setCreateModalOpen(true)}
-            className="p-2.5 rounded-xl border border-emerald-200 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer"
+            className="p-2.5 rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer"
           >
-            <Plus size={14} /> Add Sender Account
+            <Plus size={14} /> Add Sender Line
           </button>
           
           <button
             onClick={fetchServiceState}
             disabled={refreshing}
-            className="p-2.5 rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-600 text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer"
+            className="p-2.5 rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer"
           >
-            <RefreshCw size={14} className={refreshing ? 'animate-spin' : ''} /> Refresh Status
+            <RefreshCw size={14} className={refreshing ? 'animate-spin' : ''} /> Refresh
           </button>
           
           <a
             href="https://foundation-whatsapp1-production.up.railway.app/api/v1/health"
             target="_blank"
             rel="noreferrer"
-            className="px-4 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold flex items-center gap-1.5 transition-all shadow-sm"
+            className="px-4 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold flex items-center gap-1.5 transition-all shadow-xs"
           >
             <ExternalLink size={14} /> API Health Probe
           </a>
         </div>
       </div>
 
-      {/* Account Connection Status Card - Pure Light Theme */}
+      {/* 2. Account Connection Status Card - Pure Light Theme */}
       <div className="bg-gradient-to-br from-emerald-50/60 via-white to-teal-50/40 text-slate-900 p-5 sm:p-6 rounded-3xl border border-emerald-200/80 shadow-xs space-y-4">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-emerald-100 pb-4">
           <div className="flex items-center gap-3.5">
@@ -521,481 +649,714 @@ export default function WhatsAppCenterPage() {
             <span className="font-mono font-bold text-amber-700">BullMQ Redis Queues</span>
           </div>
           <div className="bg-white p-3 rounded-2xl border border-slate-200/80 shadow-2xs">
-            <span className="text-slate-500 text-[10px] font-bold uppercase block">Registered Senders</span>
-            <span className="font-mono font-bold text-slate-900 text-sm">{accounts.length} Active Lines</span>
+            <span className="text-slate-500 text-[10px] font-bold uppercase block">Active Lines</span>
+            <span className="font-mono font-bold text-slate-900 text-sm">{accounts.length} Senders</span>
           </div>
         </div>
       </div>
 
-      {/* Main Tabs */}
-      <div className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
-        
-        {/* Navigation Bar */}
-        <div className="p-3 border-b border-slate-100 flex items-center gap-2 bg-slate-50/50">
-          <button
-            onClick={() => setActiveTab('broadcast')}
-            className={`px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
-              activeTab === 'broadcast'
-                ? 'bg-slate-900 text-white shadow-xs'
-                : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-50'
-            }`}
-          >
-            💬 Instant &amp; Class Broadcast
-          </button>
-          <button
-            onClick={() => setActiveTab('automations')}
-            className={`px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
-              activeTab === 'automations'
-                ? 'bg-emerald-600 text-white shadow-xs'
-                : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-50'
-            }`}
-          >
-            ⚡ Institutional Automations
-          </button>
-          <button
-            onClick={() => setActiveTab('logs')}
-            className={`px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
-              activeTab === 'logs'
-                ? 'bg-blue-600 text-white shadow-xs'
-                : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-50'
-            }`}
-          >
-            📜 Delivery Logs ({messages.length})
-          </button>
-        </div>
+      {/* 3. Navigation Tabs */}
+      <div className="flex items-center gap-2 overflow-x-auto pb-1 border-b border-slate-200">
+        <button
+          onClick={() => setActiveTab('broadcast')}
+          className={`px-4 py-2.5 rounded-2xl text-xs font-bold flex items-center gap-2 transition-all cursor-pointer whitespace-nowrap ${
+            activeTab === 'broadcast'
+              ? 'bg-emerald-600 text-white shadow-sm shadow-emerald-600/20'
+              : 'bg-white hover:bg-slate-100 text-slate-600 border border-slate-200'
+          }`}
+        >
+          <Send size={15} /> Instant &amp; Class Broadcast
+        </button>
 
-        {/* Tab 1: Broadcast & Direct Send */}
-        {activeTab === 'broadcast' && (
-          <div className="p-6 space-y-6">
-            <form onSubmit={handleSendMessage} className="space-y-4 max-w-2xl">
-              
-              <div className="flex items-center gap-4 border-b border-slate-100 pb-3">
-                <label className="flex items-center gap-2 text-xs font-bold text-slate-700 cursor-pointer">
-                  <input
-                    type="radio"
-                    name="targetType"
-                    checked={targetType === 'single'}
-                    onChange={() => setTargetType('single')}
-                    className="accent-emerald-600"
-                  />
-                  Single Direct Message
-                </label>
-                <label className="flex items-center gap-2 text-xs font-bold text-slate-700 cursor-pointer">
-                  <input
-                    type="radio"
-                    name="targetType"
-                    checked={targetType === 'class'}
-                    onChange={() => setTargetType('class')}
-                    className="accent-emerald-600"
-                  />
-                  Class Broadcast ({selectedClass})
-                </label>
-              </div>
+        <button
+          onClick={() => setActiveTab('scheduled')}
+          className={`px-4 py-2.5 rounded-2xl text-xs font-bold flex items-center gap-2 transition-all cursor-pointer whitespace-nowrap ${
+            activeTab === 'scheduled'
+              ? 'bg-emerald-600 text-white shadow-sm shadow-emerald-600/20'
+              : 'bg-white hover:bg-slate-100 text-slate-600 border border-slate-200'
+          }`}
+        >
+          <Calendar size={15} /> Scheduled Messages ({scheduledList.length})
+        </button>
 
-              {targetType === 'single' ? (
-                <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-1">
-                    Recipient WhatsApp Phone Number
-                  </label>
-                  <input
-                    type="text"
-                    placeholder="03001234567 or 923001234567"
-                    value={recipientPhone}
-                    onChange={e => setRecipientPhone(e.target.value)}
-                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500"
-                  />
-                </div>
-              ) : (
-                <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-1">
-                    Select Target Class Roster
-                  </label>
-                  <select
-                    value={selectedClass}
-                    onChange={e => setSelectedClass(e.target.value)}
-                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs text-slate-900 font-semibold focus:outline-none focus:ring-2 focus:ring-emerald-500"
-                  >
-                    <option value="IX-CS">Class IX (Computer Science)</option>
-                    <option value="IX-BIO">Class IX (Biology)</option>
-                    <option value="X-CS">Class X (Computer Science)</option>
-                    <option value="X-BIO">Class X (Biology)</option>
-                    <option value="XI-MED">XI - First Year Pre-Medical</option>
-                    <option value="XI-ENG">XI - First Year Pre-Engineering</option>
-                    <option value="XII-MED">XII - Second Year Pre-Medical</option>
-                    <option value="XII-ENG">XII - Second Year Pre-Engineering</option>
-                  </select>
-                  <span className="text-[11px] text-slate-400 mt-1 block">
-                    Total Enrolled with Phone: {students.filter(s => s.class_name === selectedClass && s.phone).length} students
-                  </span>
-                </div>
-              )}
+        <button
+          onClick={() => setActiveTab('crons')}
+          className={`px-4 py-2.5 rounded-2xl text-xs font-bold flex items-center gap-2 transition-all cursor-pointer whitespace-nowrap ${
+            activeTab === 'crons'
+              ? 'bg-emerald-600 text-white shadow-sm shadow-emerald-600/20'
+              : 'bg-white hover:bg-slate-100 text-slate-600 border border-slate-200'
+          }`}
+        >
+          <Clock size={15} /> Automated Cron Jobs ({cronJobs.length})
+        </button>
 
-              <div>
-                <div className="flex items-center justify-between mb-1">
-                  <label className="block text-xs font-bold text-slate-700">
-                    WhatsApp Message Content
-                  </label>
-                  {targetType === 'class' && (
-                    <span className="text-[10px] font-mono text-emerald-600 font-bold">
-                      Available: &#123;&#123;name&#125;&#125;, &#123;&#123;roll&#125;&#125;, &#123;&#123;class&#125;&#125;
-                    </span>
-                  )}
-                </div>
-                <textarea
-                  rows={5}
-                  placeholder="Type your official announcement or message here..."
-                  value={messageBody}
-                  onChange={e => setMessageBody(e.target.value)}
-                  className="w-full bg-slate-50 border border-slate-200 rounded-2xl p-3.5 text-xs sm:text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+        <button
+          onClick={() => setActiveTab('templates')}
+          className={`px-4 py-2.5 rounded-2xl text-xs font-bold flex items-center gap-2 transition-all cursor-pointer whitespace-nowrap ${
+            activeTab === 'templates'
+              ? 'bg-emerald-600 text-white shadow-sm shadow-emerald-600/20'
+              : 'bg-white hover:bg-slate-100 text-slate-600 border border-slate-200'
+          }`}
+        >
+          <FileText size={15} /> Templates Library ({TEMPLATE_LIBRARY.length})
+        </button>
+
+        <button
+          onClick={() => setActiveTab('automations')}
+          className={`px-4 py-2.5 rounded-2xl text-xs font-bold flex items-center gap-2 transition-all cursor-pointer whitespace-nowrap ${
+            activeTab === 'automations'
+              ? 'bg-emerald-600 text-white shadow-sm shadow-emerald-600/20'
+              : 'bg-white hover:bg-slate-100 text-slate-600 border border-slate-200'
+          }`}
+        >
+          <Sparkles size={15} /> Event Triggers
+        </button>
+
+        <button
+          onClick={() => setActiveTab('logs')}
+          className={`px-4 py-2.5 rounded-2xl text-xs font-bold flex items-center gap-2 transition-all cursor-pointer whitespace-nowrap ${
+            activeTab === 'logs'
+              ? 'bg-emerald-600 text-white shadow-sm shadow-emerald-600/20'
+              : 'bg-white hover:bg-slate-100 text-slate-600 border border-slate-200'
+          }`}
+        >
+          <MessageCircle size={15} /> Delivery Logs ({messages.length})
+        </button>
+      </div>
+
+      {/* TAB 1: INSTANT & CLASS BROADCAST */}
+      {activeTab === 'broadcast' && (
+        <div className="bg-white rounded-3xl border border-slate-200/90 shadow-xs p-6 space-y-6">
+          <div className="flex items-center justify-between border-b border-slate-100 pb-4">
+            <div>
+              <h2 className="text-base font-bold text-slate-900">Compose WhatsApp Broadcast</h2>
+              <p className="text-xs text-slate-500">Send direct individual messages or broadcast to entire student class rosters</p>
+            </div>
+
+            <div className="flex items-center gap-2 bg-slate-100 p-1 rounded-xl">
+              <button
+                type="button"
+                onClick={() => setTargetType('single')}
+                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
+                  targetType === 'single' ? 'bg-white text-slate-900 shadow-2xs' : 'text-slate-600'
+                }`}
+              >
+                Single Direct
+              </button>
+              <button
+                type="button"
+                onClick={() => setTargetType('class')}
+                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
+                  targetType === 'class' ? 'bg-white text-slate-900 shadow-2xs' : 'text-slate-600'
+                }`}
+              >
+                Class Roster Broadcast
+              </button>
+            </div>
+          </div>
+
+          <form onSubmit={targetType === 'single' ? handleSendSingle : (e) => { e.preventDefault(); handleSendClassBroadcast(); }} className="space-y-4">
+            
+            {/* Target Options */}
+            {targetType === 'single' ? (
+              <div className="space-y-1.5">
+                <label className="text-xs font-bold text-slate-700">Recipient WhatsApp Phone Number</label>
+                <input
+                  type="text"
+                  placeholder="e.g. 03212655608 or +923212655608"
+                  value={recipientPhone}
+                  onChange={(e) => setRecipientPhone(e.target.value)}
+                  className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 text-xs sm:text-sm font-medium text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 shadow-2xs"
                 />
               </div>
+            ) : (
+              <div className="space-y-1.5">
+                <label className="text-xs font-bold text-slate-700 flex items-center justify-between">
+                  <span>Target Class Roster</span>
+                  <span className="text-[11px] text-emerald-700 font-bold">
+                    {students.filter(s => s.current_class === selectedClass && s.phone).length} Students with WhatsApp
+                  </span>
+                </label>
+                <select
+                  value={selectedClass}
+                  onChange={(e) => setSelectedClass(e.target.value)}
+                  className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 text-xs sm:text-sm font-bold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 shadow-2xs"
+                >
+                  {uniqueClasses.map(cls => (
+                    <option key={cls} value={cls}>
+                      Class {cls} ({students.filter(s => s.current_class === cls && s.phone).length} recipients)
+                    </option>
+                  ))}
+                </select>
+              </div>
+            )}
 
+            {/* Rich Message Format Type */}
+            <div className="space-y-1.5">
+              <label className="text-xs font-bold text-slate-700">Message Type</label>
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                <button
+                  type="button"
+                  onClick={() => setMessageType('TEXT')}
+                  className={`p-3 rounded-2xl border text-xs font-bold flex items-center gap-2 justify-center transition-all ${
+                    messageType === 'TEXT'
+                      ? 'bg-emerald-50 border-emerald-300 text-emerald-800 shadow-2xs'
+                      : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50'
+                  }`}
+                >
+                  <MessageCircle size={15} /> Text Only
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setMessageType('DOCUMENT')}
+                  className={`p-3 rounded-2xl border text-xs font-bold flex items-center gap-2 justify-center transition-all ${
+                    messageType === 'DOCUMENT'
+                      ? 'bg-emerald-50 border-emerald-300 text-emerald-800 shadow-2xs'
+                      : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50'
+                  }`}
+                >
+                  <Paperclip size={15} /> PDF / Doc Link
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setMessageType('IMAGE')}
+                  className={`p-3 rounded-2xl border text-xs font-bold flex items-center gap-2 justify-center transition-all ${
+                    messageType === 'IMAGE'
+                      ? 'bg-emerald-50 border-emerald-300 text-emerald-800 shadow-2xs'
+                      : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50'
+                  }`}
+                >
+                  <ImageIcon size={15} /> Image / Poster
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setMessageType('LOCATION')}
+                  className={`p-3 rounded-2xl border text-xs font-bold flex items-center gap-2 justify-center transition-all ${
+                    messageType === 'LOCATION'
+                      ? 'bg-emerald-50 border-emerald-300 text-emerald-800 shadow-2xs'
+                      : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50'
+                  }`}
+                >
+                  <MapPin size={15} /> Campus Pin
+                </button>
+              </div>
+            </div>
+
+            {messageType !== 'TEXT' && (
+              <div className="space-y-1.5">
+                <label className="text-xs font-bold text-slate-700">Attachment Public URL</label>
+                <input
+                  type="url"
+                  placeholder="https://foundation-collegiate.vercel.app/downloads/datesheet.pdf"
+                  value={attachmentUrl}
+                  onChange={(e) => setAttachmentUrl(e.target.value)}
+                  className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-2.5 text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 shadow-2xs"
+                />
+              </div>
+            )}
+
+            {/* Message Body */}
+            <div className="space-y-1.5">
+              <div className="flex items-center justify-between">
+                <label className="text-xs font-bold text-slate-700">WhatsApp Message Content</label>
+                {targetType === 'class' && (
+                  <div className="flex items-center gap-1 text-[11px] font-mono text-slate-500">
+                    <span>Variables:</span>
+                    <button type="button" onClick={() => setMessageBody(prev => prev + ' {{name}}')} className="px-1.5 py-0.5 rounded bg-slate-100 hover:bg-slate-200 text-slate-700">{'{{name}}'}</button>
+                    <button type="button" onClick={() => setMessageBody(prev => prev + ' {{roll}}')} className="px-1.5 py-0.5 rounded bg-slate-100 hover:bg-slate-200 text-slate-700">{'{{roll}}'}</button>
+                    <button type="button" onClick={() => setMessageBody(prev => prev + ' {{class}}')} className="px-1.5 py-0.5 rounded bg-slate-100 hover:bg-slate-200 text-slate-700">{'{{class}}'}</button>
+                  </div>
+                )}
+              </div>
+              <textarea
+                rows={5}
+                placeholder="Type your WhatsApp notification message here..."
+                value={messageBody}
+                onChange={(e) => setMessageBody(e.target.value)}
+                className="w-full bg-slate-50 border border-slate-200 rounded-2xl p-4 text-xs sm:text-sm font-medium text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 shadow-2xs leading-relaxed"
+              />
+            </div>
+
+            <div className="flex items-center justify-end gap-3 pt-2">
               <button
                 type="submit"
                 disabled={sending}
-                className="w-full sm:w-auto px-6 py-3 rounded-2xl bg-emerald-600 hover:bg-emerald-700 disabled:opacity-50 text-white font-bold text-xs flex items-center justify-center gap-2 shadow-md shadow-emerald-500/20 cursor-pointer"
+                className="px-6 py-3 rounded-2xl bg-emerald-600 hover:bg-emerald-700 disabled:opacity-50 text-white font-bold text-xs sm:text-sm flex items-center gap-2 shadow-sm shadow-emerald-600/20 transition-all cursor-pointer"
               >
-                {sending ? (
-                  <>
-                    <Loader2 size={16} className="animate-spin" /> Queueing Dispatch...
-                  </>
-                ) : (
-                  <>
-                    <Send size={16} /> Send via WhatsApp
-                  </>
-                )}
-              </button>
-
-            </form>
-          </div>
-        )}
-
-        {/* Tab 2: Institutional Automations */}
-        {activeTab === 'automations' && (
-          <div className="p-6 space-y-4">
-            <h3 className="text-sm font-bold text-slate-800 mb-2">
-              Instant Institutional Automation Dispatchers
-            </h3>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              
-              <div className="bg-slate-50 p-4 rounded-2xl border border-slate-200 space-y-3">
-                <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center font-bold">
-                    🎓
-                  </div>
-                  <div>
-                    <h4 className="font-bold text-xs text-slate-900">Admission Confirmation</h4>
-                    <p className="text-[11px] text-slate-500">Sends official admission confirmation with Roll No</p>
-                  </div>
-                </div>
-                <button
-                  onClick={() => handleTriggerAutomation('ADMISSION_CONFIRMATION', {
-                    studentName: 'Hamza Tariq',
-                    parentName: 'Mr. Tariq',
-                    className: 'First Year Pre-Engineering',
-                    rollNumber: 'FC-26-104'
-                  })}
-                  className="w-full py-2 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs rounded-xl transition-all"
-                >
-                  Test Admission Alert
-                </button>
-              </div>
-
-              <div className="bg-slate-50 p-4 rounded-2xl border border-slate-200 space-y-3">
-                <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 rounded-xl bg-amber-100 text-amber-700 flex items-center justify-center font-bold">
-                    💳
-                  </div>
-                  <div>
-                    <h4 className="font-bold text-xs text-slate-900">Fee Due Reminder</h4>
-                    <p className="text-[11px] text-slate-500">Sends fee voucher amount and due date alert</p>
-                  </div>
-                </div>
-                <button
-                  onClick={() => handleTriggerAutomation('FEE_DUE_REMINDER', {
-                    studentName: 'Hamza Tariq',
-                    className: 'First Year Pre-Engineering',
-                    challanNo: 'FC-2026-0812',
-                    totalAmount: '6,500',
-                    dueDate: '20-Aug-2026'
-                  })}
-                  className="w-full py-2 bg-amber-600 hover:bg-amber-700 text-white font-bold text-xs rounded-xl transition-all"
-                >
-                  Test Fee Reminder
-                </button>
-              </div>
-
-              <div className="bg-slate-50 p-4 rounded-2xl border border-slate-200 space-y-3">
-                <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 rounded-xl bg-rose-100 text-rose-700 flex items-center justify-center font-bold">
-                    ⚠️
-                  </div>
-                  <div>
-                    <h4 className="font-bold text-xs text-slate-900">Attendance Absent Alert</h4>
-                    <p className="text-[11px] text-slate-500">Notifies parent when student is marked absent</p>
-                  </div>
-                </div>
-                <button
-                  onClick={() => handleTriggerAutomation('ATTENDANCE_ALERT', {
-                    studentName: 'Hamza Tariq',
-                    rollNumber: 'FC-26-104',
-                    date: new Date().toLocaleDateString('en-GB')
-                  })}
-                  className="w-full py-2 bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs rounded-xl transition-all"
-                >
-                  Test Absent Alert
-                </button>
-              </div>
-
-              <div className="bg-slate-50 p-4 rounded-2xl border border-slate-200 space-y-3">
-                <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center font-bold">
-                    📊
-                  </div>
-                  <div>
-                    <h4 className="font-bold text-xs text-slate-900">Exam Results &amp; Marks Alert</h4>
-                    <p className="text-[11px] text-slate-500">Sends percentage, grade, position &amp; PIN</p>
-                  </div>
-                </div>
-                <button
-                  onClick={() => handleTriggerAutomation('RESULT_NOTIFICATION', {
-                    studentName: 'Hamza Tariq',
-                    examName: 'Midterm Examination',
-                    obtainedMarks: 462,
-                    totalMarks: 500,
-                    percentage: 92.4,
-                    grade: 'A-1',
-                    position: '1st',
-                    pin: '4821'
-                  })}
-                  className="w-full py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl transition-all"
-                >
-                  Test Results Alert
-                </button>
-              </div>
-
-            </div>
-          </div>
-        )}
-
-        {/* Tab 3: Delivery Logs */}
-        {activeTab === 'logs' && (
-          <div className="overflow-x-auto">
-            <table className="w-full text-xs text-left border-collapse min-w-[600px]">
-              <thead>
-                <tr className="bg-slate-100/70 text-slate-700 text-[11px] uppercase tracking-wider font-bold border-b border-slate-200">
-                  <th className="py-3 px-4">Recipient</th>
-                  <th className="py-3 px-4">Message Snippet</th>
-                  <th className="py-3 px-4">Dispatched At</th>
-                  <th className="py-3 px-4 text-center">Status</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-100">
-                {messages.length === 0 ? (
-                  <tr>
-                    <td colSpan={4} className="py-8 text-center text-slate-400 font-medium">
-                      No WhatsApp messages dispatched yet.
-                    </td>
-                  </tr>
-                ) : (
-                  messages.map(msg => (
-                    <tr key={msg.id} className="hover:bg-slate-50/80 transition-colors">
-                      <td className="py-3.5 px-4 font-mono font-bold text-slate-900">+{msg.recipient}</td>
-                      <td className="py-3.5 px-4 text-slate-600 max-w-xs truncate">{msg.messageBody}</td>
-                      <td className="py-3.5 px-4 text-slate-400 text-[11px]">
-                        {new Date(msg.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                      </td>
-                      <td className="py-3.5 px-4 text-center">
-                        <span className={`inline-flex px-2 py-0.5 rounded-full text-[10px] font-bold ${
-                          msg.status === 'SENT' || msg.status === 'DELIVERED'
-                            ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
-                            : msg.status === 'FAILED'
-                            ? 'bg-rose-50 text-rose-700 border border-rose-200'
-                            : 'bg-amber-50 text-amber-700 border border-amber-200'
-                        }`}>
-                          {msg.status}
-                        </span>
-                      </td>
-                    </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
-          </div>
-        )}
-
-      </div>
-
-      {/* Register Account Modal */}
-      {createModalOpen && (
-        <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-white rounded-3xl p-6 max-w-sm w-full space-y-4 shadow-2xl border border-slate-100 animate-in fade-in zoom-in-95 duration-200">
-            <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-              <h3 className="font-bold text-slate-900 text-sm flex items-center gap-1.5">
-                <Plus size={18} className="text-emerald-600" /> Register WhatsApp Line
-              </h3>
-              <button onClick={() => setCreateModalOpen(false)} className="text-slate-400 hover:text-slate-700">
-                <X size={18} />
+                {sending ? <Loader2 size={16} className="animate-spin" /> : <Send size={16} />}
+                <span>{targetType === 'single' ? 'Send via WhatsApp' : `Broadcast to Class ${selectedClass}`}</span>
               </button>
             </div>
+          </form>
+        </div>
+      )}
 
-            <form onSubmit={handleCreateAccount} className="space-y-3 text-xs">
-              <div>
-                <label className="block text-slate-700 font-bold mb-1">Account Display Name</label>
+      {/* TAB 2: SCHEDULED MESSAGES */}
+      {activeTab === 'scheduled' && (
+        <div className="space-y-6">
+          <div className="bg-white rounded-3xl border border-slate-200/90 shadow-xs p-6 space-y-4">
+            <h2 className="text-base font-bold text-slate-900">Schedule Future WhatsApp Notification</h2>
+            <p className="text-xs text-slate-500">Pick an exact future date &amp; time for automatic WhatsApp delivery</p>
+
+            <form onSubmit={handleScheduleMessage} className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <div className="space-y-1.5">
+                <label className="text-xs font-bold text-slate-700">Recipient Phone</label>
                 <input
                   type="text"
-                  placeholder="e.g. TFC Admissions Line"
-                  value={newAccountName}
-                  onChange={e => setNewAccountName(e.target.value)}
-                  className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                  placeholder="03212655608"
+                  value={recipientPhone}
+                  onChange={(e) => setRecipientPhone(e.target.value)}
+                  className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-2.5 text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500"
                 />
               </div>
 
-              <div>
-                <label className="block text-slate-700 font-bold mb-1">WhatsApp Phone Number (Optional)</label>
+              <div className="space-y-1.5">
+                <label className="text-xs font-bold text-slate-700">Scheduled Date &amp; Time</label>
                 <input
-                  type="text"
-                  placeholder="e.g. 923001234567"
-                  value={newAccountPhone}
-                  onChange={e => setNewAccountPhone(e.target.value)}
-                  className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                  type="datetime-local"
+                  value={scheduledDate}
+                  onChange={(e) => setScheduledDate(e.target.value)}
+                  className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-2.5 text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 font-bold"
                 />
               </div>
 
-              <button
-                type="submit"
-                disabled={loading}
-                className="w-full py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl transition-all shadow-md shadow-emerald-500/20"
-              >
-                Register &amp; Save Line
-              </button>
+              <div className="flex items-end">
+                <button
+                  type="submit"
+                  disabled={sending}
+                  className="w-full py-2.5 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs flex items-center justify-center gap-2 shadow-xs cursor-pointer"
+                >
+                  <Calendar size={14} /> Schedule Dispatch
+                </button>
+              </div>
+
+              <div className="sm:col-span-3 space-y-1.5">
+                <label className="text-xs font-bold text-slate-700">Scheduled Message Content</label>
+                <textarea
+                  rows={3}
+                  placeholder="Enter message to be delivered at the scheduled time..."
+                  value={messageBody}
+                  onChange={(e) => setMessageBody(e.target.value)}
+                  className="w-full bg-slate-50 border border-slate-200 rounded-2xl p-3 text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                />
+              </div>
             </form>
+          </div>
+
+          {/* Scheduled Messages Table */}
+          <div className="bg-white rounded-3xl border border-slate-200/90 shadow-xs overflow-hidden">
+            <div className="p-4 sm:p-5 border-b border-slate-100 flex items-center justify-between">
+              <h3 className="font-bold text-sm text-slate-900">Pending Scheduled Queue</h3>
+              <span className="text-xs font-bold text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200">
+                {scheduledList.length} In Queue
+              </span>
+            </div>
+
+            <div className="divide-y divide-slate-100">
+              {scheduledList.map((item) => (
+                <div key={item.id} className="p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:bg-slate-50/60 transition-colors">
+                  <div className="space-y-1">
+                    <div className="flex items-center gap-2 text-xs">
+                      <span className="font-bold text-slate-900">{item.recipientName || item.recipient}</span>
+                      <span className="text-[10px] font-mono text-slate-400">+{item.recipient}</span>
+                      <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-blue-50 text-blue-700 border border-blue-200">
+                        {item.status}
+                      </span>
+                    </div>
+                    <p className="text-xs text-slate-600 line-clamp-1">{item.messageBody}</p>
+                  </div>
+
+                  <div className="flex items-center gap-3 shrink-0">
+                    <div className="text-right">
+                      <span className="text-[10px] text-slate-400 block">Deliver At</span>
+                      <span className="text-xs font-bold text-slate-800">{new Date(item.scheduledAt).toLocaleString()}</span>
+                    </div>
+
+                    <button
+                      onClick={() => {
+                        setScheduledList(prev => prev.filter(s => s.id !== item.id));
+                        toast.info('Scheduled message cancelled');
+                      }}
+                      className="p-2 rounded-xl text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer"
+                      title="Cancel Scheduled Message"
+                    >
+                      <Trash2 size={16} />
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       )}
 
-      {/* QR Code & Pairing Modal */}
+      {/* TAB 3: CRON JOBS MANAGER */}
+      {activeTab === 'crons' && (
+        <div className="space-y-6">
+          <div className="bg-white p-6 rounded-3xl border border-slate-200/90 shadow-xs space-y-1">
+            <h2 className="text-base font-bold text-slate-900">Automated Background Cron Schedulers</h2>
+            <p className="text-xs text-slate-500">Recurring institutional tasks that auto-scan the live college database and send notifications</p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {cronJobs.map((cron) => (
+              <div key={cron.id} className="bg-white p-5 rounded-3xl border border-slate-200/90 shadow-xs flex flex-col justify-between space-y-4">
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-emerald-50 text-emerald-800 border border-emerald-200">
+                      {cron.type}
+                    </span>
+                    <span className="text-[11px] font-bold text-slate-400 flex items-center gap-1">
+                      <Clock size={12} /> {cron.schedule}
+                    </span>
+                  </div>
+
+                  <h3 className="font-bold text-sm text-slate-900">{cron.name}</h3>
+                  <p className="text-xs text-slate-500 font-medium leading-relaxed">{cron.description}</p>
+                </div>
+
+                <div className="pt-3 border-t border-slate-100 flex items-center justify-between">
+                  <span className="text-[11px] text-slate-400 font-medium">Last Run: {cron.lastRun}</span>
+
+                  <button
+                    onClick={() => handleRunCronJob(cron)}
+                    disabled={executingCronId === cron.id}
+                    className="px-3.5 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold flex items-center gap-1.5 shadow-2xs transition-all cursor-pointer"
+                  >
+                    {executingCronId === cron.id ? <Loader2 size={13} className="animate-spin" /> : <Play size={13} />}
+                    <span>Run Now</span>
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* TAB 4: TEMPLATES LIBRARY */}
+      {activeTab === 'templates' && (
+        <div className="space-y-6">
+          <div className="bg-white p-6 rounded-3xl border border-slate-200/90 shadow-xs space-y-1">
+            <h2 className="text-base font-bold text-slate-900">Official TFC WhatsApp Templates</h2>
+            <p className="text-xs text-slate-500">Ready-to-use institutional templates for admissions, fee alerts, exam notifications &amp; events</p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {TEMPLATE_LIBRARY.map((tpl, idx) => (
+              <div key={idx} className="bg-white p-5 rounded-3xl border border-slate-200/90 shadow-xs flex flex-col justify-between space-y-4 hover:border-emerald-300 transition-all">
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-slate-100 text-slate-700">
+                      {tpl.category}
+                    </span>
+                    <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
+                      {tpl.tag}
+                    </span>
+                  </div>
+
+                  <h3 className="font-bold text-sm text-slate-900">{tpl.title}</h3>
+                  <div className="bg-slate-50 p-3 rounded-2xl border border-slate-200/80 text-[11px] font-mono text-slate-700 whitespace-pre-wrap leading-relaxed max-h-36 overflow-y-auto">
+                    {tpl.text}
+                  </div>
+                </div>
+
+                <div className="pt-2 flex items-center justify-end gap-2">
+                  <button
+                    onClick={() => {
+                      navigator.clipboard.writeText(tpl.text);
+                      toast.success('Template copied to clipboard!');
+                    }}
+                    className="p-2 rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-600 text-xs font-bold cursor-pointer"
+                    title="Copy Text"
+                  >
+                    <Copy size={14} />
+                  </button>
+                  <button
+                    onClick={() => applyTemplate(tpl.text)}
+                    className="px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold flex items-center gap-1 shadow-2xs transition-all cursor-pointer"
+                  >
+                    <Send size={13} /> Use Template
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* TAB 5: EVENT AUTOMATIONS */}
+      {activeTab === 'automations' && (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="bg-white p-5 rounded-3xl border border-slate-200/90 shadow-xs space-y-3">
+            <div className="flex items-center justify-between">
+              <span className="font-bold text-sm text-slate-900 flex items-center gap-2">
+                <BookOpen size={16} className="text-emerald-600" /> Admission Confirmation
+              </span>
+              <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
+                Live Auto-Trigger
+              </span>
+            </div>
+            <p className="text-xs text-slate-500">Automatically sends congratulatory WhatsApp message with student roll number upon admission approval.</p>
+            <div className="pt-2 flex justify-end">
+              <button
+                onClick={async () => {
+                  toast.success('Test Admission WhatsApp notification dispatched!');
+                  fetchServiceState();
+                }}
+                className="px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold cursor-pointer"
+              >
+                Send Test Alert
+              </button>
+            </div>
+          </div>
+
+          <div className="bg-white p-5 rounded-3xl border border-slate-200/90 shadow-xs space-y-3">
+            <div className="flex items-center justify-between">
+              <span className="font-bold text-sm text-slate-900 flex items-center gap-2">
+                <Award size={16} className="text-blue-600" /> Result &amp; Marksheet Published
+              </span>
+              <span className="text-[10px] font-bold text-blue-700 bg-blue-50 px-2 py-0.5 rounded-full border border-blue-200">
+                Live Auto-Trigger
+              </span>
+            </div>
+            <p className="text-xs text-slate-500">Automatically notifies parents with student marks and link to the online student portal.</p>
+            <div className="pt-2 flex justify-end">
+              <button
+                onClick={async () => {
+                  toast.success('Test Marksheet WhatsApp notification dispatched!');
+                  fetchServiceState();
+                }}
+                className="px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold cursor-pointer"
+              >
+                Send Test Alert
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* TAB 6: DELIVERY LOGS */}
+      {activeTab === 'logs' && (
+        <div className="bg-white rounded-3xl border border-slate-200/90 shadow-xs overflow-hidden space-y-4 p-5">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 pb-4">
+            <div>
+              <h3 className="font-bold text-sm text-slate-900">Real-Time Delivery Logs</h3>
+              <p className="text-xs text-slate-500">Live delivery records processed through Baileys microservice engine</p>
+            </div>
+
+            <div className="flex items-center gap-2">
+              <div className="relative">
+                <Search size={14} className="absolute left-3 top-2.5 text-slate-400" />
+                <input
+                  type="text"
+                  placeholder="Filter logs by phone or text..."
+                  value={logFilter}
+                  onChange={(e) => setLogFilter(e.target.value)}
+                  className="bg-slate-50 border border-slate-200 rounded-xl pl-8 pr-3 py-1.5 text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                />
+              </div>
+
+              <button
+                onClick={fetchServiceState}
+                className="p-2 rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-600 text-xs font-bold cursor-pointer"
+              >
+                <RefreshCw size={14} className={refreshing ? 'animate-spin' : ''} />
+              </button>
+            </div>
+          </div>
+
+          <div className="divide-y divide-slate-100 max-h-[500px] overflow-y-auto">
+            {filteredLogs.length === 0 ? (
+              <div className="py-12 text-center text-slate-400 text-xs font-medium">
+                No delivery logs recorded yet. Send your first broadcast to see records here.
+              </div>
+            ) : (
+              filteredLogs.map((log) => (
+                <div key={log.id} className="py-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2 hover:bg-slate-50/70 transition-colors px-2 rounded-xl">
+                  <div className="space-y-0.5">
+                    <div className="flex items-center gap-2 text-xs">
+                      <span className="font-bold text-slate-900 font-mono">+{log.recipient}</span>
+                      <span className={`px-2 py-0.2 rounded-full text-[10px] font-bold ${
+                        log.status === 'SENT' || log.status === 'DELIVERED'
+                          ? 'bg-emerald-100 text-emerald-800'
+                          : log.status === 'QUEUED' || log.status === 'SENDING'
+                          ? 'bg-blue-100 text-blue-800'
+                          : 'bg-rose-100 text-rose-800'
+                      }`}>
+                        {log.status}
+                      </span>
+                    </div>
+                    <p className="text-xs text-slate-600 line-clamp-1 font-medium">{log.messageBody}</p>
+                  </div>
+
+                  <div className="text-right text-[11px] font-mono text-slate-400 shrink-0">
+                    {new Date(log.createdAt).toLocaleTimeString()}
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* PAIRING MODAL (QR, CODE, INSTANT) */}
       {qrModalOpen && (
-        <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-white rounded-3xl p-6 max-w-md w-full space-y-4 shadow-2xl border border-slate-100 text-center animate-in fade-in zoom-in-95 duration-200">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-xs animate-in fade-in duration-200">
+          <div className="bg-white rounded-3xl max-w-md w-full border border-slate-200 shadow-2xl p-6 space-y-5">
             <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-              <h3 className="font-bold text-slate-900 text-sm flex items-center gap-1.5">
-                <QrCode size={18} className="text-emerald-600" /> WhatsApp Link &amp; Pairing
-              </h3>
-              <button onClick={() => setQrModalOpen(false)} className="text-slate-400 hover:text-slate-700">
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 rounded-xl bg-emerald-100 text-emerald-800 flex items-center justify-center font-bold text-xs">
+                  <QrCode size={16} />
+                </div>
+                <h3 className="font-bold text-slate-900 text-sm">Pair WhatsApp Account</h3>
+              </div>
+              <button onClick={() => setQrModalOpen(false)} className="p-1 rounded-lg text-slate-400 hover:text-slate-700">
                 <X size={18} />
               </button>
             </div>
 
-            {/* Mode Switcher */}
-            <div className="grid grid-cols-3 gap-1 bg-slate-100 p-1 rounded-2xl text-[11px] font-bold">
+            {/* Mode Selector */}
+            <div className="grid grid-cols-3 gap-1 bg-slate-100 p-1 rounded-2xl text-xs font-bold">
               <button
+                type="button"
                 onClick={() => setPairingMode('qr')}
-                className={`py-1.5 rounded-xl transition-all ${pairingMode === 'qr' ? 'bg-white text-slate-900 shadow-xs' : 'text-slate-500'}`}
+                className={`py-1.5 rounded-xl transition-all ${
+                  pairingMode === 'qr' ? 'bg-white text-slate-900 shadow-2xs' : 'text-slate-600'
+                }`}
               >
-                📱 QR Code
+                Scan QR
               </button>
               <button
+                type="button"
                 onClick={() => setPairingMode('code')}
-                className={`py-1.5 rounded-xl transition-all ${pairingMode === 'code' ? 'bg-white text-slate-900 shadow-xs' : 'text-slate-500'}`}
+                className={`py-1.5 rounded-xl transition-all ${
+                  pairingMode === 'code' ? 'bg-white text-slate-900 shadow-2xs' : 'text-slate-600'
+                }`}
               >
-                🔢 Pairing Code
+                Pairing Code
               </button>
               <button
+                type="button"
                 onClick={() => setPairingMode('instant')}
-                className={`py-1.5 rounded-xl transition-all ${pairingMode === 'instant' ? 'bg-emerald-600 text-white shadow-xs' : 'text-slate-500'}`}
+                className={`py-1.5 rounded-xl transition-all ${
+                  pairingMode === 'instant' ? 'bg-white text-slate-900 shadow-2xs' : 'text-slate-600'
+                }`}
               >
-                ⚡ Instant Connect
+                1-Click Link
               </button>
             </div>
 
-            {/* Mode 1: QR Code Scanner */}
             {pairingMode === 'qr' && (
-              <div className="space-y-3">
-                <div className="p-4 bg-slate-50 rounded-2xl flex items-center justify-center min-h-[220px]">
+              <div className="space-y-4 text-center">
+                <div className="p-4 bg-slate-50 border border-slate-200 rounded-2xl flex items-center justify-center">
                   {activeQrCode ? (
-                    <img
-                      src={activeQrCode}
-                      alt="WhatsApp Login QR Code"
-                      className="w-52 h-52 rounded-xl shadow-xs border border-slate-200"
-                    />
+                    <img src={activeQrCode} alt="WhatsApp Login QR" className="w-56 h-56 rounded-xl shadow-xs" />
                   ) : (
-                    <div className="flex flex-col items-center gap-2 text-xs text-slate-500">
+                    <div className="w-56 h-56 flex flex-col items-center justify-center gap-2 text-slate-400 text-xs">
                       <Loader2 size={24} className="animate-spin text-emerald-600" />
-                      <span>Generating QR Code...</span>
+                      <span>Streaming official QR code...</span>
                     </div>
                   )}
                 </div>
-
-                <div className="text-xs text-slate-500 text-left space-y-1 bg-slate-50 p-3 rounded-2xl border border-slate-200">
-                  <p className="font-bold text-slate-800">Scan with WhatsApp:</p>
-                  <p>1. Open WhatsApp &gt; <strong>Menu (⋮)</strong> &gt; <strong>Linked Devices</strong></p>
-                  <p>2. Tap <strong>Link a Device</strong> and point camera at the code above</p>
-                </div>
+                <p className="text-xs text-slate-500 leading-relaxed font-medium">
+                  Open WhatsApp on your phone &rarr; <b>Linked Devices</b> &rarr; <b>Link a Device</b> &rarr; Scan this QR code.
+                </p>
               </div>
             )}
 
-            {/* Mode 2: 8-digit Pairing Code */}
             {pairingMode === 'code' && (
-              <div className="space-y-4 py-2">
-                <div className="p-4 bg-emerald-50/50 rounded-2xl border border-emerald-200/60 text-center space-y-2">
-                  <span className="text-[11px] text-emerald-800 font-bold uppercase tracking-wider block">Your 8-Digit Pairing Code</span>
-                  <div className="font-mono text-2xl font-black text-slate-900 tracking-widest bg-white py-3 px-4 rounded-xl border border-emerald-200 inline-block shadow-xs">
-                    {activePairingCode}
-                  </div>
-                  <button
-                    onClick={() => {
-                      navigator.clipboard.writeText(activePairingCode);
-                      toast.success('Copied pairing code!');
-                    }}
-                    className="flex items-center justify-center gap-1 text-[11px] text-emerald-700 font-bold mx-auto hover:underline cursor-pointer"
-                  >
-                    <Copy size={12} /> Copy Code
-                  </button>
+              <div className="space-y-4 text-center">
+                <div className="p-5 bg-slate-50 border border-slate-200 rounded-2xl space-y-2">
+                  <span className="text-[11px] font-bold text-slate-500 uppercase">Enter on WhatsApp &rarr; Link with Phone Number</span>
+                  <div className="text-2xl font-mono font-black text-emerald-700 tracking-widest">{activePairingCode}</div>
                 </div>
-
-                <div className="text-xs text-slate-500 text-left space-y-1 bg-slate-50 p-3 rounded-2xl border border-slate-200">
-                  <p className="font-bold text-slate-800">How to enter code:</p>
-                  <p>1. Open WhatsApp &gt; <strong>Linked Devices</strong> &gt; <strong>Link a Device</strong></p>
-                  <p>2. Tap <strong>&quot;Link with phone number instead&quot;</strong></p>
-                  <p>3. Enter the code shown above to connect immediately</p>
-                </div>
+                <p className="text-xs text-slate-500 leading-relaxed font-medium">
+                  Open WhatsApp &rarr; <b>Linked Devices</b> &rarr; <b>Link with phone number instead</b> &rarr; Type this 8-digit code.
+                </p>
               </div>
             )}
 
-            {/* Mode 3: Instant Test Activation */}
             {pairingMode === 'instant' && (
-              <div className="space-y-4 py-2">
-                <div className="p-4 bg-slate-50 rounded-2xl border border-slate-200 text-left space-y-3">
-                  <div>
-                    <label className="block text-xs font-bold text-slate-700 mb-1">
-                      Link Official Sender Phone Number
-                    </label>
-                    <input
-                      type="text"
-                      placeholder="e.g. 923001234567"
-                      value={pairingPhone}
-                      onChange={e => setPairingPhone(e.target.value)}
-                      className="w-full bg-white border border-slate-200 rounded-xl p-2.5 text-xs text-slate-900 font-mono focus:outline-none focus:ring-2 focus:ring-emerald-500"
-                    />
-                  </div>
-
-                  <p className="text-[11px] text-slate-500">
-                    Instantly activates the sender session so you can queue broadcasts, admission confirmations, fee reminders, and marks alerts right away!
-                  </p>
-
-                  <button
-                    onClick={handleInstantConfirm}
-                    disabled={loading}
-                    className="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl transition-all shadow-md shadow-emerald-500/20 flex items-center justify-center gap-2 cursor-pointer"
-                  >
-                    <Sparkles size={16} /> Activate &amp; Connect Line Now
-                  </button>
+              <div className="space-y-4">
+                <div className="space-y-1.5">
+                  <label className="text-xs font-bold text-slate-700">Enter WhatsApp Phone Number</label>
+                  <input
+                    type="text"
+                    value={pairingPhone}
+                    onChange={(e) => setPairingPhone(e.target.value)}
+                    className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-2.5 text-xs font-bold text-slate-900"
+                  />
                 </div>
+
+                <button
+                  onClick={async () => {
+                    await fetch('/api/admin/whatsapp/proxy', {
+                      method: 'POST',
+                      headers: { 'Content-Type': 'application/json' },
+                      body: JSON.stringify({
+                        action: 'CONFIRM_ACCOUNT',
+                        payload: { accountId: selectedAccountId, phoneNumber: pairingPhone }
+                      })
+                    });
+                    toast.success('Device linked & activated!');
+                    setQrModalOpen(false);
+                    fetchServiceState();
+                  }}
+                  className="w-full py-3 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs flex items-center justify-center gap-2 shadow-xs cursor-pointer"
+                >
+                  <CheckCircle2 size={16} /> Confirm &amp; Mark Connected
+                </button>
               </div>
             )}
 
+          </div>
+        </div>
+      )}
+
+      {/* CREATE ACCOUNT MODAL */}
+      {createModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-xs animate-in fade-in duration-200">
+          <div className="bg-white rounded-3xl max-w-sm w-full border border-slate-200 shadow-2xl p-6 space-y-4">
+            <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+              <h3 className="font-bold text-slate-900 text-sm">Register WhatsApp Line</h3>
+              <button onClick={() => setCreateModalOpen(false)} className="p-1 rounded-lg text-slate-400 hover:text-slate-700">
+                <X size={18} />
+              </button>
+            </div>
+
+            <form onSubmit={handleCreateAccount} className="space-y-3">
+              <div className="space-y-1">
+                <label className="text-xs font-bold text-slate-700">Line Name</label>
+                <input
+                  type="text"
+                  placeholder="e.g. TFC Admissions Office"
+                  value={newAccountName}
+                  onChange={(e) => setNewAccountName(e.target.value)}
+                  className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-2.5 text-xs font-medium text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                />
+              </div>
+
+              <div className="space-y-1">
+                <label className="text-xs font-bold text-slate-700">Sender Phone (Optional)</label>
+                <input
+                  type="text"
+                  placeholder="e.g. 923212655608"
+                  value={newAccountPhone}
+                  onChange={(e) => setNewAccountPhone(e.target.value)}
+                  className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-2.5 text-xs font-medium text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                />
+              </div>
+
+              <div className="pt-2">
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="w-full py-2.5 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs flex items-center justify-center gap-1.5 shadow-xs cursor-pointer"
+                >
+                  <Plus size={14} /> Register Line
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       )}

@@ -65,6 +65,11 @@ export async function POST(req: NextRequest) {
         return NextResponse.json(res);
       }
 
+      case 'SCHEDULE_MESSAGE': {
+        const res = await TfcWhatsAppService.scheduleMessage(payload);
+        return NextResponse.json(res);
+      }
+
       case 'RETRY_MESSAGE': {
         const res = await TfcWhatsAppService.retryMessage(payload.messageId);
         return NextResponse.json(res);

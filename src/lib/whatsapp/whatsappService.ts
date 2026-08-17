@@ -125,6 +125,19 @@ export class TfcWhatsAppService {
     return this.request(`/messages/${messageId}/retry`, { method: 'POST' });
   }
 
+  static async scheduleMessage(payload: {
+    accountId: string;
+    recipient: string;
+    messageBody: string;
+    scheduledAt: string;
+    metadata?: Record<string, any>;
+  }) {
+    return this.request('/messages/schedule', {
+      method: 'POST',
+      body: JSON.stringify(payload)
+    });
+  }
+
   // 6. Institutional Automations
   static async triggerAutomation(payload: {
     triggerType: 'ADMISSION_CONFIRMATION' | 'FEE_DUE_REMINDER' | 'ATTENDANCE_ALERT' | 'RESULT_NOTIFICATION' | 'ANNOUNCEMENT' | 'CUSTOM_EVENT';
