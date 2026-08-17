@@ -71,11 +71,21 @@ export class TfcWhatsAppService {
     return this.request(`/accounts/${accountId}/qr`);
   }
 
-  static async confirmAccount(accountId: string, phoneNumber?: string) {
-    return this.request(`/accounts/${accountId}/confirm`, {
+  static async requestPairingCode(accountId: string, phoneNumber: string) {
+    return this.request(`/accounts/${accountId}/pairing-code`, {
       method: 'POST',
       body: JSON.stringify({ phoneNumber })
     });
+  }
+
+  static async checkConnection(accountId: string) {
+    return this.request(`/accounts/${accountId}/check-connection`, {
+      method: 'POST'
+    });
+  }
+
+  static async reconnectAccount(accountId: string) {
+    return this.request(`/accounts/${accountId}/reconnect`, { method: 'POST' });
   }
 
   static async disconnectAccount(accountId: string) {

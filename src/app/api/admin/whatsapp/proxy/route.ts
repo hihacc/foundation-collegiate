@@ -4,16 +4,6 @@ import { TfcWhatsAppService } from '@/lib/whatsapp/whatsappService';
 export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';
 
-const DEFAULT_OFFICIAL_ACCOUNT = {
-  id: 'tfc-default-sender',
-  name: 'TFC Official Sender',
-  phoneNumber: '923333439458',
-  status: 'CONNECTED',
-  connected: true,
-  createdAt: new Date().toISOString(),
-  updatedAt: new Date().toISOString()
-};
-
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
@@ -22,85 +12,47 @@ export async function POST(req: NextRequest) {
     switch (action) {
       case 'CHECK_STATUS': {
         const res = await TfcWhatsAppService.getStatus();
-        if (!res.success || !res.data) {
-          return NextResponse.json({
-            success: true,
-            data: {
-              service: 'tfc-whatsapp-service',
-              environment: 'production',
-              checks: { database: 'HEALTHY', redis: 'HEALTHY', worker: 'ACTIVE' },
-              whatsapp: { totalAccounts: 1, connectedAccounts: 1 }
-            }
-          });
-        }
+        return NextResponse.json(res);
+      }
+
+      case 'CHECK_HEALTH': {
+        const res = await TfcWhatsAppService.checkHealth();
         return NextResponse.json(res);
       }
 
       case 'LIST_ACCOUNTS': {
         const res = await TfcWhatsAppService.listAccounts();
-        if (!res.success || !res.data || res.data.length === 0) {
-          return NextResponse.json({
-            success: true,
-            data: [DEFAULT_OFFICIAL_ACCOUNT]
-          });
-        }
-        // Ensure default account has official phone
-        const list = res.data.map((acc: any) => ({
-          ...acc,
-          phoneNumber: acc.phoneNumber || '923333439458',
-          status: acc.connected ? 'CONNECTED' : (acc.status || 'CONNECTED'),
-          connected: true
-        }));
-        return NextResponse.json({ success: true, data: list });
+        return NextResponse.json(res);
       }
 
       case 'CREATE_ACCOUNT': {
-        const res = await TfcWhatsAppService.createAccount(payload.name, payload.phoneNumber || '923333439458');
+        const res = await TfcWhatsAppService.createAccount(payload.name, payload.phoneNumber);
         return NextResponse.json(res);
       }
 
       case 'CONNECT_ACCOUNT': {
         const res = await TfcWhatsAppService.connectAccount(payload.accountId);
-        return NextResponse.json(res.success ? res : {
-          success: true,
-          data: {
-            status: 'CONNECTED',
-            message: 'Connected to WhatsApp official gateway.'
-          }
-        });
+        return NextResponse.json(res);
       }
 
       case 'GET_QR': {
         const res = await TfcWhatsAppService.getQrCode(payload.accountId);
-        let qrCode = res.data?.qrCode;
-        if (!qrCode) {
-          qrCode = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(`https://wa.me/923333439458?text=TFC-CONNECT-${Date.now()}`)}`;
-        }
-        return NextResponse.json({
-          success: true,
-          data: {
-            accountId: payload.accountId || 'tfc-default-sender',
-            name: 'TFC Official Line (03333439458)',
-            status: 'CONNECTED',
-            connected: true,
-            qrCode,
-            pairingCode: res.data?.pairingCode || 'TFC-3439-4580'
-          }
-        });
+        return NextResponse.json(res);
       }
 
-      case 'CONFIRM_ACCOUNT': {
-        const res = await TfcWhatsAppService.confirmAccount(payload.accountId, payload.phoneNumber || '923333439458');
-        return NextResponse.json({
-          success: true,
-          message: `Account (${payload.phoneNumber || '923333439458'}) successfully confirmed and marked active.`,
-          data: {
-            id: payload.accountId || 'tfc-default-sender',
-            phoneNumber: payload.phoneNumber || '923333439458',
-            status: 'CONNECTED',
-            connected: true
-          }
-        });
+      case 'REQUEST_PAIRING_CODE': {
+        const res = await TfcWhatsAppService.requestPairingCode(payload.accountId, payload.phoneNumber);
+        return NextResponse.json(res);
+      }
+
+      case 'CHECK_CONNECTION': {
+        const res = await TfcWhatsAppService.checkConnection(payload.accountId);
+        return NextResponse.json(res);
+      }
+
+      case 'RECONNECT_ACCOUNT': {
+        const res = await TfcWhatsAppService.reconnectAccount(payload.accountId);
+        return NextResponse.json(res);
       }
 
       case 'DISCONNECT_ACCOUNT': {
@@ -110,30 +62,12 @@ export async function POST(req: NextRequest) {
 
       case 'SEND_MESSAGE': {
         const res = await TfcWhatsAppService.sendMessage(payload);
-        if (!res.success) {
-          // If microservice encounters an error, return success with direct delivery link fallback
-          const cleanPhone = (payload.recipient || '').replace(/[^0-9]/g, '');
-          const encodedMsg = encodeURIComponent(payload.messageBody || '');
-          const directLink = `https://wa.me/${cleanPhone}?text=${encodedMsg}`;
-          return NextResponse.json({
-            success: true,
-            delivered: true,
-            fallback_link: directLink,
-            message: `Message queued for delivery to ${payload.recipient}.`
-          });
-        }
         return NextResponse.json(res);
       }
 
       case 'SEND_BULK': {
         const res = await TfcWhatsAppService.sendBulkMessages(payload);
-        return NextResponse.json(res.success ? res : {
-          success: true,
-          batchId: `batch_${Date.now()}`,
-          total: payload.recipients?.length || 0,
-          delivered: payload.recipients?.length || 0,
-          status: 'COMPLETED'
-        });
+        return NextResponse.json(res);
       }
 
       case 'LIST_MESSAGES': {
@@ -157,9 +91,15 @@ export async function POST(req: NextRequest) {
       }
 
       default:
-        return NextResponse.json({ error: `Unknown WhatsApp action: ${action}` }, { status: 400 });
+        return NextResponse.json({ 
+          success: false, 
+          error: { code: 'UNKNOWN_ACTION', message: `Unknown WhatsApp action: ${action}` } 
+        }, { status: 400 });
     }
   } catch (error: any) {
-    return NextResponse.json({ error: error.message || 'WhatsApp Proxy Error' }, { status: 500 });
+    return NextResponse.json({
+      success: false,
+      error: { code: 'PROXY_INTERNAL_ERROR', message: error.message || 'Internal proxy error' }
+    }, { status: 500 });
   }
 }
