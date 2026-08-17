@@ -11,6 +11,73 @@ import {
   BookOpen, Bell, ArrowUpRight, Check, X, Loader2, CornerDownLeft, Sparkle
 } from 'lucide-react';
 import Link from 'next/link';
+import Image from 'next/image';
+
+function renderInlineMarkdown(text: string): string {
+  let out = text;
+  // Bold **text**
+  out = out.replace(/\*\*(.*?)\*\*/g, '<strong class="font-bold text-slate-900">$1</strong>');
+  // Italic quotes *"quote"*
+  out = out.replace(/\*"(.*?)"\*/g, '<span class="italic text-emerald-800 bg-emerald-50 px-1 py-0.5 rounded font-mono text-[11px] border border-emerald-200/60 font-semibold">"$1"</span>');
+  // Simple italics *text*
+  out = out.replace(/\*(.*?)\*/g, '<em class="italic text-slate-700 font-medium">$1</em>');
+  // Code `code`
+  out = out.replace(/`(.*?)`/g, '<code class="bg-slate-100 px-1.5 py-0.5 rounded font-mono text-xs text-indigo-700 font-bold border border-slate-200">$1</code>');
+  return out;
+}
+
+function FormattedAiMessage({ content, isUser }: { content: string; isUser: boolean }) {
+  if (isUser) {
+    return <div className="font-medium whitespace-pre-wrap">{content}</div>;
+  }
+
+  const lines = content.split('\n');
+
+  return (
+    <div className="space-y-2 font-normal text-slate-800 leading-relaxed text-xs sm:text-sm">
+      {lines.map((line, idx) => {
+        const trimmed = line.trim();
+        if (!trimmed) {
+          return <div key={idx} className="h-0.5" />;
+        }
+
+        // Heading 3
+        if (trimmed.startsWith('### ')) {
+          return (
+            <div key={idx} className="font-display font-black text-slate-900 text-sm sm:text-base flex items-center gap-1.5 pt-1 pb-0.5 border-b border-slate-200/80">
+              <Sparkles size={15} className="text-emerald-600 shrink-0" />
+              <span>{trimmed.replace('### ', '')}</span>
+            </div>
+          );
+        }
+
+        // Heading 2
+        if (trimmed.startsWith('## ')) {
+          return (
+            <div key={idx} className="font-display font-black text-slate-900 text-base flex items-center gap-1.5 pt-1.5 pb-0.5">
+              <span>{trimmed.replace('## ', '')}</span>
+            </div>
+          );
+        }
+
+        // List item with clean bullet
+        if (trimmed.startsWith('- ') || trimmed.startsWith('* ')) {
+          const bulletContent = trimmed.replace(/^[-*]\s+/, '');
+          return (
+            <div key={idx} className="flex items-start gap-2 pl-1 py-0.5">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-600 shrink-0 mt-1.5" />
+              <div className="flex-1" dangerouslySetInnerHTML={{ __html: renderInlineMarkdown(bulletContent) }} />
+            </div>
+          );
+        }
+
+        return (
+          <p key={idx} dangerouslySetInnerHTML={{ __html: renderInlineMarkdown(line) }} />
+        );
+      })}
+    </div>
+  );
+}
 
 interface Message {
   id: string;
@@ -198,8 +265,15 @@ export default function AiCopilotPage() {
       {/* 1. Header Banner - Clean Light Theme */}
       <div className="bg-white p-5 sm:p-6 rounded-3xl border border-slate-200/90 shadow-xs flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
         <div className="flex items-center gap-3.5">
-          <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-emerald-600 via-teal-600 to-emerald-500 flex items-center justify-center text-white shadow-md shadow-emerald-500/20">
-            <Sparkles size={24} />
+          <div className="w-12 h-12 rounded-2xl bg-white border border-slate-200 p-1.5 flex items-center justify-center shadow-sm shrink-0">
+            <Image 
+              src="/foundation-logo.png" 
+              alt="The Foundation Collegiate Logo" 
+              width={40} 
+              height={40} 
+              priority
+              className="w-full h-full object-contain" 
+            />
           </div>
           <div>
             <div className="flex items-center gap-2">
@@ -350,26 +424,32 @@ export default function AiCopilotPage() {
               }`}
             >
               {/* Avatar */}
-              <div
-                className={`w-8 h-8 rounded-xl flex items-center justify-center shrink-0 text-xs font-bold ${
-                  msg.role === 'user'
-                    ? 'bg-emerald-600 text-white shadow-xs'
-                    : 'bg-emerald-50 text-emerald-800 border border-emerald-200'
-                }`}
-              >
-                {msg.role === 'user' ? <User size={15} /> : <Bot size={15} />}
-              </div>
+              {msg.role === 'user' ? (
+                <div className="w-8 h-8 rounded-xl bg-emerald-600 text-white flex items-center justify-center shrink-0 text-xs font-bold shadow-xs">
+                  <User size={15} />
+                </div>
+              ) : (
+                <div className="w-8 h-8 rounded-xl bg-white border border-slate-200 p-1 flex items-center justify-center shrink-0 shadow-2xs">
+                  <Image 
+                    src="/foundation-logo.png" 
+                    alt="TFC Copilot" 
+                    width={22} 
+                    height={22} 
+                    className="w-full h-full object-contain" 
+                  />
+                </div>
+              )}
 
               {/* Message Bubble */}
               <div className="space-y-2 max-w-[90%]">
                 <div
-                  className={`p-4 rounded-2xl text-xs sm:text-sm leading-relaxed whitespace-pre-wrap ${
+                  className={`p-4 rounded-2xl text-xs sm:text-sm leading-relaxed ${
                     msg.role === 'user'
                       ? 'bg-emerald-600 text-white rounded-tr-xs font-medium shadow-xs'
-                      : 'bg-slate-50/80 border border-slate-200 text-slate-800 rounded-tl-xs shadow-2xs'
+                      : 'bg-white border border-slate-200 text-slate-800 rounded-tl-xs shadow-2xs'
                   }`}
                 >
-                  {msg.content}
+                  <FormattedAiMessage content={msg.content} isUser={msg.role === 'user'} />
                 </div>
 
                 {/* Structured Action Proposal Card */}

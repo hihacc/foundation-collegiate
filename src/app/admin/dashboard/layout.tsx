@@ -4,6 +4,7 @@ export const dynamic = 'force-dynamic';
 import { useState, useEffect } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import Link from 'next/link';
+import Image from 'next/image';
 import { supabase } from '@/lib/supabase/client';
 import { toast } from 'sonner';
 import {
@@ -160,13 +161,20 @@ export default function AdminDashboardLayout({ children }: { children: React.Rea
         collapsed ? 'justify-center px-2' : ''
       )}>
         <div className="flex items-center gap-3">
-          <div className="relative h-9 w-9 shrink-0 overflow-hidden rounded-xl shadow-md bg-blue-600 text-white flex items-center justify-center font-bold">
-            TFC
+          <div className="relative h-10 w-10 shrink-0 rounded-2xl p-1 bg-white border border-slate-200 shadow-2xs flex items-center justify-center">
+            <Image 
+              src="/foundation-logo.png" 
+              alt="The Foundation Collegiate Logo" 
+              width={36} 
+              height={36} 
+              priority
+              className="w-full h-full object-contain" 
+            />
           </div>
           {!collapsed && (
             <div className="overflow-hidden whitespace-nowrap">
-              <div className="font-bold text-slate-800 text-sm leading-tight">TFC Admin</div>
-              <div className="text-[11px] text-slate-400 font-medium">Control Panel</div>
+              <div className="font-display font-black text-slate-900 text-sm leading-tight tracking-tight">The Foundation</div>
+              <div className="text-[10px] text-blue-600 font-bold uppercase tracking-wider">Collegiate Admin</div>
             </div>
           )}
         </div>
@@ -174,7 +182,7 @@ export default function AdminDashboardLayout({ children }: { children: React.Rea
           <button
             onClick={() => setSidebarOpen(false)}
             title="Collapse Sidebar"
-            className="hidden md:flex p-1.5 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors"
+            className="hidden md:flex p-1.5 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors cursor-pointer"
           >
             <PanelLeftClose size={18} />
           </button>
@@ -308,19 +316,26 @@ export default function AdminDashboardLayout({ children }: { children: React.Rea
             <button
               onClick={() => setSidebarOpen(!sidebarOpen)}
               title={sidebarOpen ? "Collapse Sidebar" : "Expand Sidebar"}
-              className="hidden md:flex p-2 rounded-xl text-slate-600 hover:bg-slate-100 transition-colors border border-slate-200"
+              className="hidden md:flex p-2 rounded-xl text-slate-600 hover:bg-slate-100 transition-colors border border-slate-200 cursor-pointer"
             >
-              {sidebarOpen ? <PanelLeftClose size={20} /> : <PanelLeftOpen size={20} />}
+              {sidebarOpen ? <PanelLeftClose size={18} /> : <PanelLeftOpen size={18} />}
             </button>
 
             <button
               onClick={() => setMobileSidebarOpen(true)}
-              className="md:hidden p-2 rounded-xl text-slate-600 hover:bg-slate-100 transition-colors border border-slate-200"
+              className="md:hidden p-2 rounded-xl text-slate-600 hover:bg-slate-100 transition-colors border border-slate-200 cursor-pointer"
             >
-              <Menu size={20} />
+              <Menu size={18} />
             </button>
             
-            <span className="font-bold text-slate-800 text-sm hidden sm:inline-block">The Foundation Collegiate Admin</span>
+            <div className="flex items-center gap-2">
+              <div className="w-8 h-8 rounded-xl bg-white border border-slate-200 p-0.5 shadow-2xs hidden sm:flex items-center justify-center shrink-0">
+                <Image src="/foundation-logo.png" alt="TFC Logo" width={26} height={26} className="w-full h-full object-contain" />
+              </div>
+              <span className="font-display font-black text-slate-900 text-sm hidden sm:inline-block tracking-tight">
+                The Foundation Collegiate &bull; <span className="text-blue-600 font-bold">Admin Portal</span>
+              </span>
+            </div>
           </div>
 
           <div className="flex items-center gap-3">
