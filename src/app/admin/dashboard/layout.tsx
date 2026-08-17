@@ -10,12 +10,13 @@ import {
   LayoutDashboard, FileText, Users, Image as ImageIcon, MessageSquare, Bell,
   Download, BookOpen, LogOut, Menu, X, Home, ExternalLink, Trophy,
   Settings, BarChart3, UserCog, ClipboardList, ChevronRight, PanelLeftClose, PanelLeftOpen,
-  Banknote, Receipt, Wallet, Mail, SlidersHorizontal, UserCheck, HardDrive, Cake, Camera
+  Banknote, Receipt, Wallet, Mail, SlidersHorizontal, UserCheck, HardDrive, Cake, Camera, Sparkles
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 const navItems = [
   { name: 'Dashboard',         href: '/admin/dashboard',             icon: LayoutDashboard },
+  { name: '🤖 AI Copilot & Data', href: '/admin/dashboard/ai-copilot', icon: Sparkles, isAi: true },
   
   // Fee Management Module
   { name: 'Fee Dashboard',     href: '/admin/dashboard/fees',        icon: Banknote,      isFee: true },
