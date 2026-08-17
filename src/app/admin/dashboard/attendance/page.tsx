@@ -179,35 +179,60 @@ export default function AdminAttendancePage() {
   };
 
   const handleSendWhatsAppAbsentAlert = async (st: Student) => {
-    if (!st.phone) {
-      toast.error(`No phone number found for ${st.name}`);
+    const parentNumber = st.parent_phone?.trim() || st.phone?.trim();
+    const studentNumber = st.phone?.trim();
+
+    if (!parentNumber && !studentNumber) {
+      toast.error(`No contact numbers registered for ${st.name}`);
       return;
     }
-    const msg = `🚨 *TFC Alert!*\nRespected Parent,\nStudent *${st.name}* (Roll: *${st.roll_number || 'N/A'}*, Class: *${st.class_name || selectedClass}*) is *ABSENT* from class today (*${selectedDate}*).\nKindly contact the college administration if you have any questions.\n\n*The Foundation Collegiate*`;
-    
+
+    const parentMsg = `🚨 *TFC Alert! Student is absent from class*\n\nRespected Parent,\nStudent *${st.name}* (Roll: *${st.roll_number || 'N/A'}*, Class: *${st.class_name || selectedClass}*) is *ABSENT* from class today (*${selectedDate}*).\n\nKindly contact the college administration for any queries.\n\n*The Foundation Collegiate*`;
+    const studentMsg = `🚨 *TFC Alert! You are marked absent from class*\n\nDear *${st.name}* (Roll: *${st.roll_number || 'N/A'}*, Class: *${st.class_name || selectedClass}*),\nYou are marked *ABSENT* from class today (*${selectedDate}*).\n\nPlease submit your leave application or medical certificate to the administration office upon return.\n\n*The Foundation Collegiate*`;
+
+    const dispatchList: { recipient: string; messageBody: string; label: string }[] = [];
+
+    if (parentNumber) {
+      dispatchList.push({ recipient: parentNumber, messageBody: parentMsg, label: 'Parent' });
+    }
+    if (studentNumber && studentNumber !== parentNumber) {
+      dispatchList.push({ recipient: studentNumber, messageBody: studentMsg, label: 'Student' });
+    }
+
     try {
-      const res = await fetch('/api/admin/whatsapp/proxy', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          action: 'SEND_MESSAGE',
-          payload: {
-            accountId: 'tfc-default-sender',
-            recipient: st.phone,
-            messageBody: msg,
-            metadata: { studentId: st.id, type: 'ABSENT_ALERT', date: selectedDate }
-          }
-        })
-      });
-      const data = await res.json();
-      if (data.success) {
-        toast.success(`WhatsApp Absent Alert sent to parent of ${st.name}!`);
+      let sentCount = 0;
+      for (const item of dispatchList) {
+        const res = await fetch('/api/admin/whatsapp/proxy', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            action: 'SEND_MESSAGE',
+            payload: {
+              accountId: 'tfc-default-sender',
+              recipient: item.recipient,
+              messageBody: item.messageBody,
+              metadata: { studentId: st.id, type: 'ABSENT_ALERT', target: item.label, date: selectedDate }
+            }
+          })
+        });
+        const data = await res.json();
+        if (data.success) sentCount++;
+      }
+
+      if (sentCount > 0) {
+        toast.success(`TFC Absent Alert sent on WhatsApp to ${dispatchList.map(d => d.label).join(' & ')} of ${st.name}!`);
+        logAdminActivity({
+          category: 'WHATSAPP',
+          action: 'WHATSAPP_ABSENT_ALERT_SENT',
+          details: `Sent absent alert to ${dispatchList.map(d => `${d.label} (${d.recipient})`).join(' and ')} for student ${st.name}`,
+          severity: 'INFO'
+        });
       } else {
-        window.open(`https://wa.me/${st.phone.replace(/\D/g, '')}?text=${encodeURIComponent(msg)}`, '_blank');
+        window.open(`https://wa.me/${(parentNumber || studentNumber)!.replace(/\D/g, '')}?text=${encodeURIComponent(parentMsg)}`, '_blank');
         toast.info('Opened direct WhatsApp chat');
       }
     } catch {
-      window.open(`https://wa.me/${st.phone?.replace(/\D/g, '')}?text=${encodeURIComponent(msg)}`, '_blank');
+      window.open(`https://wa.me/${(parentNumber || studentNumber)!.replace(/\D/g, '')}?text=${encodeURIComponent(parentMsg)}`, '_blank');
     }
   };
 
@@ -218,17 +243,35 @@ export default function AdminAttendancePage() {
       return;
     }
 
-    if (!confirm(`Send automated WhatsApp Absent Alerts to parents of all ${absentStudents.length} absent students?`)) {
+    if (!confirm(`Send automated WhatsApp Absent Alerts to BOTH Parents and Students for all ${absentStudents.length} absent student(s)?`)) {
       return;
     }
 
-    const bulkPayload = absentStudents
-      .filter(st => st.phone)
-      .map(st => ({
-        recipient: st.phone!,
-        messageBody: `🚨 *TFC Alert!*\nRespected Parent,\nStudent *${st.name}* (Roll: *${st.roll_number || 'N/A'}*, Class: *${st.class_name || selectedClass}*) is *ABSENT* from class today (*${selectedDate}*).\nKindly contact administration for any queries.\n\n*The Foundation Collegiate*`,
-        metadata: { studentId: st.id, name: st.name, roll: st.roll_number, date: selectedDate }
-      }));
+    const bulkPayload: { recipient: string; messageBody: string; metadata: any }[] = [];
+
+    absentStudents.forEach(st => {
+      const parentNum = st.parent_phone?.trim() || st.phone?.trim();
+      const studentNum = st.phone?.trim();
+
+      const parentMsg = `🚨 *TFC Alert! Student is absent from class*\n\nRespected Parent,\nStudent *${st.name}* (Roll: *${st.roll_number || 'N/A'}*, Class: *${st.class_name || selectedClass}*) is *ABSENT* from class today (*${selectedDate}*).\n\nKindly contact the college administration for any queries.\n\n*The Foundation Collegiate*`;
+      const studentMsg = `🚨 *TFC Alert! You are marked absent from class*\n\nDear *${st.name}* (Roll: *${st.roll_number || 'N/A'}*, Class: *${st.class_name || selectedClass}*),\nYou are marked *ABSENT* from class today (*${selectedDate}*).\n\nPlease submit your leave application or medical certificate to the administration office upon return.\n\n*The Foundation Collegiate*`;
+
+      if (parentNum) {
+        bulkPayload.push({
+          recipient: parentNum,
+          messageBody: parentMsg,
+          metadata: { studentId: st.id, name: st.name, roll: st.roll_number, date: selectedDate, target: 'PARENT' }
+        });
+      }
+
+      if (studentNum && studentNum !== parentNum) {
+        bulkPayload.push({
+          recipient: studentNum,
+          messageBody: studentMsg,
+          metadata: { studentId: st.id, name: st.name, roll: st.roll_number, date: selectedDate, target: 'STUDENT' }
+        });
+      }
+    });
 
     if (bulkPayload.length === 0) {
       toast.error('None of the absent students have phone numbers registered in directory.');
@@ -249,11 +292,11 @@ export default function AdminAttendancePage() {
       });
       const data = await res.json();
       if (data.success) {
-        toast.success(`Dispatched ${bulkPayload.length} WhatsApp Absent Alerts to parents!`);
+        toast.success(`Dispatched ${bulkPayload.length} WhatsApp Absent Alerts to Parents and Students!`);
         logAdminActivity({
           category: 'WHATSAPP',
           action: 'WHATSAPP_BULK_ABSENT_ALERT_DISPATCH',
-          details: `Dispatched automated WhatsApp absentee alerts to ${bulkPayload.length} parent(s) for ${selectedClass} on ${selectedDate}`,
+          details: `Dispatched ${bulkPayload.length} automated WhatsApp absentee alerts to Parents & Students for ${selectedClass} on ${selectedDate}`,
           severity: 'INFO',
           metadata: { class: selectedClass, count: bulkPayload.length, date: selectedDate }
         });
