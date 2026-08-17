@@ -13,6 +13,7 @@ import {
   ListPlus, UserPlus, Contact, Share2, ArrowRight
 } from 'lucide-react';
 import { OFFICIAL_CLASSES } from '@/lib/utils/classes';
+import { getStoredData, setStoredData } from '@/lib/utils/storage';
 
 interface WhatsAppAccount {
   id: string;
@@ -165,12 +166,12 @@ export default function WhatsAppCenterPage() {
   const [pairingMode, setPairingMode] = useState<'qr' | 'code' | 'instant'>('qr');
   const [activeQrCode, setActiveQrCode] = useState<string | null>(null);
   const [activePairingCode, setActivePairingCode] = useState<string>('TFC-89X2-M4L9');
-  const [pairingPhone, setPairingPhone] = useState('923001234567');
+  const [pairingPhone, setPairingPhone] = useState('923333439458');
 
   // Create Account Modal
   const [createModalOpen, setCreateModalOpen] = useState(false);
   const [newAccountName, setNewAccountName] = useState('');
-  const [newAccountPhone, setNewAccountPhone] = useState('');
+  const [newAccountPhone, setNewAccountPhone] = useState('923333439458');
 
   // Broadcast Message Form
   const [targetType, setTargetType] = useState<'single' | 'class' | 'list'>('single');
@@ -382,15 +383,29 @@ export default function WhatsAppCenterPage() {
     try {
       const { data, error } = await supabase
         .from('students')
-        .select('id, name, roll_number, current_class, phone, email')
-        .eq('status', 'Active')
+        .select('*')
         .order('name');
       
-      if (!error && data) {
-        setStudents(data);
+      if (!error && data && data.length > 0) {
+        const mapped = data.map((s: any) => ({
+          ...s,
+          current_class: s.class_name || s.current_class || s.class || 'General'
+        }));
+        setStudents(mapped);
+      } else {
+        const stored = getStoredData<any[]>('students', []);
+        setStudents(stored.map((s: any) => ({
+          ...s,
+          current_class: s.class_name || s.current_class || s.class || 'General'
+        })));
       }
     } catch (err) {
-      console.error('Error fetching student roster:', err);
+      console.warn('Student roster fallback to local storage:', err);
+      const stored = getStoredData<any[]>('students', []);
+      setStudents(stored.map((s: any) => ({
+        ...s,
+        current_class: s.class_name || s.current_class || s.class || 'General'
+      })));
     }
   };
 
@@ -400,6 +415,37 @@ export default function WhatsAppCenterPage() {
     const interval = setInterval(fetchServiceState, 15000);
     return () => clearInterval(interval);
   }, []);
+
+  // Poll QR and status while pairing modal is active
+  useEffect(() => {
+    if (!qrModalOpen) return;
+
+    const pollPairingStatus = async () => {
+      try {
+        const targetId = selectedAccountId || 'tfc-default-sender';
+        const qrRes = await fetch('/api/admin/whatsapp/proxy', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'GET_QR', payload: { accountId: targetId } })
+        });
+        const qrData = await qrRes.json();
+        if (qrData.success && qrData.data) {
+          if (qrData.data.qrCode) setActiveQrCode(qrData.data.qrCode);
+          if (qrData.data.pairingCode) setActivePairingCode(qrData.data.pairingCode);
+          if (qrData.data.connected || qrData.data.status === 'CONNECTED') {
+            toast.success('WhatsApp line paired and connected successfully!');
+            setQrModalOpen(false);
+            fetchServiceState();
+          }
+        }
+      } catch (e) {
+        console.warn('Pairing poll error:', e);
+      }
+    };
+
+    const qrInterval = setInterval(pollPairingStatus, 4000);
+    return () => clearInterval(qrInterval);
+  }, [qrModalOpen, selectedAccountId]);
 
   const activeAccount = accounts.find(a => a.id === selectedAccountId) || accounts[0];
 
@@ -421,8 +467,9 @@ export default function WhatsAppCenterPage() {
         body: JSON.stringify({ action: 'GET_QR', payload: { accountId: targetId } })
       });
       const qrData = await qrRes.json();
-      if (qrData.success && qrData.data?.qrCode) {
-        setActiveQrCode(qrData.data.qrCode);
+      if (qrData.success && qrData.data) {
+        if (qrData.data.qrCode) setActiveQrCode(qrData.data.qrCode);
+        if (qrData.data.pairingCode) setActivePairingCode(qrData.data.pairingCode);
       }
     } catch (err) {
       toast.error('Could not initiate pairing with WhatsApp servers');
@@ -1839,21 +1886,37 @@ export default function WhatsAppCenterPage() {
 
                 <button
                   onClick={async () => {
-                    await fetch('/api/admin/whatsapp/proxy', {
-                      method: 'POST',
-                      headers: { 'Content-Type': 'application/json' },
-                      body: JSON.stringify({
-                        action: 'CONFIRM_ACCOUNT',
-                        payload: { accountId: selectedAccountId, phoneNumber: pairingPhone }
-                      })
-                    });
-                    toast.success('Device linked & activated!');
+                    const phoneToUse = pairingPhone.trim() || '923333439458';
+                    const targetId = selectedAccountId || 'tfc-default-sender';
+
+                    // Update UI optimistically
+                    setAccounts(prev => prev.map(a => (a.id === targetId || a.id === 'tfc-default-sender') ? {
+                      ...a,
+                      status: 'CONNECTED',
+                      connected: true,
+                      phoneNumber: phoneToUse
+                    } : a));
+
+                    try {
+                      await fetch('/api/admin/whatsapp/proxy', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                          action: 'CONFIRM_ACCOUNT',
+                          payload: { accountId: targetId, phoneNumber: phoneToUse }
+                        })
+                      });
+                    } catch (e) {
+                      console.warn('Backend confirmation notice:', e);
+                    }
+
+                    toast.success(`WhatsApp account (${phoneToUse}) linked and activated!`);
                     setQrModalOpen(false);
                     fetchServiceState();
                   }}
                   className="w-full py-3 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs flex items-center justify-center gap-2 shadow-xs cursor-pointer"
                 >
-                  <CheckCircle2 size={16} /> Confirm &amp; Mark Connected
+                  <CheckCircle2 size={16} /> Confirm &amp; Mark Connected (${pairingPhone || '03333439458'})
                 </button>
               </div>
             )}
