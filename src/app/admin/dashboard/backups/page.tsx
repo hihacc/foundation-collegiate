@@ -34,15 +34,15 @@ export default function AdminBackupsPage() {
   const [restoring, setRestoring] = useState(false);
   const [lastBackupTime, setLastBackupTime] = useState<string>('');
   
-  // Timer interval settings (Default to 1 Hour = 3600s)
+  // Timer interval settings (Default to 24 Hours = 86400s)
   const [timerIntervalSec, setTimerIntervalSec] = useState<number>(() => {
     if (typeof window !== 'undefined') {
       const saved = localStorage.getItem('tfc_backup_interval_sec');
       if (saved) return Number(saved);
     }
-    return 3600; // 1 Hour default
+    return 86400; // 24 Hours / Daily default
   });
-  const [secondsLeft, setSecondsLeft] = useState<number>(3600);
+  const [secondsLeft, setSecondsLeft] = useState<number>(86400);
   const [isAutoTimerRunning, setIsAutoTimerRunning] = useState<boolean>(true);
 
   // Load existing backup logs and restore interval state
@@ -56,7 +56,7 @@ export default function AdminBackupsPage() {
             filename: 'TFC-Backup-Snapshot-2026.json',
             file_size: '248.50 KB',
             total_records: 48,
-            trigger_type: 'Hourly Auto Cloud Cron',
+            trigger_type: 'Daily 24-Hour Cloud Cron',
             status: 'Completed',
             created_at: new Date(Date.now() - 3600000).toISOString()
           }
@@ -91,7 +91,7 @@ export default function AdminBackupsPage() {
     if (typeof window !== 'undefined') {
       localStorage.setItem('tfc_backup_interval_sec', val.toString());
     }
-    toast.info(`Backup automated schedule set to every ${val >= 3600 ? `${val / 3600} Hour(s)` : `${val / 60} Minute(s)`}`);
+    toast.info(`Backup automated schedule set to every ${val >= 86400 ? '24 Hours (1 Day)' : val >= 3600 ? `${val / 3600} Hour(s)` : `${val / 60} Minute(s)`}`);
   };
 
   // Automated countdown ticker
@@ -123,12 +123,14 @@ export default function AdminBackupsPage() {
   };
 
   const getIntervalLabel = (sec: number) => {
-    if (sec === 3600) return 'Every 1 Hour (Standard Cloud Cron)';
-    if (sec === 7200) return 'Every 2 Hours';
+    if (sec === 86400) return 'Every 24 Hours (Daily Cloud Cron)';
+    if (sec === 43200) return 'Every 12 Hours';
+    if (sec === 21600) return 'Every 6 Hours';
     if (sec === 10800) return 'Every 3 Hours';
+    if (sec === 3600) return 'Every 1 Hour';
     if (sec === 1800) return 'Every 30 Minutes';
     if (sec === 60) return 'Every 1 Minute (Test Mode)';
-    return `Every ${Math.round(sec / 60)} Minutes`;
+    return `Every ${Math.round(sec / 3600)} Hours`;
   };
 
   const handleGenerateBackup = async (isBackground = false) => {
@@ -231,17 +233,17 @@ export default function AdminBackupsPage() {
           <div className="space-y-2 max-w-2xl">
             <div className="flex items-center gap-2">
               <span className="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
-                Hourly Automated Cloud Sync Active
+                Daily 24-Hour Automated Cloud Sync Active
               </span>
               <span className="px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-blue-500/20 text-blue-300 border border-blue-500/30">
-                24/7 Cloud Cron (0 * * * *)
+                24/7 Cloud Cron (0 0 * * *)
               </span>
             </div>
             <h1 className="text-2xl sm:text-4xl font-extrabold tracking-tight text-white">
               Database Backup &amp; Email Vault
             </h1>
             <p className="text-slate-300 text-xs sm:text-sm leading-relaxed">
-              Automated full JSON snapshots of all 19 database tables are emailed directly to your admin email addresses every hour.
+              Automated full JSON snapshots of all 19 database tables are emailed directly to your admin email addresses every 24 hours.
             </p>
           </div>
 
@@ -297,9 +299,11 @@ export default function AdminBackupsPage() {
             onChange={(e) => handleIntervalChange(Number(e.target.value))}
             className="px-3.5 py-2.5 bg-white border border-slate-300 text-slate-800 rounded-xl text-xs font-bold shadow-xs outline-none cursor-pointer"
           >
-            <option value={3600}>⏰ Every 1 Hour (Standard Cloud Cron)</option>
-            <option value={7200}>⏰ Every 2 Hours</option>
+            <option value={86400}>⏰ Every 24 Hours (Daily Cloud Cron: 0 0 * * *)</option>
+            <option value={43200}>⏰ Every 12 Hours</option>
+            <option value={21600}>⏰ Every 6 Hours</option>
             <option value={10800}>⏰ Every 3 Hours</option>
+            <option value={3600}>⏰ Every 1 Hour</option>
             <option value={1800}>⏰ Every 30 Minutes</option>
             <option value={60}>⚡ Every 1 Minute (Quick Test Mode)</option>
           </select>
