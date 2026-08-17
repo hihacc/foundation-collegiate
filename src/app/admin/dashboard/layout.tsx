@@ -10,9 +10,10 @@ import {
   LayoutDashboard, FileText, Users, Image as ImageIcon, MessageSquare, Bell,
   Download, BookOpen, LogOut, Menu, X, Home, ExternalLink, Trophy,
   Settings, BarChart3, UserCog, ClipboardList, ChevronRight, PanelLeftClose, PanelLeftOpen,
-  Banknote, Receipt, Wallet, Mail, SlidersHorizontal, UserCheck, HardDrive, Cake, Camera, Sparkles, ShieldCheck, MessageCircle
+  Banknote, Receipt, Wallet, Mail, SlidersHorizontal, UserCheck, HardDrive, Cake, Camera, Sparkles, ShieldCheck, MessageCircle, Lock
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { logAdminActivity } from '@/lib/utils/auditLogger';
 
 const navItems = [
   { name: 'Dashboard',         href: '/admin/dashboard',             icon: LayoutDashboard },
@@ -43,9 +44,10 @@ const navItems = [
   { name: 'Downloads',         href: '/admin/dashboard/downloads',   icon: Download },
   { name: 'Courses & Diplomas',href: '/admin/dashboard/courses',     icon: BookOpen },
   { name: 'Analytics',         href: '/admin/dashboard/analytics',   icon: BarChart3 },
+  { name: '🛡️ Audit & Activity Logs', href: '/admin/dashboard/logs', icon: ShieldCheck, isAudit: true },
   { name: 'Email Control',     href: '/admin/dashboard/email-control', icon: Mail, isControl: true },
   { name: 'Drive & Backups',   href: '/admin/dashboard/backups',       icon: HardDrive },
-  { name: 'Security & Audit',  href: '/admin/dashboard/security',      icon: ShieldCheck },
+  { name: 'Security & Access', href: '/admin/dashboard/security',      icon: Lock },
   { name: 'Settings',          href: '/admin/dashboard/settings',      icon: Settings },
 ];
 
@@ -101,6 +103,18 @@ export default function AdminDashboardLayout({ children }: { children: React.Rea
       } catch {}
     };
     fetchCounts();
+
+    // Log page visits in audit trail
+    if (pathname && pathname.startsWith('/admin')) {
+      const pageTitle = navItems.find(n => n.href === pathname)?.name || pathname;
+      logAdminActivity({
+        category: 'PAGE_VISIT',
+        action: 'ADMIN_ROUTE_TRANSITION',
+        details: `Administrator accessed ${pageTitle}`,
+        path: pathname,
+        severity: 'INFO'
+      });
+    }
   }, [pathname]);
 
   useEffect(() => {

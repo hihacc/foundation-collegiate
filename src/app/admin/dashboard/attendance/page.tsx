@@ -14,6 +14,7 @@ import Button from '@/components/ui/Button';
 import { Student, AttendanceRecord } from '@/types';
 import { getStoredData, setStoredData } from '@/lib/utils/storage';
 import { OFFICIAL_CLASSES, matchStudentToClass } from '@/lib/utils/classes';
+import { logAdminActivity } from '@/lib/utils/auditLogger';
 
 const fallbackClasses = OFFICIAL_CLASSES.map(c => c.key);
 
@@ -156,6 +157,15 @@ export default function AdminAttendancePage() {
 
       toast.success(`Attendance saved for ${classStudents.length} students on ${selectedDate}!`);
 
+      // Log in system audit trail
+      logAdminActivity({
+        category: 'ATTENDANCE',
+        action: 'ATTENDANCE_ROSTER_SAVED',
+        details: `Saved attendance for ${classStudents.length} students in ${selectedClass} on ${selectedDate}`,
+        severity: 'SUCCESS',
+        metadata: { class: selectedClass, date: selectedDate, total: classStudents.length, absent: summary.absent }
+      });
+
       // If any students are absent, offer 1-click WhatsApp parent broadcast
       const absentCount = classStudents.filter(st => (todayStatus[st.id] || 'present') === 'absent').length;
       if (absentCount > 0) {
@@ -240,6 +250,13 @@ export default function AdminAttendancePage() {
       const data = await res.json();
       if (data.success) {
         toast.success(`Dispatched ${bulkPayload.length} WhatsApp Absent Alerts to parents!`);
+        logAdminActivity({
+          category: 'WHATSAPP',
+          action: 'WHATSAPP_BULK_ABSENT_ALERT_DISPATCH',
+          details: `Dispatched automated WhatsApp absentee alerts to ${bulkPayload.length} parent(s) for ${selectedClass} on ${selectedDate}`,
+          severity: 'INFO',
+          metadata: { class: selectedClass, count: bulkPayload.length, date: selectedDate }
+        });
       } else {
         toast.error('Failed to send bulk WhatsApp alerts');
       }

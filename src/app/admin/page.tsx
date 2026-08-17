@@ -13,6 +13,7 @@ import {
   CheckCircle2, Home, Shield
 } from 'lucide-react';
 import { getStoredData, setStoredData } from '@/lib/utils/storage';
+import { logAdminActivity } from '@/lib/utils/auditLogger';
 
 export default function AdminLoginPage() {
   const router = useRouter();
@@ -93,6 +94,20 @@ export default function AdminLoginPage() {
         userAgent: typeof window !== 'undefined' ? window.navigator.userAgent : 'Unknown'
       };
       setStoredData('admin_login_audit', [newLog, ...logs].slice(0, 50));
+
+      // Centralized Audit Log
+      logAdminActivity({
+        category: 'AUTH',
+        action: status === 'SUCCESS' ? 'ADMIN_LOGIN_SUCCESS' : status === 'FAILED' ? 'ADMIN_LOGIN_FAILED' : 'ADMIN_MFA_DISPATCHED',
+        actor_email: attemptedEmail,
+        actor_role: 'Administrator',
+        details: status === 'SUCCESS' 
+          ? 'Administrator authenticated successfully into Control Panel'
+          : status === 'FAILED'
+          ? 'Failed login attempt: Invalid master credentials supplied'
+          : 'Dispatched 6-digit MFA security verification code to administrator email',
+        severity: status === 'SUCCESS' ? 'SUCCESS' : status === 'FAILED' ? 'WARNING' : 'INFO'
+      });
     } catch {}
   };
 

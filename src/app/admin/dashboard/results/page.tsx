@@ -14,6 +14,7 @@ import { toast } from 'sonner';
 import { Result, Student, SubjectResult } from '@/lib/types';
 import { OFFICIAL_CLASSES, matchStudentToClass } from '@/lib/utils/classes';
 import { getStoredData, setStoredData } from '@/lib/utils/storage';
+import { logAdminActivity } from '@/lib/utils/auditLogger';
 
 const isUUID = (str?: string | null): boolean => {
   if (!str) return false;
@@ -553,6 +554,14 @@ _Check complete detailed transcripts online at https://foundationcollegiate.edu.
         }
       }));
 
+      logAdminActivity({
+        category: 'RESULT',
+        action: 'RESULT_SINGLE_RECORD_SAVED',
+        details: `Saved marks & PIN for student ${row.student_name} (${row.roll_number}) in ${row.class_name} - ${row.exam_name} (${activeMonthName})`,
+        severity: 'SUCCESS',
+        metadata: { roll: row.roll_number, name: row.student_name, class: row.class_name, obtained: row.obtained_marks, total: row.total_marks }
+      });
+
       toast.success(`Saved marks & PIN for ${row.student_name} (${row.roll_number})`);
     } catch (err: any) {
       toast.error(`Save error: ${err.message}`);
@@ -645,6 +654,14 @@ _Check complete detailed transcripts online at https://foundationcollegiate.edu.
           updated[stId] = { ...prev[stId], is_saved: true };
         });
         return updated;
+      });
+
+      logAdminActivity({
+        category: 'RESULT',
+        action: 'RESULT_BULK_CLASS_SAVED',
+        details: `Saved examination results & security PINs for ${resultsToUpsert.length} students in ${selectedClassKey} - ${selectedExamType} (${activeMonthName})`,
+        severity: 'SUCCESS',
+        metadata: { class: selectedClassKey, count: resultsToUpsert.length, session: activeMonthName, exam: selectedExamType }
       });
 
       toast.success(`Successfully saved marks and security PINs for all ${resultsToUpsert.length} students in ${selectedClassKey}!`);
