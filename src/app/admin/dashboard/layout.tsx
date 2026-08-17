@@ -10,7 +10,7 @@ import {
   LayoutDashboard, FileText, Users, Image as ImageIcon, MessageSquare, Bell,
   Download, BookOpen, LogOut, Menu, X, Home, ExternalLink, Trophy,
   Settings, BarChart3, UserCog, ClipboardList, ChevronRight, PanelLeftClose, PanelLeftOpen,
-  Banknote, Receipt, Wallet, Mail, SlidersHorizontal, UserCheck, HardDrive, Cake, Camera, Sparkles
+  Banknote, Receipt, Wallet, Mail, SlidersHorizontal, UserCheck, HardDrive, Cake, Camera, Sparkles, ShieldCheck
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -44,6 +44,7 @@ const navItems = [
   { name: 'Analytics',         href: '/admin/dashboard/analytics',   icon: BarChart3 },
   { name: 'Email Control',     href: '/admin/dashboard/email-control', icon: Mail, isControl: true },
   { name: 'Drive & Backups',   href: '/admin/dashboard/backups',       icon: HardDrive },
+  { name: 'Security & Audit',  href: '/admin/dashboard/security',      icon: ShieldCheck },
   { name: 'Settings',          href: '/admin/dashboard/settings',      icon: Settings },
 ];
 

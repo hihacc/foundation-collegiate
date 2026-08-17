@@ -228,6 +228,7 @@ export default function AdminLoginPage() {
       localStorage.setItem('tfc_admin_email', adminEmail);
       const twelveHours = Date.now() + 12 * 60 * 60 * 1000;
       localStorage.setItem('tfc_session_expires', String(twelveHours));
+      document.cookie = `tfc_admin_auth=true; path=/; max-age=43200; SameSite=Lax`;
     }
     setStoredData('admin_login_attempts', 0);
     toast.success('Welcome back, Administrator! Opening portal...');

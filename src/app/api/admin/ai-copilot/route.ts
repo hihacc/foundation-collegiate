@@ -2,13 +2,24 @@ import { NextRequest, NextResponse } from 'next/server';
 import { supabase } from '@/lib/supabase/client';
 import { getAllAiConnections } from '@/lib/ai/aiConnectionService';
 import { decryptApiKey } from '@/lib/utils/encryption';
+import { checkRateLimit } from '@/lib/security/rateLimiter';
+import { sanitizeInput } from '@/lib/security/sanitize';
 
 export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';
 
 export async function POST(req: NextRequest) {
+  // 1. Rate Limiting Protection (Max 30 AI queries per minute per client)
+  const rl = checkRateLimit(req, 30, 60000);
+  if (!rl.success) {
+    return NextResponse.json({
+      error: 'Too many requests. Please wait a moment before sending another AI query.'
+    }, { status: 429 });
+  }
+
   try {
-    const { prompt, history = [], filterTable } = await req.json();
+    const { prompt: rawPrompt, history = [], filterTable } = await req.json();
+    const prompt = sanitizeInput(rawPrompt);
 
     if (!prompt || typeof prompt !== 'string') {
       return NextResponse.json({ error: 'Prompt is required' }, { status: 400 });
