@@ -36,10 +36,10 @@ export default function AiScannerSettingsPage() {
   // Add / Edit Modal State
   const [showAddModal, setShowAddModal] = useState<boolean>(false);
   const [editingId, setEditingId] = useState<string | null>(null);
-  const [formName, setFormName] = useState<string>('Hugging Face - Secondary');
-  const [formProvider, setFormProvider] = useState<'huggingface' | 'google' | 'groq' | 'local'>('huggingface');
+  const [formName, setFormName] = useState<string>('OpenRouter - Primary (Free)');
+  const [formProvider, setFormProvider] = useState<'openrouter' | 'huggingface' | 'google' | 'groq' | 'local'>('openrouter');
   const [formKey, setFormKey] = useState<string>('');
-  const [formModel, setFormModel] = useState<string>('Qwen/Qwen2.5-VL-7B-Instruct');
+  const [formModel, setFormModel] = useState<string>('google/gemini-2.0-flash-exp:free');
   const [formIsDefault, setFormIsDefault] = useState<boolean>(false);
   const [showKeyText, setShowKeyText] = useState<boolean>(false);
   const [isSaving, setIsSaving] = useState<boolean>(false);
