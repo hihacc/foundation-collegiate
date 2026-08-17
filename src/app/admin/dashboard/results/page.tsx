@@ -30,7 +30,7 @@ interface StudentMarkRow {
   result_id?: string;
   exam_name: string;
   month: string;
-  subject_marks: Record<string, number | ''>;
+  subject_marks: Record<string, number | '' | 'A'>;
   total_marks: number;
   obtained_marks: number;
   percentage: number;
@@ -101,23 +101,27 @@ export default function AdminResultsPage() {
       setResults(loadedResults);
 
       // Fetch PINs
-      const { data: pinData } = await supabase.from('pins').select('*');
-      const map: Record<string, string> = {};
-      if (pinData) {
-        pinData.forEach((p: any) => {
-          if (p.roll_number && p.pin_hash) map[p.roll_number.toUpperCase()] = p.pin_hash;
-        });
-      } else {
-        const localPins = JSON.parse(localStorage.getItem('tfc_admin_pins') || '{}');
-        Object.keys(localPins).forEach(k => {
-          map[k.toUpperCase()] = localPins[k].pin_hash || localPins[k];
-        });
+      try {
+        const { data: pinData } = await supabase.from('pins').select('roll_number, pin_hash');
+        const pMap: Record<string, string> = {};
+        if (pinData && pinData.length > 0) {
+          pinData.forEach((p: any) => {
+            if (p.roll_number && p.pin_hash) {
+              pMap[p.roll_number.toUpperCase()] = p.pin_hash;
+            }
+          });
+          setPinMap(pMap);
+        } else {
+          const storedPins = localStorage.getItem('tfc_admin_pins');
+          if (storedPins) setPinMap(JSON.parse(storedPins));
+        }
+      } catch {
+        const storedPins = localStorage.getItem('tfc_admin_pins');
+        if (storedPins) setPinMap(JSON.parse(storedPins));
       }
-      setPinMap(map);
+
     } catch (err) {
-      console.error('Fetch error:', err);
-      setStudents(getStoredData('students', []));
-      setResults(getStoredData('results', []));
+      console.warn('Fallback loading applied:', err);
     } finally {
       setLoading(false);
     }
@@ -127,50 +131,31 @@ export default function AdminResultsPage() {
     fetchData();
   }, []);
 
-  // 2. Derive Default Subjects when selected class changes
+  // 2. Load / Configure Default Subjects whenever Class changes
   useEffect(() => {
-    const matchedClass = OFFICIAL_CLASSES.find(c => c.key === selectedClassKey);
-    let defaultSubs: { name: string; total_marks: number }[] = [];
-
-    if (matchedClass && matchedClass.defaultSubjects) {
-      defaultSubs = matchedClass.defaultSubjects.map(subItem => {
-        const subName = typeof subItem === 'string' ? subItem : (subItem as any).name || 'Subject';
-        let maxMarks = typeof (subItem as any)?.total_marks === 'number' ? (subItem as any).total_marks : 100;
-        const lower = subName.toLowerCase();
-        if (lower.includes('biology') || lower.includes('physics') || lower.includes('chemistry') || lower.includes('computer science')) {
-          maxMarks = 75;
-        } else if (lower.includes('islamiat') || lower.includes('pakistan studies') || lower.includes('sindhi') || lower.includes('urdu salees')) {
-          maxMarks = 50;
-        } else if (lower.includes('math') || lower.includes('english') || lower.includes('urdu')) {
-          maxMarks = 100;
-        }
-        return { name: subName, total_marks: maxMarks };
-      });
-    } else {
-      defaultSubs = [
-        { name: 'English', total_marks: 100 },
-        { name: 'Urdu', total_marks: 100 },
-        { name: 'Mathematics', total_marks: 100 },
-        { name: 'Islamiat', total_marks: 50 },
-        { name: 'Pakistan Studies', total_marks: 50 }
-      ];
-    }
-
-    const savedCustomSubjects = localStorage.getItem(`tfc_class_subjects_${selectedClassKey}`);
-    if (savedCustomSubjects) {
+    const classDef = OFFICIAL_CLASSES.find(c => c.key === selectedClassKey);
+    const savedCustom = localStorage.getItem(`tfc_class_subjects_${selectedClassKey}`);
+    
+    if (savedCustom) {
       try {
-        const parsed = JSON.parse(savedCustomSubjects);
-        if (Array.isArray(parsed) && parsed.length > 0) {
-          setClassSubjects(parsed);
-          return;
-        }
+        setClassSubjects(JSON.parse(savedCustom));
+        return;
       } catch {}
     }
 
-    setClassSubjects(defaultSubs);
+    if (classDef && classDef.defaultSubjects) {
+      setClassSubjects(classDef.defaultSubjects);
+    } else {
+      setClassSubjects([
+        { name: 'English', total_marks: 100 },
+        { name: 'Urdu', total_marks: 100 },
+        { name: 'Mathematics', total_marks: 100 },
+        { name: 'Science / Computer', total_marks: 100 }
+      ]);
+    }
   }, [selectedClassKey]);
 
-  // 3. Filter Enrolled Active Students for Selected Class (excludes inactive and graduated)
+  // 3. Filter Students Enrolled in the Active Class
   const classStudents = useMemo(() => {
     return students.filter(s => {
       const st = String(s.status || '').toLowerCase().trim();
@@ -181,21 +166,29 @@ export default function AdminResultsPage() {
   }, [students, selectedClassKey]);
 
   // Helper for metrics
-  const calculateMetrics = (subjectMarks: Record<string, number | ''>, subjects: { name: string; total_marks: number }[]) => {
+  const calculateMetrics = (subjectMarks: Record<string, number | '' | 'A'>, subjects: { name: string; total_marks: number }[]) => {
     let obtainedSum = 0;
     let totalSum = 0;
     let hasFailed = false;
+    let hasAbsent = false;
+    let allAbsent = true;
 
     subjects.forEach(sub => {
       const max = sub.total_marks || 100;
       totalSum += max;
 
       const rawVal = subjectMarks[sub.name];
-      const marks = typeof rawVal === 'number' ? Math.min(max, Math.max(0, rawVal)) : 0;
-      obtainedSum += marks;
-
-      if (typeof rawVal === 'number' && marks < (max * 0.33)) {
+      if (rawVal === 'A' || (rawVal as any) === 'AB') {
+        hasAbsent = true;
         hasFailed = true;
+      } else {
+        allAbsent = false;
+        const marks = typeof rawVal === 'number' ? Math.min(max, Math.max(0, rawVal)) : 0;
+        obtainedSum += marks;
+
+        if (typeof rawVal === 'number' && marks < (max * 0.33)) {
+          hasFailed = true;
+        }
       }
     });
 
@@ -203,14 +196,16 @@ export default function AdminResultsPage() {
     const pct = Number(((obtainedSum / t) * 100).toFixed(1));
 
     let grade = 'PASS';
-    if (hasFailed || pct < 40) grade = 'F';
+    if (allAbsent && subjects.length > 0) grade = 'ABSENT';
+    else if (hasAbsent) grade = 'FAIL (AB)';
+    else if (hasFailed || pct < 40) grade = 'F';
     else if (pct >= 85) grade = 'DISTINCTION';
     else if (pct >= 80) grade = 'A-1';
     else if (pct >= 60) grade = 'A';
     else if (pct >= 50) grade = 'B';
     else grade = 'PASS';
 
-    return { total_marks: totalSum, obtained_marks: obtainedSum, percentage: pct, grade };
+    return { total_marks: totalSum, obtained_marks: obtainedSum, percentage: pct, grade, hasAbsent, allAbsent };
   };
 
   // 4. Synchronize Mark Rows for all students in class
@@ -268,11 +263,14 @@ export default function AdminResultsPage() {
     setMarkRows(newRows);
   }, [classStudents, classSubjects, activeMonthName, selectedClassKey, selectedExamType, results, loading]);
 
-  // Handle Mark Input
+  // Handle Mark Input (Supports numeric score, 'A', or 'AB')
   const handleMarkChange = (studentId: string, subjectName: string, maxMarks: number, valueStr: string) => {
-    let numVal: number | '' = '';
-    if (valueStr.trim() !== '') {
-      const parsed = parseInt(valueStr, 10);
+    let numVal: number | '' | 'A' = '';
+    const clean = valueStr.trim().toUpperCase();
+    if (clean === 'A' || clean === 'AB' || clean === 'ABSENT') {
+      numVal = 'A';
+    } else if (clean !== '') {
+      const parsed = parseInt(clean, 10);
       if (!isNaN(parsed)) {
         numVal = Math.min(maxMarks, Math.max(0, parsed));
       }
@@ -298,6 +296,41 @@ export default function AdminResultsPage() {
         }
       };
     });
+  };
+
+  // Toggle single subject absent status
+  const handleToggleSubjectAbsent = (studentId: string, subjectName: string) => {
+    const current = markRows[studentId]?.subject_marks?.[subjectName];
+    const newVal = current === 'A' ? '' : 'A';
+    handleMarkChange(studentId, subjectName, 100, newVal);
+  };
+
+  // Mark/Unmark all subjects absent for this student
+  const handleToggleAllAbsent = (studentId: string) => {
+    const currentRow = markRows[studentId];
+    if (!currentRow) return;
+
+    const isCurrentlyAllAbsent = classSubjects.every(s => currentRow.subject_marks?.[s.name] === 'A');
+    const newSubjectMarks: Record<string, number | '' | 'A'> = {};
+    classSubjects.forEach(s => {
+      newSubjectMarks[s.name] = isCurrentlyAllAbsent ? '' : 'A';
+    });
+
+    const metrics = calculateMetrics(newSubjectMarks, classSubjects);
+    setMarkRows(prev => ({
+      ...prev,
+      [studentId]: {
+        ...currentRow,
+        subject_marks: newSubjectMarks,
+        total_marks: metrics.total_marks,
+        obtained_marks: metrics.obtained_marks,
+        percentage: metrics.percentage,
+        grade: metrics.grade,
+        remarks: isCurrentlyAllAbsent ? '' : 'Absent in examination',
+        is_saved: false
+      }
+    }));
+    toast.info(isCurrentlyAllAbsent ? 'Cleared absent status' : 'Marked all exam papers Absent (AB)');
   };
 
   // Add Custom Subject Column
@@ -394,7 +427,7 @@ export default function AdminResultsPage() {
     const updated: Record<string, StudentMarkRow> = {};
     Object.keys(markRows).forEach(stId => {
       const row = markRows[stId];
-      const newSubjectMarks: Record<string, number | ''> = {};
+      const newSubjectMarks: Record<string, number | '' | 'A'> = {};
       classSubjects.forEach(sub => {
         const passMark = Math.round(sub.total_marks * 0.65);
         newSubjectMarks[sub.name] = typeof row.subject_marks[sub.name] === 'number' ? row.subject_marks[sub.name] : passMark;
@@ -448,10 +481,12 @@ _Check complete detailed transcripts online at https://foundationcollegiate.edu.
 
       const structuredSubjects: SubjectResult[] = classSubjects.map(sub => {
         const rawVal = row.subject_marks?.[sub.name];
+        const isAbsent = rawVal === 'A' || (rawVal as any) === 'AB';
         const m = typeof rawVal === 'number' ? rawVal : 0;
         const pct = (m / sub.total_marks) * 100;
         let g = 'PASS';
-        if (m < sub.total_marks * 0.33) g = 'F';
+        if (isAbsent) g = 'ABSENT';
+        else if (m < sub.total_marks * 0.33) g = 'F';
         else if (pct >= 80) g = 'A-1';
         else if (pct >= 60) g = 'A';
         else if (pct >= 50) g = 'B';
@@ -461,6 +496,7 @@ _Check complete detailed transcripts online at https://foundationcollegiate.edu.
           total_marks: sub.total_marks,
           marks: m,
           grade: g,
+          is_absent: isAbsent
         };
       });
 
@@ -537,10 +573,12 @@ _Check complete detailed transcripts online at https://foundationcollegiate.edu.
         const rollUpper = (row.roll_number || '').trim().toUpperCase();
         const structuredSubjects: SubjectResult[] = classSubjects.map(sub => {
           const rawVal = row.subject_marks?.[sub.name];
+          const isAbsent = rawVal === 'A' || (rawVal as any) === 'AB';
           const m = typeof rawVal === 'number' ? rawVal : 0;
           const pct = (m / sub.total_marks) * 100;
           let g = 'PASS';
-          if (m < sub.total_marks * 0.33) g = 'F';
+          if (isAbsent) g = 'ABSENT';
+          else if (m < sub.total_marks * 0.33) g = 'F';
           else if (pct >= 80) g = 'A-1';
           else if (pct >= 60) g = 'A';
           else if (pct >= 50) g = 'B';
@@ -550,6 +588,7 @@ _Check complete detailed transcripts online at https://foundationcollegiate.edu.
             total_marks: sub.total_marks,
             marks: m,
             grade: g,
+            is_absent: isAbsent
           };
         });
 
@@ -1106,27 +1145,42 @@ _Check complete detailed transcripts online at https://foundationcollegiate.edu.
                         />
                       </td>
 
-                      {/* 5. Dynamic Subject Marks Inputs */}
+                      {/* 5. Dynamic Subject Marks Inputs with Absent (AB) Option */}
                       {classSubjects.map((sub) => {
                         const curVal = row.subject_marks?.[sub.name] ?? '';
+                        const isAbsent = curVal === 'A' || (curVal as any) === 'AB';
                         const numVal = typeof curVal === 'number' ? curVal : 0;
-                        const isFailing = typeof curVal === 'number' && numVal < (sub.total_marks * 0.33);
+                        const isFailing = isAbsent || (typeof curVal === 'number' && numVal < (sub.total_marks * 0.33));
 
                         return (
                           <td key={sub.name} className="py-2.5 px-2 text-center border-l border-slate-100">
-                            <input
-                              type="number"
-                              min={0}
-                              max={sub.total_marks}
-                              value={curVal}
-                              placeholder="0"
-                              onChange={e => handleMarkChange(row.student_id, sub.name, sub.total_marks, e.target.value)}
-                              className={`w-16 text-center font-mono font-bold text-xs rounded-xl py-1.5 px-1 border transition-all focus:outline-none focus:ring-2 ${
-                                isFailing
-                                  ? 'bg-rose-50 border-rose-300 text-rose-700 focus:ring-rose-500'
-                                  : 'bg-white border-slate-200 text-slate-800 focus:ring-blue-500'
-                              }`}
-                            />
+                            <div className="flex flex-col items-center gap-1">
+                              <input
+                                type="text"
+                                value={isAbsent ? 'AB' : curVal}
+                                placeholder="0"
+                                onChange={e => handleMarkChange(row.student_id, sub.name, sub.total_marks, e.target.value)}
+                                className={`w-16 text-center font-mono font-bold text-xs rounded-xl py-1.5 px-1 border transition-all focus:outline-none focus:ring-2 ${
+                                  isAbsent
+                                    ? 'bg-rose-100 border-rose-300 text-rose-800 font-black focus:ring-rose-500'
+                                    : isFailing
+                                    ? 'bg-amber-50 border-amber-300 text-amber-800 focus:ring-amber-500'
+                                    : 'bg-white border-slate-200 text-slate-800 focus:ring-blue-500'
+                                }`}
+                              />
+                              <button
+                                type="button"
+                                onClick={() => handleToggleSubjectAbsent(row.student_id, sub.name)}
+                                className={`px-1.5 py-0.5 rounded text-[9px] font-bold uppercase transition-all cursor-pointer ${
+                                  isAbsent
+                                    ? 'bg-rose-600 text-white shadow-2xs'
+                                    : 'bg-slate-100 hover:bg-rose-50 text-slate-400 hover:text-rose-600'
+                                }`}
+                                title={isAbsent ? "Student Absent in this exam" : "Click to mark Absent"}
+                              >
+                                {isAbsent ? 'Absent' : 'AB'}
+                              </button>
+                            </div>
                           </td>
                         );
                       })}
@@ -1174,6 +1228,16 @@ _Check complete detailed transcripts online at https://foundationcollegiate.edu.
                             }`}
                           >
                             {isRowSaving ? <Loader2 size={13} className="animate-spin" /> : <Save size={13} />}
+                          </button>
+
+                          {/* Toggle All Absent */}
+                          <button
+                            type="button"
+                            onClick={() => handleToggleAllAbsent(row.student_id)}
+                            title="Mark/Unmark all papers Absent (AB)"
+                            className="p-1.5 bg-slate-100 hover:bg-rose-100 text-slate-500 hover:text-rose-700 rounded-xl text-[11px] font-bold transition-colors cursor-pointer border border-slate-200"
+                          >
+                            AB
                           </button>
 
                           {/* WhatsApp Parent Alert */}

@@ -8,7 +8,7 @@ import {
   UserCheck, UserX, Clock, Calendar, CheckCircle2, XCircle, AlertCircle, 
   Search, Printer, Download, Save, RefreshCw, Filter, Users, ChevronRight,
   BarChart3, QrCode, Mail, AlertTriangle, ShieldAlert, Sparkles, Send, Check,
-  Layers, CheckCheck, XSquare
+  Layers, CheckCheck, XSquare, MessageCircle
 } from 'lucide-react';
 import Button from '@/components/ui/Button';
 import { Student, AttendanceRecord } from '@/types';
@@ -155,10 +155,96 @@ export default function AdminAttendancePage() {
       } catch {}
 
       toast.success(`Attendance saved for ${classStudents.length} students on ${selectedDate}!`);
+
+      // If any students are absent, offer 1-click WhatsApp parent broadcast
+      const absentCount = classStudents.filter(st => (todayStatus[st.id] || 'present') === 'absent').length;
+      if (absentCount > 0) {
+        toast.info(`${absentCount} student(s) marked absent. Click "WhatsApp Parents" to notify them instantly!`);
+      }
     } catch {
       toast.error('Failed to save attendance record');
     } finally {
       setSaving(false);
+    }
+  };
+
+  const handleSendWhatsAppAbsentAlert = async (st: Student) => {
+    if (!st.phone) {
+      toast.error(`No phone number found for ${st.name}`);
+      return;
+    }
+    const msg = `🚨 *TFC Alert!*\nRespected Parent,\nStudent *${st.name}* (Roll: *${st.roll_number || 'N/A'}*, Class: *${st.class_name || selectedClass}*) is *ABSENT* from class today (*${selectedDate}*).\nKindly contact the college administration if you have any questions.\n\n*The Foundation Collegiate*`;
+    
+    try {
+      const res = await fetch('/api/admin/whatsapp/proxy', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'SEND_MESSAGE',
+          payload: {
+            accountId: 'tfc-default-sender',
+            recipient: st.phone,
+            messageBody: msg,
+            metadata: { studentId: st.id, type: 'ABSENT_ALERT', date: selectedDate }
+          }
+        })
+      });
+      const data = await res.json();
+      if (data.success) {
+        toast.success(`WhatsApp Absent Alert sent to parent of ${st.name}!`);
+      } else {
+        window.open(`https://wa.me/${st.phone.replace(/\D/g, '')}?text=${encodeURIComponent(msg)}`, '_blank');
+        toast.info('Opened direct WhatsApp chat');
+      }
+    } catch {
+      window.open(`https://wa.me/${st.phone?.replace(/\D/g, '')}?text=${encodeURIComponent(msg)}`, '_blank');
+    }
+  };
+
+  const handleSendBulkWhatsAppAbsentAlerts = async () => {
+    const absentStudents = classStudents.filter(st => (todayStatus[st.id] || 'present') === 'absent');
+    if (absentStudents.length === 0) {
+      toast.info('No students marked absent in this class for today.');
+      return;
+    }
+
+    if (!confirm(`Send automated WhatsApp Absent Alerts to parents of all ${absentStudents.length} absent students?`)) {
+      return;
+    }
+
+    const bulkPayload = absentStudents
+      .filter(st => st.phone)
+      .map(st => ({
+        recipient: st.phone!,
+        messageBody: `🚨 *TFC Alert!*\nRespected Parent,\nStudent *${st.name}* (Roll: *${st.roll_number || 'N/A'}*, Class: *${st.class_name || selectedClass}*) is *ABSENT* from class today (*${selectedDate}*).\nKindly contact administration for any queries.\n\n*The Foundation Collegiate*`,
+        metadata: { studentId: st.id, name: st.name, roll: st.roll_number, date: selectedDate }
+      }));
+
+    if (bulkPayload.length === 0) {
+      toast.error('None of the absent students have phone numbers registered in directory.');
+      return;
+    }
+
+    try {
+      const res = await fetch('/api/admin/whatsapp/proxy', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'SEND_BULK',
+          payload: {
+            accountId: 'tfc-default-sender',
+            messages: bulkPayload
+          }
+        })
+      });
+      const data = await res.json();
+      if (data.success) {
+        toast.success(`Dispatched ${bulkPayload.length} WhatsApp Absent Alerts to parents!`);
+      } else {
+        toast.error('Failed to send bulk WhatsApp alerts');
+      }
+    } catch (e: any) {
+      toast.error(e.message || 'WhatsApp alert error');
     }
   };
 
@@ -280,6 +366,16 @@ export default function AdminAttendancePage() {
           >
             <Printer size={14} className="mr-1.5" /> Print Sheet
           </Button>
+
+          {summary.absent > 0 && (
+            <Button
+              size="sm"
+              onClick={handleSendBulkWhatsAppAbsentAlerts}
+              className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-md shadow-emerald-600/20 flex-1 sm:flex-none"
+            >
+              <Send size={14} className="mr-1.5" /> Auto WhatsApp Absent Alerts ({summary.absent})
+            </Button>
+          )}
 
           <Button
             size="sm"
@@ -484,20 +580,21 @@ export default function AdminAttendancePage() {
                     <th className="py-4 px-4">Student Name</th>
                     <th className="py-4 px-4">Class Program</th>
                     <th className="py-4 px-4 text-center min-w-[280px]">Status Marking</th>
-                    <th className="py-4 px-4 min-w-[180px]">Teacher Remarks</th>
+                    <th className="py-4 px-4 min-w-[150px]">Teacher Remarks</th>
+                    <th className="py-4 px-4 text-center min-w-[130px]">WhatsApp Parent Alert</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100">
                   {loading ? (
                     <tr>
-                      <td colSpan={6} className="py-16 text-center text-slate-400">
+                      <td colSpan={7} className="py-16 text-center text-slate-400">
                         <RefreshCw className="animate-spin text-blue-600 mx-auto mb-2" size={32} />
                         <p className="font-bold text-slate-600">Loading student attendance roster...</p>
                       </td>
                     </tr>
                   ) : filteredStudents.length === 0 ? (
                     <tr>
-                      <td colSpan={6} className="py-16 text-center text-slate-400">
+                      <td colSpan={7} className="py-16 text-center text-slate-400">
                         <Users className="mx-auto mb-2 text-slate-300" size={40} />
                         <p className="font-bold text-slate-700 text-sm">No students found for this class.</p>
                       </td>
@@ -576,6 +673,20 @@ export default function AdminAttendancePage() {
                               placeholder="e.g. Sick leave, Late by 15m..."
                               className="w-full px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 focus:bg-white focus:ring-1 focus:ring-blue-500 focus:outline-none"
                             />
+                          </td>
+                          <td className="py-3 px-4 text-center">
+                            {curStatus === 'absent' ? (
+                              <button
+                                type="button"
+                                onClick={() => handleSendWhatsAppAbsentAlert(st)}
+                                className="px-3 py-1.5 rounded-xl bg-red-100 hover:bg-emerald-600 hover:text-white text-red-800 text-[11px] font-bold transition-all flex items-center gap-1.5 mx-auto cursor-pointer shadow-2xs"
+                                title="Send WhatsApp Absent Alert to Parent"
+                              >
+                                <MessageCircle size={13} /> WhatsApp Alert
+                              </button>
+                            ) : (
+                              <span className="text-[11px] text-slate-300 font-mono">-</span>
+                            )}
                           </td>
                         </tr>
                       );

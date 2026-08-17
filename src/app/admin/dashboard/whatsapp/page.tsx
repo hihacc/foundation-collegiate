@@ -12,6 +12,7 @@ import {
   Paperclip, MapPin, Bell, Award, UserCheck, Trash2, ChevronRight, Eye,
   ListPlus, UserPlus, Contact, Share2, ArrowRight
 } from 'lucide-react';
+import { OFFICIAL_CLASSES } from '@/lib/utils/classes';
 
 interface WhatsAppAccount {
   id: string;
@@ -798,8 +799,10 @@ export default function WhatsAppCenterPage() {
     toast.success('Template loaded into message composer!');
   };
 
-  const uniqueClasses = Array.from(new Set(students.map(s => s.current_class).filter(Boolean)));
-  if (!uniqueClasses.includes('IX-CS')) uniqueClasses.unshift('IX-CS');
+  // Merge database classes with all standard official classes
+  const dbClasses = Array.from(new Set(students.map(s => s.current_class).filter(Boolean)));
+  const standardClasses = OFFICIAL_CLASSES.map(c => c.name);
+  const uniqueClasses = Array.from(new Set(['IX-CS', 'X-CS', 'XI-Pre-Med', 'XI-Pre-Eng', 'XI-CS', 'XI-Commerce', 'XII-Pre-Med', 'XII-Pre-Eng', 'XII-CS', 'XII-Commerce', ...dbClasses, ...standardClasses]));
 
   const filteredLogs = messages.filter(m => 
     !logFilter || m.recipient.includes(logFilter) || m.messageBody.toLowerCase().includes(logFilter.toLowerCase())
