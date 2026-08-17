@@ -179,55 +179,78 @@ export default function AdmissionsPage() {
       const selectedClass = classes.find(c => c.id === data.class_id);
       const selectedGroup = groups.find(g => g.id === data.group_id);
       
-      const newApp = {
-        id: crypto.randomUUID(),
-        student_name: data.student_name,
-        father_name: data.father_name,
-        class_id: data.class_id,
-        group_id: data.group_id,
-        class_applied: selectedClass ? `${selectedClass.name} - ${selectedGroup?.name || ''}` : 'Unknown', // Legacy fallback
-        previous_school: data.previous_school,
-        parent_phone: data.parent_phone,
-        parent_email: data.parent_email,
-        address: data.address,
-        status: 'pending',
-        created_at: new Date().toISOString(),
-        metadata: {
-          dob: data.dob,
-          religion: data.religion,
-          nationality: data.nationality,
-          cnic: data.cnic,
-          student_phone: data.student_phone,
-          father_occupation: data.father_occupation,
-          father_profession_address: data.father_profession_address,
-          father_office_phone: data.father_office_phone,
-          father_cell_phone: data.father_cell_phone,
-          subject_ids: data.subjects,
-          photo_url: data.photo_url,
-          official_use: {
-            remarks: '',
-            gr_no: '',
-            section: '',
-            date_of_admission: '',
-            admission_fee: '',
-            monthly_fee: '',
-            fee_grid: []
-          }
+      const isUUID = (str: string) => /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(str);
+
+      const metadata = {
+        dob: data.dob,
+        religion: data.religion,
+        nationality: data.nationality,
+        cnic: data.cnic,
+        student_phone: data.student_phone,
+        father_occupation: data.father_occupation,
+        father_profession_address: data.father_profession_address,
+        father_office_phone: data.father_office_phone,
+        father_cell_phone: data.father_cell_phone,
+        subject_ids: data.subjects,
+        photo_url: data.photo_url,
+        official_use: {
+          remarks: '',
+          gr_no: '',
+          section: '',
+          date_of_admission: '',
+          admission_fee: '',
+          monthly_fee: '',
+          fee_grid: []
         }
       };
 
+      const classLabel = selectedClass 
+        ? `${selectedClass.name}${selectedGroup ? ' - ' + selectedGroup.name : ''}` 
+        : 'General Application';
+
+      const dbPayload = {
+        student_name: data.student_name,
+        father_name: data.father_name,
+        date_of_birth: data.dob || null,
+        class_id: isUUID(data.class_id) ? data.class_id : null,
+        group_id: isUUID(data.group_id) ? data.group_id : null,
+        class_applied: classLabel,
+        previous_school: data.previous_school,
+        parent_phone: data.parent_phone,
+        parent_email: data.parent_email || null,
+        address: data.address,
+        photo_url: data.photo_url || null,
+        status: 'pending',
+        notes: JSON.stringify(metadata)
+      };
+
+      let insertedId = crypto.randomUUID();
       try {
-        await supabase.from('admissions').insert([newApp]);
+        const { data: insertedData, error: insertErr } = await supabase
+          .from('admissions')
+          .insert([dbPayload])
+          .select();
+        if (insertedData && insertedData[0]?.id) {
+          insertedId = insertedData[0].id;
+        } else if (insertErr) {
+          console.warn('Supabase insert notice:', insertErr.message);
+        }
       } catch (sbErr) {
         console.warn('Supabase insert fallback:', sbErr);
       }
+
+      const newApp = {
+        id: insertedId,
+        ...dbPayload,
+        metadata
+      };
 
       const current = getStoredData<any[]>('admissions', []);
       setStoredData('admissions', [newApp, ...current]);
 
       setIsSuccess(true);
       toast.success('Admission Application Submitted Successfully!', {
-        description: 'Our team will contact you shortly.'
+        description: 'Our administration team will contact you shortly.'
       });
       reset();
     } catch (error: any) {

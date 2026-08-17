@@ -26,8 +26,22 @@ export default function AdminAdmissionsPage() {
     try {
       const { data, error } = await supabase.from('admissions').select('*').order('created_at', { ascending: false });
       if (!error && data && data.length > 0) {
-        setAdmissions(data);
-        setStoredData('admissions', data);
+        const mapped = data.map((d: any) => {
+          let parsedMeta = d.metadata;
+          if (!parsedMeta && d.notes) {
+            try {
+              parsedMeta = JSON.parse(d.notes);
+            } catch {
+              parsedMeta = {};
+            }
+          }
+          return {
+            ...d,
+            metadata: parsedMeta || {}
+          };
+        });
+        setAdmissions(mapped);
+        setStoredData('admissions', mapped);
       }
     } catch {
       // keep stored data
@@ -110,7 +124,7 @@ export default function AdminAdmissionsPage() {
       };
 
       if (isUUID(selected.id)) {
-        await supabase.from('admissions').update({ metadata: updatedMetadata }).eq('id', selected.id);
+        await supabase.from('admissions').update({ notes: JSON.stringify(updatedMetadata) }).eq('id', selected.id);
       }
       
       const updatedApp = { ...selected, metadata: updatedMetadata };
