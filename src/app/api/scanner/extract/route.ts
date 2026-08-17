@@ -77,7 +77,7 @@ Return ONLY valid JSON.`;
 
     // 4. Try Active OpenRouter Connection
     if (connection.provider === 'openrouter' && decryptedKey) {
-      const modelToUse = connection.model_id || 'google/gemini-2.0-flash-exp:free';
+      const modelToUse = (connection.model_id && !connection.model_id.includes(':free') ? connection.model_id : 'openrouter/free');
       try {
         const orResponse = await fetch('https://openrouter.ai/api/v1/chat/completions', {
           method: 'POST',

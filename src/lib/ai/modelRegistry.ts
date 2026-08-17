@@ -15,54 +15,54 @@ export interface AiModelSpec {
 export const AI_MODELS_REGISTRY: AiModelSpec[] = [
   // OpenRouter Free & High Performance Vision Models
   {
-    id: 'google/gemini-2.0-flash-exp:free',
-    name: 'Gemini 2.0 Flash (Free)',
+    id: 'openrouter/free',
+    name: 'OpenRouter Universal Vision (Free)',
     provider: 'openrouter',
     size: 'Cloud Vision',
-    level: 'Medium',
+    level: 'High',
     accuracy: 5,
     speed: 5,
     cost: 1,
     suitability: '⭐ 100% Free Forever via OpenRouter',
     isRecommended: true,
-    description: 'Fast, high-accuracy vision model from Google hosted on OpenRouter with zero token charges.'
+    description: 'Universal free router that automatically routes to the best available free multimodal vision model.'
   },
   {
-    id: 'qwen/qwen-2.5-vl-72b-instruct:free',
-    name: 'Qwen 2.5 VL 72B (Free)',
+    id: 'qwen/qwen2.5-vl-72b-instruct',
+    name: 'Qwen 2.5 VL 72B (OpenRouter)',
     provider: 'openrouter',
     size: '72B',
     level: 'Very High',
     accuracy: 5,
     speed: 4,
     cost: 1,
-    suitability: '⭐ Ideal for Admission Forms (Free)',
+    suitability: '⭐ Premier Handwriting & Form OCR',
     isRecommended: true,
-    description: 'Premier vision-language model with excellent handwriting recognition, free on OpenRouter.'
+    description: 'Premier vision-language model with top handwriting recognition on OpenRouter.'
   },
   {
-    id: 'meta-llama/llama-3.2-11b-vision-instruct:free',
-    name: 'Llama 3.2 11B Vision (Free)',
+    id: 'qwen/qwen3-vl-8b-instruct',
+    name: 'Qwen 3 VL 8B (OpenRouter)',
     provider: 'openrouter',
-    size: '11B',
-    level: 'Light',
+    size: '8B',
+    level: 'Medium',
     accuracy: 4,
     speed: 5,
     cost: 1,
-    suitability: 'Free Meta Vision Model',
-    description: 'Ultra fast document image perception with zero token charges on OpenRouter.'
+    suitability: 'Fast Document Perception',
+    description: 'Next-generation fast vision-language model on OpenRouter.'
   },
   {
-    id: 'qwen/qwen-2.5-vl-72b-instruct',
-    name: 'Qwen 2.5 VL 72B (OpenRouter)',
+    id: 'google/gemini-2.5-flash',
+    name: 'Gemini 2.5 Flash (OpenRouter)',
     provider: 'openrouter',
-    size: '72B',
-    level: 'Very High',
+    size: 'Cloud Vision',
+    level: 'High',
     accuracy: 5,
     speed: 5,
-    cost: 2,
-    suitability: 'High-Speed Ultra Reliable',
-    description: 'Dedicated high-concurrency Qwen vision endpoint on OpenRouter for instant batch processing.'
+    cost: 1,
+    suitability: 'Google Vision on OpenRouter',
+    description: 'Ultra fast and reliable vision intelligence from Google hosted on OpenRouter.'
   },
   {
     id: 'openai/gpt-4o-mini',
