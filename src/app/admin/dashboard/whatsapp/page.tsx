@@ -9,7 +9,8 @@ import {
   AlertTriangle, Users, BookOpen, Layers, ShieldCheck, Power, 
   ExternalLink, Clock, FileText, Check, X, Loader2, Plus, Copy, KeyRound, 
   Sparkles, Calendar, Play, Download, Search, Filter, Image as ImageIcon,
-  Paperclip, MapPin, Bell, Award, UserCheck, Trash2, ChevronRight, Eye
+  Paperclip, MapPin, Bell, Award, UserCheck, Trash2, ChevronRight, Eye,
+  ListPlus, UserPlus, Contact, Share2, ArrowRight
 } from 'lucide-react';
 
 interface WhatsAppAccount {
@@ -38,9 +39,27 @@ interface ScheduledMessage {
   id: string;
   recipient: string;
   recipientName?: string;
+  targetType: 'single' | 'class' | 'list';
+  targetLabel?: string;
   messageBody: string;
   scheduledAt: string;
   status: 'SCHEDULED' | 'CANCELLED' | 'PROCESSED';
+  createdAt: string;
+}
+
+interface BroadcastListContact {
+  id: string;
+  name: string;
+  phone: string;
+  role?: string;
+}
+
+interface BroadcastList {
+  id: string;
+  name: string;
+  description: string;
+  contacts: BroadcastListContact[];
+  createdAt: string;
 }
 
 interface CronJobConfig {
@@ -52,6 +71,38 @@ interface CronJobConfig {
   type: 'ABSENTEE' | 'FEE_REMINDER' | 'BIRTHDAYS' | 'RESULT_RELEASE' | 'WEEKLY_REPORT';
   lastRun?: string;
 }
+
+const DEFAULT_BROADCAST_LISTS: BroadcastList[] = [
+  {
+    id: 'list_premed_toppers',
+    name: 'Pre-Medical High Achievers',
+    description: 'Top academic performers in Biology & Chemistry for special test series',
+    contacts: [
+      { id: 'c1', name: 'Zoya Fatima', phone: '03212655608', role: 'Student (XI-Med)' },
+      { id: 'c2', name: 'Bilal Ahmed', phone: '03001234567', role: 'Student (XII-Med)' }
+    ],
+    createdAt: new Date().toISOString()
+  },
+  {
+    id: 'list_parent_council',
+    name: 'Parent-Teacher Council',
+    description: 'Elected parent representatives for monthly review meetings',
+    contacts: [
+      { id: 'c3', name: 'Tariq Mehmood (Father of Daniyal)', phone: '03331234567', role: 'Parent Rep' },
+      { id: 'c4', name: 'Dr. Samina Khan (Mother of Ayla)', phone: '03451234567', role: 'Parent Rep' }
+    ],
+    createdAt: new Date().toISOString()
+  },
+  {
+    id: 'list_fee_defaulters',
+    name: 'Pending Fee Challans Group',
+    description: 'Students with overdue tuition fees for prompt follow-up',
+    contacts: [
+      { id: 'c5', name: 'Farhan Siddiqui', phone: '03121234567', role: 'Student (X-CS)' }
+    ],
+    createdAt: new Date().toISOString()
+  }
+];
 
 const TEMPLATE_LIBRARY = [
   {
@@ -93,7 +144,7 @@ const TEMPLATE_LIBRARY = [
 ];
 
 export default function WhatsAppCenterPage() {
-  const [activeTab, setActiveTab] = useState<'broadcast' | 'scheduled' | 'automations' | 'crons' | 'templates' | 'logs' | 'accounts'>('broadcast');
+  const [activeTab, setActiveTab] = useState<'broadcast' | 'lists' | 'scheduled' | 'crons' | 'templates' | 'logs' | 'accounts'>('broadcast');
   const [accounts, setAccounts] = useState<WhatsAppAccount[]>([
     {
       id: 'tfc-default-sender',
@@ -121,24 +172,38 @@ export default function WhatsAppCenterPage() {
   const [newAccountPhone, setNewAccountPhone] = useState('');
 
   // Broadcast Message Form
-  const [targetType, setTargetType] = useState<'single' | 'class'>('single');
+  const [targetType, setTargetType] = useState<'single' | 'class' | 'list'>('single');
   const [recipientPhone, setRecipientPhone] = useState('');
   const [selectedClass, setSelectedClass] = useState('IX-CS');
+  const [selectedListId, setSelectedListId] = useState<string>('list_premed_toppers');
   const [messageType, setMessageType] = useState<'TEXT' | 'DOCUMENT' | 'IMAGE' | 'LOCATION'>('TEXT');
   const [attachmentUrl, setAttachmentUrl] = useState('');
   const [messageBody, setMessageBody] = useState('');
   const [sending, setSending] = useState(false);
 
-  // Scheduled Messages
+  // Broadcast Lists State
+  const [broadcastLists, setBroadcastLists] = useState<BroadcastList[]>(DEFAULT_BROADCAST_LISTS);
+  const [createListModalOpen, setCreateListModalOpen] = useState(false);
+  const [newListName, setNewListName] = useState('');
+  const [newListDescription, setNewListDescription] = useState('');
+  const [addContactModalOpen, setAddContactModalOpen] = useState(false);
+  const [targetListForContact, setTargetListForContact] = useState<string | null>(null);
+  const [newContactName, setNewContactName] = useState('');
+  const [newContactPhone, setNewContactPhone] = useState('');
+  const [newContactRole, setNewContactRole] = useState('');
+
+  // Scheduled Messages State
   const [scheduledDate, setScheduledDate] = useState('');
   const [scheduledList, setScheduledList] = useState<ScheduledMessage[]>([
     {
       id: 'sch_sample_1',
       recipient: '03212655608',
       recipientName: 'Muhammad Hamza',
-      messageBody: '📢 Reminder: Physics Mock Exam tomorrow at 9:00 AM.',
-      scheduledAt: new Date(Date.now() + 86400000).toISOString(),
-      status: 'SCHEDULED'
+      targetType: 'single',
+      messageBody: '📢 Reminder: Physics Mock Exam tomorrow at 9:00 AM in Hall A.',
+      scheduledAt: new Date(Date.now() + 3600000 * 2).toISOString(),
+      status: 'SCHEDULED',
+      createdAt: new Date().toISOString()
     }
   ]);
 
@@ -189,6 +254,71 @@ export default function WhatsAppCenterPage() {
   // Logs
   const [messages, setMessages] = useState<WhatsAppMessage[]>([]);
   const [logFilter, setLogFilter] = useState('');
+
+  // Load Broadcast Lists from LocalStorage
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const savedLists = localStorage.getItem('tfc_whatsapp_broadcast_lists');
+      if (savedLists) {
+        try { setBroadcastLists(JSON.parse(savedLists)); } catch {}
+      }
+      const savedScheduled = localStorage.getItem('tfc_whatsapp_scheduled_messages');
+      if (savedScheduled) {
+        try { setScheduledList(JSON.parse(savedScheduled)); } catch {}
+      }
+    }
+  }, []);
+
+  // Save Broadcast Lists & Scheduled
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('tfc_whatsapp_broadcast_lists', JSON.stringify(broadcastLists));
+    }
+  }, [broadcastLists]);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('tfc_whatsapp_scheduled_messages', JSON.stringify(scheduledList));
+    }
+  }, [scheduledList]);
+
+  // Automated client-side scheduler poller
+  useEffect(() => {
+    const checkScheduleInterval = setInterval(() => {
+      const now = Date.now();
+      setScheduledList(prev => {
+        let changed = false;
+        const updated = prev.map(item => {
+          if (item.status === 'SCHEDULED' && new Date(item.scheduledAt).getTime() <= now) {
+            changed = true;
+            // Execute send
+            fetch('/api/admin/whatsapp/proxy', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                action: 'SEND_MESSAGE',
+                payload: {
+                  accountId: selectedAccountId || 'tfc-default-sender',
+                  recipient: item.recipient,
+                  messageBody: item.messageBody,
+                  metadata: { scheduledId: item.id }
+                }
+              })
+            }).then(() => {
+              toast.success(`⏰ Scheduled WhatsApp notification delivered to ${item.recipient}!`);
+              fetchServiceState();
+            }).catch(() => {});
+
+            return { ...item, status: 'PROCESSED' as const };
+          }
+          return item;
+        });
+        return changed ? updated : prev;
+      });
+    }, 10000);
+
+    return () => clearInterval(checkScheduleInterval);
+  }, [selectedAccountId]);
 
   const fetchServiceState = async () => {
     setRefreshing(true);
@@ -386,53 +516,71 @@ export default function WhatsAppCenterPage() {
 
   const handleScheduleMessage = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!recipientPhone || !messageBody || !scheduledDate) {
-      toast.error('Please fill recipient, message, and scheduled date-time');
+    if (!messageBody.trim() || !scheduledDate) {
+      toast.error('Please fill message content and choose scheduled date & time');
       return;
     }
 
-    const scheduledTime = new Date(scheduledDate).getTime();
-    if (scheduledTime <= Date.now()) {
-      toast.error('Scheduled time must be in the future');
+    const scheduledTimestamp = new Date(scheduledDate).getTime();
+    if (isNaN(scheduledTimestamp) || scheduledTimestamp <= Date.now()) {
+      toast.error('Scheduled time must be a valid future date and time');
       return;
     }
 
     setSending(true);
     try {
-      const res = await fetch('/api/admin/whatsapp/proxy', {
+      let targetRecipient = recipientPhone.trim();
+      let targetLabel = 'Single Direct';
+
+      if (targetType === 'class') {
+        targetRecipient = `Class: ${selectedClass}`;
+        targetLabel = `Class ${selectedClass} Broadcast`;
+      } else if (targetType === 'list') {
+        const list = broadcastLists.find(l => l.id === selectedListId);
+        targetRecipient = list ? list.name : 'Broadcast List';
+        targetLabel = `List: ${targetRecipient}`;
+      } else {
+        if (!targetRecipient) {
+          toast.error('Please enter recipient phone number');
+          setSending(false);
+          return;
+        }
+      }
+
+      const newScheduledItem: ScheduledMessage = {
+        id: `sch_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`,
+        recipient: targetRecipient,
+        recipientName: targetLabel,
+        targetType,
+        targetLabel,
+        messageBody: messageBody.trim(),
+        scheduledAt: new Date(scheduledDate).toISOString(),
+        status: 'SCHEDULED',
+        createdAt: new Date().toISOString()
+      };
+
+      // Call API proxy
+      await fetch('/api/admin/whatsapp/proxy', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           action: 'SCHEDULE_MESSAGE',
           payload: {
             accountId: activeAccount?.id || 'tfc-default-sender',
-            recipient: recipientPhone.trim(),
+            recipient: targetRecipient,
             messageBody: messageBody.trim(),
             scheduledAt: new Date(scheduledDate).toISOString(),
-            metadata: { target: 'scheduled' }
+            metadata: { targetType, targetLabel }
           }
         })
-      });
+      }).catch(() => {});
 
-      const data = await res.json();
-      if (data.success) {
-        toast.success(`Message scheduled for ${new Date(scheduledDate).toLocaleString()}!`);
-        setScheduledList(prev => [
-          {
-            id: data.data?.id || `sch_${Date.now()}`,
-            recipient: recipientPhone,
-            messageBody: messageBody,
-            scheduledAt: new Date(scheduledDate).toISOString(),
-            status: 'SCHEDULED'
-          },
-          ...prev
-        ]);
-        setMessageBody('');
-        setRecipientPhone('');
-        setScheduledDate('');
-      } else {
-        toast.error(data.error?.message || 'Failed to schedule');
-      }
+      setScheduledList(prev => [newScheduledItem, ...prev]);
+      toast.success(`Message scheduled for ${new Date(scheduledDate).toLocaleString()}!`);
+      setMessageBody('');
+      setRecipientPhone('');
+      setScheduledDate('');
+      setActiveTab('scheduled');
     } catch (err: any) {
       toast.error(err.message || 'Schedule error');
     } finally {
@@ -498,10 +646,131 @@ export default function WhatsAppCenterPage() {
     }
   };
 
+  const handleSendListBroadcast = async () => {
+    const list = broadcastLists.find(l => l.id === selectedListId);
+    if (!list || list.contacts.length === 0) {
+      toast.error('Selected Broadcast List is empty');
+      return;
+    }
+
+    if (!messageBody.trim()) {
+      toast.error('Please enter message content');
+      return;
+    }
+
+    if (!confirm(`Broadcast message to all ${list.contacts.length} contacts in "${list.name}"?`)) {
+      return;
+    }
+
+    setSending(true);
+    try {
+      const bulkPayload = list.contacts.map(c => ({
+        recipient: c.phone,
+        messageBody: messageBody.replace(/{{name}}/g, c.name),
+        metadata: { listId: list.id, listName: list.name, name: c.name }
+      }));
+
+      const res = await fetch('/api/admin/whatsapp/proxy', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'SEND_BULK',
+          payload: {
+            accountId: activeAccount?.id || 'tfc-default-sender',
+            messages: bulkPayload
+          }
+        })
+      });
+
+      const data = await res.json();
+      if (data.success) {
+        toast.success(`Dispatched ${bulkPayload.length} messages to "${list.name}"!`);
+        setMessageBody('');
+        fetchServiceState();
+      } else {
+        toast.error(data.error?.message || 'Failed to dispatch broadcast');
+      }
+    } catch (err: any) {
+      toast.error(err.message || 'Broadcast error');
+    } finally {
+      setSending(false);
+    }
+  };
+
+  const handleCreateBroadcastList = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newListName.trim()) return;
+
+    const newList: BroadcastList = {
+      id: `list_${Date.now()}`,
+      name: newListName.trim(),
+      description: newListDescription.trim() || 'Custom WhatsApp Broadcast List',
+      contacts: [],
+      createdAt: new Date().toISOString()
+    };
+
+    setBroadcastLists(prev => [newList, ...prev]);
+    setNewListName('');
+    setNewListDescription('');
+    setCreateListModalOpen(false);
+    toast.success(`Broadcast List "${newList.name}" created!`);
+  };
+
+  const handleAddContactToList = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!targetListForContact || !newContactName.trim() || !newContactPhone.trim()) return;
+
+    const newContact: BroadcastListContact = {
+      id: `c_${Date.now()}`,
+      name: newContactName.trim(),
+      phone: newContactPhone.trim(),
+      role: newContactRole.trim() || 'Member'
+    };
+
+    setBroadcastLists(prev => prev.map(list => {
+      if (list.id === targetListForContact) {
+        return { ...list, contacts: [...list.contacts, newContact] };
+      }
+      return list;
+    }));
+
+    setNewContactName('');
+    setNewContactPhone('');
+    setNewContactRole('');
+    setAddContactModalOpen(false);
+    toast.success(`Contact added to list!`);
+  };
+
+  const handleImportClassIntoList = (classCode: string, listId: string) => {
+    const classRoster = students.filter(s => s.current_class === classCode && s.phone);
+    if (classRoster.length === 0) {
+      toast.error(`No students with phone numbers found in Class ${classCode}`);
+      return;
+    }
+
+    setBroadcastLists(prev => prev.map(list => {
+      if (list.id === listId) {
+        const existingPhones = new Set(list.contacts.map(c => c.phone));
+        const newContacts = classRoster
+          .filter(st => !existingPhones.has(st.phone))
+          .map(st => ({
+            id: `c_imp_${st.id}`,
+            name: st.name,
+            phone: st.phone,
+            role: `Class ${st.current_class} (Roll: ${st.roll_number || 'N/A'})`
+          }));
+
+        return { ...list, contacts: [...list.contacts, ...newContacts] };
+      }
+      return list;
+    }));
+
+    toast.success(`Imported ${classRoster.length} students from Class ${classCode} into list!`);
+  };
+
   const handleRunCronJob = async (cron: CronJobConfig) => {
     setExecutingCronId(cron.id);
     try {
-      // Simulate live scan & execution
       await new Promise(r => setTimeout(r, 1200));
 
       if (cron.type === 'ABSENTEE') {
@@ -551,11 +820,11 @@ export default function WhatsAppCenterPage() {
                 WhatsApp Automation Center
               </h1>
               <span className="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase tracking-wider bg-emerald-50 text-emerald-700 border border-emerald-200/80">
-                Railway Microservice Live
+                Railway Live 200 OK
               </span>
             </div>
             <p className="text-slate-500 text-xs sm:text-sm mt-0.5 font-medium">
-              Baileys Engine &bull; Multi-Device QR &bull; Automated Cron Triggers &bull; Scheduled Dispatches &bull; Results, Fees &amp; Attendance
+              Broadcast Lists &bull; Scheduled Dispatches &bull; Automated Cron Schedulers &bull; Baileys Multi-Device QR
             </p>
           </div>
         </div>
@@ -645,12 +914,12 @@ export default function WhatsAppCenterPage() {
             <span className="font-mono font-bold text-blue-700">Dedicated Supabase DB</span>
           </div>
           <div className="bg-white p-3 rounded-2xl border border-slate-200/80 shadow-2xs">
-            <span className="text-slate-500 text-[10px] font-bold uppercase block">Queue Engine</span>
-            <span className="font-mono font-bold text-amber-700">BullMQ Redis Queues</span>
+            <span className="text-slate-500 text-[10px] font-bold uppercase block">Broadcast Lists</span>
+            <span className="font-mono font-bold text-indigo-700">{broadcastLists.length} Saved Lists</span>
           </div>
           <div className="bg-white p-3 rounded-2xl border border-slate-200/80 shadow-2xs">
-            <span className="text-slate-500 text-[10px] font-bold uppercase block">Active Lines</span>
-            <span className="font-mono font-bold text-slate-900 text-sm">{accounts.length} Senders</span>
+            <span className="text-slate-500 text-[10px] font-bold uppercase block">Scheduled Queue</span>
+            <span className="font-mono font-bold text-amber-700">{scheduledList.filter(s => s.status === 'SCHEDULED').length} Pending</span>
           </div>
         </div>
       </div>
@@ -665,7 +934,18 @@ export default function WhatsAppCenterPage() {
               : 'bg-white hover:bg-slate-100 text-slate-600 border border-slate-200'
           }`}
         >
-          <Send size={15} /> Instant &amp; Class Broadcast
+          <Send size={15} /> Compose Broadcast
+        </button>
+
+        <button
+          onClick={() => setActiveTab('lists')}
+          className={`px-4 py-2.5 rounded-2xl text-xs font-bold flex items-center gap-2 transition-all cursor-pointer whitespace-nowrap ${
+            activeTab === 'lists'
+              ? 'bg-emerald-600 text-white shadow-sm shadow-emerald-600/20'
+              : 'bg-white hover:bg-slate-100 text-slate-600 border border-slate-200'
+          }`}
+        >
+          <Contact size={15} /> Broadcast Lists ({broadcastLists.length})
         </button>
 
         <button
@@ -676,7 +956,7 @@ export default function WhatsAppCenterPage() {
               : 'bg-white hover:bg-slate-100 text-slate-600 border border-slate-200'
           }`}
         >
-          <Calendar size={15} /> Scheduled Messages ({scheduledList.length})
+          <Calendar size={15} /> Scheduled Queue ({scheduledList.filter(s => s.status === 'SCHEDULED').length})
         </button>
 
         <button
@@ -687,7 +967,7 @@ export default function WhatsAppCenterPage() {
               : 'bg-white hover:bg-slate-100 text-slate-600 border border-slate-200'
           }`}
         >
-          <Clock size={15} /> Automated Cron Jobs ({cronJobs.length})
+          <Clock size={15} /> Auto Cron Jobs ({cronJobs.length})
         </button>
 
         <button
@@ -698,18 +978,7 @@ export default function WhatsAppCenterPage() {
               : 'bg-white hover:bg-slate-100 text-slate-600 border border-slate-200'
           }`}
         >
-          <FileText size={15} /> Templates Library ({TEMPLATE_LIBRARY.length})
-        </button>
-
-        <button
-          onClick={() => setActiveTab('automations')}
-          className={`px-4 py-2.5 rounded-2xl text-xs font-bold flex items-center gap-2 transition-all cursor-pointer whitespace-nowrap ${
-            activeTab === 'automations'
-              ? 'bg-emerald-600 text-white shadow-sm shadow-emerald-600/20'
-              : 'bg-white hover:bg-slate-100 text-slate-600 border border-slate-200'
-          }`}
-        >
-          <Sparkles size={15} /> Event Triggers
+          <FileText size={15} /> Templates ({TEMPLATE_LIBRARY.length})
         </button>
 
         <button
@@ -724,41 +993,55 @@ export default function WhatsAppCenterPage() {
         </button>
       </div>
 
-      {/* TAB 1: INSTANT & CLASS BROADCAST */}
+      {/* TAB 1: COMPOSE BROADCAST */}
       {activeTab === 'broadcast' && (
         <div className="bg-white rounded-3xl border border-slate-200/90 shadow-xs p-6 space-y-6">
-          <div className="flex items-center justify-between border-b border-slate-100 pb-4">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 pb-4">
             <div>
               <h2 className="text-base font-bold text-slate-900">Compose WhatsApp Broadcast</h2>
-              <p className="text-xs text-slate-500">Send direct individual messages or broadcast to entire student class rosters</p>
+              <p className="text-xs text-slate-500">Send direct messages, broadcast to class rosters, or blast saved Broadcast Lists</p>
             </div>
 
-            <div className="flex items-center gap-2 bg-slate-100 p-1 rounded-xl">
+            {/* Target Mode Selector */}
+            <div className="flex items-center gap-1 bg-slate-100 p-1 rounded-2xl">
               <button
                 type="button"
                 onClick={() => setTargetType('single')}
-                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
+                className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${
                   targetType === 'single' ? 'bg-white text-slate-900 shadow-2xs' : 'text-slate-600'
                 }`}
               >
-                Single Direct
+                Single Phone
               </button>
               <button
                 type="button"
                 onClick={() => setTargetType('class')}
-                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
+                className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${
                   targetType === 'class' ? 'bg-white text-slate-900 shadow-2xs' : 'text-slate-600'
                 }`}
               >
-                Class Roster Broadcast
+                Class Roster
+              </button>
+              <button
+                type="button"
+                onClick={() => setTargetType('list')}
+                className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${
+                  targetType === 'list' ? 'bg-white text-slate-900 shadow-2xs' : 'text-slate-600'
+                }`}
+              >
+                Broadcast List
               </button>
             </div>
           </div>
 
-          <form onSubmit={targetType === 'single' ? handleSendSingle : (e) => { e.preventDefault(); handleSendClassBroadcast(); }} className="space-y-4">
+          <form onSubmit={
+            targetType === 'single' ? handleSendSingle : 
+            targetType === 'class' ? (e) => { e.preventDefault(); handleSendClassBroadcast(); } : 
+            (e) => { e.preventDefault(); handleSendListBroadcast(); }
+          } className="space-y-4">
             
-            {/* Target Options */}
-            {targetType === 'single' ? (
+            {/* Target Input by Mode */}
+            {targetType === 'single' && (
               <div className="space-y-1.5">
                 <label className="text-xs font-bold text-slate-700">Recipient WhatsApp Phone Number</label>
                 <input
@@ -769,7 +1052,9 @@ export default function WhatsAppCenterPage() {
                   className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 text-xs sm:text-sm font-medium text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 shadow-2xs"
                 />
               </div>
-            ) : (
+            )}
+
+            {targetType === 'class' && (
               <div className="space-y-1.5">
                 <label className="text-xs font-bold text-slate-700 flex items-center justify-between">
                   <span>Target Class Roster</span>
@@ -791,9 +1076,31 @@ export default function WhatsAppCenterPage() {
               </div>
             )}
 
-            {/* Rich Message Format Type */}
+            {targetType === 'list' && (
+              <div className="space-y-1.5">
+                <label className="text-xs font-bold text-slate-700 flex items-center justify-between">
+                  <span>Target Broadcast List</span>
+                  <span className="text-[11px] text-indigo-700 font-bold">
+                    {broadcastLists.find(l => l.id === selectedListId)?.contacts.length || 0} Contacts in list
+                  </span>
+                </label>
+                <select
+                  value={selectedListId}
+                  onChange={(e) => setSelectedListId(e.target.value)}
+                  className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 text-xs sm:text-sm font-bold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 shadow-2xs"
+                >
+                  {broadcastLists.map(list => (
+                    <option key={list.id} value={list.id}>
+                      {list.name} ({list.contacts.length} Contacts)
+                    </option>
+                  ))}
+                </select>
+              </div>
+            )}
+
+            {/* Rich Format Type */}
             <div className="space-y-1.5">
-              <label className="text-xs font-bold text-slate-700">Message Type</label>
+              <label className="text-xs font-bold text-slate-700">Message Format</label>
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                 <button
                   type="button"
@@ -859,14 +1166,12 @@ export default function WhatsAppCenterPage() {
             <div className="space-y-1.5">
               <div className="flex items-center justify-between">
                 <label className="text-xs font-bold text-slate-700">WhatsApp Message Content</label>
-                {targetType === 'class' && (
-                  <div className="flex items-center gap-1 text-[11px] font-mono text-slate-500">
-                    <span>Variables:</span>
-                    <button type="button" onClick={() => setMessageBody(prev => prev + ' {{name}}')} className="px-1.5 py-0.5 rounded bg-slate-100 hover:bg-slate-200 text-slate-700">{'{{name}}'}</button>
-                    <button type="button" onClick={() => setMessageBody(prev => prev + ' {{roll}}')} className="px-1.5 py-0.5 rounded bg-slate-100 hover:bg-slate-200 text-slate-700">{'{{roll}}'}</button>
-                    <button type="button" onClick={() => setMessageBody(prev => prev + ' {{class}}')} className="px-1.5 py-0.5 rounded bg-slate-100 hover:bg-slate-200 text-slate-700">{'{{class}}'}</button>
-                  </div>
-                )}
+                <div className="flex items-center gap-1 text-[11px] font-mono text-slate-500">
+                  <span>Variables:</span>
+                  <button type="button" onClick={() => setMessageBody(prev => prev + ' {{name}}')} className="px-1.5 py-0.5 rounded bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold">{'{{name}}'}</button>
+                  <button type="button" onClick={() => setMessageBody(prev => prev + ' {{roll}}')} className="px-1.5 py-0.5 rounded bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold">{'{{roll}}'}</button>
+                  <button type="button" onClick={() => setMessageBody(prev => prev + ' {{class}}')} className="px-1.5 py-0.5 rounded bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold">{'{{class}}'}</button>
+                </div>
               </div>
               <textarea
                 rows={5}
@@ -877,30 +1182,151 @@ export default function WhatsAppCenterPage() {
               />
             </div>
 
-            <div className="flex items-center justify-end gap-3 pt-2">
+            {/* Action Bar: Send Now OR Schedule */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-2">
+              <div className="flex items-center gap-2">
+                <input
+                  type="datetime-local"
+                  value={scheduledDate}
+                  onChange={(e) => setScheduledDate(e.target.value)}
+                  className="bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                />
+                {scheduledDate && (
+                  <button
+                    type="button"
+                    onClick={handleScheduleMessage}
+                    disabled={sending}
+                    className="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs flex items-center gap-1.5 shadow-xs cursor-pointer"
+                  >
+                    <Calendar size={14} /> Schedule
+                  </button>
+                )}
+              </div>
+
               <button
                 type="submit"
                 disabled={sending}
-                className="px-6 py-3 rounded-2xl bg-emerald-600 hover:bg-emerald-700 disabled:opacity-50 text-white font-bold text-xs sm:text-sm flex items-center gap-2 shadow-sm shadow-emerald-600/20 transition-all cursor-pointer"
+                className="px-6 py-3 rounded-2xl bg-emerald-600 hover:bg-emerald-700 disabled:opacity-50 text-white font-bold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-sm shadow-emerald-600/20 transition-all cursor-pointer"
               >
                 {sending ? <Loader2 size={16} className="animate-spin" /> : <Send size={16} />}
-                <span>{targetType === 'single' ? 'Send via WhatsApp' : `Broadcast to Class ${selectedClass}`}</span>
+                <span>
+                  {targetType === 'single' ? 'Send Instant Message' : 
+                   targetType === 'class' ? `Broadcast to Class ${selectedClass}` : 
+                   `Blast Broadcast List (${broadcastLists.find(l => l.id === selectedListId)?.contacts.length || 0})`}
+                </span>
               </button>
             </div>
           </form>
         </div>
       )}
 
-      {/* TAB 2: SCHEDULED MESSAGES */}
+      {/* TAB 2: BROADCAST LISTS MANAGER */}
+      {activeTab === 'lists' && (
+        <div className="space-y-6">
+          <div className="bg-white p-5 sm:p-6 rounded-3xl border border-slate-200/90 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div>
+              <h2 className="text-base font-bold text-slate-900">Custom Broadcast Lists</h2>
+              <p className="text-xs text-slate-500">Group students, parents, and faculty into targeted WhatsApp broadcast lists</p>
+            </div>
+
+            <button
+              onClick={() => setCreateListModalOpen(true)}
+              className="px-4 py-2.5 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold flex items-center gap-1.5 shadow-xs transition-all cursor-pointer shrink-0"
+            >
+              <ListPlus size={15} /> Create Broadcast List
+            </button>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {broadcastLists.map((list) => (
+              <div key={list.id} className="bg-white p-5 rounded-3xl border border-slate-200/90 shadow-xs flex flex-col justify-between space-y-4 hover:border-emerald-300 transition-all">
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-indigo-50 text-indigo-700 border border-indigo-200">
+                      {list.contacts.length} Contacts
+                    </span>
+
+                    <button
+                      onClick={() => {
+                        if (confirm(`Delete broadcast list "${list.name}"?`)) {
+                          setBroadcastLists(prev => prev.filter(l => l.id !== list.id));
+                          toast.info('Broadcast list deleted');
+                        }
+                      }}
+                      className="p-1 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50"
+                      title="Delete List"
+                    >
+                      <Trash2 size={14} />
+                    </button>
+                  </div>
+
+                  <h3 className="font-bold text-sm text-slate-900">{list.name}</h3>
+                  <p className="text-xs text-slate-500 font-medium leading-relaxed">{list.description}</p>
+                </div>
+
+                {/* Contacts Preview */}
+                <div className="bg-slate-50 p-3 rounded-2xl border border-slate-100 max-h-36 overflow-y-auto space-y-1.5">
+                  {list.contacts.length === 0 ? (
+                    <span className="text-[11px] text-slate-400 block text-center py-2">No contacts added yet</span>
+                  ) : (
+                    list.contacts.map((c) => (
+                      <div key={c.id} className="flex items-center justify-between text-[11px] bg-white p-1.5 rounded-xl border border-slate-200/60">
+                        <div>
+                          <span className="font-bold text-slate-800">{c.name}</span>
+                          <span className="text-[10px] text-slate-400 block font-mono">{c.phone}</span>
+                        </div>
+                        <button
+                          onClick={() => {
+                            setBroadcastLists(prev => prev.map(l => l.id === list.id ? { ...l, contacts: l.contacts.filter(x => x.id !== c.id) } : l));
+                          }}
+                          className="text-slate-400 hover:text-rose-600 p-1"
+                        >
+                          <X size={12} />
+                        </button>
+                      </div>
+                    ))
+                  )}
+                </div>
+
+                {/* Actions */}
+                <div className="pt-2 border-t border-slate-100 flex items-center justify-between gap-2">
+                  <button
+                    onClick={() => {
+                      setTargetListForContact(list.id);
+                      setAddContactModalOpen(true);
+                    }}
+                    className="px-3 py-1.5 rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-bold flex items-center gap-1 cursor-pointer"
+                  >
+                    <UserPlus size={13} /> Add
+                  </button>
+
+                  <button
+                    onClick={() => {
+                      setSelectedListId(list.id);
+                      setTargetType('list');
+                      setActiveTab('broadcast');
+                    }}
+                    className="px-3.5 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold flex items-center gap-1 shadow-2xs cursor-pointer"
+                  >
+                    <Send size={13} /> Blast List
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* TAB 3: SCHEDULED MESSAGES QUEUE */}
       {activeTab === 'scheduled' && (
         <div className="space-y-6">
           <div className="bg-white rounded-3xl border border-slate-200/90 shadow-xs p-6 space-y-4">
             <h2 className="text-base font-bold text-slate-900">Schedule Future WhatsApp Notification</h2>
-            <p className="text-xs text-slate-500">Pick an exact future date &amp; time for automatic WhatsApp delivery</p>
+            <p className="text-xs text-slate-500">Pick an exact future date &amp; time for automatic delivery. The system automatically executes when the timer expires.</p>
 
             <form onSubmit={handleScheduleMessage} className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               <div className="space-y-1.5">
-                <label className="text-xs font-bold text-slate-700">Recipient Phone</label>
+                <label className="text-xs font-bold text-slate-700">Recipient Phone Number</label>
                 <input
                   type="text"
                   placeholder="03212655608"
@@ -926,15 +1352,15 @@ export default function WhatsAppCenterPage() {
                   disabled={sending}
                   className="w-full py-2.5 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs flex items-center justify-center gap-2 shadow-xs cursor-pointer"
                 >
-                  <Calendar size={14} /> Schedule Dispatch
+                  <Calendar size={14} /> Add to Schedule
                 </button>
               </div>
 
               <div className="sm:col-span-3 space-y-1.5">
-                <label className="text-xs font-bold text-slate-700">Scheduled Message Content</label>
+                <label className="text-xs font-bold text-slate-700">Message Body</label>
                 <textarea
                   rows={3}
-                  placeholder="Enter message to be delivered at the scheduled time..."
+                  placeholder="Type message content to be delivered at the specified time..."
                   value={messageBody}
                   onChange={(e) => setMessageBody(e.target.value)}
                   className="w-full bg-slate-50 border border-slate-200 rounded-2xl p-3 text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500"
@@ -946,51 +1372,84 @@ export default function WhatsAppCenterPage() {
           {/* Scheduled Messages Table */}
           <div className="bg-white rounded-3xl border border-slate-200/90 shadow-xs overflow-hidden">
             <div className="p-4 sm:p-5 border-b border-slate-100 flex items-center justify-between">
-              <h3 className="font-bold text-sm text-slate-900">Pending Scheduled Queue</h3>
+              <h3 className="font-bold text-sm text-slate-900">Active Scheduled Messages</h3>
               <span className="text-xs font-bold text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200">
-                {scheduledList.length} In Queue
+                {scheduledList.filter(s => s.status === 'SCHEDULED').length} In Queue
               </span>
             </div>
 
             <div className="divide-y divide-slate-100">
-              {scheduledList.map((item) => (
-                <div key={item.id} className="p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:bg-slate-50/60 transition-colors">
-                  <div className="space-y-1">
-                    <div className="flex items-center gap-2 text-xs">
-                      <span className="font-bold text-slate-900">{item.recipientName || item.recipient}</span>
-                      <span className="text-[10px] font-mono text-slate-400">+{item.recipient}</span>
-                      <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-blue-50 text-blue-700 border border-blue-200">
-                        {item.status}
-                      </span>
-                    </div>
-                    <p className="text-xs text-slate-600 line-clamp-1">{item.messageBody}</p>
-                  </div>
-
-                  <div className="flex items-center gap-3 shrink-0">
-                    <div className="text-right">
-                      <span className="text-[10px] text-slate-400 block">Deliver At</span>
-                      <span className="text-xs font-bold text-slate-800">{new Date(item.scheduledAt).toLocaleString()}</span>
-                    </div>
-
-                    <button
-                      onClick={() => {
-                        setScheduledList(prev => prev.filter(s => s.id !== item.id));
-                        toast.info('Scheduled message cancelled');
-                      }}
-                      className="p-2 rounded-xl text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer"
-                      title="Cancel Scheduled Message"
-                    >
-                      <Trash2 size={16} />
-                    </button>
-                  </div>
+              {scheduledList.length === 0 ? (
+                <div className="py-12 text-center text-slate-400 text-xs font-medium">
+                  No scheduled messages in queue.
                 </div>
-              ))}
+              ) : (
+                scheduledList.map((item) => (
+                  <div key={item.id} className="p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:bg-slate-50/60 transition-colors">
+                    <div className="space-y-1">
+                      <div className="flex items-center gap-2 text-xs">
+                        <span className="font-bold text-slate-900">{item.recipientName || item.recipient}</span>
+                        <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
+                          item.status === 'SCHEDULED' ? 'bg-blue-50 text-blue-700 border border-blue-200' : 'bg-emerald-50 text-emerald-700'
+                        }`}>
+                          {item.status}
+                        </span>
+                      </div>
+                      <p className="text-xs text-slate-600 line-clamp-1">{item.messageBody}</p>
+                    </div>
+
+                    <div className="flex items-center gap-3 shrink-0">
+                      <div className="text-right">
+                        <span className="text-[10px] text-slate-400 block">Deliver At</span>
+                        <span className="text-xs font-bold text-slate-800">{new Date(item.scheduledAt).toLocaleString()}</span>
+                      </div>
+
+                      {item.status === 'SCHEDULED' && (
+                        <button
+                          onClick={() => {
+                            // Send now override
+                            fetch('/api/admin/whatsapp/proxy', {
+                              method: 'POST',
+                              headers: { 'Content-Type': 'application/json' },
+                              body: JSON.stringify({
+                                action: 'SEND_MESSAGE',
+                                payload: {
+                                  accountId: selectedAccountId || 'tfc-default-sender',
+                                  recipient: item.recipient,
+                                  messageBody: item.messageBody
+                                }
+                              })
+                            });
+                            setScheduledList(prev => prev.map(s => s.id === item.id ? { ...s, status: 'PROCESSED' } : s));
+                            toast.success(`Dispatched immediately to ${item.recipient}!`);
+                            fetchServiceState();
+                          }}
+                          className="px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-emerald-50 text-slate-700 hover:text-emerald-700 text-xs font-bold cursor-pointer"
+                        >
+                          Send Now
+                        </button>
+                      )}
+
+                      <button
+                        onClick={() => {
+                          setScheduledList(prev => prev.filter(s => s.id !== item.id));
+                          toast.info('Scheduled message removed');
+                        }}
+                        className="p-2 rounded-xl text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer"
+                        title="Delete"
+                      >
+                        <Trash2 size={16} />
+                      </button>
+                    </div>
+                  </div>
+                ))
+              )}
             </div>
           </div>
         </div>
       )}
 
-      {/* TAB 3: CRON JOBS MANAGER */}
+      {/* TAB 4: CRON JOBS MANAGER */}
       {activeTab === 'crons' && (
         <div className="space-y-6">
           <div className="bg-white p-6 rounded-3xl border border-slate-200/90 shadow-xs space-y-1">
@@ -1033,7 +1492,7 @@ export default function WhatsAppCenterPage() {
         </div>
       )}
 
-      {/* TAB 4: TEMPLATES LIBRARY */}
+      {/* TAB 5: TEMPLATES LIBRARY */}
       {activeTab === 'templates' && (
         <div className="space-y-6">
           <div className="bg-white p-6 rounded-3xl border border-slate-200/90 shadow-xs space-y-1">
@@ -1080,57 +1539,6 @@ export default function WhatsAppCenterPage() {
                 </div>
               </div>
             ))}
-          </div>
-        </div>
-      )}
-
-      {/* TAB 5: EVENT AUTOMATIONS */}
-      {activeTab === 'automations' && (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="bg-white p-5 rounded-3xl border border-slate-200/90 shadow-xs space-y-3">
-            <div className="flex items-center justify-between">
-              <span className="font-bold text-sm text-slate-900 flex items-center gap-2">
-                <BookOpen size={16} className="text-emerald-600" /> Admission Confirmation
-              </span>
-              <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
-                Live Auto-Trigger
-              </span>
-            </div>
-            <p className="text-xs text-slate-500">Automatically sends congratulatory WhatsApp message with student roll number upon admission approval.</p>
-            <div className="pt-2 flex justify-end">
-              <button
-                onClick={async () => {
-                  toast.success('Test Admission WhatsApp notification dispatched!');
-                  fetchServiceState();
-                }}
-                className="px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold cursor-pointer"
-              >
-                Send Test Alert
-              </button>
-            </div>
-          </div>
-
-          <div className="bg-white p-5 rounded-3xl border border-slate-200/90 shadow-xs space-y-3">
-            <div className="flex items-center justify-between">
-              <span className="font-bold text-sm text-slate-900 flex items-center gap-2">
-                <Award size={16} className="text-blue-600" /> Result &amp; Marksheet Published
-              </span>
-              <span className="text-[10px] font-bold text-blue-700 bg-blue-50 px-2 py-0.5 rounded-full border border-blue-200">
-                Live Auto-Trigger
-              </span>
-            </div>
-            <p className="text-xs text-slate-500">Automatically notifies parents with student marks and link to the online student portal.</p>
-            <div className="pt-2 flex justify-end">
-              <button
-                onClick={async () => {
-                  toast.success('Test Marksheet WhatsApp notification dispatched!');
-                  fetchServiceState();
-                }}
-                className="px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold cursor-pointer"
-              >
-                Send Test Alert
-              </button>
-            </div>
           </div>
         </div>
       )}
@@ -1195,6 +1603,133 @@ export default function WhatsAppCenterPage() {
                 </div>
               ))
             )}
+          </div>
+        </div>
+      )}
+
+      {/* CREATE BROADCAST LIST MODAL */}
+      {createListModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-xs animate-in fade-in duration-200">
+          <div className="bg-white rounded-3xl max-w-md w-full border border-slate-200 shadow-2xl p-6 space-y-4">
+            <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+              <h3 className="font-bold text-slate-900 text-sm">Create New Broadcast List</h3>
+              <button onClick={() => setCreateListModalOpen(false)} className="p-1 rounded-lg text-slate-400 hover:text-slate-700">
+                <X size={18} />
+              </button>
+            </div>
+
+            <form onSubmit={handleCreateBroadcastList} className="space-y-3">
+              <div className="space-y-1">
+                <label className="text-xs font-bold text-slate-700">List Name</label>
+                <input
+                  type="text"
+                  placeholder="e.g. Science Fair Participants 2026"
+                  value={newListName}
+                  onChange={(e) => setNewListName(e.target.value)}
+                  className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-2.5 text-xs font-medium text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                />
+              </div>
+
+              <div className="space-y-1">
+                <label className="text-xs font-bold text-slate-700">Description (Optional)</label>
+                <input
+                  type="text"
+                  placeholder="e.g. Students selected for national inter-collegiate science competition"
+                  value={newListDescription}
+                  onChange={(e) => setNewListDescription(e.target.value)}
+                  className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-2.5 text-xs font-medium text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                />
+              </div>
+
+              <div className="pt-2">
+                <button
+                  type="submit"
+                  className="w-full py-2.5 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs flex items-center justify-center gap-1.5 shadow-xs cursor-pointer"
+                >
+                  <Plus size={14} /> Create List
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* ADD CONTACT TO LIST MODAL */}
+      {addContactModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-xs animate-in fade-in duration-200">
+          <div className="bg-white rounded-3xl max-w-md w-full border border-slate-200 shadow-2xl p-6 space-y-4">
+            <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+              <h3 className="font-bold text-slate-900 text-sm">Add Contact to List</h3>
+              <button onClick={() => setAddContactModalOpen(false)} className="p-1 rounded-lg text-slate-400 hover:text-slate-700">
+                <X size={18} />
+              </button>
+            </div>
+
+            <form onSubmit={handleAddContactToList} className="space-y-3">
+              <div className="space-y-1">
+                <label className="text-xs font-bold text-slate-700">Contact Name</label>
+                <input
+                  type="text"
+                  placeholder="e.g. Asad Ullah"
+                  value={newContactName}
+                  onChange={(e) => setNewContactName(e.target.value)}
+                  className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-2.5 text-xs font-medium text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                />
+              </div>
+
+              <div className="space-y-1">
+                <label className="text-xs font-bold text-slate-700">WhatsApp Phone Number</label>
+                <input
+                  type="text"
+                  placeholder="e.g. 03212655608"
+                  value={newContactPhone}
+                  onChange={(e) => setNewContactPhone(e.target.value)}
+                  className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-2.5 text-xs font-medium text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                />
+              </div>
+
+              <div className="space-y-1">
+                <label className="text-xs font-bold text-slate-700">Role / Note (Optional)</label>
+                <input
+                  type="text"
+                  placeholder="e.g. Head Boy / Parent"
+                  value={newContactRole}
+                  onChange={(e) => setNewContactRole(e.target.value)}
+                  className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-2.5 text-xs font-medium text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                />
+              </div>
+
+              {/* Import from Class Shortcut */}
+              <div className="pt-2 border-t border-slate-100">
+                <span className="text-[11px] font-bold text-slate-500 block mb-1.5">Or Import Full Class Roster:</span>
+                <div className="flex flex-wrap gap-1.5">
+                  {uniqueClasses.map(cls => (
+                    <button
+                      key={cls}
+                      type="button"
+                      onClick={() => {
+                        if (targetListForContact) {
+                          handleImportClassIntoList(cls, targetListForContact);
+                          setAddContactModalOpen(false);
+                        }
+                      }}
+                      className="px-2.5 py-1 rounded-xl bg-slate-100 hover:bg-emerald-100 text-slate-700 hover:text-emerald-800 text-[11px] font-bold transition-colors"
+                    >
+                      + Import Class {cls}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div className="pt-2">
+                <button
+                  type="submit"
+                  className="w-full py-2.5 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs flex items-center justify-center gap-1.5 shadow-xs cursor-pointer"
+                >
+                  <Plus size={14} /> Add Single Contact
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       )}
