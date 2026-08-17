@@ -56,7 +56,105 @@ export async function POST(req: NextRequest) {
       });
     }
 
-    // 2. Google AI Studio Key Test
+    // 2. OpenRouter.ai Test (Free & Premium Vision)
+    if (provider === 'openrouter') {
+      if (!testKey) {
+        return NextResponse.json({
+          success: false,
+          status: 'invalid_key',
+          error: 'No OpenRouter API key provided (must start with sk-or-v1-...)'
+        });
+      }
+
+      try {
+        const testModel = model_id || 'google/gemini-2.0-flash-exp:free';
+        const orRes = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${testKey}`,
+            'HTTP-Referer': 'https://foundationcollegiate.edu.pk',
+            'X-Title': 'The Foundation Collegiate Scanner',
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            model: testModel,
+            messages: [
+              {
+                role: 'user',
+                content: [
+                  { type: 'text', text: 'Reply with ONLY the word "READY".' },
+                  { type: 'image_url', image_url: { url: VALID_TEST_IMAGE_200 } }
+                ]
+              }
+            ],
+            max_tokens: 15
+          })
+        });
+
+        const latency = Date.now() - startTime;
+        const orData = await orRes.json();
+
+        if (orRes.ok && orData.choices?.[0]?.message?.content) {
+          if (targetConn) {
+            targetConn.status = 'working';
+            targetConn.latency_ms = latency;
+            targetConn.last_tested_at = new Date().toISOString();
+            await saveAiConnections(connections);
+          }
+
+          return NextResponse.json({
+            success: true,
+            status: 'working',
+            latency_ms: latency,
+            model: testModel,
+            provider: 'OpenRouter.ai',
+            auth_valid: true,
+            image_supported: true,
+            inference_success: true,
+            output_sample: orData.choices[0].message.content.trim(),
+            message: `🟢 OpenRouter.ai connected successfully! Model ${testModel} verified (${latency}ms).`
+          });
+        } else {
+          const errMsg = orData.error?.message || 'OpenRouter authentication / inference failed';
+          const isQuota = errMsg.toLowerCase().includes('credit') || errMsg.toLowerCase().includes('quota') || errMsg.toLowerCase().includes('rate limit');
+          const isAuth = orRes.status === 401 || errMsg.toLowerCase().includes('key') || errMsg.toLowerCase().includes('token');
+
+          const statusResult = isQuota ? 'credits_depleted' : isAuth ? 'invalid_key' : 'failed';
+
+          if (targetConn) {
+            targetConn.status = statusResult;
+            targetConn.latency_ms = latency;
+            targetConn.last_tested_at = new Date().toISOString();
+            await saveAiConnections(connections);
+          }
+
+          return NextResponse.json({
+            success: false,
+            status: statusResult,
+            latency_ms: latency,
+            model: testModel,
+            error: errMsg,
+            diagnostics: {
+              auth_valid: !isAuth,
+              quota_ok: !isQuota,
+              recommendation: isAuth
+                ? 'Check that your OpenRouter API key is correct (get a free key at openrouter.ai/keys).'
+                : isQuota
+                ? 'Rate limit reached on this free model. Switch to another OpenRouter free model or Unlimited Local Engine.'
+                : 'Check OpenRouter model status.'
+            }
+          });
+        }
+      } catch (err: any) {
+        return NextResponse.json({
+          success: false,
+          status: 'failed',
+          error: err.message
+        });
+      }
+    }
+
+    // 3. Google AI Studio Key Test
     if (provider === 'google' || model_id === 'gemini-2.5-flash') {
       if (!testKey) {
         return NextResponse.json({

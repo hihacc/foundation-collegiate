@@ -506,12 +506,37 @@ export default function AiScannerSettingsPage() {
               </div>
 
               <div>
-                <label className="font-bold text-slate-700 block mb-1">AI Provider Platform</label>
+                <div className="flex justify-between items-center mb-1">
+                  <label className="font-bold text-slate-700">AI Provider Platform</label>
+                  {formProvider === 'openrouter' && (
+                    <a
+                      href="https://openrouter.ai/keys"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-[11px] text-blue-600 hover:underline font-bold flex items-center gap-1"
+                    >
+                      Get OpenRouter Key <ExternalLink size={10} />
+                    </a>
+                  )}
+                </div>
                 <select
                   value={formProvider}
-                  onChange={e => setFormProvider(e.target.value as any)}
+                  onChange={e => {
+                    const newProv = e.target.value as any;
+                    setFormProvider(newProv);
+                    if (newProv === 'openrouter') {
+                      setFormModel('google/gemini-2.0-flash-exp:free');
+                    } else if (newProv === 'huggingface') {
+                      setFormModel('Qwen/Qwen2.5-VL-72B-Instruct');
+                    } else if (newProv === 'google') {
+                      setFormModel('gemini-2.5-flash');
+                    } else {
+                      setFormModel('local-wasm-tesseract');
+                    }
+                  }}
                   className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl font-bold text-slate-900 focus:bg-white focus:ring-2 focus:ring-blue-500 outline-none cursor-pointer"
                 >
+                  <option value="openrouter">OpenRouter.ai (Free &amp; High-Speed Vision)</option>
                   <option value="huggingface">Hugging Face (Inference API)</option>
                   <option value="google">Google AI Studio (Gemini Vision)</option>
                   <option value="local">Unlimited Local WebAssembly (Free / 0 API)</option>
@@ -535,7 +560,13 @@ export default function AiScannerSettingsPage() {
                     type={showKeyText ? 'text' : 'password'}
                     value={formKey}
                     onChange={e => setFormKey(e.target.value)}
-                    placeholder={formProvider === 'huggingface' ? 'hf_xxxxxxxxxxxxxxxxxxxx' : 'AIzaSyxxxxxxxxxxxxxxxxx'}
+                    placeholder={
+                      formProvider === 'openrouter'
+                        ? 'sk-or-v1-xxxxxxxxxxxxxxxxxxxxxxxx'
+                        : formProvider === 'huggingface'
+                        ? 'hf_xxxxxxxxxxxxxxxxxxxx'
+                        : 'AIzaSyxxxxxxxxxxxxxxxxx'
+                    }
                     className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl font-mono text-slate-900 focus:bg-white focus:ring-2 focus:ring-blue-500 outline-none"
                     required={!editingId}
                   />
@@ -552,12 +583,23 @@ export default function AiScannerSettingsPage() {
                   onChange={e => setFormModel(e.target.value)}
                   className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl font-bold text-slate-900 focus:bg-white focus:ring-2 focus:ring-blue-500 outline-none cursor-pointer"
                 >
-                  <option value="Qwen/Qwen2.5-VL-7B-Instruct">Qwen2.5-VL-7B-Instruct (⭐ Recommended for TFC)</option>
-                  <option value="Qwen/Qwen2.5-VL-3B-Instruct">Qwen2.5-VL-3B-Instruct (Fast &amp; Light)</option>
-                  <option value="Qwen/Qwen2.5-VL-72B-Instruct">Qwen2.5-VL-72B-Instruct (Maximum Precision)</option>
-                  <option value="meta-llama/Llama-3.2-11B-Vision-Instruct">Llama-3.2-11B-Vision-Instruct</option>
-                  <option value="gemini-2.5-flash">Google Gemini 2.5 Flash</option>
-                  <option value="local-wasm-tesseract">Unlimited Local Engine (0 API)</option>
+                  <optgroup label="OpenRouter.ai Free &amp; Fast Models">
+                    <option value="google/gemini-2.0-flash-exp:free">Gemini 2.0 Flash (Free Forever - ⭐ Recommended)</option>
+                    <option value="qwen/qwen-2.5-vl-72b-instruct:free">Qwen 2.5 VL 72B (Free - Ideal for Forms)</option>
+                    <option value="meta-llama/llama-3.2-11b-vision-instruct:free">Llama 3.2 11B Vision (Free)</option>
+                    <option value="qwen/qwen-2.5-vl-72b-instruct">Qwen 2.5 VL 72B (Premium High Speed)</option>
+                    <option value="openai/gpt-4o-mini">GPT-4o Mini (OpenAI Vision)</option>
+                  </optgroup>
+                  <optgroup label="Hugging Face Models">
+                    <option value="Qwen/Qwen2.5-VL-72B-Instruct">Qwen2.5-VL-72B-Instruct (HF Serverless)</option>
+                    <option value="Qwen/Qwen2.5-VL-7B-Instruct">Qwen2.5-VL-7B-Instruct</option>
+                    <option value="Qwen/Qwen2.5-VL-3B-Instruct">Qwen2.5-VL-3B-Instruct</option>
+                    <option value="meta-llama/Llama-3.2-11B-Vision-Instruct">Llama-3.2-11B-Vision-Instruct</option>
+                  </optgroup>
+                  <optgroup label="Direct APIs &amp; Local">
+                    <option value="gemini-2.5-flash">Google Gemini 2.5 Flash</option>
+                    <option value="local-wasm-tesseract">Unlimited Local Engine (0 API)</option>
+                  </optgroup>
                 </select>
               </div>
 

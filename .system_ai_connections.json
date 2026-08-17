@@ -10,7 +10,22 @@
     "is_default": false,
     "status": "not_tested",
     "created_at": "2026-08-16T19:16:25.343Z",
-    "updated_at": "2026-08-16T19:16:25.343Z"
+    "updated_at": "2026-08-16T19:58:18.236Z"
+  },
+  {
+    "id": "10adf3b9-a2c2-4ea7-8e6d-e77fdbae6431",
+    "name": "Hugging Face - Account #1",
+    "provider": "huggingface",
+    "encrypted_key": "b90f046529115dfe4769f9a8754f2284:57aca286fc1fecb39f5c4f451e5ddc087dd4767e1f7fea3694057f1eeb1e304bb61cd55282f22c1b8ac48adcd8f3be93",
+    "masked_key": "hf_V••••••••••••YaSK",
+    "model_id": "Qwen/Qwen2.5-VL-72B-Instruct",
+    "is_active": true,
+    "is_default": true,
+    "status": "failed",
+    "created_at": "2026-08-16T19:20:04.419Z",
+    "updated_at": "2026-08-16T19:20:04.419Z",
+    "latency_ms": 1594,
+    "last_tested_at": "2026-08-16T19:59:13.547Z"
   },
   {
     "id": "default-local-engine",
@@ -20,9 +35,11 @@
     "masked_key": "No API Key Required",
     "model_id": "local-wasm-tesseract",
     "is_active": true,
-    "is_default": true,
+    "is_default": false,
     "status": "working",
     "created_at": "2026-08-16T19:14:49.705Z",
-    "updated_at": "2026-08-16T19:14:49.706Z"
+    "updated_at": "2026-08-16T19:14:49.706Z",
+    "latency_ms": 679,
+    "last_tested_at": "2026-08-16T19:57:47.411Z"
   }
 ]

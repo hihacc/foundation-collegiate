@@ -1,7 +1,7 @@
 export interface AiModelSpec {
   id: string;
   name: string;
-  provider: 'huggingface' | 'google' | 'groq' | 'local';
+  provider: 'openrouter' | 'huggingface' | 'google' | 'groq' | 'local';
   size: string;
   level: 'Light' | 'Medium' | 'High' | 'Very High' | 'Client Engine';
   accuracy: number; // 1-5 stars
@@ -13,6 +13,71 @@ export interface AiModelSpec {
 }
 
 export const AI_MODELS_REGISTRY: AiModelSpec[] = [
+  // OpenRouter Free & High Performance Vision Models
+  {
+    id: 'google/gemini-2.0-flash-exp:free',
+    name: 'Gemini 2.0 Flash (Free)',
+    provider: 'openrouter',
+    size: 'Cloud Vision',
+    level: 'Medium',
+    accuracy: 5,
+    speed: 5,
+    cost: 1,
+    suitability: '⭐ 100% Free Forever via OpenRouter',
+    isRecommended: true,
+    description: 'Fast, high-accuracy vision model from Google hosted on OpenRouter with zero token charges.'
+  },
+  {
+    id: 'qwen/qwen-2.5-vl-72b-instruct:free',
+    name: 'Qwen 2.5 VL 72B (Free)',
+    provider: 'openrouter',
+    size: '72B',
+    level: 'Very High',
+    accuracy: 5,
+    speed: 4,
+    cost: 1,
+    suitability: '⭐ Ideal for Admission Forms (Free)',
+    isRecommended: true,
+    description: 'Premier vision-language model with excellent handwriting recognition, free on OpenRouter.'
+  },
+  {
+    id: 'meta-llama/llama-3.2-11b-vision-instruct:free',
+    name: 'Llama 3.2 11B Vision (Free)',
+    provider: 'openrouter',
+    size: '11B',
+    level: 'Light',
+    accuracy: 4,
+    speed: 5,
+    cost: 1,
+    suitability: 'Free Meta Vision Model',
+    description: 'Ultra fast document image perception with zero token charges on OpenRouter.'
+  },
+  {
+    id: 'qwen/qwen-2.5-vl-72b-instruct',
+    name: 'Qwen 2.5 VL 72B (OpenRouter)',
+    provider: 'openrouter',
+    size: '72B',
+    level: 'Very High',
+    accuracy: 5,
+    speed: 5,
+    cost: 2,
+    suitability: 'High-Speed Ultra Reliable',
+    description: 'Dedicated high-concurrency Qwen vision endpoint on OpenRouter for instant batch processing.'
+  },
+  {
+    id: 'openai/gpt-4o-mini',
+    name: 'GPT-4o Mini (OpenRouter)',
+    provider: 'openrouter',
+    size: 'Cloud Vision',
+    level: 'Medium',
+    accuracy: 5,
+    speed: 5,
+    cost: 2,
+    suitability: 'OpenAI Vision via OpenRouter',
+    description: 'Cost-effective, highly accurate OpenAI document reading model.'
+  },
+
+  // Hugging Face Models
   {
     id: 'Qwen/Qwen2.5-VL-72B-Instruct',
     name: 'Qwen2.5-VL-72B-Instruct',
@@ -22,9 +87,8 @@ export const AI_MODELS_REGISTRY: AiModelSpec[] = [
     accuracy: 5,
     speed: 4,
     cost: 2,
-    suitability: '⭐ Ideal for TFC Admission Forms',
-    isRecommended: true,
-    description: 'Premier vision-language model on Hugging Face. High accuracy handwritten admission form parsing.'
+    suitability: 'Hugging Face Serverless',
+    description: 'Direct Hugging Face Inference API endpoint for Qwen vision.'
   },
   {
     id: 'Qwen/Qwen2.5-VL-7B-Instruct',
@@ -38,42 +102,8 @@ export const AI_MODELS_REGISTRY: AiModelSpec[] = [
     suitability: 'Lightweight Vision Model',
     description: 'Fast vision-language model for document layout understanding.'
   },
-  {
-    id: 'Qwen/Qwen2.5-VL-3B-Instruct',
-    name: 'Qwen2.5-VL-3B-Instruct',
-    provider: 'huggingface',
-    size: '3B',
-    level: 'Light',
-    accuracy: 4,
-    speed: 5,
-    cost: 1,
-    suitability: 'Fast & Lightweight',
-    description: 'Ultra-fast inference with low latency. Good for clean scans and printed text.'
-  },
-  {
-    id: 'meta-llama/Llama-3.2-11B-Vision-Instruct',
-    name: 'Llama-3.2-11B-Vision-Instruct',
-    provider: 'huggingface',
-    size: '11B',
-    level: 'Medium',
-    accuracy: 4,
-    speed: 4,
-    cost: 2,
-    suitability: 'Reliable Meta Vision Model',
-    description: 'Strong general document perception and OCR extraction capabilities.'
-  },
-  {
-    id: 'meta-llama/Llama-3.2-90B-Vision-Instruct',
-    name: 'Llama-3.2-90B-Vision-Instruct',
-    provider: 'huggingface',
-    size: '90B',
-    level: 'Very High',
-    accuracy: 5,
-    speed: 2,
-    cost: 4,
-    suitability: 'Complex Document Layouts',
-    description: 'High capacity model for dense multi-column tabular forms.'
-  },
+
+  // Google AI Studio Direct
   {
     id: 'gemini-2.5-flash',
     name: 'Google Gemini 2.5 Flash',
@@ -83,9 +113,11 @@ export const AI_MODELS_REGISTRY: AiModelSpec[] = [
     accuracy: 5,
     speed: 5,
     cost: 1,
-    suitability: 'Unlimited Free Tier via AI Studio',
-    description: 'Fast multimodal vision from Google AI Studio. 100% free with AIzaSy... API key.'
+    suitability: 'Google AI Studio API Key',
+    description: 'Direct Google AI Studio API with 15 RPM free tier.'
   },
+
+  // Local Unlimited WebAssembly
   {
     id: 'local-wasm-tesseract',
     name: 'Unlimited Local WebAssembly Engine',
@@ -103,7 +135,7 @@ export const AI_MODELS_REGISTRY: AiModelSpec[] = [
 export interface AiConnectionConfig {
   id: string;
   name: string;
-  provider: 'huggingface' | 'google' | 'groq' | 'local';
+  provider: 'openrouter' | 'huggingface' | 'google' | 'groq' | 'local';
   encrypted_key: string;
   masked_key: string;
   model_id: string;

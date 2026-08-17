@@ -101,7 +101,7 @@ export async function getActiveAiConnection(): Promise<{ connection: AiConnectio
 export async function addOrUpdateAiConnection(payload: {
   id?: string;
   name: string;
-  provider: 'huggingface' | 'google' | 'groq' | 'local';
+  provider: 'openrouter' | 'huggingface' | 'google' | 'groq' | 'local';
   plain_api_key?: string;
   model_id: string;
   is_default?: boolean;

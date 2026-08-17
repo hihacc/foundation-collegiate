@@ -73,12 +73,52 @@ Extract all details into structured JSON:
 Return ONLY valid JSON.`;
 
     let parsedResult: any = null;
-    let engineUsed = connection.name || 'Hugging Face Vision AI';
+    let engineUsed = connection.name || 'AI Vision Engine';
 
-    // 4. Try Active Hugging Face Connection
-    if (connection.provider === 'huggingface' && decryptedKey) {
+    // 4. Try Active OpenRouter Connection
+    if (connection.provider === 'openrouter' && decryptedKey) {
+      const modelToUse = connection.model_id || 'google/gemini-2.0-flash-exp:free';
+      try {
+        const orResponse = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${decryptedKey}`,
+            'HTTP-Referer': 'https://foundationcollegiate.edu.pk',
+            'X-Title': 'The Foundation Collegiate Scanner',
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            model: modelToUse,
+            messages: [
+              {
+                role: 'user',
+                content: [
+                  { type: 'text', text: promptText },
+                  { type: 'image_url', image_url: { url: base64DataUrl } }
+                ]
+              }
+            ],
+            max_tokens: 800,
+            temperature: 0.1
+          })
+        });
+
+        const orData = await orResponse.json();
+        const rawContent = orData.choices?.[0]?.message?.content || '';
+        const jsonMatch = rawContent.match(/\{[\s\S]*\}/);
+        if (jsonMatch) {
+          parsedResult = JSON.parse(jsonMatch[0]);
+          engineUsed = `${connection.name} (${modelToUse})`;
+        }
+      } catch (err: any) {
+        console.warn(`OpenRouter primary failed:`, err.message);
+      }
+    }
+
+    // 5. Try Active Hugging Face Connection
+    if (!parsedResult && connection.provider === 'huggingface' && decryptedKey) {
       const hf = new HfInference(decryptedKey);
-      const modelToUse = connection.model_id || 'Qwen/Qwen2.5-VL-7B-Instruct';
+      const modelToUse = connection.model_id || 'Qwen/Qwen2.5-VL-72B-Instruct';
 
       try {
         const response = await hf.chatCompletion({
