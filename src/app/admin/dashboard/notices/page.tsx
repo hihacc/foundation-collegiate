@@ -4,10 +4,12 @@ export const dynamic = 'force-dynamic';
 import { useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabase/client';
 import { toast } from 'sonner';
-import { Plus, Trash2, Pin, Bell, Calendar, Tag } from 'lucide-react';
+import { Plus, Trash2, Pin, Bell, Calendar, Tag, MessageCircle, Share2, Sparkles } from 'lucide-react';
 import Button from '@/components/ui/Button';
 import { Notice } from '@/types';
 import { getStoredData, setStoredData } from '@/lib/utils/storage';
+import { logAdminActivity } from '@/lib/utils/auditLogger';
+import Link from 'next/link';
 
 const isUUID = (str: any) => typeof str === 'string' && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(str);
 
@@ -45,7 +47,7 @@ export default function AdminNoticesPage() {
       const { data, error } = await supabase.from('notices').insert([{ id: noticeId, ...newNotice }]).select('*').single();
       if (!error && data) {
         noticeId = data.id;
-        toast.success('Notice published to database!');
+        toast.success('Notice published to live website!');
       } else {
         toast.success('Notice published!');
       }
@@ -56,18 +58,26 @@ export default function AdminNoticesPage() {
       const updatedList = [createdItem, ...notices];
       setNotices(updatedList);
       setStoredData('notices', updatedList);
+      
+      logAdminActivity({
+        category: 'SETTINGS',
+        action: 'NOTICE_ANNOUNCEMENT_PUBLISHED',
+        details: `Published announcement "${form.title}" (${form.type.toUpperCase()})`,
+        severity: form.type === 'important' ? 'WARNING' : 'INFO'
+      });
+
       setShowForm(false);
       setForm({ title: '', content: '', type: 'general', is_pinned: false });
     }
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm('Delete this notice?')) return;
+    const target = notices.find(n => n.id === id);
+    if (!confirm(`Delete announcement "${target?.title || 'this notice'}"?`)) return;
     try {
       if (isUUID(id)) {
         await supabase.from('notices').delete().eq('id', id);
       } else {
-        const target = notices.find(n => n.id === id);
         if (target?.title) {
           await supabase.from('notices').delete().eq('title', target.title);
         }
@@ -79,6 +89,12 @@ export default function AdminNoticesPage() {
       const updatedList = notices.filter(n => n.id !== id);
       setNotices(updatedList);
       setStoredData('notices', updatedList);
+      logAdminActivity({
+        category: 'SETTINGS',
+        action: 'NOTICE_ANNOUNCEMENT_DELETED',
+        details: `Deleted notice "${target?.title || id}"`,
+        severity: 'WARNING'
+      });
     }
   };
 
@@ -195,18 +211,26 @@ export default function AdminNoticesPage() {
               <h3 className="text-lg font-bold text-slate-800 mb-1">{n.title}</h3>
               <p className="text-slate-600 text-sm leading-relaxed">{n.content}</p>
             </div>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 shrink-0">
+              <Link
+                href={`/admin/dashboard/whatsapp?text=${encodeURIComponent(`📢 *OFFICIAL NOTICE - THE FOUNDATION COLLEGIATE*\n\n*${n.title}*\n\n${n.content}\n\n*TFC Administration*`)}`}
+                className="px-3 py-2 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 text-xs font-bold flex items-center gap-1.5 shadow-2xs transition-colors cursor-pointer"
+                title="Broadcast this notice via WhatsApp"
+              >
+                <MessageCircle size={14} />
+                <span className="hidden sm:inline">WhatsApp</span>
+              </Link>
               <button 
                 onClick={() => togglePin(n.id, n.is_pinned)} 
                 title={n.is_pinned ? 'Unpin' : 'Pin to top'}
-                className={`w-9 h-9 rounded-xl flex items-center justify-center transition-colors ${n.is_pinned ? 'bg-amber-100 text-amber-700' : 'bg-slate-100 text-slate-500 hover:bg-slate-200'}`}
+                className={`w-9 h-9 rounded-xl flex items-center justify-center transition-colors cursor-pointer ${n.is_pinned ? 'bg-amber-100 text-amber-700' : 'bg-slate-100 text-slate-500 hover:bg-slate-200'}`}
               >
                 <Pin size={16} />
               </button>
               <button 
                 onClick={() => handleDelete(n.id)} 
                 title="Delete Notice"
-                className="w-9 h-9 bg-red-50 hover:bg-red-600 text-red-500 hover:text-white rounded-xl flex items-center justify-center transition-colors"
+                className="w-9 h-9 bg-red-50 hover:bg-red-600 text-red-500 hover:text-white rounded-xl flex items-center justify-center transition-colors cursor-pointer"
               >
                 <Trash2 size={16} />
               </button>

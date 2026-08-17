@@ -4,11 +4,12 @@ export const dynamic = 'force-dynamic';
 import { useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabase/client';
 import { toast } from 'sonner';
-import { Plus, Trash2, Pencil, Search, Loader2, UserCog, Upload } from 'lucide-react';
+import { Plus, Trash2, Pencil, Search, Loader2, UserCog, Upload, Sparkles, Phone, Mail, Award, CheckCircle2 } from 'lucide-react';
 import Button from '@/components/ui/Button';
 import { Teacher } from '@/lib/types';
 import { m, AnimatePresence } from 'framer-motion';
 import { getStoredData, setStoredData } from '@/lib/utils/storage';
+import { logAdminActivity } from '@/lib/utils/auditLogger';
 
 const isUUID = (str: any) => typeof str === 'string' && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(str);
 
@@ -86,6 +87,12 @@ export default function AdminTeachersPage() {
         await supabase.from('teachers').update(payload).eq('id', editing.id);
         const updated = teachers.map(t => t.id === editing.id ? { ...t, ...payload } : t);
         updateAndStore(updated);
+        logAdminActivity({
+          category: 'ACADEMIC',
+          action: 'FACULTY_PROFILE_UPDATED',
+          details: `Updated faculty profile for ${payload.name} (${payload.subject})`,
+          severity: 'INFO'
+        });
         toast.success('Faculty member updated & homepage updated live!');
       } else {
         const newId = crypto.randomUUID();
@@ -94,6 +101,12 @@ export default function AdminTeachersPage() {
         const newT: Teacher = { id: newId, ...payload, created_at: new Date().toISOString() };
         const updated = [newT, ...teachers];
         updateAndStore(updated);
+        logAdminActivity({
+          category: 'ACADEMIC',
+          action: 'FACULTY_MEMBER_ADDED',
+          details: `Added new faculty member ${payload.name} (${payload.subject})`,
+          severity: 'SUCCESS'
+        });
         toast.success('New faculty member added & homepage updated live!');
       }
       setShowForm(false);
@@ -124,12 +137,12 @@ export default function AdminTeachersPage() {
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm('Are you sure you want to delete this faculty member?')) return;
+    const target = teachers.find(t => t.id === id);
+    if (!confirm(`Are you sure you want to delete ${target?.name || 'this faculty member'}?`)) return;
     try {
       if (isUUID(id)) {
         await supabase.from('teachers').delete().eq('id', id);
       } else {
-        const target = teachers.find(t => t.id === id);
         if (target?.name) {
           await supabase.from('teachers').delete().eq('name', target.name);
         }
@@ -137,6 +150,12 @@ export default function AdminTeachersPage() {
     } catch {}
     const updated = teachers.filter(t => t.id !== id);
     updateAndStore(updated);
+    logAdminActivity({
+      category: 'ACADEMIC',
+      action: 'FACULTY_MEMBER_DELETED',
+      details: `Removed faculty member ${target?.name || id}`,
+      severity: 'WARNING'
+    });
     toast.success('Faculty member removed successfully!');
   };
 

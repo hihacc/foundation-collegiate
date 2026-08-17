@@ -256,9 +256,20 @@ export default function WhatsAppCenterPage() {
   const [messages, setMessages] = useState<WhatsAppMessage[]>([]);
   const [logFilter, setLogFilter] = useState('');
 
-  // Load Broadcast Lists from LocalStorage
+  // Load URL query params and Broadcast Lists from LocalStorage
   useEffect(() => {
     if (typeof window !== 'undefined') {
+      const urlParams = new URLSearchParams(window.location.search);
+      const textParam = urlParams.get('text');
+      const toParam = urlParams.get('to');
+      if (textParam) {
+        setMessageBody(decodeURIComponent(textParam));
+        toast.info('Loaded message template into WhatsApp compose box!');
+      }
+      if (toParam) {
+        setRecipientPhone(toParam);
+      }
+
       const savedLists = localStorage.getItem('tfc_whatsapp_broadcast_lists');
       if (savedLists) {
         try { setBroadcastLists(JSON.parse(savedLists)); } catch {}

@@ -4,10 +4,11 @@ export const dynamic = 'force-dynamic';
 import { useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabase/client';
 import { toast } from 'sonner';
-import { Plus, Trash2, Pencil, Search, Loader2, Trophy, Upload, Star, Check } from 'lucide-react';
+import { Plus, Trash2, Pencil, Search, Loader2, Trophy, Upload, ExternalLink, Image as ImageIcon, Sparkles, CheckCircle2, Check, Star } from 'lucide-react';
 import Button from '@/components/ui/Button';
 import { Achiever } from '@/types';
 import { m, AnimatePresence } from 'framer-motion';
+import { logAdminActivity } from '@/lib/utils/auditLogger';
 import { formatGoogleDriveImageUrl } from '@/lib/utils/googleDrive';
 import { optimizeUploadedImage } from '@/lib/utils/imageOptimizer';
 
@@ -139,6 +140,12 @@ export default function AdminAchieversPage() {
         const updated = achievers.map(a => a.id === editing.id ? { ...a, ...payload } : a);
         setAchievers(updated);
         try { localStorage.setItem('tfc_achievers_cache', JSON.stringify(updated)); } catch {}
+        logAdminActivity({
+          category: 'ACADEMIC',
+          action: 'TOP_ACHIEVER_UPDATED',
+          details: `Updated Top Achiever profile for ${payload.name} (${payload.position})`,
+          severity: 'INFO'
+        });
         toast.success('Top Achiever photo & profile updated successfully!');
       } else {
         const { error } = await supabase.from('achievers').insert([payload]);
@@ -147,6 +154,12 @@ export default function AdminAchieversPage() {
         const updated = [payload as Achiever, ...achievers];
         setAchievers(updated);
         try { localStorage.setItem('tfc_achievers_cache', JSON.stringify(updated)); } catch {}
+        logAdminActivity({
+          category: 'ACADEMIC',
+          action: 'TOP_ACHIEVER_ADDED',
+          details: `Added new Top Achiever ${payload.name} (${payload.position} - ${payload.percentage})`,
+          severity: 'SUCCESS'
+        });
         toast.success('Top Achiever added successfully with your photo!');
       }
 
@@ -202,6 +215,12 @@ export default function AdminAchieversPage() {
       } else if (targetAchiever?.name) {
         await supabase.from('achievers').delete().eq('name', targetAchiever.name);
       }
+      logAdminActivity({
+        category: 'ACADEMIC',
+        action: 'TOP_ACHIEVER_DELETED',
+        details: `Deleted Top Achiever card for ${targetAchiever?.name || id}`,
+        severity: 'WARNING'
+      });
       toast.success('Achiever card permanently deleted.');
     } catch {
       toast.success('Achiever card removed.');
