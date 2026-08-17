@@ -125,6 +125,8 @@ export default function AdminAttendancePage() {
     toast.info(`Marked all ${filteredStudents.length} students as ${status.toUpperCase()}`);
   };
 
+  const [autoSendWhatsAppOnSave, setAutoSendWhatsAppOnSave] = useState<boolean>(true);
+
   const handleSaveAttendance = async () => {
     if (classStudents.length === 0) return toast.info('No students to record attendance for.');
     
@@ -155,8 +157,6 @@ export default function AdminAttendancePage() {
         await supabase.from('attendance').upsert(newRecords, { onConflict: 'student_id,date' });
       } catch {}
 
-      toast.success(`Attendance saved for ${classStudents.length} students on ${selectedDate}!`);
-
       // Log in system audit trail
       logAdminActivity({
         category: 'ATTENDANCE',
@@ -166,10 +166,71 @@ export default function AdminAttendancePage() {
         metadata: { class: selectedClass, date: selectedDate, total: classStudents.length, absent: summary.absent }
       });
 
-      // If any students are absent, offer 1-click WhatsApp parent broadcast
-      const absentCount = classStudents.filter(st => (todayStatus[st.id] || 'present') === 'absent').length;
-      if (absentCount > 0) {
-        toast.info(`${absentCount} student(s) marked absent. Click "WhatsApp Parents" to notify them instantly!`);
+      // Automatically send WhatsApp absent alerts to BOTH parent and student if any students are absent
+      const absentStudents = classStudents.filter(st => (todayStatus[st.id] || 'present') === 'absent');
+      let whatsappDispatchedCount = 0;
+
+      if (autoSendWhatsAppOnSave && absentStudents.length > 0) {
+        const bulkPayload: { recipient: string; messageBody: string; metadata: any }[] = [];
+
+        absentStudents.forEach(st => {
+          const parentNum = st.parent_phone?.trim() || st.phone?.trim();
+          const studentNum = st.phone?.trim();
+
+          const parentMsg = `🚨 *TFC Alert! Student is absent from class*\n\nRespected Parent,\nStudent *${st.name}* (Roll: *${st.roll_number || 'N/A'}*, Class: *${st.class_name || selectedClass}*) is *ABSENT* from class today (*${selectedDate}*).\n\nKindly contact the college administration for any queries.\n\n*The Foundation Collegiate*`;
+          const studentMsg = `🚨 *TFC Alert! You are marked absent from class*\n\nDear *${st.name}* (Roll: *${st.roll_number || 'N/A'}*, Class: *${st.class_name || selectedClass}*),\nYou are marked *ABSENT* from class today (*${selectedDate}*).\n\nPlease submit your leave application or medical certificate to the administration office upon return.\n\n*The Foundation Collegiate*`;
+
+          if (parentNum) {
+            bulkPayload.push({
+              recipient: parentNum,
+              messageBody: parentMsg,
+              metadata: { studentId: st.id, name: st.name, roll: st.roll_number, date: selectedDate, target: 'PARENT' }
+            });
+          }
+
+          if (studentNum && studentNum !== parentNum) {
+            bulkPayload.push({
+              recipient: studentNum,
+              messageBody: studentMsg,
+              metadata: { studentId: st.id, name: st.name, roll: st.roll_number, date: selectedDate, target: 'STUDENT' }
+            });
+          }
+        });
+
+        if (bulkPayload.length > 0) {
+          try {
+            const res = await fetch('/api/admin/whatsapp/proxy', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                action: 'SEND_BULK',
+                payload: {
+                  accountId: 'tfc-default-sender',
+                  messages: bulkPayload
+                }
+              })
+            });
+            const data = await res.json();
+            if (data.success) {
+              whatsappDispatchedCount = bulkPayload.length;
+              logAdminActivity({
+                category: 'WHATSAPP',
+                action: 'WHATSAPP_AUTO_ABSENT_ALERT_ON_SAVE',
+                details: `Auto-dispatched ${bulkPayload.length} WhatsApp absent alerts to Parents & Students on attendance save for ${selectedClass}`,
+                severity: 'INFO',
+                metadata: { class: selectedClass, count: bulkPayload.length, date: selectedDate }
+              });
+            }
+          } catch (e: any) {
+            console.warn('Auto WhatsApp absent alert dispatch notice:', e.message);
+          }
+        }
+      }
+
+      if (whatsappDispatchedCount > 0) {
+        toast.success(`Attendance saved & Auto-sent ${whatsappDispatchedCount} WhatsApp Absent Alerts to Parents & Students!`);
+      } else {
+        toast.success(`Attendance saved for ${classStudents.length} students on ${selectedDate}!`);
       }
     } catch {
       toast.error('Failed to save attendance record');
@@ -427,15 +488,17 @@ export default function AdminAttendancePage() {
             <Printer size={14} className="mr-1.5" /> Print Sheet
           </Button>
 
-          {summary.absent > 0 && (
-            <Button
-              size="sm"
-              onClick={handleSendBulkWhatsAppAbsentAlerts}
-              className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-md shadow-emerald-600/20 flex-1 sm:flex-none"
-            >
-              <Send size={14} className="mr-1.5" /> Auto WhatsApp Absent Alerts ({summary.absent})
-            </Button>
-          )}
+          <label className="flex items-center gap-1.5 px-3 py-2 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200 rounded-xl text-xs font-bold cursor-pointer select-none transition-colors">
+            <input 
+              type="checkbox" 
+              checked={autoSendWhatsAppOnSave} 
+              onChange={e => setAutoSendWhatsAppOnSave(e.target.checked)} 
+              className="rounded text-emerald-600 focus:ring-emerald-500 w-3.5 h-3.5 cursor-pointer" 
+            />
+            <MessageCircle size={14} className="text-emerald-600" />
+            <span className="hidden sm:inline">Auto-WhatsApp on Save</span>
+            <span className="sm:hidden">Auto WhatsApp</span>
+          </label>
 
           <Button
             size="sm"
