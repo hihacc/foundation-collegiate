@@ -253,6 +253,17 @@ export default function AdminDashboardPage() {
           </Link>
 
           <Link
+            href="/admin/dashboard/students/scanner"
+            className="p-4 rounded-2xl bg-gradient-to-br from-amber-500 to-orange-600 text-white hover:shadow-lg hover:shadow-orange-500/20 transition-all group border border-amber-400"
+          >
+            <div className="w-10 h-10 rounded-xl bg-white/20 text-white flex items-center justify-center font-bold mb-3 shadow-md group-hover:scale-110 transition-transform">
+              <Sparkles size={20} />
+            </div>
+            <div className="font-bold text-white text-xs sm:text-sm">📸 AI Form Scanner</div>
+            <div className="text-[11px] text-amber-100 mt-0.5">OpenRouter &bull; Qwen &bull; OCR</div>
+          </Link>
+
+          <Link
             href="/admin/dashboard/notices"
             className="p-4 rounded-2xl bg-gradient-to-br from-purple-50 to-purple-100/50 border border-purple-200 hover:border-purple-400 hover:shadow-md transition-all group"
           >

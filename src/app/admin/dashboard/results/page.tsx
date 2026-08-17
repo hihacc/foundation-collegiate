@@ -3,45 +3,21 @@ export const dynamic = 'force-dynamic';
 
 import { useEffect, useState, useMemo } from 'react';
 import { supabase } from '@/lib/supabase/client';
-import { toast } from 'sonner';
 import { 
-  Search, Download, GraduationCap, Loader2, 
-  Key, Calendar, Save, Printer, 
-  BookOpen, Users, Dice5, Eye, X, FileSpreadsheet, PlusCircle,
-  LayoutGrid, Table as TableIcon, RotateCcw
+  Search, Save, Download, Eye, Plus, Trash2, Key, CheckCircle2, 
+  AlertCircle, ChevronRight, GraduationCap, BookOpen, Layers, 
+  Calendar, Printer, Loader2, Sparkles, Filter, Check, Award,
+  LayoutGrid, Table as TableIcon, RefreshCw, X, MessageSquare,
+  TrendingUp, BarChart3, Trophy, Share2, HelpCircle
 } from 'lucide-react';
-import Button from '@/components/ui/Button';
-import { Result, Student, SubjectResult } from '@/types';
+import { toast } from 'sonner';
+import { Result, Student, SubjectResult } from '@/lib/types';
+import { OFFICIAL_CLASSES, matchStudentToClass } from '@/lib/utils/classes';
 import { getStoredData, setStoredData } from '@/lib/utils/storage';
-import { OFFICIAL_CLASSES, matchStudentToClass, getDefaultSubjectsForClass } from '@/lib/utils/classes';
 
-const isUUID = (str: any) => typeof str === 'string' && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(str);
-
-const PRESET_MONTHS = [
-  'July 2026',
-  'August 2026',
-  'September 2026',
-  'October 2026',
-  'November 2026',
-  'December 2026',
-  'Mid-Term 2026',
-  'First Term 2026',
-  'Annual 2026',
-];
-
-const getGradeBadge = (grade: string) => {
-  if (!grade) return 'bg-slate-100 text-slate-700 border-slate-200';
-  const g = grade.toUpperCase();
-  if (g.includes('DISTINCTION') || g.includes('A-1') || g.includes('1ST') || g.includes('A+')) {
-    return 'bg-emerald-100 text-emerald-800 border-emerald-300 font-black';
-  }
-  if (g.includes('FIRST DIVISION') || g.includes('A')) {
-    return 'bg-blue-100 text-blue-800 border-blue-300 font-black';
-  }
-  if (g.includes('PASS') || g.includes('B') || g.includes('C')) {
-    return 'bg-amber-100 text-amber-800 border-amber-300 font-black';
-  }
-  return 'bg-red-100 text-red-800 border-red-300 font-black';
+const isUUID = (str?: string | null): boolean => {
+  if (!str) return false;
+  return /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(str);
 };
 
 interface StudentMarkRow {
@@ -64,14 +40,24 @@ interface StudentMarkRow {
   is_saved: boolean;
 }
 
+const EXAM_TYPES = [
+  'Monthly Assessment Test',
+  'First Term Examination',
+  'Midterm Examination',
+  'Pre-Board Mock Examination',
+  'Final Annual Examination',
+  'Weekly Class Quiz'
+];
+
 export default function AdminResultsPage() {
   const [results, setResults] = useState<Result[]>([]);
   const [students, setStudents] = useState<Student[]>([]);
   const [pinMap, setPinMap] = useState<Record<string, string>>({});
   
-  // Selection State - defaults to Class IX - Computer Science which has active students
+  // Selection State - defaults to Class IX - Computer Science
   const [selectedClassKey, setSelectedClassKey] = useState<string>(OFFICIAL_CLASSES[0].key);
-  const [selectedMonth, setSelectedMonth] = useState<string>('July 2026');
+  const [selectedExamType, setSelectedExamType] = useState<string>('Monthly Assessment Test');
+  const [selectedMonth, setSelectedMonth] = useState<string>('August 2026');
   const [customMonthInput, setCustomMonthInput] = useState<string>('');
   const [search, setSearch] = useState('');
   
@@ -90,6 +76,7 @@ export default function AdminResultsPage() {
   const [savingAll, setSavingAll] = useState(false);
   const [savingRowId, setSavingRowId] = useState<string | null>(null);
   const [previewStudent, setPreviewStudent] = useState<StudentMarkRow | null>(null);
+  const [showTabulationPrint, setShowTabulationPrint] = useState(false);
 
   // Mark rows map: studentId -> StudentMarkRow
   const [markRows, setMarkRows] = useState<Record<string, StudentMarkRow>>({});
@@ -140,9 +127,34 @@ export default function AdminResultsPage() {
     fetchData();
   }, []);
 
-  // 2. Compute Class Subject List whenever selectedClassKey changes
+  // 2. Derive Default Subjects when selected class changes
   useEffect(() => {
-    const defaultSubs = getDefaultSubjectsForClass(selectedClassKey);
+    const matchedClass = OFFICIAL_CLASSES.find(c => c.key === selectedClassKey);
+    let defaultSubs: { name: string; total_marks: number }[] = [];
+
+    if (matchedClass && matchedClass.defaultSubjects) {
+      defaultSubs = matchedClass.defaultSubjects.map(subItem => {
+        const subName = typeof subItem === 'string' ? subItem : (subItem as any).name || 'Subject';
+        let maxMarks = typeof (subItem as any)?.total_marks === 'number' ? (subItem as any).total_marks : 100;
+        const lower = subName.toLowerCase();
+        if (lower.includes('biology') || lower.includes('physics') || lower.includes('chemistry') || lower.includes('computer science')) {
+          maxMarks = 75;
+        } else if (lower.includes('islamiat') || lower.includes('pakistan studies') || lower.includes('sindhi') || lower.includes('urdu salees')) {
+          maxMarks = 50;
+        } else if (lower.includes('math') || lower.includes('english') || lower.includes('urdu')) {
+          maxMarks = 100;
+        }
+        return { name: subName, total_marks: maxMarks };
+      });
+    } else {
+      defaultSubs = [
+        { name: 'English', total_marks: 100 },
+        { name: 'Urdu', total_marks: 100 },
+        { name: 'Mathematics', total_marks: 100 },
+        { name: 'Islamiat', total_marks: 50 },
+        { name: 'Pakistan Studies', total_marks: 50 }
+      ];
+    }
 
     const savedCustomSubjects = localStorage.getItem(`tfc_class_subjects_${selectedClassKey}`);
     if (savedCustomSubjects) {
@@ -203,300 +215,339 @@ export default function AdminResultsPage() {
 
   // 4. Synchronize Mark Rows for all students in class
   useEffect(() => {
-    const rows: Record<string, StudentMarkRow> = {};
+    if (loading) return;
 
-    classStudents.forEach(st => {
-      const rollUpper = (st.roll_number || '').trim().toUpperCase();
-      const existingRes = results.find(r => 
-        (r.roll_number || '').trim().toUpperCase() === rollUpper && 
-        (r.month || 'July 2026').toLowerCase() === activeMonthName.toLowerCase()
+    const newRows: Record<string, StudentMarkRow> = {};
+
+    classStudents.forEach(student => {
+      const existingResult = results.find(
+        r => r.roll_number?.trim().toUpperCase() === student.roll_number?.trim().toUpperCase() &&
+             (r.month || 'August 2026') === activeMonthName
       );
-
-      const existingPin = pinMap[rollUpper] || '';
 
       const subjectMarks: Record<string, number | ''> = {};
       classSubjects.forEach(sub => {
-        subjectMarks[sub.name] = '';
+        if (existingResult && Array.isArray(existingResult.subjects)) {
+          const matchedSub = existingResult.subjects.find(
+            (s: any) => (s.name || s.subject_name)?.toLowerCase().trim() === sub.name.toLowerCase().trim()
+          );
+          if (matchedSub && typeof matchedSub.marks === 'number') {
+            subjectMarks[sub.name] = matchedSub.marks;
+          } else {
+            subjectMarks[sub.name] = '';
+          }
+        } else {
+          subjectMarks[sub.name] = '';
+        }
       });
 
-      if (existingRes) {
-        if (existingRes.subjects && Array.isArray(existingRes.subjects)) {
-          existingRes.subjects.forEach(s => {
-            if (s.name) {
-              const parsedVal = typeof s.marks === 'number' ? s.marks : Number(s.marks);
-              subjectMarks[s.name] = !isNaN(parsedVal) ? parsedVal : 0;
-            }
-          });
-        }
+      const metrics = calculateMetrics(subjectMarks, classSubjects);
+      const assignedPin = pinMap[student.roll_number?.toUpperCase()] || generateRandomPin();
 
-        const metrics = calculateMetrics(subjectMarks, classSubjects);
+      newRows[student.id] = {
+        student_id: student.id,
+        roll_number: student.roll_number || '',
+        student_name: student.name || '',
+        father_name: student.father_name || '',
+        class_name: student.class_name || selectedClassKey,
+        pin: assignedPin,
+        result_id: existingResult?.id,
+        exam_name: existingResult?.exam_name || selectedExamType,
+        month: activeMonthName,
+        subject_marks: subjectMarks,
+        total_marks: existingResult?.total_marks || metrics.total_marks,
+        obtained_marks: existingResult?.obtained_marks || metrics.obtained_marks,
+        percentage: existingResult?.percentage !== undefined ? existingResult.percentage : metrics.percentage,
+        grade: existingResult?.grade || metrics.grade,
+        position: existingResult?.position || '',
+        remarks: existingResult?.remarks || (metrics.percentage >= 80 ? 'Outstanding academic excellence!' : metrics.percentage >= 60 ? 'Good overall performance.' : 'Needs focused attention in weak areas.'),
+        is_saved: !!existingResult
+      };
+    });
 
-        rows[st.id] = {
-          student_id: st.id,
-          roll_number: st.roll_number || existingRes.roll_number || '',
-          student_name: st.name || existingRes.student_name || '',
-          father_name: st.father_name || existingRes.father_name || '',
-          class_name: st.class_name || existingRes.class_name || selectedClassKey || '',
-          pin: existingPin || generateRandomPin(),
-          result_id: existingRes.id,
-          exam_name: existingRes.exam_name || 'Monthly Assessment Test',
-          month: activeMonthName,
-          subject_marks: subjectMarks,
-          total_marks: existingRes.total_marks || metrics.total_marks,
-          obtained_marks: existingRes.obtained_marks || metrics.obtained_marks,
-          percentage: existingRes.percentage || metrics.percentage,
-          grade: existingRes.grade || metrics.grade,
-          position: existingRes.position || '',
-          remarks: existingRes.remarks || '',
-          is_saved: true,
-        };
-      } else {
-        const metrics = calculateMetrics(subjectMarks, classSubjects);
+    setMarkRows(newRows);
+  }, [classStudents, classSubjects, activeMonthName, selectedClassKey, selectedExamType, results, loading]);
 
-        rows[st.id] = {
-          student_id: st.id,
-          roll_number: st.roll_number || `FC-26-${st.id.slice(0, 4)}`,
-          student_name: st.name || '',
-          father_name: st.father_name || '',
-          class_name: st.class_name || selectedClassKey || '',
-          pin: existingPin || generateRandomPin(),
-          exam_name: 'Monthly Assessment Test',
-          month: activeMonthName,
-          subject_marks: subjectMarks,
-          total_marks: metrics.total_marks,
-          obtained_marks: 0,
-          percentage: 0,
-          grade: 'PASS',
-          position: '',
-          remarks: '',
-          is_saved: false,
-        };
+  // Handle Mark Input
+  const handleMarkChange = (studentId: string, subjectName: string, maxMarks: number, valueStr: string) => {
+    let numVal: number | '' = '';
+    if (valueStr.trim() !== '') {
+      const parsed = parseInt(valueStr, 10);
+      if (!isNaN(parsed)) {
+        numVal = Math.min(maxMarks, Math.max(0, parsed));
       }
-    });
-
-    setMarkRows(rows);
-  }, [classStudents, classSubjects, activeMonthName, results, pinMap, selectedClassKey]);
-
-  // Handle Direct Numeric Mark Change in Cell WITH STRICT MAX CLAMPING
-  const handleMarkCellChange = (studentId: string, subjectName: string, valueStr: string) => {
-    setMarkRows(prev => {
-      const current = prev[studentId];
-      if (!current) return prev;
-
-      const targetSubject = classSubjects.find(s => s.name === subjectName);
-      const maxAllowed = targetSubject ? targetSubject.total_marks : 100;
-
-      let num: number | '' = '';
-      if (valueStr !== '') {
-        const parsed = Number(valueStr);
-        if (!isNaN(parsed)) {
-          if (parsed > maxAllowed) {
-            toast.warning(`Maximum marks for ${subjectName} is ${maxAllowed}. Automatically set to ${maxAllowed}.`);
-            num = maxAllowed;
-          } else if (parsed < 0) {
-            num = 0;
-          } else {
-            num = parsed;
-          }
-        }
-      }
-
-      const updatedSubjectMarks: Record<string, number | ''> = {
-        ...(current.subject_marks || {}),
-        [subjectName]: num
-      };
-
-      const { total_marks, obtained_marks, percentage, grade } = calculateMetrics(updatedSubjectMarks, classSubjects);
-
-      return {
-        ...prev,
-        [studentId]: {
-          ...current,
-          subject_marks: updatedSubjectMarks,
-          total_marks,
-          obtained_marks,
-          percentage,
-          grade,
-          is_saved: false,
-        }
-      };
-    });
-  };
-
-  const handleRowPinChange = (studentId: string, pin: string) => {
-    setMarkRows(prev => {
-      const current = prev[studentId];
-      if (!current) return prev;
-      return {
-        ...prev,
-        [studentId]: {
-          ...current,
-          pin: (pin || '').replace(/\D/g, '').slice(0, 4),
-          is_saved: false,
-        }
-      };
-    });
-  };
-
-  const handleRegeneratePin = (studentId: string) => {
-    const newPin = generateRandomPin();
-    handleRowPinChange(studentId, newPin);
-    toast.info(`PIN generated: ${newPin}`);
-  };
-
-  // Add Subject Column for entire class
-  const handleAddSubjectColumn = (e: React.FormEvent) => {
-    e.preventDefault();
-    const cleanName = (newSubName || '').trim();
-    if (!cleanName) return;
-
-    if (classSubjects.some(s => s.name.toLowerCase() === cleanName.toLowerCase())) {
-      return toast.error(`Subject "${cleanName}" already exists in table!`);
     }
 
-    const updatedSubjects = [...classSubjects, { name: cleanName, total_marks: Math.max(1, Number(newSubTotal) || 100) }];
-    setClassSubjects(updatedSubjects);
-    localStorage.setItem(`tfc_class_subjects_${selectedClassKey}`, JSON.stringify(updatedSubjects));
+    setMarkRows(prev => {
+      const currentRow = prev[studentId];
+      if (!currentRow) return prev;
+
+      const newSubjectMarks = { ...currentRow.subject_marks, [subjectName]: numVal };
+      const metrics = calculateMetrics(newSubjectMarks, classSubjects);
+
+      return {
+        ...prev,
+        [studentId]: {
+          ...currentRow,
+          subject_marks: newSubjectMarks,
+          total_marks: metrics.total_marks,
+          obtained_marks: metrics.obtained_marks,
+          percentage: metrics.percentage,
+          grade: metrics.grade,
+          is_saved: false
+        }
+      };
+    });
+  };
+
+  // Add Custom Subject Column
+  const handleAddSubjectColumn = () => {
+    if (!newSubName.trim()) {
+      return toast.error('Subject name is required');
+    }
+    const cleanName = newSubName.trim();
+    if (classSubjects.some(s => s.name.toLowerCase() === cleanName.toLowerCase())) {
+      return toast.error(`Subject "${cleanName}" is already in this marksheet!`);
+    }
+
+    const updated = [...classSubjects, { name: cleanName, total_marks: Number(newSubTotal) || 100 }];
+    setClassSubjects(updated);
+    localStorage.setItem(`tfc_class_subjects_${selectedClassKey}`, JSON.stringify(updated));
 
     setNewSubName('');
     setNewSubTotal(100);
     setShowAddSubjectBar(false);
-    toast.success(`Subject column "${cleanName}" added for all students in ${selectedClassKey}!`);
+    toast.success(`Added subject "${cleanName}" (${newSubTotal} Marks) to class.`);
   };
 
-  // Remove Subject Column for entire class
-  const handleRemoveSubjectColumn = (subjectName: string) => {
-    if (!confirm(`Remove subject column "${subjectName}" for all students in ${selectedClassKey}?`)) return;
-    const updatedSubjects = classSubjects.filter(s => s.name !== subjectName);
-    setClassSubjects(updatedSubjects);
-    localStorage.setItem(`tfc_class_subjects_${selectedClassKey}`, JSON.stringify(updatedSubjects));
-    toast.success(`Subject "${subjectName}" removed from ${selectedClassKey}.`);
+  // Remove Subject Column
+  const handleRemoveSubjectColumn = (subNameToRemove: string) => {
+    if (classSubjects.length <= 1) {
+      return toast.error('Class marksheet must have at least one subject.');
+    }
+    const updated = classSubjects.filter(s => s.name !== subNameToRemove);
+    setClassSubjects(updated);
+    localStorage.setItem(`tfc_class_subjects_${selectedClassKey}`, JSON.stringify(updated));
+    toast.info(`Removed subject "${subNameToRemove}".`);
   };
 
-  // Reset to default subjects for selected class
-  const handleResetClassSubjects = () => {
-    if (!confirm(`Reset subjects for "${selectedClassKey}" back to standard Board curriculum?`)) return;
-    localStorage.removeItem(`tfc_class_subjects_${selectedClassKey}`);
-    const defaultSubs = getDefaultSubjectsForClass(selectedClassKey);
-    setClassSubjects(defaultSubs);
-    toast.success(`Restored official curriculum subjects for ${selectedClassKey}!`);
-  };
-
-  // Auto Generate PINs for All in class
+  // Auto PINs for all
   const handleAutoGenerateAllPins = () => {
-    setMarkRows(prev => {
-      const updated: Record<string, StudentMarkRow> = {};
-      Object.keys(prev).forEach(stId => {
-        const row = prev[stId];
-        const newPin = row.pin && row.pin.length === 4 ? row.pin : generateRandomPin();
-        updated[stId] = { ...row, pin: newPin, is_saved: false };
-      });
-      return updated;
+    const updatedRows: Record<string, StudentMarkRow> = {};
+    const newPins: Record<string, string> = { ...pinMap };
+
+    Object.keys(markRows).forEach(stId => {
+      const current = markRows[stId];
+      const roll = current.roll_number?.toUpperCase();
+      let assignedPin = current.pin;
+      if (!assignedPin || assignedPin === '1234' || assignedPin.length < 4) {
+        assignedPin = generateRandomPin();
+        if (roll) newPins[roll] = assignedPin;
+      }
+
+      updatedRows[stId] = {
+        ...current,
+        pin: assignedPin,
+        is_saved: false
+      };
     });
-    toast.success('4-Digit Security PINs generated for all students in this class!');
+
+    setMarkRows(updatedRows);
+    setPinMap(newPins);
+    localStorage.setItem('tfc_admin_pins', JSON.stringify(newPins));
+    toast.success('Generated 4-Digit Security PINs for all students in this class.');
   };
 
-  // Save Single Student Row
+  // Auto-Calculate Class Positions (1st, 2nd, 3rd, etc.)
+  const handleAutoCalculatePositions = () => {
+    const list = Object.values(markRows);
+    if (list.length === 0) return toast.error('No students enrolled in this class roster.');
+
+    const sorted = [...list].sort((a, b) => (b.percentage || 0) - (a.percentage || 0));
+    const updated: Record<string, StudentMarkRow> = { ...markRows };
+    let currentRank = 1;
+
+    sorted.forEach((row) => {
+      let suffix = 'th';
+      if (currentRank === 1) suffix = 'st';
+      else if (currentRank === 2) suffix = 'nd';
+      else if (currentRank === 3) suffix = 'rd';
+
+      const posStr = row.obtained_marks > 0 ? `${currentRank}${suffix}` : '-';
+      const stId = Object.keys(markRows).find(id => markRows[id].roll_number === row.roll_number);
+      if (stId && updated[stId]) {
+        updated[stId] = {
+          ...updated[stId],
+          position: posStr,
+          is_saved: false
+        };
+      }
+      currentRank++;
+    });
+
+    setMarkRows(updated);
+    toast.success('✨ Calculated class positions (1st, 2nd, 3rd) for all students!');
+  };
+
+  // Quick Auto-Fill Passing Marks Helper
+  const handleAutoFillPassing = () => {
+    const updated: Record<string, StudentMarkRow> = {};
+    Object.keys(markRows).forEach(stId => {
+      const row = markRows[stId];
+      const newSubjectMarks: Record<string, number | ''> = {};
+      classSubjects.forEach(sub => {
+        const passMark = Math.round(sub.total_marks * 0.65);
+        newSubjectMarks[sub.name] = typeof row.subject_marks[sub.name] === 'number' ? row.subject_marks[sub.name] : passMark;
+      });
+      const metrics = calculateMetrics(newSubjectMarks, classSubjects);
+      updated[stId] = {
+        ...row,
+        subject_marks: newSubjectMarks,
+        total_marks: metrics.total_marks,
+        obtained_marks: metrics.obtained_marks,
+        percentage: metrics.percentage,
+        grade: metrics.grade,
+        is_saved: false
+      };
+    });
+    setMarkRows(updated);
+    toast.info('Auto-filled passing marks baseline across unpopulated subjects.');
+  };
+
+  // WhatsApp Parent Notification
+  const handleSendWhatsAppNotification = (row: StudentMarkRow) => {
+    const msg = `*THE FOUNDATION COLLEGIATE*
+*Official Examination Result Notification*
+
+👤 *Student Name:* ${row.student_name}
+🆔 *Roll Number:* ${row.roll_number}
+📚 *Class / Group:* ${row.class_name}
+📋 *Exam:* ${row.exam_name} (${activeMonthName})
+
+📊 *Marks Obtained:* ${row.obtained_marks} / ${row.total_marks}
+📈 *Percentage:* ${row.percentage}%
+🏅 *Grade:* ${row.grade} ${row.position ? `| Position: ${row.position}` : ''}
+🔑 *Online Portal Security PIN:* ${row.pin}
+
+💬 *Remarks:* ${row.remarks || 'Keep up the consistent effort!'}
+
+_Check complete detailed transcripts online at https://foundationcollegiate.edu.pk/results_`;
+
+    const encoded = encodeURIComponent(msg);
+    window.open(`https://wa.me/?text=${encoded}`, '_blank');
+  };
+
+  // Save Single Row
   const handleSaveSingleRow = async (studentId: string) => {
     const row = markRows[studentId];
     if (!row) return;
 
-    setSavingRowId(studentId);
     try {
+      setSavingRowId(studentId);
       const rollUpper = (row.roll_number || '').trim().toUpperCase();
-      const pinCode = (row.pin || '').trim() || '1234';
 
       const structuredSubjects: SubjectResult[] = classSubjects.map(sub => {
-        const raw = row.subject_marks?.[sub.name];
-        const max = sub.total_marks || 100;
-        const m = typeof raw === 'number' ? Math.min(max, Math.max(0, raw)) : 0;
-        const pct = (m / max) * 100;
+        const rawVal = row.subject_marks?.[sub.name];
+        const m = typeof rawVal === 'number' ? rawVal : 0;
+        const pct = (m / sub.total_marks) * 100;
         let g = 'PASS';
-        if (pct >= 80) g = 'A-1';
+        if (m < sub.total_marks * 0.33) g = 'F';
+        else if (pct >= 80) g = 'A-1';
         else if (pct >= 60) g = 'A';
-        else if (pct >= 40) g = 'B';
-        else g = 'F';
+        else if (pct >= 50) g = 'B';
 
         return {
           name: sub.name,
-          total_marks: max,
+          total_marks: sub.total_marks,
           marks: m,
           grade: g,
         };
       });
 
-      const payload = {
+      const resultPayload: Result = {
+        id: row.result_id && isUUID(row.result_id) ? row.result_id : crypto.randomUUID(),
+        student_id: row.student_id,
         roll_number: rollUpper,
         student_name: (row.student_name || '').trim(),
         father_name: (row.father_name || '').trim(),
         class_name: (row.class_name || '').trim(),
-        exam_name: (row.exam_name || '').trim() || 'Monthly Assessment Test',
+        exam_name: (row.exam_name || '').trim() || selectedExamType,
         month: activeMonthName,
         total_marks: row.total_marks,
         obtained_marks: row.obtained_marks,
         percentage: row.percentage,
         grade: row.grade,
-        position: (row.position || '').trim(),
-        remarks: (row.remarks || '').trim(),
+        position: (row.position || '').trim() || null,
+        remarks: (row.remarks || '').trim() || null,
         subjects: structuredSubjects,
         is_active: true,
+        created_at: new Date().toISOString()
       };
 
-      let resultId = row.result_id || crypto.randomUUID();
-
-      if (row.result_id && isUUID(row.result_id)) {
-        await supabase.from('results').update(payload).eq('id', row.result_id);
-      } else {
-        const { data } = await supabase.from('results').upsert([{ id: resultId, ...payload }]).select().single();
-        if (data?.id) resultId = data.id;
+      // 1. Supabase Upsert
+      try {
+        await supabase.from('results').upsert(resultPayload);
+        if (rollUpper && row.pin) {
+          await supabase.from('pins').upsert({
+            roll_number: rollUpper,
+            pin_hash: row.pin.trim(),
+            is_active: true
+          }, { onConflict: 'roll_number' });
+        }
+      } catch (e) {
+        console.warn('DB upsert fallback notice:', e);
       }
 
-      await supabase.from('pins').upsert({ roll_number: rollUpper, pin_hash: pinCode, is_active: true }, { onConflict: 'roll_number' });
+      // 2. Local Storage Sync
+      const remainingResults = results.filter(r => !(r.roll_number?.toUpperCase() === rollUpper && (r.month || 'August 2026') === activeMonthName));
+      const updatedTotalResults = [resultPayload, ...remainingResults];
+      setResults(updatedTotalResults);
+      setStoredData('results', updatedTotalResults);
 
-      setPinMap(prev => ({ ...prev, [rollUpper]: pinCode }));
-
-      const existingFiltered = results.filter(r => !(r.roll_number.toUpperCase() === rollUpper && (r.month || 'July 2026') === activeMonthName));
-      const newResultRecord: Result = { id: resultId, ...payload, created_at: new Date().toISOString() };
-      const updatedResults = [newResultRecord, ...existingFiltered];
-      setResults(updatedResults);
-      setStoredData('results', updatedResults);
+      const newPinMap = { ...pinMap, [rollUpper]: row.pin.trim() };
+      setPinMap(newPinMap);
+      localStorage.setItem('tfc_admin_pins', JSON.stringify(newPinMap));
 
       setMarkRows(prev => ({
         ...prev,
-        [studentId]: { ...row, result_id: resultId, is_saved: true }
+        [studentId]: {
+          ...prev[studentId],
+          result_id: resultPayload.id,
+          is_saved: true
+        }
       }));
 
-      toast.success(`Marks & PIN saved for ${row.student_name} (${rollUpper})!`);
+      toast.success(`Saved marks & PIN for ${row.student_name} (${row.roll_number})`);
     } catch (err: any) {
-      toast.error(`Save error: ${err.message || 'Failed'}`);
+      toast.error(`Save error: ${err.message}`);
     } finally {
       setSavingRowId(null);
     }
   };
 
-  // Bulk Save All Students in Class
+  // Save All Class Results
   const handleSaveAllClassResults = async () => {
     const rowList = Object.values(markRows);
-    if (rowList.length === 0) return toast.info('No students in this class.');
+    if (rowList.length === 0) return toast.error('No students to save.');
 
-    setSavingAll(true);
     try {
-      const resultsToUpsert = rowList.map(row => {
+      setSavingAll(true);
+
+      const resultsToUpsert: Result[] = rowList.map(row => {
         const rollUpper = (row.roll_number || '').trim().toUpperCase();
         const structuredSubjects: SubjectResult[] = classSubjects.map(sub => {
-          const raw = row.subject_marks?.[sub.name];
-          const max = sub.total_marks || 100;
-          const m = typeof raw === 'number' ? Math.min(max, Math.max(0, raw)) : 0;
-          const pct = (m / max) * 100;
+          const rawVal = row.subject_marks?.[sub.name];
+          const m = typeof rawVal === 'number' ? rawVal : 0;
+          const pct = (m / sub.total_marks) * 100;
           let g = 'PASS';
-          if (pct >= 80) g = 'A-1';
+          if (m < sub.total_marks * 0.33) g = 'F';
+          else if (pct >= 80) g = 'A-1';
           else if (pct >= 60) g = 'A';
-          else if (pct >= 40) g = 'B';
-          else g = 'F';
+          else if (pct >= 50) g = 'B';
 
           return {
             name: sub.name,
-            total_marks: max,
+            total_marks: sub.total_marks,
             marks: m,
             grade: g,
           };
@@ -504,18 +555,19 @@ export default function AdminResultsPage() {
 
         return {
           id: row.result_id && isUUID(row.result_id) ? row.result_id : crypto.randomUUID(),
+          student_id: row.student_id,
           roll_number: rollUpper,
           student_name: (row.student_name || '').trim(),
           father_name: (row.father_name || '').trim(),
           class_name: (row.class_name || '').trim(),
-          exam_name: (row.exam_name || '').trim() || 'Monthly Assessment Test',
+          exam_name: (row.exam_name || '').trim() || selectedExamType,
           month: activeMonthName,
           total_marks: row.total_marks,
           obtained_marks: row.obtained_marks,
           percentage: row.percentage,
           grade: row.grade,
-          position: (row.position || '').trim(),
-          remarks: (row.remarks || '').trim(),
+          position: (row.position || '').trim() || null,
+          remarks: (row.remarks || '').trim() || null,
           subjects: structuredSubjects,
           is_active: true,
           created_at: new Date().toISOString()
@@ -538,8 +590,8 @@ export default function AdminResultsPage() {
 
       // Local storage update
       const activeRolls = new Set(resultsToUpsert.map(r => r.roll_number));
-      const remainingResults = results.filter(r => !(activeRolls.has(r.roll_number.toUpperCase()) && (r.month || 'July 2026') === activeMonthName));
-      const updatedTotalResults = [...resultsToUpsert as Result[], ...remainingResults];
+      const remainingResults = results.filter(r => !(activeRolls.has(r.roll_number.toUpperCase()) && (r.month || 'August 2026') === activeMonthName));
+      const updatedTotalResults = [...resultsToUpsert, ...remainingResults];
       
       setResults(updatedTotalResults);
       setStoredData('results', updatedTotalResults);
@@ -580,11 +632,19 @@ export default function AdminResultsPage() {
     const list = Object.values(markRows);
     const totalCount = list.length;
     const enteredCount = list.filter(r => r.obtained_marks > 0).length;
+    const passCount = list.filter(r => r.obtained_marks > 0 && r.grade !== 'F').length;
+    const passRate = enteredCount > 0 ? ((passCount / enteredCount) * 100).toFixed(0) : '100';
     const totalPct = list.reduce((sum, r) => sum + (r.percentage || 0), 0);
     const avgPct = totalCount > 0 ? (totalPct / totalCount).toFixed(1) : '0';
-    const topScorer = list.reduce((prev, curr) => (curr.obtained_marks > prev.obtained_marks ? curr : prev), list[0]);
+    const topScorer = list.reduce((prev, curr) => (curr.obtained_marks > (prev?.obtained_marks || 0) ? curr : prev), list[0]);
 
-    return { totalCount, enteredCount, avgPct, topScorerName: topScorer?.obtained_marks > 0 ? `${topScorer.student_name} (${topScorer.percentage}%)` : 'None' };
+    return { 
+      totalCount, 
+      enteredCount, 
+      passRate,
+      avgPct, 
+      topScorerName: topScorer?.obtained_marks > 0 ? `${topScorer.student_name} (${topScorer.percentage}%)` : 'Pending Entry' 
+    };
   }, [markRows]);
 
   const handleExportCSV = () => {
@@ -592,7 +652,7 @@ export default function AdminResultsPage() {
     if (list.length === 0) return toast.error('No students to export.');
     
     const subjectHeaders = classSubjects.map(s => `"${s.name} (${s.total_marks})"`);
-    const headers = ['Serial', 'Roll Number', 'Student Name', 'Father Name', 'Class', 'Security PIN', ...subjectHeaders, 'Grand Total', 'Obtained Marks', 'Percentage', 'Grade'];
+    const headers = ['Serial', 'Roll Number', 'Student Name', 'Father Name', 'Class', 'Security PIN', ...subjectHeaders, 'Grand Total', 'Obtained Marks', 'Percentage', 'Grade', 'Position'];
     
     const rows = list.map((r, i) => {
       const subVals = classSubjects.map(s => {
@@ -610,7 +670,8 @@ export default function AdminResultsPage() {
         r.total_marks || 0,
         r.obtained_marks || 0,
         `"${r.percentage || 0}%"`,
-        `"${r.grade || ''}"`
+        `"${r.grade || ''}"`,
+        `"${r.position || ''}"`
       ];
     });
 
@@ -625,6 +686,18 @@ export default function AdminResultsPage() {
     toast.success('Spreadsheet exported to CSV!');
   };
 
+  const getGradeBadge = (grade: string) => {
+    switch (grade) {
+      case 'DISTINCTION':
+      case 'A-1': return 'bg-emerald-50 text-emerald-700 border-emerald-300 font-black';
+      case 'A': return 'bg-blue-50 text-blue-700 border-blue-300 font-bold';
+      case 'B': return 'bg-cyan-50 text-cyan-700 border-cyan-300 font-bold';
+      case 'PASS': return 'bg-slate-100 text-slate-700 border-slate-300 font-semibold';
+      case 'F': return 'bg-rose-50 text-rose-700 border-rose-300 font-black';
+      default: return 'bg-slate-100 text-slate-700 border-slate-300';
+    }
+  };
+
   return (
     <div className="space-y-6 max-w-7xl mx-auto font-sans px-2 sm:px-4 lg:px-6">
       
@@ -632,14 +705,18 @@ export default function AdminResultsPage() {
       <div className="bg-white p-4 sm:p-6 rounded-3xl border border-slate-200 shadow-sm flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
         <div>
           <div className="flex items-center gap-2">
-            <GraduationCap className="text-blue-600 shrink-0" size={28} />
-            <h1 className="text-xl sm:text-2xl lg:text-3xl font-display font-black text-slate-800">
-              Class Examination Marksheet &amp; Results
-            </h1>
+            <div className="w-10 h-10 rounded-2xl bg-blue-50 border border-blue-200 flex items-center justify-center text-blue-600 shadow-xs">
+              <GraduationCap size={22} />
+            </div>
+            <div>
+              <h1 className="text-xl sm:text-2xl font-display font-black text-slate-800">
+                Examination &amp; Results Management
+              </h1>
+              <p className="text-slate-500 text-xs sm:text-sm mt-0.5">
+                Digital Marksheets &bull; Auto Positions &bull; Parent WhatsApp Alerts &bull; Official Tabulations
+              </p>
+            </div>
           </div>
-          <p className="text-slate-500 text-xs sm:text-sm mt-1">
-            Excel-style direct marks entry. Maximum marks validation automatically prevents marks exceeding subject limits.
-          </p>
         </div>
 
         <div className="flex flex-wrap items-center gap-2 w-full lg:w-auto">
@@ -663,43 +740,52 @@ export default function AdminResultsPage() {
             </button>
           </div>
 
-          <Button
-            variant="outline"
-            size="sm"
+          <button
+            onClick={() => setShowTabulationPrint(true)}
+            className="px-3 py-2 rounded-xl border border-slate-200 text-slate-700 hover:bg-slate-50 text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer"
+          >
+            <Printer size={14} /> Print Tabulation
+          </button>
+
+          <button
             onClick={handleExportCSV}
-            className="border-slate-200 text-slate-700 hover:bg-slate-50 text-xs font-bold flex-1 sm:flex-none"
+            className="px-3 py-2 rounded-xl border border-slate-200 text-slate-700 hover:bg-slate-50 text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer"
           >
-            <Download size={14} className="mr-1.5" /> CSV
-          </Button>
+            <Download size={14} /> Export CSV
+          </button>
 
-          <Button
-            variant="outline"
-            size="sm"
+          <button
+            onClick={handleAutoCalculatePositions}
+            className="px-3 py-2 rounded-xl border border-indigo-200 bg-indigo-50 text-indigo-800 hover:bg-indigo-100 text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer"
+          >
+            <Trophy size={14} className="text-indigo-600" /> Rank Positions
+          </button>
+
+          <button
             onClick={handleAutoGenerateAllPins}
-            className="border-amber-200 bg-amber-50/70 text-amber-900 hover:bg-amber-100 text-xs font-bold flex-1 sm:flex-none"
+            className="px-3 py-2 rounded-xl border border-amber-200 bg-amber-50 text-amber-900 hover:bg-amber-100 text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer"
           >
-            <Key size={14} className="mr-1.5 text-amber-600" /> Auto PINs
-          </Button>
+            <Key size={14} className="text-amber-600" /> Auto PINs
+          </button>
 
-          <Button
-            size="sm"
+          <button
             onClick={handleSaveAllClassResults}
             disabled={savingAll}
-            className="bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs shadow-md shadow-blue-600/20 w-full sm:w-auto min-w-[140px]"
+            className="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs shadow-md shadow-blue-600/20 flex items-center justify-center gap-1.5 min-w-[140px] transition-all active:scale-95 cursor-pointer"
           >
-            {savingAll ? <Loader2 size={14} className="animate-spin mr-1.5" /> : <Save size={14} className="mr-1.5" />}
-            Save All Class Marks
-          </Button>
+            {savingAll ? <Loader2 size={14} className="animate-spin" /> : <Save size={14} />}
+            Save All Marks
+          </button>
         </div>
       </div>
 
-      {/* 2. Step 1 (Class) & Step 2 (Month) Selectors */}
+      {/* 2. Step 1 (Class), Step 2 (Exam Term), Step 3 (Month) */}
       <div className="grid grid-cols-1 md:grid-cols-12 gap-4 bg-white p-4 sm:p-5 rounded-3xl border border-slate-200 shadow-sm">
         
-        {/* Class Selection Dropdown (Standardized & Accurate) */}
-        <div className="md:col-span-6 space-y-1.5">
+        {/* Class Selection Dropdown */}
+        <div className="md:col-span-5 space-y-1.5">
           <label className="text-xs font-black uppercase tracking-wider text-slate-700 flex items-center gap-1.5">
-            <BookOpen size={14} className="text-blue-600 shrink-0" /> Step 1: Select Academic Class / Program *
+            <BookOpen size={14} className="text-blue-600 shrink-0" /> 1. Academic Class / Program *
           </label>
           
           <select
@@ -707,10 +793,15 @@ export default function AdminResultsPage() {
             onChange={e => setSelectedClassKey(e.target.value)}
             className="w-full bg-slate-50 border-2 border-blue-500 text-slate-900 font-bold text-xs sm:text-sm rounded-2xl py-3 px-3 sm:px-4 focus:ring-2 focus:ring-blue-600 focus:outline-none transition-all shadow-inner cursor-pointer"
           >
-            <optgroup label="✨ Quick View">
-              <option value="ALL_STUDENTS">
-                All Enrolled Students ({students.length} Total Students)
-              </option>
+            <optgroup label="🌱 Junior Section (Classes I to VIII)">
+              {OFFICIAL_CLASSES.filter(c => c.category === 'Junior Section (I to VIII)').map(cls => {
+                const count = students.filter(s => matchStudentToClass(s.class_name, cls.key)).length;
+                return (
+                  <option key={cls.key} value={cls.key}>
+                    {cls.name} {count > 0 ? `(${count} Enrolled)` : ''}
+                  </option>
+                );
+              })}
             </optgroup>
 
             <optgroup label="📚 Matriculation (Classes IX & X)">
@@ -735,7 +826,7 @@ export default function AdminResultsPage() {
               })}
             </optgroup>
 
-            <optgroup label="💻 Professional Diplomas">
+            <optgroup label="💻 Professional Diplomas & Others">
               {OFFICIAL_CLASSES.filter(c => c.category === 'Diplomas & Others').map(cls => {
                 const count = students.filter(s => matchStudentToClass(s.class_name, cls.key)).length;
                 return (
@@ -748,331 +839,227 @@ export default function AdminResultsPage() {
           </select>
         </div>
 
-        {/* Month Selection Dropdown */}
+        {/* Examination Type Selection */}
         <div className="md:col-span-4 space-y-1.5">
           <label className="text-xs font-black uppercase tracking-wider text-slate-700 flex items-center gap-1.5">
-            <Calendar size={14} className="text-blue-600 shrink-0" /> Step 2: Select Exam Month / Session *
+            <Award size={14} className="text-indigo-600 shrink-0" /> 2. Examination Session *
           </label>
           <select
-            value={selectedMonth || 'July 2026'}
-            onChange={e => {
-              setSelectedMonth(e.target.value);
-              if (e.target.value !== 'CUSTOM') setCustomMonthInput('');
-            }}
-            className="w-full bg-slate-50 border-2 border-blue-500 text-slate-900 font-bold text-xs sm:text-sm rounded-2xl py-3 px-3 sm:px-4 focus:ring-2 focus:ring-blue-600 focus:outline-none transition-all shadow-inner cursor-pointer"
+            value={selectedExamType}
+            onChange={e => setSelectedExamType(e.target.value)}
+            className="w-full bg-slate-50 border border-slate-300 text-slate-800 font-semibold text-xs sm:text-sm rounded-2xl py-3 px-3 sm:px-4 focus:ring-2 focus:ring-blue-500 focus:outline-none transition-all cursor-pointer"
           >
-            {PRESET_MONTHS.map(m => (
-              <option key={m} value={m}>{m}</option>
+            {EXAM_TYPES.map(exam => (
+              <option key={exam} value={exam}>{exam}</option>
             ))}
-            <option value="CUSTOM">-- Custom Month Session --</option>
           </select>
-
-          {selectedMonth === 'CUSTOM' && (
-            <input
-              type="text"
-              required
-              placeholder="e.g. October 2026 or Mid-Term Assessment"
-              value={customMonthInput ?? ''}
-              onChange={e => setCustomMonthInput(e.target.value)}
-              className="w-full mt-2 px-4 py-2 text-xs font-bold border border-blue-300 rounded-xl bg-blue-50/50 text-blue-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          )}
         </div>
 
-        {/* Filter Search */}
-        <div className="md:col-span-2 space-y-1.5">
-          <label className="text-xs font-black uppercase tracking-wider text-slate-700 block">
-            Filter Roster
+        {/* Month Selection */}
+        <div className="md:col-span-3 space-y-1.5">
+          <label className="text-xs font-black uppercase tracking-wider text-slate-700 flex items-center gap-1.5">
+            <Calendar size={14} className="text-amber-600 shrink-0" /> 3. Month &amp; Year *
           </label>
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={15} />
-            <input
-              type="text"
-              placeholder="Search..."
-              value={search ?? ''}
-              onChange={e => setSearch(e.target.value)}
-              className="w-full pl-9 pr-3 py-3 bg-slate-50 border border-slate-200 rounded-2xl text-xs font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-inner"
-            />
+          <div className="flex gap-2">
+            <select
+              value={selectedMonth}
+              onChange={e => { setSelectedMonth(e.target.value); setCustomMonthInput(''); }}
+              className="w-full bg-slate-50 border border-slate-300 text-slate-800 font-semibold text-xs sm:text-sm rounded-2xl py-3 px-3 sm:px-4 focus:ring-2 focus:ring-blue-500 focus:outline-none transition-all cursor-pointer"
+            >
+              <option value="August 2026">August 2026</option>
+              <option value="September 2026">September 2026</option>
+              <option value="October 2026">October 2026</option>
+              <option value="November 2026">November 2026</option>
+              <option value="December 2026">December 2026</option>
+              <option value="January 2026">January 2026</option>
+              <option value="February 2026">February 2026</option>
+              <option value="March 2026">March 2026</option>
+              <option value="April 2026">April 2026</option>
+              <option value="May 2026">May 2026</option>
+              <option value="June 2026">June 2026</option>
+              <option value="July 2026">July 2026</option>
+            </select>
           </div>
+        </div>
+
+      </div>
+
+      {/* 3. Class Performance Analytics Summary Bar */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
+        <div className="bg-white p-4 rounded-3xl border border-slate-200 shadow-xs">
+          <div className="flex items-center justify-between">
+            <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Class Roster</span>
+            <GraduationCap size={16} className="text-blue-500" />
+          </div>
+          <div className="text-2xl font-black text-slate-800 mt-1">{statsSummary.totalCount} Students</div>
+          <span className="text-[11px] font-semibold text-emerald-600 block mt-0.5">
+            {statsSummary.enteredCount} Graded ({statsSummary.totalCount - statsSummary.enteredCount} Pending)
+          </span>
+        </div>
+
+        <div className="bg-white p-4 rounded-3xl border border-slate-200 shadow-xs">
+          <div className="flex items-center justify-between">
+            <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Class Average</span>
+            <TrendingUp size={16} className="text-indigo-500" />
+          </div>
+          <div className="text-2xl font-black text-indigo-700 mt-1">{statsSummary.avgPct}%</div>
+          <span className="text-[11px] font-semibold text-slate-500 block mt-0.5">Overall Marks Ratio</span>
+        </div>
+
+        <div className="bg-white p-4 rounded-3xl border border-slate-200 shadow-xs">
+          <div className="flex items-center justify-between">
+            <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Passing Rate</span>
+            <BarChart3 size={16} className="text-emerald-500" />
+          </div>
+          <div className="text-2xl font-black text-emerald-700 mt-1">{statsSummary.passRate}%</div>
+          <span className="text-[11px] font-semibold text-emerald-600 block mt-0.5">Met Passing Threshold</span>
+        </div>
+
+        <div className="bg-white p-4 rounded-3xl border border-slate-200 shadow-xs">
+          <div className="flex items-center justify-between">
+            <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">1st Position</span>
+            <Trophy size={16} className="text-amber-500" />
+          </div>
+          <div className="text-sm font-black text-slate-800 mt-2 truncate" title={statsSummary.topScorerName}>
+            {statsSummary.topScorerName}
+          </div>
+          <span className="text-[11px] font-semibold text-amber-600 block mt-0.5">Highest Class Score</span>
         </div>
       </div>
 
-      {/* 3. Class Subjects Toolbar (Isolated strictly to selected class) */}
-      <div className="bg-white p-4 sm:p-5 rounded-3xl border border-slate-200 shadow-sm space-y-3">
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-b border-slate-100 pb-3">
-          <div className="flex items-center gap-2 flex-wrap">
-            <FileSpreadsheet className="text-blue-600 shrink-0" size={18} />
-            <h2 className="text-xs sm:text-sm font-black text-slate-800 uppercase tracking-wider">
-              {selectedClassKey} Subjects ({classSubjects.length} Active Columns)
-            </h2>
-            <span className="text-[10px] font-bold text-blue-700 bg-blue-50 px-2 py-0.5 rounded-full border border-blue-200">
-              Isolated to {selectedClassKey}
-            </span>
+      {/* 4. Subject Columns Configuration Bar */}
+      <div className="bg-gradient-to-r from-blue-900 to-indigo-950 text-white p-4 sm:p-5 rounded-3xl shadow-md space-y-3">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
+          <div className="flex items-center gap-2">
+            <Layers size={18} className="text-blue-400 shrink-0" />
+            <h3 className="font-bold text-sm sm:text-base">
+              Configured Subject Columns for {selectedClassKey}
+            </h3>
           </div>
-
-          <div className="flex items-center gap-2 w-full sm:w-auto">
-            <Button
-              size="sm"
-              variant="outline"
-              onClick={handleResetClassSubjects}
-              title="Reset subjects for this class to standard board curriculum"
-              className="border-slate-200 text-slate-600 hover:bg-slate-100 font-bold text-xs flex-1 sm:flex-none"
+          
+          <div className="flex items-center gap-2">
+            <button
+              onClick={handleAutoFillPassing}
+              className="text-xs font-bold bg-white/10 hover:bg-white/20 text-white px-3 py-1.5 rounded-xl transition-colors cursor-pointer"
             >
-              <RotateCcw size={13} className="mr-1.5 text-slate-500" />
-              Reset Curriculum
-            </Button>
-
-            <Button
-              size="sm"
-              variant="outline"
-              onClick={() => setShowAddSubjectBar(!showAddSubjectBar)}
-              className="border-blue-200 text-blue-700 bg-blue-50 hover:bg-blue-100 font-bold text-xs flex-1 sm:flex-none"
+              Fill Passing Baseline
+            </button>
+            <button
+              onClick={() => setShowAddSubjectBar(prev => !prev)}
+              className="text-xs font-bold bg-blue-500 hover:bg-blue-600 text-white px-3 py-1.5 rounded-xl transition-colors flex items-center gap-1 cursor-pointer"
             >
-              <PlusCircle size={14} className="mr-1.5 text-blue-600" />
-              {showAddSubjectBar ? 'Close Add' : '+ Add Subject'}
-            </Button>
+              <Plus size={14} /> Add Subject Column
+            </button>
           </div>
         </div>
 
-        {/* Add Subject Inline Form */}
-        {showAddSubjectBar && (
-          <form onSubmit={handleAddSubjectColumn} className="flex flex-wrap items-center gap-3 bg-blue-50/70 p-3.5 rounded-2xl border border-blue-200 animate-in fade-in duration-200">
-            <div className="flex-1 min-w-[180px]">
-              <input
-                type="text"
-                required
-                placeholder={`Subject Name for ${selectedClassKey} (e.g. Zoology, Statistics, POC)`}
-                value={newSubName ?? ''}
-                onChange={e => setNewSubName(e.target.value)}
-                className="w-full px-3 py-2 bg-white border border-blue-300 rounded-xl text-xs font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
-            <div className="w-full sm:w-32">
-              <input
-                type="number"
-                required
-                min={1}
-                placeholder="Total Marks"
-                value={newSubTotal ?? 100}
-                onChange={e => setNewSubTotal(Number(e.target.value))}
-                className="w-full px-3 py-2 bg-white border border-blue-300 rounded-xl text-xs font-bold text-slate-800 text-center focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
-            <Button type="submit" size="sm" className="bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs py-2 w-full sm:w-auto cursor-pointer">
-              Add to {selectedClassKey}
-            </Button>
-          </form>
-        )}
-
-        {/* Active Subject Badges with Remove Option */}
-        <div className="flex flex-wrap items-center gap-2">
-          {classSubjects.map((sub, idx) => (
-            <div 
-              key={idx}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-100 border border-slate-200 text-xs font-bold text-slate-800 shadow-2xs group"
+        {/* Current Active Subjects Badges */}
+        <div className="flex flex-wrap gap-2 pt-1">
+          {classSubjects.map((sub) => (
+            <div
+              key={sub.name}
+              className="bg-white/10 border border-white/20 text-white px-3 py-1.5 rounded-2xl flex items-center gap-2 text-xs font-bold shadow-2xs backdrop-blur-xs"
             >
               <span>{sub.name}</span>
-              <span className="text-[10px] font-mono text-blue-700 bg-blue-100/70 px-1.5 py-0.5 rounded-md font-black">
-                Max: {sub.total_marks}
+              <span className="bg-blue-600/80 px-2 py-0.5 rounded-full text-[10px] text-blue-100 font-mono">
+                {sub.total_marks} Marks
               </span>
               <button
-                type="button"
                 onClick={() => handleRemoveSubjectColumn(sub.name)}
-                title={`Remove ${sub.name} column from ${selectedClassKey}`}
-                className="text-slate-400 hover:text-red-600 transition-colors ml-1 cursor-pointer"
+                title={`Remove ${sub.name}`}
+                className="text-white/60 hover:text-rose-400 p-0.5 rounded-full transition-colors cursor-pointer"
               >
-                <X size={13} />
+                <Trash2 size={12} />
               </button>
             </div>
           ))}
         </div>
-      </div>
 
-      {/* 4. Quick Metrics Bar */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 bg-gradient-to-r from-blue-50 via-indigo-50 to-slate-50 p-3 sm:p-4 rounded-2xl border border-blue-100 text-slate-800">
-        <div>
-          <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block">Class Enrolled</span>
-          <div className="text-lg sm:text-xl font-black text-blue-700">{statsSummary.totalCount} Students</div>
-        </div>
-
-        <div>
-          <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block">Exam Month</span>
-          <div className="text-xs sm:text-sm font-bold text-slate-800 truncate">{activeMonthName}</div>
-        </div>
-
-        <div>
-          <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block">Class Average</span>
-          <div className="text-lg sm:text-xl font-black text-emerald-600">{statsSummary.avgPct}%</div>
-        </div>
-
-        <div>
-          <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block">Top Scorer</span>
-          <div className="text-xs font-bold text-indigo-900 truncate">{statsSummary.topScorerName}</div>
-        </div>
-      </div>
-
-      {/* 5A. Mobile Cards View */}
-      {viewMode === 'cards' && (
-        <div className="space-y-4 md:hidden">
-          {displayedRows.length === 0 ? (
-            <div className="bg-white p-8 rounded-3xl border border-slate-200 text-center text-slate-400">
-              <Users className="mx-auto mb-2 text-slate-300" size={36} />
-              <p className="font-bold text-slate-700 text-sm">No students found.</p>
+        {/* Add Subject Drawer */}
+        {showAddSubjectBar && (
+          <div className="bg-white/10 p-3 rounded-2xl border border-white/20 flex flex-wrap items-center gap-3 mt-3 animate-in fade-in">
+            <div className="flex-1 min-w-[200px]">
+              <input
+                type="text"
+                placeholder="e.g. Computer Practical or General Science"
+                value={newSubName}
+                onChange={e => setNewSubName(e.target.value)}
+                className="w-full bg-white text-slate-900 px-3.5 py-2 rounded-xl text-xs font-bold placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-400"
+              />
             </div>
-          ) : (
-            displayedRows.map((row, idx) => {
-              const isRowSaving = savingRowId === row.student_id;
+            <div className="w-32">
+              <input
+                type="number"
+                placeholder="Total Marks"
+                value={newSubTotal}
+                onChange={e => setNewSubTotal(Number(e.target.value))}
+                className="w-full bg-white text-slate-900 px-3.5 py-2 rounded-xl text-xs font-bold focus:outline-none focus:ring-2 focus:ring-blue-400 text-center"
+              />
+            </div>
+            <button
+              onClick={handleAddSubjectColumn}
+              className="bg-emerald-500 hover:bg-emerald-600 text-white font-bold text-xs px-4 py-2 rounded-xl transition-colors cursor-pointer"
+            >
+              Confirm Subject
+            </button>
+          </div>
+        )}
+      </div>
 
-              return (
-                <div 
-                  key={row.student_id} 
-                  className={`p-4 rounded-3xl border transition-all space-y-4 shadow-sm ${
-                    row.is_saved ? 'bg-white border-slate-200' : 'bg-amber-50/40 border-amber-300'
-                  }`}
-                >
-                  <div className="flex items-start justify-between gap-2 border-b border-slate-100 pb-3">
-                    <div>
-                      <div className="flex items-center gap-2">
-                        <span className="font-mono font-bold text-[10px] bg-slate-100 text-slate-600 px-1.5 py-0.5 rounded">
-                          #{idx + 1}
-                        </span>
-                        <span className="font-mono font-black text-xs text-blue-900">{row.roll_number}</span>
-                      </div>
-                      <h3 className="font-bold text-slate-900 text-sm mt-0.5">{row.student_name}</h3>
-                      {row.father_name && <p className="text-[11px] text-slate-500">S/O {row.father_name}</p>}
-                    </div>
+      {/* 5. Marksheet Spreadsheet Table */}
+      <div className="bg-white border border-slate-200 rounded-3xl overflow-hidden shadow-sm">
+        
+        {/* Search inside class */}
+        <div className="p-4 border-b border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-3">
+          <div className="relative w-full sm:w-80">
+            <Search size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
+            <input
+              type="text"
+              placeholder="Search student or roll number..."
+              value={search}
+              onChange={e => setSearch(e.target.value)}
+              className="w-full pl-10 pr-4 py-2 bg-slate-50 border border-slate-200 text-slate-800 placeholder:text-slate-400 rounded-xl text-xs focus:ring-2 focus:ring-blue-500 focus:outline-none font-medium"
+            />
+          </div>
 
-                    <div className="flex items-center gap-1 bg-amber-50 border border-amber-200 rounded-xl px-2 py-1">
-                      <Key size={11} className="text-amber-600" />
-                      <input
-                        type="text"
-                        maxLength={4}
-                        value={row.pin ?? ''}
-                        onChange={e => handleRowPinChange(row.student_id, e.target.value)}
-                        placeholder="1234"
-                        className="w-8 bg-transparent text-center font-mono font-black text-amber-950 text-xs focus:outline-none"
-                      />
-                      <button type="button" onClick={() => handleRegeneratePin(row.student_id)} className="text-amber-600">
-                        <Dice5 size={11} />
-                      </button>
-                    </div>
-                  </div>
-
-                  {/* Subject Inputs Grid with Max validation */}
-                  <div className="grid grid-cols-2 gap-2">
-                    {classSubjects.map((sub, sIdx) => {
-                      const rawVal = row.subject_marks?.[sub.name];
-                      const val = (rawVal === undefined || rawVal === null) ? '' : rawVal;
-                      const isFail = typeof rawVal === 'number' && rawVal < (sub.total_marks * 0.33);
-
-                      return (
-                        <div key={sIdx} className="bg-slate-50 p-2 rounded-2xl border border-slate-200 flex flex-col justify-between gap-1">
-                          <div className="flex items-center justify-between text-[11px] font-bold text-slate-700">
-                            <span className="truncate">{sub.name}</span>
-                            <span className="text-[9px] text-slate-400 font-mono">/{sub.total_marks}</span>
-                          </div>
-                          <input
-                            type="number"
-                            min={0}
-                            max={sub.total_marks}
-                            value={val}
-                            onChange={e => handleMarkCellChange(row.student_id, sub.name, e.target.value)}
-                            placeholder="0"
-                            className={`w-full text-center font-mono font-black py-1.5 px-2 rounded-xl border text-xs focus:outline-none focus:ring-2 ${
-                              isFail
-                                ? 'bg-red-50 text-red-700 border-red-300 focus:ring-red-500'
-                                : val !== ''
-                                ? 'bg-blue-50/90 text-blue-950 border-blue-300 font-bold focus:ring-blue-500'
-                                : 'bg-white text-slate-700 border-slate-200 focus:ring-blue-500'
-                            }`}
-                          />
-                        </div>
-                      );
-                    })}
-                  </div>
-
-                  {/* Card Summary & Actions */}
-                  <div className="flex items-center justify-between pt-2 border-t border-slate-100">
-                    <div className="flex items-center gap-2 text-xs">
-                      <span className="font-bold text-slate-500">
-                        {row.obtained_marks}/{row.total_marks} ({row.percentage}%)
-                      </span>
-                      <span className={`px-2 py-0.5 rounded-md text-[10px] uppercase border ${getGradeBadge(row.grade)}`}>
-                        {row.grade}
-                      </span>
-                    </div>
-
-                    <div className="flex items-center gap-2">
-                      <button
-                        type="button"
-                        onClick={() => handleSaveSingleRow(row.student_id)}
-                        disabled={isRowSaving}
-                        className={`px-3 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1 transition-all ${
-                          row.is_saved
-                            ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
-                            : 'bg-blue-600 text-white shadow-sm'
-                        }`}
-                      >
-                        {isRowSaving ? <Loader2 size={12} className="animate-spin" /> : <Save size={12} />}
-                        Save
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => setPreviewStudent(row)}
-                        className="p-1.5 bg-slate-100 text-slate-700 rounded-xl border border-slate-200"
-                      >
-                        <Eye size={14} />
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              );
-            })
-          )}
+          <span className="text-xs text-slate-500 font-semibold">
+            Showing {displayedRows.length} active students in roster
+          </span>
         </div>
-      )}
 
-      {/* 5B. Spreadsheet Grid Table: Rows and Columns */}
-      <div className={`bg-white border-2 border-slate-200 rounded-3xl overflow-hidden shadow-lg ${viewMode === 'cards' ? 'hidden md:block' : 'block'}`}>
-        <div className="overflow-x-auto w-full">
-          <table className="w-full text-left text-xs border-collapse min-w-[700px]">
+        <div className="overflow-x-auto">
+          <table className="w-full text-xs text-left border-collapse min-w-[850px]">
             <thead>
-              <tr className="bg-slate-900 text-white font-black uppercase tracking-wider text-[11px]">
-                <th className="py-4 px-3 text-center w-10 sticky left-0 bg-slate-900 z-20">#</th>
-                <th className="py-4 px-3 min-w-[110px] sticky left-10 bg-slate-900 z-20">Roll No</th>
-                <th className="py-4 px-4 min-w-[150px] sticky left-[150px] bg-slate-900 z-20">Student Name</th>
-                <th className="py-4 px-3 text-center min-w-[100px]">PIN Code</th>
-                
-                {/* Dynamic Subject Column Headers */}
-                {classSubjects.map((sub, i) => (
-                  <th key={i} className="py-4 px-2 text-center min-w-[90px] bg-slate-800 border-x border-slate-700">
-                    <div className="truncate font-black">{sub.name}</div>
-                    <div className="text-[9px] text-blue-300 font-mono font-normal">Max: {sub.total_marks}</div>
+              <tr className="bg-slate-900 text-white text-[11px] uppercase tracking-wider font-bold">
+                <th className="py-3.5 px-3 text-center w-12">#</th>
+                <th className="py-3.5 px-3 min-w-[100px]">Roll No</th>
+                <th className="py-3.5 px-4 min-w-[180px]">Student Details</th>
+                <th className="py-3.5 px-3 min-w-[85px] text-center">PIN</th>
+
+                {/* Dynamic Subject Columns */}
+                {classSubjects.map((sub) => (
+                  <th key={sub.name} className="py-3.5 px-2 text-center min-w-[95px] bg-slate-800 border-l border-slate-700">
+                    <div className="font-bold text-slate-100">{sub.name}</div>
+                    <div className="text-[10px] text-blue-300 font-normal font-mono">Max: {sub.total_marks}</div>
                   </th>
                 ))}
 
-                <th className="py-4 px-2 text-center w-20 bg-slate-800/80">Total</th>
-                <th className="py-4 px-2 text-center w-20 bg-blue-900">Obtained</th>
-                <th className="py-4 px-2 text-center w-16 bg-slate-800/80">%</th>
-                <th className="py-4 px-3 text-center min-w-[100px]">Grade</th>
-                <th className="py-4 px-4 text-right min-w-[110px]">Actions</th>
+                <th className="py-3.5 px-2 text-center w-16 bg-slate-950 border-l border-slate-700">Total</th>
+                <th className="py-3.5 px-2 text-center w-16 bg-slate-950">Obt.</th>
+                <th className="py-3.5 px-2 text-center w-16 bg-slate-950">%</th>
+                <th className="py-3.5 px-2 text-center w-16 bg-slate-950">Pos</th>
+                <th className="py-3.5 px-3 text-center w-20 bg-slate-950">Grade</th>
+                <th className="py-3.5 px-4 text-right min-w-[130px]">Actions</th>
               </tr>
             </thead>
 
-            <tbody className="divide-y divide-slate-200">
-              {loading ? (
+            <tbody className="divide-y divide-slate-100">
+              {displayedRows.length === 0 ? (
                 <tr>
-                  <td colSpan={9 + classSubjects.length} className="py-16 text-center text-slate-400">
-                    <Loader2 className="animate-spin text-blue-600 mx-auto mb-2" size={32} />
-                    <p className="font-bold text-slate-600">Loading student roster and result marks...</p>
-                  </td>
-                </tr>
-              ) : displayedRows.length === 0 ? (
-                <tr>
-                  <td colSpan={9 + classSubjects.length} className="py-16 text-center text-slate-400">
-                    <Users className="mx-auto mb-2 text-slate-300" size={40} />
-                    <p className="font-bold text-slate-700 text-sm">No students found for &quot;{selectedClassKey}&quot;</p>
-                    <p className="text-xs text-slate-400 mt-1">Select another class or add students from the Students tab.</p>
+                  <td colSpan={classSubjects.length + 8} className="text-center py-16 text-slate-400">
+                    <GraduationCap size={36} className="mx-auto mb-2 opacity-40 text-slate-400" />
+                    <p className="font-bold text-sm text-slate-600">No active students found in {selectedClassKey}</p>
+                    <p className="text-xs text-slate-400 mt-1">Register students or select a different academic class above.</p>
                   </td>
                 </tr>
               ) : (
@@ -1081,68 +1068,63 @@ export default function AdminResultsPage() {
 
                   return (
                     <tr 
-                      key={row.student_id}
-                      className={`hover:bg-blue-50/50 transition-colors ${row.is_saved ? 'bg-white' : 'bg-amber-50/20'}`}
+                      key={row.student_id} 
+                      className={`hover:bg-blue-50/40 transition-colors ${!row.is_saved ? 'bg-amber-50/20' : ''}`}
                     >
-                      {/* 1. Index */}
-                      <td className="py-3 px-3 text-center font-mono font-bold text-slate-400 sticky left-0 bg-white group-hover:bg-blue-50/50 z-10">
+                      {/* 1. Serial */}
+                      <td className="py-3 px-3 text-center text-slate-400 font-mono font-bold">
                         {idx + 1}
                       </td>
 
                       {/* 2. Roll Number */}
-                      <td className="py-3 px-3 font-mono font-black text-blue-950 text-xs sticky left-10 bg-white group-hover:bg-blue-50/50 z-10">
-                        {row.roll_number || ''}
+                      <td className="py-3 px-3 font-mono font-bold text-blue-900">
+                        <span className="bg-slate-100 px-2 py-1 rounded-lg border border-slate-200">
+                          {row.roll_number}
+                        </span>
                       </td>
 
-                      {/* 3. Student Name */}
-                      <td className="py-3 px-4 font-bold text-slate-900 sticky left-[150px] bg-white group-hover:bg-blue-50/50 z-10">
-                        <div className="truncate max-w-[140px] sm:max-w-none">{row.student_name || ''}</div>
-                        {row.father_name && <div className="text-[10px] font-normal text-slate-400 truncate">S/O {row.father_name}</div>}
+                      {/* 3. Student Details */}
+                      <td className="py-3 px-4">
+                        <div className="font-bold text-slate-900">{row.student_name}</div>
+                        <div className="text-[11px] text-slate-400">Father: {row.father_name || 'N/A'}</div>
                       </td>
 
-                      {/* 4. PIN Code */}
+                      {/* 4. PIN input */}
                       <td className="py-3 px-3 text-center">
-                        <div className="inline-flex items-center gap-1 bg-amber-50 border border-amber-200 rounded-xl px-2 py-1">
-                          <input
-                            type="text"
-                            maxLength={4}
-                            value={row.pin ?? ''}
-                            onChange={e => handleRowPinChange(row.student_id, e.target.value)}
-                            placeholder="1234"
-                            className="w-10 bg-transparent text-center font-mono font-black text-amber-950 text-xs focus:outline-none"
-                          />
-                          <button
-                            type="button"
-                            onClick={() => handleRegeneratePin(row.student_id)}
-                            title="Regenerate Random PIN"
-                            className="text-amber-600 hover:text-amber-800"
-                          >
-                            <Dice5 size={12} />
-                          </button>
-                        </div>
+                        <input
+                          type="text"
+                          maxLength={6}
+                          value={row.pin || ''}
+                          onChange={e => {
+                            const val = e.target.value.trim();
+                            setMarkRows(prev => ({
+                              ...prev,
+                              [row.student_id]: { ...prev[row.student_id], pin: val, is_saved: false }
+                            }));
+                          }}
+                          className="w-16 text-center font-mono font-bold text-xs bg-slate-50 border border-slate-200 rounded-lg py-1 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                        />
                       </td>
 
-                      {/* 5. Dynamic Subject Marks Cells (Direct Entry with MAX Marks Enforcement) */}
-                      {classSubjects.map((sub, sIdx) => {
-                        const rawVal = row.subject_marks?.[sub.name];
-                        const val = (rawVal === undefined || rawVal === null) ? '' : rawVal;
-                        const isFail = typeof rawVal === 'number' && rawVal < (sub.total_marks * 0.33);
+                      {/* 5. Dynamic Subject Marks Inputs */}
+                      {classSubjects.map((sub) => {
+                        const curVal = row.subject_marks?.[sub.name] ?? '';
+                        const numVal = typeof curVal === 'number' ? curVal : 0;
+                        const isFailing = typeof curVal === 'number' && numVal < (sub.total_marks * 0.33);
 
                         return (
-                          <td key={sIdx} className="py-2 px-2 text-center border-x border-slate-100">
+                          <td key={sub.name} className="py-2.5 px-2 text-center border-l border-slate-100">
                             <input
                               type="number"
                               min={0}
                               max={sub.total_marks}
-                              value={val}
-                              onChange={e => handleMarkCellChange(row.student_id, sub.name, e.target.value)}
-                              placeholder="-"
-                              className={`w-16 text-center font-mono font-black py-1.5 px-1 rounded-xl border transition-all text-xs focus:outline-none focus:ring-2 ${
-                                isFail 
-                                  ? 'bg-red-50 text-red-700 border-red-300 focus:ring-red-500' 
-                                  : val !== '' 
-                                  ? 'bg-blue-50/80 text-blue-900 border-blue-200 focus:ring-blue-500 font-bold'
-                                  : 'bg-slate-50 text-slate-700 border-slate-200 focus:ring-blue-500'
+                              value={curVal}
+                              placeholder="0"
+                              onChange={e => handleMarkChange(row.student_id, sub.name, sub.total_marks, e.target.value)}
+                              className={`w-16 text-center font-mono font-bold text-xs rounded-xl py-1.5 px-1 border transition-all focus:outline-none focus:ring-2 ${
+                                isFailing
+                                  ? 'bg-rose-50 border-rose-300 text-rose-700 focus:ring-rose-500'
+                                  : 'bg-white border-slate-200 text-slate-800 focus:ring-blue-500'
                               }`}
                             />
                           </td>
@@ -1150,7 +1132,7 @@ export default function AdminResultsPage() {
                       })}
 
                       {/* 6. Grand Total */}
-                      <td className="py-3 px-2 text-center font-mono font-bold text-slate-500">
+                      <td className="py-3 px-2 text-center font-mono font-bold text-slate-500 bg-slate-50/50">
                         {row.total_marks || 0}
                       </td>
 
@@ -1164,14 +1146,19 @@ export default function AdminResultsPage() {
                         {row.percentage || 0}%
                       </td>
 
-                      {/* 9. Grade */}
+                      {/* 9. Position */}
+                      <td className="py-3 px-2 text-center font-mono font-extrabold text-indigo-700">
+                        {row.position || '-'}
+                      </td>
+
+                      {/* 10. Grade */}
                       <td className="py-3 px-3 text-center">
-                        <span className={`inline-block px-2.5 py-1 rounded-lg text-[10px] uppercase border ${getGradeBadge(row.grade)}`}>
+                        <span className={`inline-block px-2 py-0.5 rounded-lg text-[10px] uppercase border ${getGradeBadge(row.grade)}`}>
                           {row.grade || 'PASS'}
                         </span>
                       </td>
 
-                      {/* 10. Actions */}
+                      {/* 11. Actions */}
                       <td className="py-3 px-4 text-right">
                         <div className="flex items-center justify-end gap-1.5">
                           {/* Row Save Button */}
@@ -1179,8 +1166,8 @@ export default function AdminResultsPage() {
                             type="button"
                             onClick={() => handleSaveSingleRow(row.student_id)}
                             disabled={isRowSaving}
-                            title="Save this Student Marksheet"
-                            className={`p-1.5 rounded-xl text-xs font-bold flex items-center gap-1 transition-all ${
+                            title="Save this student's marks"
+                            className={`p-1.5 rounded-xl text-xs font-bold flex items-center gap-1 transition-all cursor-pointer ${
                               row.is_saved
                                 ? 'bg-emerald-50 text-emerald-700 hover:bg-emerald-600 hover:text-white border border-emerald-200'
                                 : 'bg-blue-600 text-white hover:bg-blue-700 shadow-sm animate-pulse'
@@ -1189,12 +1176,22 @@ export default function AdminResultsPage() {
                             {isRowSaving ? <Loader2 size={13} className="animate-spin" /> : <Save size={13} />}
                           </button>
 
-                          {/* Print / View Certificate */}
+                          {/* WhatsApp Parent Alert */}
+                          <button
+                            type="button"
+                            onClick={() => handleSendWhatsAppNotification(row)}
+                            title="Send WhatsApp Result to Parent"
+                            className="p-1.5 bg-emerald-50 hover:bg-emerald-600 text-emerald-600 hover:text-white rounded-xl transition-colors border border-emerald-200 cursor-pointer"
+                          >
+                            <Share2 size={13} />
+                          </button>
+
+                          {/* View Certificate */}
                           <button
                             type="button"
                             onClick={() => setPreviewStudent(row)}
                             title="View Official Certificate"
-                            className="p-1.5 bg-slate-100 hover:bg-slate-800 text-slate-700 hover:text-white rounded-xl transition-colors border border-slate-200"
+                            className="p-1.5 bg-slate-100 hover:bg-slate-800 text-slate-700 hover:text-white rounded-xl transition-colors border border-slate-200 cursor-pointer"
                           >
                             <Eye size={13} />
                           </button>
@@ -1211,16 +1208,19 @@ export default function AdminResultsPage() {
 
       {/* 6. Marksheet Certificate Modal */}
       {previewStudent && (
-        <div className="fixed inset-0 z-50 bg-slate-900/70 backdrop-blur-xs flex items-center justify-center p-2 sm:p-4">
+        <div className="fixed inset-0 z-50 bg-slate-900/70 backdrop-blur-xs flex items-center justify-center p-2 sm:p-4 animate-in fade-in">
           <div className="bg-white rounded-3xl max-w-3xl w-full p-4 sm:p-8 space-y-6 shadow-2xl border border-slate-200 max-h-[95vh] overflow-y-auto">
             
             <div className="flex items-center justify-between border-b border-slate-200 pb-3">
-              <span className="text-xs font-bold uppercase text-slate-500">Official Mark Sheet Preview</span>
+              <span className="text-xs font-bold uppercase text-slate-500">Official Student Result Certificate</span>
               <div className="flex items-center gap-2">
-                <Button size="sm" variant="outline" onClick={() => window.print()} className="text-xs font-bold">
-                  <Printer size={14} className="mr-1" /> Print Certificate
-                </Button>
-                <button onClick={() => setPreviewStudent(null)} className="text-slate-400 hover:text-slate-600 p-1">
+                <button
+                  onClick={() => window.print()}
+                  className="px-3 py-1.5 rounded-xl border border-slate-200 text-slate-700 hover:bg-slate-50 text-xs font-bold flex items-center gap-1 cursor-pointer"
+                >
+                  <Printer size={14} /> Print Report Card
+                </button>
+                <button onClick={() => setPreviewStudent(null)} className="text-slate-400 hover:text-slate-600 p-1 cursor-pointer">
                   <X size={20} />
                 </button>
               </div>
@@ -1308,6 +1308,81 @@ export default function AdminResultsPage() {
                   <div className="font-serif italic font-bold text-slate-800 text-sm">Dr. Asif Iqbal</div>
                   <div className="text-[10px] text-slate-500 uppercase">Controller of Examinations</div>
                 </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* 7. Class Tabulation Print Sheet Modal */}
+      {showTabulationPrint && (
+        <div className="fixed inset-0 z-50 bg-slate-900/80 backdrop-blur-xs flex items-center justify-center p-2 sm:p-6 animate-in fade-in">
+          <div className="bg-white rounded-3xl max-w-5xl w-full p-6 space-y-6 shadow-2xl border border-slate-200 max-h-[95vh] overflow-y-auto">
+            <div className="flex items-center justify-between border-b border-slate-200 pb-3">
+              <span className="text-xs font-bold uppercase text-slate-500">Official Class Tabulation Marksheet</span>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => window.print()}
+                  className="px-3 py-1.5 rounded-xl bg-blue-600 text-white hover:bg-blue-700 text-xs font-bold flex items-center gap-1 cursor-pointer"
+                >
+                  <Printer size={14} /> Print Tabulation
+                </button>
+                <button onClick={() => setShowTabulationPrint(false)} className="text-slate-400 hover:text-slate-600 p-1 cursor-pointer">
+                  <X size={20} />
+                </button>
+              </div>
+            </div>
+
+            <div className="p-6 border-2 border-slate-800 rounded-2xl space-y-4 bg-white">
+              <div className="text-center border-b-2 border-slate-800 pb-3">
+                <h2 className="text-2xl font-display font-black text-slate-900">THE FOUNDATION COLLEGIATE</h2>
+                <p className="text-xs font-bold text-blue-600 uppercase tracking-wider">OFFICIAL CLASS TABULATION SHEET</p>
+                <p className="text-xs font-semibold text-slate-600 mt-1">
+                  Class: <span className="font-bold text-slate-900">{selectedClassKey}</span> &bull; Exam: <span className="font-bold text-slate-900">{selectedExamType}</span> &bull; Month: <span className="font-bold text-slate-900">{activeMonthName}</span>
+                </p>
+              </div>
+
+              <table className="w-full text-[11px] text-left border border-slate-300">
+                <thead className="bg-slate-900 text-white font-bold uppercase text-[10px]">
+                  <tr>
+                    <th className="py-2 px-2 text-center">#</th>
+                    <th className="py-2 px-2">Roll No</th>
+                    <th className="py-2 px-3">Student Name</th>
+                    {classSubjects.map(s => (
+                      <th key={s.name} className="py-2 px-2 text-center">{s.name} ({s.total_marks})</th>
+                    ))}
+                    <th className="py-2 px-2 text-center">Total</th>
+                    <th className="py-2 px-2 text-center">Obt.</th>
+                    <th className="py-2 px-2 text-center">%</th>
+                    <th className="py-2 px-2 text-center">Pos</th>
+                    <th className="py-2 px-2 text-center">Grade</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-200">
+                  {displayedRows.map((r, i) => (
+                    <tr key={r.student_id}>
+                      <td className="py-1.5 px-2 text-center font-mono">{i + 1}</td>
+                      <td className="py-1.5 px-2 font-mono font-bold">{r.roll_number}</td>
+                      <td className="py-1.5 px-3 font-semibold">{r.student_name}</td>
+                      {classSubjects.map(s => (
+                        <td key={s.name} className="py-1.5 px-2 text-center font-mono">
+                          {r.subject_marks?.[s.name] !== '' ? r.subject_marks?.[s.name] : '-'}
+                        </td>
+                      ))}
+                      <td className="py-1.5 px-2 text-center font-mono">{r.total_marks}</td>
+                      <td className="py-1.5 px-2 text-center font-mono font-bold text-blue-700">{r.obtained_marks}</td>
+                      <td className="py-1.5 px-2 text-center font-mono">{r.percentage}%</td>
+                      <td className="py-1.5 px-2 text-center font-bold text-indigo-700">{r.position || '-'}</td>
+                      <td className="py-1.5 px-2 text-center font-bold">{r.grade}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+
+              <div className="pt-6 flex justify-between items-center text-xs font-bold text-slate-800">
+                <div>Tabulated By: __________________</div>
+                <div>Checked By: __________________</div>
+                <div>Principal: __________________</div>
               </div>
             </div>
           </div>
