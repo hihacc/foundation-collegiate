@@ -119,6 +119,9 @@ export async function logAdminActivity(entry: {
   const currentRole = entry.actor_role || 'Super Administrator';
   const currentPath = entry.path || (typeof window !== 'undefined' ? window.location.pathname : '/admin/dashboard');
 
+  let clientIp = '182.185.142.12 (Karachi, PK)';
+  let deviceInfo = getClientDeviceInfo();
+
   const newLog: AuditLogEntry = {
     id: `log-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`,
     category: entry.category,
@@ -126,69 +129,106 @@ export async function logAdminActivity(entry: {
     actor_email: currentEmail,
     actor_role: currentRole,
     details: entry.details,
-    ip_address: typeof window !== 'undefined' ? '182.185.142.12 (Verified)' : 'Internal Service',
-    device_info: getClientDeviceInfo(),
+    ip_address: clientIp,
+    device_info: deviceInfo,
     path: currentPath,
     severity: entry.severity || 'INFO',
     metadata: entry.metadata,
     timestamp: new Date().toISOString()
   };
 
-  // 1. Sync to local storage
+  // 1. Sync to local storage immediately
   if (typeof window !== 'undefined') {
     try {
       const existing = getStoredData<AuditLogEntry[]>(STORAGE_KEY, SEED_LOGS);
       const updated = [newLog, ...existing.slice(0, 499)]; // retain last 500 entries
       setStoredData(STORAGE_KEY, updated);
     } catch {}
-  }
 
-  // 2. Sync to Supabase audit_logs table (best effort)
-  try {
-    await supabase.from('audit_logs').insert({
-      id: newLog.id,
-      category: newLog.category,
-      action: newLog.action,
-      actor_email: newLog.actor_email,
-      actor_role: newLog.actor_role,
-      details: newLog.details,
-      ip_address: newLog.ip_address,
-      device_info: newLog.device_info,
-      path: newLog.path,
-      severity: newLog.severity,
-      metadata: newLog.metadata,
-      created_at: newLog.timestamp
-    });
-  } catch {
-    // Graceful offline fallback
+    // 2. Dispatch to server API endpoint for real edge IP and DB insertion
+    try {
+      fetch('/api/admin/audit', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          category: entry.category,
+          action: entry.action,
+          details: entry.details,
+          actor_email: currentEmail,
+          actor_role: currentRole,
+          severity: entry.severity || 'INFO',
+          path: currentPath,
+          metadata: entry.metadata
+        })
+      }).then(r => r.json()).then(data => {
+        if (data.success && data.log) {
+          // Update IP in stored log
+          const existing = getStoredData<AuditLogEntry[]>(STORAGE_KEY, SEED_LOGS);
+          const foundIdx = existing.findIndex(l => l.id === newLog.id);
+          if (foundIdx >= 0) {
+            existing[foundIdx].ip_address = data.log.ip_address;
+            setStoredData(STORAGE_KEY, existing);
+          }
+        }
+      }).catch(() => {});
+    } catch {}
+  } else {
+    // Server-side fallback
+    try {
+      await supabase.from('audit_logs').insert({
+        id: newLog.id,
+        category: newLog.category,
+        action: newLog.action,
+        actor_email: newLog.actor_email,
+        actor_role: newLog.actor_role,
+        details: newLog.details,
+        ip_address: newLog.ip_address,
+        device_info: newLog.device_info,
+        path: newLog.path,
+        severity: newLog.severity,
+        metadata: newLog.metadata,
+        created_at: newLog.timestamp
+      });
+    } catch {}
   }
 
   return newLog;
 }
 
 /**
- * Fetch all audit logs (merges database and local storage)
+ * Fetch all audit logs (merges API endpoint, database and local storage)
  */
 export async function getAuditLogs(): Promise<AuditLogEntry[]> {
-  try {
-    const { data } = await supabase.from('audit_logs').select('*').order('created_at', { ascending: false }).limit(300);
-    if (data && data.length > 0) {
-      return data.map((d: any) => ({
-        id: d.id,
-        category: d.category || 'SYSTEM',
-        action: d.action || 'ACTIVITY',
-        actor_email: d.actor_email || 'admin@tfc.com',
-        actor_role: d.actor_role || 'Administrator',
-        details: d.details || '',
-        ip_address: d.ip_address || 'Verified IP',
-        device_info: d.device_info || 'Browser',
-        path: d.path || '/admin',
-        severity: d.severity || 'INFO',
-        metadata: d.metadata || {},
-        timestamp: d.created_at || d.timestamp || new Date().toISOString()
-      }));
-    }
-  } catch {}
+  if (typeof window !== 'undefined') {
+    try {
+      const res = await fetch('/api/admin/audit?limit=200');
+      const data = await res.json();
+      if (data.success && Array.isArray(data.logs) && data.logs.length > 0) {
+        const mapped: AuditLogEntry[] = data.logs.map((d: any) => ({
+          id: d.id,
+          category: d.category || 'SYSTEM',
+          action: d.action || 'ACTIVITY',
+          actor_email: d.actor_email || 'admin@tfc.com',
+          actor_role: d.actor_role || 'Administrator',
+          details: d.details || '',
+          ip_address: d.ip_address || 'Verified IP',
+          device_info: d.device_info || 'Browser Client',
+          path: d.path || '/admin',
+          severity: d.severity || 'INFO',
+          metadata: d.metadata || {},
+          timestamp: d.created_at || d.timestamp || new Date().toISOString()
+        }));
+
+        // Merge with local storage
+        const local = getStoredData<AuditLogEntry[]>(STORAGE_KEY, []);
+        const existingIds = new Set(mapped.map(m => m.id));
+        const missingLocal = local.filter(l => !existingIds.has(l.id));
+        const merged = [...missingLocal, ...mapped].slice(0, 500);
+        setStoredData(STORAGE_KEY, merged);
+        return merged;
+      }
+    } catch {}
+  }
 
   return getStoredData<AuditLogEntry[]>(STORAGE_KEY, SEED_LOGS);
 }

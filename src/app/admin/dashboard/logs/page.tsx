@@ -130,6 +130,18 @@ export default function AdminAuditLogsPage() {
     toast.success('Audit logs exported to CSV!');
   };
 
+  const handleSimulateSecurityPing = async () => {
+    await logAdminActivity({
+      category: 'SECURITY',
+      action: 'ADMIN_MANUAL_SECURITY_PING',
+      details: 'Administrator manually triggered a live security health telemetry check',
+      severity: 'SUCCESS',
+      metadata: { testId: crypto.randomUUID(), source: 'ADMIN_CONSOLE', liveCheck: true }
+    });
+    toast.success('Live security audit ping recorded successfully!');
+    fetchLogs();
+  };
+
   // Export to JSON
   const handleExportJSON = () => {
     if (logs.length === 0) return toast.info('No logs to export');
@@ -268,6 +280,14 @@ export default function AdminAuditLogsPage() {
             className="border-slate-200 text-slate-700 hover:bg-slate-50 text-xs font-bold"
           >
             <Terminal size={13} className="mr-1.5" /> JSON
+          </Button>
+
+          <Button
+            size="sm"
+            onClick={handleSimulateSecurityPing}
+            className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs shadow-xs"
+          >
+            <Sparkles size={13} className="mr-1.5" /> Test Security Ping
           </Button>
 
           <Button
