@@ -459,27 +459,27 @@ export default function WhatsAppCenterPage() {
         </div>
       </div>
 
-      {/* Account Connection Status Card */}
-      <div className="bg-gradient-to-br from-slate-900 to-emerald-950 text-white p-5 sm:p-6 rounded-3xl shadow-md space-y-4">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-white/10 pb-4">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-emerald-500/20 text-emerald-400 border border-emerald-400/30 flex items-center justify-center font-bold">
-              <Smartphone size={20} />
+      {/* Account Connection Status Card - Pure Light Theme */}
+      <div className="bg-gradient-to-br from-emerald-50/60 via-white to-teal-50/40 text-slate-900 p-5 sm:p-6 rounded-3xl border border-emerald-200/80 shadow-xs space-y-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-emerald-100 pb-4">
+          <div className="flex items-center gap-3.5">
+            <div className="w-11 h-11 rounded-2xl bg-emerald-100 text-emerald-800 border border-emerald-300/60 flex items-center justify-center font-bold shadow-xs">
+              <Smartphone size={22} />
             </div>
             <div>
-              <div className="font-bold text-sm text-white flex items-center gap-2">
+              <div className="font-bold text-sm text-slate-900 flex items-center gap-2">
                 {activeAccount?.name || 'TFC Official Sender'}
                 {activeAccount?.connected ? (
-                  <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500 text-white flex items-center gap-1">
+                  <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-600 text-white flex items-center gap-1 shadow-xs">
                     <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse"></span> Connected &amp; Active
                   </span>
                 ) : (
-                  <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-500/20 text-amber-300 border border-amber-400/30">
+                  <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-900 border border-amber-300">
                     Ready to Pair via QR / Code
                   </span>
                 )}
               </div>
-              <div className="text-xs text-slate-300">
+              <div className="text-xs text-slate-500 font-medium mt-0.5">
                 {activeAccount?.phoneNumber ? `+${activeAccount.phoneNumber}` : 'Scan QR code or enter pairing code to link WhatsApp'}
               </div>
             </div>
@@ -490,7 +490,7 @@ export default function WhatsAppCenterPage() {
               <button
                 onClick={() => handleDisconnect(activeAccount.id)}
                 disabled={loading}
-                className="px-3.5 py-2 rounded-xl bg-rose-600/80 hover:bg-rose-600 text-white text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer"
+                className="px-4 py-2 rounded-xl bg-rose-50 hover:bg-rose-100 border border-rose-200 text-rose-700 text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer"
               >
                 <Power size={14} /> Disconnect
               </button>
@@ -498,7 +498,7 @@ export default function WhatsAppCenterPage() {
               <button
                 onClick={() => handleStartPairing()}
                 disabled={loading}
-                className="px-4 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 text-xs font-black flex items-center gap-1.5 transition-all shadow-md shadow-emerald-500/20 cursor-pointer"
+                className="px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold flex items-center gap-1.5 transition-all shadow-sm shadow-emerald-600/20 cursor-pointer"
               >
                 <QrCode size={16} /> Pair WhatsApp (QR / Code)
               </button>
@@ -506,23 +506,23 @@ export default function WhatsAppCenterPage() {
           </div>
         </div>
 
-        {/* Operational Diagnostics Stats */}
+        {/* Operational Diagnostics Stats - Light Cards */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
-          <div className="bg-white/5 p-3 rounded-2xl border border-white/10">
-            <span className="text-slate-400 text-[10px] font-bold uppercase block">API Engine</span>
-            <span className="font-mono font-bold text-emerald-400">Vercel Serverless (200 OK)</span>
+          <div className="bg-white p-3 rounded-2xl border border-slate-200/80 shadow-2xs">
+            <span className="text-slate-500 text-[10px] font-bold uppercase block">API Engine</span>
+            <span className="font-mono font-bold text-emerald-700">Railway &bull; 8080 LIVE</span>
           </div>
-          <div className="bg-white/5 p-3 rounded-2xl border border-white/10">
-            <span className="text-slate-400 text-[10px] font-bold uppercase block">Database</span>
-            <span className="font-mono font-bold text-blue-400">Dedicated Supabase DB</span>
+          <div className="bg-white p-3 rounded-2xl border border-slate-200/80 shadow-2xs">
+            <span className="text-slate-500 text-[10px] font-bold uppercase block">Database</span>
+            <span className="font-mono font-bold text-blue-700">Dedicated Supabase DB</span>
           </div>
-          <div className="bg-white/5 p-3 rounded-2xl border border-white/10">
-            <span className="text-slate-400 text-[10px] font-bold uppercase block">Queue Processing</span>
-            <span className="font-mono font-bold text-amber-400">BullMQ Redis Queues</span>
+          <div className="bg-white p-3 rounded-2xl border border-slate-200/80 shadow-2xs">
+            <span className="text-slate-500 text-[10px] font-bold uppercase block">Queue Engine</span>
+            <span className="font-mono font-bold text-amber-700">BullMQ Redis Queues</span>
           </div>
-          <div className="bg-white/5 p-3 rounded-2xl border border-white/10">
-            <span className="text-slate-400 text-[10px] font-bold uppercase block">Registered Senders</span>
-            <span className="font-mono font-bold text-white text-sm">{accounts.length} Accounts</span>
+          <div className="bg-white p-3 rounded-2xl border border-slate-200/80 shadow-2xs">
+            <span className="text-slate-500 text-[10px] font-bold uppercase block">Registered Senders</span>
+            <span className="font-mono font-bold text-slate-900 text-sm">{accounts.length} Active Lines</span>
           </div>
         </div>
       </div>
