@@ -525,6 +525,24 @@ export default function AdminStudentsPage() {
     toast.success('Exported Student Directory CSV file!');
   };
 
+  const [statusFilter, setStatusFilter] = useState<'all' | 'active' | 'inactive' | 'graduated'>('all');
+
+  const handleQuickStatusChange = async (studentId: string, newStatus: string) => {
+    const updated = students.map(s => s.id === studentId ? {
+      ...s,
+      status: newStatus,
+      is_active: newStatus === 'active'
+    } : s);
+    updateAndStore(updated);
+    try {
+      await supabase.from('students').update({
+        status: newStatus,
+        is_active: newStatus === 'active'
+      }).eq('id', studentId);
+    } catch {}
+    toast.success(`Student status updated to ${newStatus.toUpperCase()}`);
+  };
+
   const filtered = students.filter(s => {
     const matchesSearch =
       !search ||
@@ -536,10 +554,29 @@ export default function AdminStudentsPage() {
 
     const matchesClass = matchStudentToClass(s.class_name, selectedClass);
 
+    const st = String(s.status || '').toLowerCase().trim();
+    const isInactive = st === 'inactive';
+    const isGraduated = st === 'graduated' || st === 'alumni';
+    const isActive = !isInactive && !isGraduated && s.is_active !== false;
+
+    if (statusFilter === 'active' && !isActive) return false;
+    if (statusFilter === 'inactive' && !isInactive) return false;
+    if (statusFilter === 'graduated' && !isGraduated) return false;
+
     return matchesSearch && matchesClass;
   });
 
-  const activeCount = students.filter(s => !s.status || String(s.status).toLowerCase() === 'active').length;
+  const activeCount = students.filter(s => {
+    const st = String(s.status || '').toLowerCase().trim();
+    return st !== 'inactive' && st !== 'graduated' && st !== 'alumni' && s.is_active !== false;
+  }).length;
+
+  const inactiveCount = students.filter(s => String(s.status || '').toLowerCase().trim() === 'inactive').length;
+  const graduatedCount = students.filter(s => {
+    const st = String(s.status || '').toLowerCase().trim();
+    return st === 'graduated' || st === 'alumni';
+  }).length;
+
   const emailCount = students.filter(s => s.email).length;
 
   if (!mounted) return null;
@@ -625,6 +662,50 @@ export default function AdminStudentsPage() {
           <span className="text-xs text-amber-600 uppercase tracking-wider font-bold block">Active Classes</span>
           <span className="text-2xl font-bold text-amber-700">{dynamicClasses.length}</span>
         </div>
+      </div>
+
+      {/* Status Filter Tabs */}
+      <div className="flex flex-wrap items-center gap-2">
+        <button
+          onClick={() => setStatusFilter('all')}
+          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+            statusFilter === 'all'
+              ? 'bg-slate-900 text-white shadow-sm'
+              : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-50'
+          }`}
+        >
+          All Directory ({students.length})
+        </button>
+        <button
+          onClick={() => setStatusFilter('active')}
+          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+            statusFilter === 'active'
+              ? 'bg-emerald-600 text-white shadow-md shadow-emerald-500/20'
+              : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-50'
+          }`}
+        >
+          🟢 Active Enrolled ({activeCount})
+        </button>
+        <button
+          onClick={() => setStatusFilter('inactive')}
+          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+            statusFilter === 'inactive'
+              ? 'bg-rose-600 text-white shadow-md shadow-rose-500/20'
+              : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-50'
+          }`}
+        >
+          🔴 Inactive ({inactiveCount})
+        </button>
+        <button
+          onClick={() => setStatusFilter('graduated')}
+          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+            statusFilter === 'graduated'
+              ? 'bg-indigo-600 text-white shadow-md shadow-indigo-500/20'
+              : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-50'
+          }`}
+        >
+          🎓 Graduated / Alumni ({graduatedCount})
+        </button>
       </div>
 
       {/* Search & Filter Bar */}
@@ -1092,13 +1173,21 @@ export default function AdminStudentsPage() {
                           <GraduationCap size={14} className="text-blue-600 shrink-0" />
                           {s.class_name}
                         </div>
-                        <span className={`inline-flex px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider ${
-                          s.status === 'active' || !s.status ? 'bg-emerald-50 text-emerald-600 border border-emerald-200' : 
-                          s.status === 'graduated' ? 'bg-blue-50 text-blue-600 border border-blue-200' : 
-                          'bg-slate-100 text-slate-500 border border-slate-200'
-                        }`}>
-                          {s.status || 'Active'}
-                        </span>
+                        <select
+                          value={s.status || 'active'}
+                          onChange={e => handleQuickStatusChange(s.id, e.target.value)}
+                          className={`px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider border cursor-pointer outline-none shadow-2xs ${
+                            s.status === 'active' || !s.status
+                              ? 'bg-emerald-50 text-emerald-700 border-emerald-300 hover:bg-emerald-100'
+                              : s.status === 'graduated'
+                              ? 'bg-indigo-50 text-indigo-700 border-indigo-300 hover:bg-indigo-100'
+                              : 'bg-rose-50 text-rose-700 border-rose-300 hover:bg-rose-100'
+                          }`}
+                        >
+                          <option value="active">🟢 Active</option>
+                          <option value="inactive">🔴 Inactive</option>
+                          <option value="graduated">🎓 Graduated</option>
+                        </select>
                       </div>
                     </td>
                     <td className="py-4 px-4">

@@ -67,9 +67,14 @@ export default function AdminAttendancePage() {
     fetchData();
   }, []);
 
-  // Filter students by selected class
+  // Filter active enrolled students by selected class (excludes inactive and graduated)
   const classStudents = useMemo(() => {
-    return students.filter(s => matchStudentToClass(s.class_name, selectedClass));
+    return students.filter(s => {
+      const st = String(s.status || '').toLowerCase().trim();
+      const isNotInactive = st !== 'inactive' && st !== 'graduated' && st !== 'alumni';
+      const isActiveFlag = s.is_active !== false;
+      return isNotInactive && isActiveFlag && matchStudentToClass(s.class_name, selectedClass);
+    });
   }, [students, selectedClass]);
 
   // Filtered by search query

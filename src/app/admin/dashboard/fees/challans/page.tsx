@@ -109,9 +109,13 @@ export default function FeeChallansPage() {
       const currentProfiles = Array.isArray(profiles) ? profiles : [];
       const currentStructures = Array.isArray(structures) ? structures : [];
 
-      const activeStudents = studentList.filter((s: any) => 
-        s && (!s.status || String(s.status).toLowerCase() === 'active' || s.is_active !== false)
-      );
+      const activeStudents = studentList.filter((s: any) => {
+        if (!s || !s.id) return false;
+        const st = String(s.status || '').toLowerCase().trim();
+        const isNotInactive = st !== 'inactive' && st !== 'graduated' && st !== 'alumni';
+        const isActiveFlag = s.is_active !== false;
+        return isNotInactive && isActiveFlag;
+      });
       
       for (const student of activeStudents) {
         if (!student || !student.id) continue;

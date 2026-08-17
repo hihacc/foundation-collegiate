@@ -124,11 +124,35 @@ export default function StudentFeesPage() {
     }
   };
 
-  const filtered = students.filter(s =>
-    (s.name || '').toLowerCase().includes(search.toLowerCase()) ||
-    (s.roll_number || '').toLowerCase().includes(search.toLowerCase()) ||
-    (s.class_name || '').toLowerCase().includes(search.toLowerCase())
-  );
+  const [statusTab, setStatusTab] = useState<'active' | 'all' | 'inactive' | 'graduated'>('active');
+
+  const filtered = students.filter(s => {
+    const st = String(s.status || '').toLowerCase().trim();
+    const isInactive = st === 'inactive';
+    const isGraduated = st === 'graduated' || st === 'alumni';
+    const isActive = !isInactive && !isGraduated && s.is_active !== false;
+
+    if (statusTab === 'active' && !isActive) return false;
+    if (statusTab === 'inactive' && !isInactive) return false;
+    if (statusTab === 'graduated' && !isGraduated) return false;
+
+    return (
+      (s.name || '').toLowerCase().includes(search.toLowerCase()) ||
+      (s.roll_number || '').toLowerCase().includes(search.toLowerCase()) ||
+      (s.class_name || '').toLowerCase().includes(search.toLowerCase())
+    );
+  });
+
+  const activeCount = students.filter(s => {
+    const st = String(s.status || '').toLowerCase().trim();
+    return st !== 'inactive' && st !== 'graduated' && st !== 'alumni' && s.is_active !== false;
+  }).length;
+
+  const inactiveCount = students.filter(s => String(s.status || '').toLowerCase().trim() === 'inactive').length;
+  const graduatedCount = students.filter(s => {
+    const st = String(s.status || '').toLowerCase().trim();
+    return st === 'graduated' || st === 'alumni';
+  }).length;
 
   const getProfileInfo = (studentId: string) => {
     const profile = profiles.find(p => p.student_id === studentId);
@@ -153,6 +177,50 @@ export default function StudentFeesPage() {
             className="w-full sm:w-80 pl-11 pr-4 py-2.5 bg-slate-50 border border-slate-200 text-slate-800 placeholder:text-slate-400 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm shadow-inner"
           />
         </div>
+      </div>
+
+      {/* Status Filter Tabs */}
+      <div className="flex flex-wrap items-center gap-2">
+        <button
+          onClick={() => setStatusTab('active')}
+          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+            statusTab === 'active'
+              ? 'bg-emerald-600 text-white shadow-md shadow-emerald-500/20'
+              : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-50'
+          }`}
+        >
+          🟢 Active Enrolled ({activeCount})
+        </button>
+        <button
+          onClick={() => setStatusTab('all')}
+          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+            statusTab === 'all'
+              ? 'bg-slate-900 text-white'
+              : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-50'
+          }`}
+        >
+          All Students ({students.length})
+        </button>
+        <button
+          onClick={() => setStatusTab('inactive')}
+          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+            statusTab === 'inactive'
+              ? 'bg-rose-600 text-white shadow-md shadow-rose-500/20'
+              : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-50'
+          }`}
+        >
+          🔴 Inactive ({inactiveCount})
+        </button>
+        <button
+          onClick={() => setStatusTab('graduated')}
+          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+            statusTab === 'graduated'
+              ? 'bg-indigo-600 text-white shadow-md shadow-indigo-500/20'
+              : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-50'
+          }`}
+        >
+          🎓 Graduated / Alumni ({graduatedCount})
+        </button>
       </div>
 
       <div className="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm">

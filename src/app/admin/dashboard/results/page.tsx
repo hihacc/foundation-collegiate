@@ -158,9 +158,14 @@ export default function AdminResultsPage() {
     setClassSubjects(defaultSubs);
   }, [selectedClassKey]);
 
-  // 3. Filter Enrolled Students for Selected Class using Canonical matcher
+  // 3. Filter Enrolled Active Students for Selected Class (excludes inactive and graduated)
   const classStudents = useMemo(() => {
-    return students.filter(s => matchStudentToClass(s.class_name, selectedClassKey));
+    return students.filter(s => {
+      const st = String(s.status || '').toLowerCase().trim();
+      const isNotInactive = st !== 'inactive' && st !== 'graduated' && st !== 'alumni';
+      const isActiveFlag = s.is_active !== false;
+      return isNotInactive && isActiveFlag && matchStudentToClass(s.class_name, selectedClassKey);
+    });
   }, [students, selectedClassKey]);
 
   // Helper for metrics
