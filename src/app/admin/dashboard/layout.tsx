@@ -10,7 +10,7 @@ import {
   LayoutDashboard, FileText, Users, Image as ImageIcon, MessageSquare, Bell,
   Download, BookOpen, LogOut, Menu, X, Home, ExternalLink, Trophy,
   Settings, BarChart3, UserCog, ClipboardList, ChevronRight, PanelLeftClose, PanelLeftOpen,
-  Banknote, Receipt, Wallet, Mail, SlidersHorizontal, UserCheck, HardDrive, Cake, Camera, Sparkles, ShieldCheck
+  Banknote, Receipt, Wallet, Mail, SlidersHorizontal, UserCheck, HardDrive, Cake, Camera, Sparkles, ShieldCheck, MessageCircle
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -25,6 +25,7 @@ const navItems = [
   { name: 'Fee Challans',      href: '/admin/dashboard/fees/challans',   icon: Receipt,    isFee: true },
   { name: 'Payments',          href: '/admin/dashboard/fees/payments',   icon: Wallet,     isFee: true },
   
+  { name: 'WhatsApp Center',   href: '/admin/dashboard/whatsapp',    icon: MessageCircle },
   { name: 'Top Achievers',     href: '/admin/dashboard/achievers',   icon: Trophy },
   { name: 'Results',           href: '/admin/dashboard/results',     icon: FileText },
   { name: 'Attendance',        href: '/admin/dashboard/attendance',  icon: UserCheck },
