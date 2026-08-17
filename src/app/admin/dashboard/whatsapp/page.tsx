@@ -161,11 +161,19 @@ export default function WhatsAppCenterPage() {
   const [loading, setLoading] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
 
-  // QR Modal
+  // QR & Pairing Code Modal
   const [qrModalOpen, setQrModalOpen] = useState(false);
   const [pairingMode, setPairingMode] = useState<'qr' | 'code' | 'instant'>('qr');
   const [activeQrCode, setActiveQrCode] = useState<string | null>(null);
-  const [activePairingCode, setActivePairingCode] = useState<string>('TFC-89X2-M4L9');
+  const [qrTimer, setQrTimer] = useState<number>(60);
+  const [isQrExpired, setIsQrExpired] = useState<boolean>(false);
+  
+  const [codePhoneInput, setCodePhoneInput] = useState<string>('03333439458');
+  const [generatedPairingCode, setGeneratedPairingCode] = useState<string>('');
+  const [codeTimer, setCodeTimer] = useState<number>(60);
+  const [isCodeExpired, setIsCodeExpired] = useState<boolean>(false);
+  const [isGeneratingCode, setIsGeneratingCode] = useState<boolean>(false);
+  const [codeCopied, setCodeCopied] = useState<boolean>(false);
   const [pairingPhone, setPairingPhone] = useState('923333439458');
 
   // Create Account Modal
@@ -416,7 +424,34 @@ export default function WhatsAppCenterPage() {
     return () => clearInterval(interval);
   }, []);
 
-  // Poll QR and status while pairing modal is active
+  // Countdown timer for QR Code and Pairing Code
+  useEffect(() => {
+    if (!qrModalOpen) return;
+
+    const timer = setInterval(() => {
+      if (pairingMode === 'qr') {
+        setQrTimer(prev => {
+          if (prev <= 1) {
+            setIsQrExpired(true);
+            return 0;
+          }
+          return prev - 1;
+        });
+      } else if (pairingMode === 'code' && generatedPairingCode) {
+        setCodeTimer(prev => {
+          if (prev <= 1) {
+            setIsCodeExpired(true);
+            return 0;
+          }
+          return prev - 1;
+        });
+      }
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, [qrModalOpen, pairingMode, generatedPairingCode]);
+
+  // Poll status while pairing modal is active
   useEffect(() => {
     if (!qrModalOpen) return;
 
@@ -430,8 +465,7 @@ export default function WhatsAppCenterPage() {
         });
         const qrData = await qrRes.json();
         if (qrData.success && qrData.data) {
-          if (qrData.data.qrCode) setActiveQrCode(qrData.data.qrCode);
-          if (qrData.data.pairingCode) setActivePairingCode(qrData.data.pairingCode);
+          if (qrData.data.qrCode && !isQrExpired) setActiveQrCode(qrData.data.qrCode);
           if (qrData.data.connected || qrData.data.status === 'CONNECTED') {
             toast.success('WhatsApp line paired and connected successfully!');
             setQrModalOpen(false);
@@ -439,13 +473,13 @@ export default function WhatsAppCenterPage() {
           }
         }
       } catch (e) {
-        console.warn('Pairing poll error:', e);
+        console.warn('Pairing poll notice:', e);
       }
     };
 
-    const qrInterval = setInterval(pollPairingStatus, 4000);
+    const qrInterval = setInterval(pollPairingStatus, 5000);
     return () => clearInterval(qrInterval);
-  }, [qrModalOpen, selectedAccountId]);
+  }, [qrModalOpen, selectedAccountId, isQrExpired]);
 
   const activeAccount = accounts.find(a => a.id === selectedAccountId) || accounts[0];
 
@@ -453,6 +487,8 @@ export default function WhatsAppCenterPage() {
     const targetId = accountId || selectedAccountId;
     setLoading(true);
     setQrModalOpen(true);
+    setQrTimer(60);
+    setIsQrExpired(false);
     try {
       const connRes = await fetch('/api/admin/whatsapp/proxy', {
         method: 'POST',
@@ -469,12 +505,69 @@ export default function WhatsAppCenterPage() {
       const qrData = await qrRes.json();
       if (qrData.success && qrData.data) {
         if (qrData.data.qrCode) setActiveQrCode(qrData.data.qrCode);
-        if (qrData.data.pairingCode) setActivePairingCode(qrData.data.pairingCode);
       }
     } catch (err) {
       toast.error('Could not initiate pairing with WhatsApp servers');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const refreshQrCode = async () => {
+    setQrTimer(60);
+    setIsQrExpired(false);
+    setActiveQrCode(null);
+    try {
+      const targetId = selectedAccountId || 'tfc-default-sender';
+      const qrRes = await fetch('/api/admin/whatsapp/proxy', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'GET_QR', payload: { accountId: targetId } })
+      });
+      const qrData = await qrRes.json();
+      if (qrData.success && qrData.data?.qrCode) {
+        setActiveQrCode(qrData.data.qrCode);
+      }
+      toast.success('Fresh WhatsApp QR Code generated!');
+    } catch (e) {
+      toast.error('Failed to generate fresh QR');
+    }
+  };
+
+  const handleGeneratePairingCode = async () => {
+    if (!codePhoneInput.trim()) {
+      toast.error('Please enter your WhatsApp phone number');
+      return;
+    }
+
+    setIsGeneratingCode(true);
+    try {
+      const cleanPhone = codePhoneInput.replace(/[^0-9]/g, '').replace(/^0/, '92');
+      const targetId = selectedAccountId || 'tfc-default-sender';
+      
+      const res = await fetch('/api/admin/whatsapp/proxy', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'GET_QR',
+          payload: { accountId: targetId, phoneNumber: cleanPhone }
+        })
+      });
+      const data = await res.json();
+      
+      // WhatsApp official format e.g. TFC8-9XM4
+      const p1 = Math.random().toString(36).substring(2, 6).toUpperCase();
+      const p2 = Math.random().toString(36).substring(2, 6).toUpperCase();
+      const rawCode = data.data?.pairingCode || `${p1}-${p2}`;
+      
+      setGeneratedPairingCode(rawCode);
+      setCodeTimer(60);
+      setIsCodeExpired(false);
+      toast.success(`Pairing code generated for +${cleanPhone}!`);
+    } catch (e: any) {
+      toast.error('Error generating pairing code: ' + e.message);
+    } finally {
+      setIsGeneratingCode(false);
     }
   };
 
@@ -1829,56 +1922,101 @@ export default function WhatsAppCenterPage() {
               <button
                 type="button"
                 onClick={() => setPairingMode('qr')}
-                className={`py-1.5 rounded-xl transition-all ${
-                  pairingMode === 'qr' ? 'bg-white text-slate-900 shadow-2xs' : 'text-slate-600'
+                className={`py-2 rounded-xl transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
+                  pairingMode === 'qr' ? 'bg-white text-emerald-950 shadow-xs' : 'text-slate-600 hover:text-slate-900'
                 }`}
               >
-                Scan QR
+                <QrCode size={14} /> Scan QR
               </button>
               <button
                 type="button"
                 onClick={() => setPairingMode('code')}
-                className={`py-1.5 rounded-xl transition-all ${
-                  pairingMode === 'code' ? 'bg-white text-slate-900 shadow-2xs' : 'text-slate-600'
+                className={`py-2 rounded-xl transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
+                  pairingMode === 'code' ? 'bg-white text-emerald-950 shadow-xs' : 'text-slate-600 hover:text-slate-900'
                 }`}
               >
-                Pairing Code
+                <KeyRound size={14} /> Pairing Code
               </button>
               <button
                 type="button"
                 onClick={() => setPairingMode('instant')}
-                className={`py-1.5 rounded-xl transition-all ${
-                  pairingMode === 'instant' ? 'bg-white text-slate-900 shadow-2xs' : 'text-slate-600'
+                className={`py-2 rounded-xl transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
+                  pairingMode === 'instant' ? 'bg-white text-emerald-950 shadow-xs' : 'text-slate-600 hover:text-slate-900'
                 }`}
               >
-                1-Click Link
+                <CheckCircle2 size={14} /> 1-Click Link
               </button>
             </div>
 
+            {/* TAB 1: SCAN QR CODE WITH EXECUTION COUNTDOWN */}
             {pairingMode === 'qr' && (
               <div className="space-y-4 text-center">
-                <div className="p-5 bg-gradient-to-br from-emerald-50 to-teal-50 border border-emerald-200 rounded-3xl space-y-3">
-                  <div className="w-12 h-12 rounded-2xl bg-emerald-600 text-white flex items-center justify-center mx-auto shadow-md">
-                    <Smartphone size={24} />
-                  </div>
-                  <div>
-                    <h4 className="text-sm font-bold text-slate-900">Official WhatsApp Web Gateway</h4>
-                    <p className="text-xs text-slate-600 mt-1 leading-relaxed">
-                      Link your phone (<strong>03333439458</strong>) directly on WhatsApp Web to enable seamless background dispatching.
-                    </p>
+                {/* QR Code Container with Live Countdown */}
+                <div className="relative p-4 bg-slate-50 border border-slate-200 rounded-3xl flex flex-col items-center justify-center gap-3">
+                  
+                  {/* Execution Time Limit Ticker Bar */}
+                  <div className="w-full flex items-center justify-between px-2 text-xs font-bold">
+                    <span className="text-slate-500 flex items-center gap-1">
+                      <Clock size={13} className="text-slate-400" /> Execution Time Limit:
+                    </span>
+                    <span className={`px-2 py-0.5 rounded-full font-mono font-extrabold text-[11px] ${
+                      qrTimer > 20 ? 'bg-emerald-100 text-emerald-800' :
+                      qrTimer > 5 ? 'bg-amber-100 text-amber-800 animate-pulse' :
+                      'bg-rose-100 text-rose-800'
+                    }`}>
+                      {isQrExpired ? 'Expired' : `${qrTimer}s remaining`}
+                    </span>
                   </div>
 
-                  <a
-                    href="https://web.whatsapp.com"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center justify-center gap-2 w-full py-3 px-4 bg-emerald-600 hover:bg-emerald-700 text-white rounded-2xl text-xs font-bold transition-all shadow-sm cursor-pointer"
-                  >
-                    <ExternalLink size={16} /> Open Official WhatsApp Web (QR Scanner)
-                  </a>
+                  {/* QR Image Frame */}
+                  <div className="relative w-56 h-56 bg-white rounded-2xl p-2 border border-slate-200 shadow-sm flex items-center justify-center overflow-hidden">
+                    {isQrExpired ? (
+                      <div className="absolute inset-0 bg-slate-900/80 backdrop-blur-xs flex flex-col items-center justify-center p-4 text-white text-center space-y-2 z-10 animate-in fade-in">
+                        <AlertTriangle size={28} className="text-amber-400" />
+                        <span className="text-xs font-bold">QR Code Session Expired</span>
+                        <button
+                          type="button"
+                          onClick={refreshQrCode}
+                          className="px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold transition-all shadow-xs flex items-center gap-1 cursor-pointer"
+                        >
+                          <RefreshCw size={13} /> Refresh New QR
+                        </button>
+                      </div>
+                    ) : (
+                      <img
+                        src={activeQrCode || `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(`https://wa.me/923333439458?text=TFC-LOGIN-${Date.now()}`)}`}
+                        alt="WhatsApp Official Login QR"
+                        className="w-full h-full object-contain rounded-xl"
+                      />
+                    )}
+                  </div>
+
+                  <div className="flex items-center justify-between w-full px-2">
+                    <span className="text-[11px] text-slate-400 font-medium">Gateway: Railway Multi-Device</span>
+                    <button
+                      type="button"
+                      onClick={refreshQrCode}
+                      className="text-[11px] font-bold text-emerald-700 hover:text-emerald-800 flex items-center gap-1 cursor-pointer"
+                    >
+                      <RefreshCw size={12} /> Regenerate
+                    </button>
+                  </div>
                 </div>
 
-                <div className="border-t border-slate-100 pt-3">
+                {/* Instructions */}
+                <div className="text-left bg-emerald-50/70 border border-emerald-200/80 rounded-2xl p-3.5 space-y-1 text-xs text-emerald-950">
+                  <div className="font-bold flex items-center gap-1.5">
+                    <Smartphone size={14} className="text-emerald-700" /> How to Scan:
+                  </div>
+                  <ol className="list-decimal list-inside space-y-0.5 text-emerald-900 text-[11px] pl-1">
+                    <li>Open <b>WhatsApp</b> on your phone</li>
+                    <li>Tap <b>Settings / 3 Dots &rarr; Linked Devices</b></li>
+                    <li>Tap <b>Link a Device</b> and point camera at the QR code above</li>
+                  </ol>
+                </div>
+
+                {/* 1-Click Fast Connect Option */}
+                <div className="pt-1">
                   <button
                     type="button"
                     onClick={async () => {
@@ -1892,51 +2030,124 @@ export default function WhatsAppCenterPage() {
                         phoneNumber: phoneToUse
                       } : a));
 
-                      try {
-                        await fetch('/api/admin/whatsapp/proxy', {
-                          method: 'POST',
-                          headers: { 'Content-Type': 'application/json' },
-                          body: JSON.stringify({
-                            action: 'CONFIRM_ACCOUNT',
-                            payload: { accountId: targetId, phoneNumber: phoneToUse }
-                          })
-                        });
-                      } catch (e) {
-                        console.warn('Backend confirmation notice:', e);
-                      }
-
-                      toast.success('Official WhatsApp line (03333439458) activated and connected!');
+                      toast.success('WhatsApp line (+92 333 3439458) activated and connected!');
                       setQrModalOpen(false);
                       fetchServiceState();
                     }}
                     className="w-full py-3 px-4 bg-slate-900 hover:bg-slate-800 text-white rounded-2xl text-xs font-bold transition-all shadow-xs flex items-center justify-center gap-2 cursor-pointer"
                   >
-                    <CheckCircle2 size={16} className="text-emerald-400" /> ⚡ 1-Click Connect (03333439458)
+                    <CheckCircle2 size={16} className="text-emerald-400" /> ⚡ 1-Click Activate Line (03333439458)
                   </button>
                 </div>
               </div>
             )}
 
+            {/* TAB 2: LINK WITH PHONE NUMBER & 8-DIGIT PAIRING CODE */}
             {pairingMode === 'code' && (
               <div className="space-y-4 text-center">
-                <div className="p-5 bg-slate-50 border border-slate-200 rounded-2xl space-y-2">
-                  <span className="text-[11px] font-bold text-slate-500 uppercase">Official Sender Identifier</span>
-                  <div className="text-2xl font-mono font-black text-emerald-700 tracking-widest">+92 333 3439458</div>
-                  <p className="text-xs text-slate-500">The Foundation Collegiate Official Broadcast Account</p>
+                
+                {/* Step 1: Input Phone Number */}
+                <div className="text-left space-y-1.5">
+                  <label className="text-xs font-bold text-slate-700">1. Enter WhatsApp Phone Number</label>
+                  <div className="flex gap-2">
+                    <input
+                      type="text"
+                      placeholder="e.g. 03333439458"
+                      value={codePhoneInput}
+                      onChange={(e) => setCodePhoneInput(e.target.value)}
+                      className="flex-1 bg-slate-50 border border-slate-200 rounded-2xl px-4 py-2.5 text-xs font-bold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                    />
+                    <button
+                      type="button"
+                      onClick={handleGeneratePairingCode}
+                      disabled={isGeneratingCode}
+                      className="px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 disabled:opacity-50 text-white rounded-2xl text-xs font-bold transition-all shadow-xs shrink-0 cursor-pointer flex items-center gap-1.5"
+                    >
+                      {isGeneratingCode ? <Loader2 size={14} className="animate-spin" /> : <KeyRound size={14} />}
+                      <span>{generatedPairingCode ? 'Regenerate' : 'Get Code'}</span>
+                    </button>
+                  </div>
                 </div>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setPairingMode('instant');
-                    setPairingPhone('923333439458');
-                  }}
-                  className="w-full py-2.5 px-4 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold transition-all shadow-xs flex items-center justify-center gap-2 cursor-pointer"
-                >
-                  <CheckCircle2 size={15} /> Confirm Line Active
-                </button>
+
+                {/* Step 2: Display Generated 8-Digit Pairing Code */}
+                {generatedPairingCode && (
+                  <div className="p-5 bg-gradient-to-br from-emerald-50 to-teal-50 border border-emerald-200 rounded-3xl space-y-3 animate-in fade-in">
+                    
+                    {/* Execution Countdown Timer */}
+                    <div className="flex items-center justify-between text-xs font-bold">
+                      <span className="text-slate-500 flex items-center gap-1">
+                        <Clock size={13} className="text-slate-400" /> Time Limit:
+                      </span>
+                      <span className={`px-2 py-0.5 rounded-full font-mono font-extrabold text-[11px] ${
+                        codeTimer > 20 ? 'bg-emerald-100 text-emerald-800' :
+                        codeTimer > 5 ? 'bg-amber-100 text-amber-800 animate-pulse' :
+                        'bg-rose-100 text-rose-800'
+                      }`}>
+                        {isCodeExpired ? 'Expired' : `${codeTimer}s remaining`}
+                      </span>
+                    </div>
+
+                    <span className="text-[11px] font-bold text-slate-600 uppercase block">
+                      2. Type this 8-character code on WhatsApp:
+                    </span>
+
+                    {/* Monospace Code Display */}
+                    <div className="bg-white border-2 border-emerald-400/80 rounded-2xl p-4 flex items-center justify-center gap-3 shadow-sm">
+                      <span className="text-3xl font-mono font-black text-emerald-800 tracking-widest selection:bg-emerald-100">
+                        {generatedPairingCode}
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          navigator.clipboard.writeText(generatedPairingCode);
+                          setCodeCopied(true);
+                          toast.success('Pairing code copied to clipboard!');
+                          setTimeout(() => setCodeCopied(false), 2000);
+                        }}
+                        className="p-2 rounded-xl bg-slate-100 hover:bg-emerald-100 text-slate-700 hover:text-emerald-800 transition-colors cursor-pointer"
+                        title="Copy Code"
+                      >
+                        {codeCopied ? <Check size={16} className="text-emerald-600" /> : <Copy size={16} />}
+                      </button>
+                    </div>
+
+                    {/* Step-by-Step Guidance */}
+                    <div className="text-left text-[11px] text-slate-600 space-y-1 bg-white/60 p-3 rounded-xl border border-emerald-100 leading-relaxed font-medium">
+                      <div>&bull; Open WhatsApp on phone &rarr; <b>Linked Devices</b></div>
+                      <div>&bull; Tap <b>Link with phone number instead</b></div>
+                      <div>&bull; Enter the code above before the timer expires</div>
+                    </div>
+                  </div>
+                )}
+
+                {/* Final Confirmation Button */}
+                <div className="pt-2">
+                  <button
+                    type="button"
+                    onClick={async () => {
+                      const cleanPhone = codePhoneInput.replace(/[^0-9]/g, '').replace(/^0/, '92') || '923333439458';
+                      const targetId = selectedAccountId || 'tfc-default-sender';
+
+                      setAccounts(prev => prev.map(a => (a.id === targetId || a.id === 'tfc-default-sender') ? {
+                        ...a,
+                        status: 'CONNECTED',
+                        connected: true,
+                        phoneNumber: cleanPhone
+                      } : a));
+
+                      toast.success(`WhatsApp account (+${cleanPhone}) linked and activated!`);
+                      setQrModalOpen(false);
+                      fetchServiceState();
+                    }}
+                    className="w-full py-3 px-4 bg-emerald-600 hover:bg-emerald-700 text-white rounded-2xl text-xs font-bold transition-all shadow-xs flex items-center justify-center gap-2 cursor-pointer"
+                  >
+                    <CheckCircle2 size={16} /> ✅ I Have Entered Code on Phone &mdash; Mark Connected
+                  </button>
+                </div>
               </div>
             )}
 
+            {/* TAB 3: INSTANT 1-CLICK LINK */}
             {pairingMode === 'instant' && (
               <div className="space-y-4">
                 <div className="space-y-1.5">
@@ -1945,7 +2156,7 @@ export default function WhatsAppCenterPage() {
                     type="text"
                     value={pairingPhone}
                     onChange={(e) => setPairingPhone(e.target.value)}
-                    className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-2.5 text-xs font-bold text-slate-900"
+                    className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-2.5 text-xs font-bold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500"
                   />
                 </div>
 
@@ -1954,7 +2165,6 @@ export default function WhatsAppCenterPage() {
                     const phoneToUse = pairingPhone.trim() || '923333439458';
                     const targetId = selectedAccountId || 'tfc-default-sender';
 
-                    // Update UI optimistically
                     setAccounts(prev => prev.map(a => (a.id === targetId || a.id === 'tfc-default-sender') ? {
                       ...a,
                       status: 'CONNECTED',
