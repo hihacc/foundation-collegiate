@@ -5,7 +5,8 @@ import { useState, useEffect, useMemo } from 'react';
 import { 
   BookOpen, Search, Plus, Printer, Download, Save, Trash2, 
   CheckCircle2, X, Edit3, RefreshCw, LayoutGrid, Table, Check, 
-  UserCheck, AlertCircle, ArrowUpDown, Sparkles
+  UserCheck, AlertCircle, ArrowUpDown, Sparkles, ChevronLeft, ChevronRight,
+  ChevronsLeft, ChevronsRight
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { GrRecord, INITIAL_GR_RECORDS } from '@/lib/data/grRegisterData';
@@ -19,6 +20,10 @@ export default function GrRegisterPage() {
   const [statusFilter, setStatusFilter] = useState<'all' | 'assigned' | 'blank'>('all');
   const [classFilter, setClassFilter] = useState('all');
   const [viewMode, setViewMode] = useState<'table' | 'grid'>('table');
+
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState<number>(100);
 
   // Edit / Assign Modal State
   const [editingRecord, setEditingRecord] = useState<GrRecord | null>(null);
@@ -73,6 +78,18 @@ export default function GrRegisterPage() {
       return true;
     }).sort((a, b) => a.gr_number - b.gr_number);
   }, [records, search, statusFilter, classFilter]);
+
+  // Pagination slice
+  const totalPages = Math.ceil(filteredRecords.length / pageSize) || 1;
+  const paginatedRecords = useMemo(() => {
+    const start = (currentPage - 1) * pageSize;
+    return filteredRecords.slice(start, start + pageSize);
+  }, [filteredRecords, currentPage, pageSize]);
+
+  // Reset page when filters change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [search, statusFilter, classFilter, pageSize]);
 
   // Statistics
   const stats = useMemo(() => {
@@ -150,13 +167,13 @@ export default function GrRegisterPage() {
   };
 
   const handleDelete = async (id: string, grCode: string) => {
-    if (!confirm(`Are you sure you want to remove ${grCode}?`)) return;
+    if (!confirm(`Are you sure you want to clear ${grCode}?`)) return;
     try {
       const res = await fetch(`/api/admin/gr-register?id=${id}`, { method: 'DELETE' });
       const data = await res.json();
       if (data.success) {
-        toast.success(`Record ${grCode} removed`);
-        setRecords(prev => prev.filter(r => r.id !== id));
+        toast.success(`Record ${grCode} reset to blank`);
+        setRecords(prev => prev.map(r => r.id === id ? { ...r, student_name: '', class_name: '', status: 'blank' } : r));
       } else {
         toast.error(data.error || 'Failed to delete');
       }
@@ -179,11 +196,11 @@ export default function GrRegisterPage() {
     const encodedUri = encodeURI(csvContent);
     const link = document.createElement('a');
     link.setAttribute('href', encodedUri);
-    link.setAttribute('download', `TFC_GR_Register_${Date.now()}.csv`);
+    link.setAttribute('download', `TFC_Official_GR_Register_1_to_${records.length}.csv`);
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
-    toast.success('GR Register CSV exported successfully!');
+    toast.success(`Exported all ${records.length} GR Register records!`);
   };
 
   return (
@@ -198,11 +215,11 @@ export default function GrRegisterPage() {
             </span>
             <div>
               <h1 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight flex items-center gap-2">
-                Official G.R. Register
-                <span className="px-2.5 py-0.5 rounded-full bg-blue-100 text-blue-800 text-xs font-black">Sequential Ledger</span>
+                Official G.R. Register (GR 1 - {stats.total})
+                <span className="px-2.5 py-0.5 rounded-full bg-blue-100 text-blue-800 text-xs font-black">100% Sequential</span>
               </h1>
               <p className="text-xs text-slate-500 font-medium">
-                Official General Register numbers, assigned student names &amp; academic classes digitized from paper ledgers
+                Official continuous General Register numbers (GR-1 to GR-1310) with exact handwritten student entries
               </p>
             </div>
           </div>
@@ -227,7 +244,7 @@ export default function GrRegisterPage() {
             onClick={() => setNewModalOpen(true)}
             className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-xs font-black rounded-xl flex items-center gap-1.5 shadow-sm transition-colors cursor-pointer"
           >
-            <Plus size={14} /> Add / Assign G.R.
+            <Plus size={14} /> Assign G.R.
           </button>
         </div>
       </div>
@@ -265,13 +282,13 @@ export default function GrRegisterPage() {
         <div className="p-4 bg-white rounded-2xl border border-slate-200 shadow-2xs space-y-1">
           <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Total G.R. Numbers</p>
           <p className="text-2xl font-black text-slate-900">{stats.total}</p>
-          <p className="text-[10px] text-slate-500 font-medium">Sequential ledger entries</p>
+          <p className="text-[10px] text-slate-500 font-medium">Sequential slots (GR-1 to GR-1310)</p>
         </div>
 
         <div className="p-4 bg-white rounded-2xl border border-emerald-200 shadow-2xs space-y-1">
           <p className="text-[11px] font-bold text-emerald-700 uppercase tracking-wider">Assigned Students</p>
           <p className="text-2xl font-black text-emerald-600">{stats.assigned}</p>
-          <p className="text-[10px] text-emerald-600/80 font-medium">Verified active students</p>
+          <p className="text-[10px] text-emerald-600/80 font-medium">Verified handwritten entries</p>
         </div>
 
         <div className="p-4 bg-white rounded-2xl border border-amber-200 shadow-2xs space-y-1">
@@ -295,7 +312,7 @@ export default function GrRegisterPage() {
             type="text"
             value={search}
             onChange={e => setSearch(e.target.value)}
-            placeholder="Search GR No (e.g. 116, 139, 301), Student Name, Class..."
+            placeholder="Search GR No (e.g. 116, 139, 301, 1229), Student Name, Class..."
             className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-2xl text-xs font-semibold text-slate-900 outline-none focus:ring-2 focus:ring-blue-500"
           />
           {search && (
@@ -333,6 +350,19 @@ export default function GrRegisterPage() {
             {OFFICIAL_CLASSES.map(c => (
               <option key={c.key} value={c.name}>{c.name}</option>
             ))}
+          </select>
+
+          {/* Page Size Selector */}
+          <select
+            value={pageSize}
+            onChange={e => setPageSize(Number(e.target.value))}
+            className="px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-700 outline-none"
+          >
+            <option value={50}>50 / page</option>
+            <option value={100}>100 / page</option>
+            <option value={250}>250 / page</option>
+            <option value={500}>500 / page</option>
+            <option value={1310}>Show All (1310)</option>
           </select>
 
           {/* View Mode Toggle */}
@@ -383,7 +413,7 @@ export default function GrRegisterPage() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
-                {filteredRecords.map(rec => {
+                {paginatedRecords.map(rec => {
                   const isBlank = rec.status === 'blank' || !rec.student_name;
 
                   return (
@@ -393,7 +423,7 @@ export default function GrRegisterPage() {
                       </td>
                       <td className="py-3.5 px-4 font-bold text-slate-900">
                         {isBlank ? (
-                          <span className="text-amber-600 font-medium italic">-- Blank / Unassigned Slot --</span>
+                          <span className="text-amber-600 font-medium italic">-- Blank / Available Slot --</span>
                         ) : (
                           rec.student_name
                         )}
@@ -410,7 +440,7 @@ export default function GrRegisterPage() {
                       <td className="py-3.5 px-4 text-center">
                         {isBlank ? (
                           <span className="px-2.5 py-1 rounded-full bg-amber-100 text-amber-800 text-[10px] font-black uppercase">
-                            Blank
+                            Blank Slot
                           </span>
                         ) : (
                           <span className="px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-800 text-[10px] font-black uppercase flex items-center justify-center gap-1 mx-auto w-fit">
@@ -429,7 +459,7 @@ export default function GrRegisterPage() {
                           <button
                             onClick={() => handleDelete(rec.id, rec.gr_code)}
                             className="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-xl transition-colors cursor-pointer"
-                            title="Delete"
+                            title="Clear entry"
                           >
                             <Trash2 size={14} />
                           </button>
@@ -445,7 +475,7 @@ export default function GrRegisterPage() {
       ) : (
         /* Visual Grid Cards */
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-          {filteredRecords.map(rec => {
+          {paginatedRecords.map(rec => {
             const isBlank = rec.status === 'blank' || !rec.student_name;
 
             return (
@@ -473,7 +503,7 @@ export default function GrRegisterPage() {
 
                 <div>
                   {isBlank ? (
-                    <p className="font-bold text-amber-700 text-sm">Unassigned Slot</p>
+                    <p className="font-bold text-amber-700 text-sm">Available Slot</p>
                   ) : (
                     <h4 className="font-bold text-slate-900 text-sm truncate">{rec.student_name}</h4>
                   )}
@@ -494,6 +524,55 @@ export default function GrRegisterPage() {
               </div>
             );
           })}
+        </div>
+      )}
+
+      {/* Pagination Bar */}
+      {filteredRecords.length > pageSize && (
+        <div className="bg-white p-4 rounded-2xl border border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs font-bold text-slate-600">
+          <div>
+            Showing <span className="text-slate-900">{(currentPage - 1) * pageSize + 1}</span> to <span className="text-slate-900">{Math.min(currentPage * pageSize, filteredRecords.length)}</span> of <span className="text-slate-900">{filteredRecords.length}</span> entries
+          </div>
+
+          <div className="flex items-center gap-1">
+            <button
+              onClick={() => setCurrentPage(1)}
+              disabled={currentPage === 1}
+              className="p-2 rounded-xl bg-slate-100 hover:bg-slate-200 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+              title="First Page"
+            >
+              <ChevronsLeft size={16} />
+            </button>
+            <button
+              onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+              disabled={currentPage === 1}
+              className="p-2 rounded-xl bg-slate-100 hover:bg-slate-200 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+              title="Previous Page"
+            >
+              <ChevronLeft size={16} />
+            </button>
+
+            <span className="px-4 py-2 rounded-xl bg-blue-50 text-blue-700 font-black">
+              Page {currentPage} of {totalPages}
+            </span>
+
+            <button
+              onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+              disabled={currentPage === totalPages}
+              className="p-2 rounded-xl bg-slate-100 hover:bg-slate-200 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+              title="Next Page"
+            >
+              <ChevronRight size={16} />
+            </button>
+            <button
+              onClick={() => setCurrentPage(totalPages)}
+              disabled={currentPage === totalPages}
+              className="p-2 rounded-xl bg-slate-100 hover:bg-slate-200 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+              title="Last Page"
+            >
+              <ChevronsRight size={16} />
+            </button>
+          </div>
         </div>
       )}
 
@@ -578,7 +657,7 @@ export default function GrRegisterPage() {
 
             <div className="space-y-3 text-xs">
               <div>
-                <label className="block font-bold text-slate-700 mb-1">G.R. Number (e.g. 162, 163...)</label>
+                <label className="block font-bold text-slate-700 mb-1">G.R. Number (e.g. 1311, 1312...)</label>
                 <input
                   type="number"
                   value={newFormData.gr_number}
