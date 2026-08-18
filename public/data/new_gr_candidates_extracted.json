@@ -1,0 +1,1350 @@
+[
+  {
+    "image": {
+      "index": 1,
+      "imageId": "new_img_01",
+      "filename": "WhatsApp Image 2026-08-19 at 12.35.28 AM.jpeg",
+      "sha256": "2fcc9752e381762dd1f5097a6cbcbdc8b18f5bb781a96f5e705996488b17ca98",
+      "sizeBytes": 164764,
+      "width": 720,
+      "height": 1280,
+      "format": "Portrait Page",
+      "isDuplicateOfOld": false
+    },
+    "candidatesCount": 10,
+    "candidates": [
+      {
+        "gr_number": 53,
+        "student_name": "Hassan",
+        "class_name": "AFnen",
+        "source_image": "WhatsApp Image 2026-08-19 at 12.35.28 AM.jpeg",
+        "source_image_hash": "2fcc9752e381762dd1f5097a6cbcbdc8b18f5bb781a96f5e705996488b17ca98",
+        "confidence": 90,
+        "status": "needs_review",
+        "verification_status": "needs_review"
+      },
+      {
+        "gr_number": 3,
+        "student_name": "Tog",
+        "class_name": "Preew",
+        "source_image": "WhatsApp Image 2026-08-19 at 12.35.28 AM.jpeg",
+        "source_image_hash": "2fcc9752e381762dd1f5097a6cbcbdc8b18f5bb781a96f5e705996488b17ca98",
+        "confidence": 90,
+        "status": "needs_review",
+        "verification_status": "needs_review"
+      },
+      {
+        "gr_number": 5,
+        "student_name": "Mmeen",
+        "class_name": "Hare",
+        "source_image": "WhatsApp Image 2026-08-19 at 12.35.28 AM.jpeg",
+        "source_image_hash": "2fcc9752e381762dd1f5097a6cbcbdc8b18f5bb781a96f5e705996488b17ca98",
+        "confidence": 90,
+        "status": "needs_review",
+        "verification_status": "needs_review"
+      },
+      {
+        "gr_number": 10,
+        "student_name": "Ques",
+        "class_name": "Prear",
+        "source_image": "WhatsApp Image 2026-08-19 at 12.35.28 AM.jpeg",
+        "source_image_hash": "2fcc9752e381762dd1f5097a6cbcbdc8b18f5bb781a96f5e705996488b17ca98",
+        "confidence": 90,
+        "status": "needs_review",
+        "verification_status": "needs_review"
+      },
+      {
+        "gr_number": 12,
+        "student_name": "Tuna",
+        "class_name": "JSS",
+        "source_image": "WhatsApp Image 2026-08-19 at 12.35.28 AM.jpeg",
+        "source_image_hash": "2fcc9752e381762dd1f5097a6cbcbdc8b18f5bb781a96f5e705996488b17ca98",
+        "confidence": 90,
+        "status": "needs_review",
+        "verification_status": "needs_review"
+      },
+      {
+        "gr_number": 9,
+        "student_name": "Seed",
+        "class_name": "Unassigned",
+        "source_image": "WhatsApp Image 2026-08-19 at 12.35.28 AM.jpeg",
+        "source_image_hash": "2fcc9752e381762dd1f5097a6cbcbdc8b18f5bb781a96f5e705996488b17ca98",
+        "confidence": 90,
+        "status": "needs_review",
+        "verification_status": "needs_review"
+      },
+      {
+        "gr_number": 20,
+        "student_name": "Bsre",
+        "class_name": "Class X - Matric",
+        "source_image": "WhatsApp Image 2026-08-19 at 12.35.28 AM.jpeg",
+        "source_image_hash": "2fcc9752e381762dd1f5097a6cbcbdc8b18f5bb781a96f5e705996488b17ca98",
+        "confidence": 90,
+        "status": "needs_review",
+        "verification_status": "needs_review"
+      },
+      {
+        "gr_number": 21,
+        "student_name": "MaRlom",
+        "class_name": "Class XI - Pre-Engineering",
+        "source_image": "WhatsApp Image 2026-08-19 at 12.35.28 AM.jpeg",
+        "source_image_hash": "2fcc9752e381762dd1f5097a6cbcbdc8b18f5bb781a96f5e705996488b17ca98",
+        "confidence": 90,
+        "status": "needs_review",
+        "verification_status": "needs_review"
+      },
+      {
+        "gr_number": 22,
+        "student_name": "Uzer",
+        "class_name": "esol",
+        "source_image": "WhatsApp Image 2026-08-19 at 12.35.28 AM.jpeg",
+        "source_image_hash": "2fcc9752e381762dd1f5097a6cbcbdc8b18f5bb781a96f5e705996488b17ca98",
+        "confidence": 90,
+        "status": "needs_review",
+        "verification_status": "needs_review"
+      },
+      {
+        "gr_number": 23,
+        "student_name": "Haswr",
+        "class_name": "Unassigned",
+        "source_image": "WhatsApp Image 2026-08-19 at 12.35.28 AM.jpeg",
+        "source_image_hash": "2fcc9752e381762dd1f5097a6cbcbdc8b18f5bb781a96f5e705996488b17ca98",
+        "confidence": 90,
+        "status": "needs_review",
+        "verification_status": "needs_review"
+      }
+    ]
+  },
+  {
+    "image": {
+      "index": 2,
+      "imageId": "new_img_02",
+      "filename": "WhatsApp Image 2026-08-19 at 12.35.46 AM.jpeg",
+      "sha256": "3048b48411afb8c5da047b3eed435c6946ab4d4b1a5306f1abf511547d6ea76a",
+      "sizeBytes": 172318,
+      "width": 720,
+      "height": 1280,
+      "format": "Portrait Page",
+      "isDuplicateOfOld": false
+    },
+    "candidatesCount": 7,
+    "candidates": [
+      {
+        "gr_number": 24,
+        "student_name": "Lore",
+        "class_name": "Bog",
+        "source_image": "WhatsApp Image 2026-08-19 at 12.35.46 AM.jpeg",
+        "source_image_hash": "3048b48411afb8c5da047b3eed435c6946ab4d4b1a5306f1abf511547d6ea76a",
+        "confidence": 90,
+        "status": "needs_review",
+        "verification_status": "needs_review"
+      },
+      {
+        "gr_number": 2,
+        "student_name": "Dusua",
+        "class_name": "Tus",
+        "source_image": "WhatsApp Image 2026-08-19 at 12.35.46 AM.jpeg",
+        "source_image_hash": "3048b48411afb8c5da047b3eed435c6946ab4d4b1a5306f1abf511547d6ea76a",
+        "confidence": 90,
+        "status": "needs_review",
+        "verification_status": "needs_review"
+      },
+      {
+        "gr_number": 29,
+        "student_name": "Ten Kin",
+        "class_name": "BT",
+        "source_image": "WhatsApp Image 2026-08-19 at 12.35.46 AM.jpeg",
+        "source_image_hash": "3048b48411afb8c5da047b3eed435c6946ab4d4b1a5306f1abf511547d6ea76a",
+        "confidence": 90,
+        "status": "needs_review",
+        "verification_status": "needs_review"
+      },
+      {
+        "gr_number": 30,
+        "student_name": "Quan Museen",
+        "class_name": "P",
+        "source_image": "WhatsApp Image 2026-08-19 at 12.35.46 AM.jpeg",
+        "source_image_hash": "3048b48411afb8c5da047b3eed435c6946ab4d4b1a5306f1abf511547d6ea76a",
+        "confidence": 90,
+        "status": "needs_review",
+        "verification_status": "needs_review"
+      },
+      {
+        "gr_number": 31,
+        "student_name": "Nepween",
+        "class_name": "Class X - Matric",
+        "source_image": "WhatsApp Image 2026-08-19 at 12.35.46 AM.jpeg",
+        "source_image_hash": "3048b48411afb8c5da047b3eed435c6946ab4d4b1a5306f1abf511547d6ea76a",
+        "confidence": 90,
+        "status": "needs_review",
+        "verification_status": "needs_review"
+      },
+      {
+        "gr_number": 53,
+        "student_name": "Qeae Us",
+        "class_name": "De",
+        "source_image": "WhatsApp Image 2026-08-19 at 12.35.46 AM.jpeg",
+        "source_image_hash": "3048b48411afb8c5da047b3eed435c6946ab4d4b1a5306f1abf511547d6ea76a",
+        "confidence": 90,
+        "status": "needs_review",
+        "verification_status": "needs_review"
+      },
+      {
+        "gr_number": 43,
+        "student_name": "Zonarz Ud",
+        "class_name": "WNrw",
+        "source_image": "WhatsApp Image 2026-08-19 at 12.35.46 AM.jpeg",
+        "source_image_hash": "3048b48411afb8c5da047b3eed435c6946ab4d4b1a5306f1abf511547d6ea76a",
+        "confidence": 90,
+        "status": "needs_review",
+        "verification_status": "needs_review"
+      }
+    ]
+  },
+  {
+    "image": {
+      "index": 3,
+      "imageId": "new_img_03",
+      "filename": "WhatsApp Image 2026-08-19 at 12.35.56 AM.jpeg",
+      "sha256": "6afe357d79faf0c5658a0a8f0dd745809123232dc087288e6985412b5bb0e94c",
+      "sizeBytes": 153661,
+      "width": 720,
+      "height": 1280,
+      "format": "Portrait Page",
+      "isDuplicateOfOld": false
+    },
+    "candidatesCount": 4,
+    "candidates": [
+      {
+        "gr_number": 53,
+        "student_name": "Sacan",
+        "class_name": "Sawer a",
+        "source_image": "WhatsApp Image 2026-08-19 at 12.35.56 AM.jpeg",
+        "source_image_hash": "6afe357d79faf0c5658a0a8f0dd745809123232dc087288e6985412b5bb0e94c",
+        "confidence": 75,
+        "status": "needs_review",
+        "verification_status": "needs_review"
+      },
+      {
+        "gr_number": 55,
+        "student_name": "ER’ad",
+        "class_name": "Class XI - Science",
+        "source_image": "WhatsApp Image 2026-08-19 at 12.35.56 AM.jpeg",
+        "source_image_hash": "6afe357d79faf0c5658a0a8f0dd745809123232dc087288e6985412b5bb0e94c",
+        "confidence": 75,
+        "status": "needs_review",
+        "verification_status": "needs_review"
+      },
+      {
+        "gr_number": 56,
+        "student_name": "DUERNAR x =",
+        "class_name": "Sc)",
+        "source_image": "WhatsApp Image 2026-08-19 at 12.35.56 AM.jpeg",
+        "source_image_hash": "6afe357d79faf0c5658a0a8f0dd745809123232dc087288e6985412b5bb0e94c",
+        "confidence": 75,
+        "status": "needs_review",
+        "verification_status": "needs_review"
+      },
+      {
+        "gr_number": 67,
+        "student_name": "(Reman",
+        "class_name": "Jnemy R.Gm I",
+        "source_image": "WhatsApp Image 2026-08-19 at 12.35.56 AM.jpeg",
+        "source_image_hash": "6afe357d79faf0c5658a0a8f0dd745809123232dc087288e6985412b5bb0e94c",
+        "confidence": 75,
+        "status": "needs_review",
+        "verification_status": "needs_review"
+      }
+    ]
+  },
+  {
+    "image": {
+      "index": 4,
+      "imageId": "new_img_04",
+      "filename": "WhatsApp Image 2026-08-19 at 12.36.09 AM.jpeg",
+      "sha256": "c2f44c327a0b27918b23eaba7294d438f304702df26eabb2861bde2c37014b22",
+      "sizeBytes": 160906,
+      "width": 1280,
+      "height": 720,
+      "format": "Landscape Spread",
+      "isDuplicateOfOld": false
+    },
+    "candidatesCount": 1,
+    "candidates": [
+      {
+        "gr_number": 233,
+        "student_name": "gl E2PPROF",
+        "class_name": "27 £33 UAL",
+        "source_image": "WhatsApp Image 2026-08-19 at 12.36.09 AM.jpeg",
+        "source_image_hash": "c2f44c327a0b27918b23eaba7294d438f304702df26eabb2861bde2c37014b22",
+        "confidence": 75,
+        "status": "needs_review",
+        "verification_status": "needs_review"
+      }
+    ]
+  },
+  {
+    "image": {
+      "index": 5,
+      "imageId": "new_img_05",
+      "filename": "WhatsApp Image 2026-08-19 at 12.36.14 AM.jpeg",
+      "sha256": "1d00dd3f498bbcff284f015f46409015db07a09eeb669f6c02cff7767e242990",
+      "sizeBytes": 164283,
+      "width": 720,
+      "height": 1280,
+      "format": "Portrait Page",
+      "isDuplicateOfOld": false
+    },
+    "candidatesCount": 7,
+    "candidates": [
+      {
+        "gr_number": 8,
+        "student_name": "M. Lame",
+        "class_name": "Class X - Matric",
+        "source_image": "WhatsApp Image 2026-08-19 at 12.36.14 AM.jpeg",
+        "source_image_hash": "1d00dd3f498bbcff284f015f46409015db07a09eeb669f6c02cff7767e242990",
+        "confidence": 90,
+        "status": "needs_review",
+        "verification_status": "needs_review"
+      },
+      {
+        "gr_number": 1,
+        "student_name": "Ruosues Saat",
+        "class_name": "Class X - Matric",
+        "source_image": "WhatsApp Image 2026-08-19 at 12.36.14 AM.jpeg",
+        "source_image_hash": "1d00dd3f498bbcff284f015f46409015db07a09eeb669f6c02cff7767e242990",
+        "confidence": 90,
+        "status": "needs_review",
+        "verification_status": "needs_review"
+      },
+      {
+        "gr_number": 18,
+        "student_name": "Dame Naeew",
+        "class_name": "Class X - Matric",
+        "source_image": "WhatsApp Image 2026-08-19 at 12.36.14 AM.jpeg",
+        "source_image_hash": "1d00dd3f498bbcff284f015f46409015db07a09eeb669f6c02cff7767e242990",
+        "confidence": 90,
+        "status": "needs_review",
+        "verification_status": "needs_review"
+      },
+      {
+        "gr_number": 5,
+        "student_name": "BocuRa MUBASHIE",
+        "class_name": "reseed",
+        "source_image": "WhatsApp Image 2026-08-19 at 12.36.14 AM.jpeg",
+        "source_image_hash": "1d00dd3f498bbcff284f015f46409015db07a09eeb669f6c02cff7767e242990",
+        "confidence": 90,
+        "status": "needs_review",
+        "verification_status": "needs_review"
+      },
+      {
+        "gr_number": 106,
+        "student_name": "Harz NAgEEL",
+        "class_name": "5",
+        "source_image": "WhatsApp Image 2026-08-19 at 12.36.14 AM.jpeg",
+        "source_image_hash": "1d00dd3f498bbcff284f015f46409015db07a09eeb669f6c02cff7767e242990",
+        "confidence": 90,
+        "status": "needs_review",
+        "verification_status": "needs_review"
+      },
+      {
+        "gr_number": 109,
+        "student_name": "Dyepa Aameen",
+        "class_name": "beh aa",
+        "source_image": "WhatsApp Image 2026-08-19 at 12.36.14 AM.jpeg",
+        "source_image_hash": "1d00dd3f498bbcff284f015f46409015db07a09eeb669f6c02cff7767e242990",
+        "confidence": 90,
+        "status": "needs_review",
+        "verification_status": "needs_review"
+      },
+      {
+        "gr_number": 9,
+        "student_name": "Nessa URODT",
+        "class_name": "Unassigned",
+        "source_image": "WhatsApp Image 2026-08-19 at 12.36.14 AM.jpeg",
+        "source_image_hash": "1d00dd3f498bbcff284f015f46409015db07a09eeb669f6c02cff7767e242990",
+        "confidence": 90,
+        "status": "needs_review",
+        "verification_status": "needs_review"
+      }
+    ]
+  },
+  {
+    "image": {
+      "index": 6,
+      "imageId": "new_img_06",
+      "filename": "WhatsApp Image 2026-08-19 at 12.36.27 AM.jpeg",
+      "sha256": "765e5d785317a969b4cc13a92183efdcecb4b15837d185b2cc180d1c4d401170",
+      "sizeBytes": 146731,
+      "width": 720,
+      "height": 1280,
+      "format": "Portrait Page",
+      "isDuplicateOfOld": false
+    },
+    "candidatesCount": 6,
+    "candidates": [
+      {
+        "gr_number": 120,
+        "student_name": "Avs dea",
+        "class_name": "3",
+        "source_image": "WhatsApp Image 2026-08-19 at 12.36.27 AM.jpeg",
+        "source_image_hash": "765e5d785317a969b4cc13a92183efdcecb4b15837d185b2cc180d1c4d401170",
+        "confidence": 90,
+        "status": "needs_review",
+        "verification_status": "needs_review"
+      },
+      {
+        "gr_number": 121,
+        "student_name": "JPNTYNS N",
+        "class_name": "U2",
+        "source_image": "WhatsApp Image 2026-08-19 at 12.36.27 AM.jpeg",
+        "source_image_hash": "765e5d785317a969b4cc13a92183efdcecb4b15837d185b2cc180d1c4d401170",
+        "confidence": 90,
+        "status": "needs_review",
+        "verification_status": "needs_review"
+      },
+      {
+        "gr_number": 122,
+        "student_name": "A Khan",
+        "class_name": "3",
+        "source_image": "WhatsApp Image 2026-08-19 at 12.36.27 AM.jpeg",
+        "source_image_hash": "765e5d785317a969b4cc13a92183efdcecb4b15837d185b2cc180d1c4d401170",
+        "confidence": 90,
+        "status": "needs_review",
+        "verification_status": "needs_review"
+      },
+      {
+        "gr_number": 123,
+        "student_name": "Sowinee PY",
+        "class_name": "es A",
+        "source_image": "WhatsApp Image 2026-08-19 at 12.36.27 AM.jpeg",
+        "source_image_hash": "765e5d785317a969b4cc13a92183efdcecb4b15837d185b2cc180d1c4d401170",
+        "confidence": 90,
+        "status": "needs_review",
+        "verification_status": "needs_review"
+      },
+      {
+        "gr_number": 132,
+        "student_name": "Nei",
+        "class_name": "Weal i 4",
+        "source_image": "WhatsApp Image 2026-08-19 at 12.36.27 AM.jpeg",
+        "source_image_hash": "765e5d785317a969b4cc13a92183efdcecb4b15837d185b2cc180d1c4d401170",
+        "confidence": 90,
+        "status": "needs_review",
+        "verification_status": "needs_review"
+      },
+      {
+        "gr_number": 133,
+        "student_name": "MM: Moma",
+        "class_name": "4 | H",
+        "source_image": "WhatsApp Image 2026-08-19 at 12.36.27 AM.jpeg",
+        "source_image_hash": "765e5d785317a969b4cc13a92183efdcecb4b15837d185b2cc180d1c4d401170",
+        "confidence": 90,
+        "status": "needs_review",
+        "verification_status": "needs_review"
+      }
+    ]
+  },
+  {
+    "image": {
+      "index": 7,
+      "imageId": "new_img_07",
+      "filename": "WhatsApp Image 2026-08-19 at 12.36.38 AM.jpeg",
+      "sha256": "25653a3bba2ed6d07a2a9391cfc02787459689550fe8fafb3eda802a40d60b9e",
+      "sizeBytes": 149165,
+      "width": 720,
+      "height": 1280,
+      "format": "Portrait Page",
+      "isDuplicateOfOld": false
+    },
+    "candidatesCount": 6,
+    "candidates": [
+      {
+        "gr_number": 139,
+        "student_name": "Uwe Ani",
+        "class_name": "UE et A Seine",
+        "source_image": "WhatsApp Image 2026-08-19 at 12.36.38 AM.jpeg",
+        "source_image_hash": "25653a3bba2ed6d07a2a9391cfc02787459689550fe8fafb3eda802a40d60b9e",
+        "confidence": 90,
+        "status": "needs_review",
+        "verification_status": "needs_review"
+      },
+      {
+        "gr_number": 2,
+        "student_name": "Shaheate",
+        "class_name": "Bt",
+        "source_image": "WhatsApp Image 2026-08-19 at 12.36.38 AM.jpeg",
+        "source_image_hash": "25653a3bba2ed6d07a2a9391cfc02787459689550fe8fafb3eda802a40d60b9e",
+        "confidence": 90,
+        "status": "needs_review",
+        "verification_status": "needs_review"
+      },
+      {
+        "gr_number": 3,
+        "student_name": "Aimen Kid",
+        "class_name": "uM",
+        "source_image": "WhatsApp Image 2026-08-19 at 12.36.38 AM.jpeg",
+        "source_image_hash": "25653a3bba2ed6d07a2a9391cfc02787459689550fe8fafb3eda802a40d60b9e",
+        "confidence": 90,
+        "status": "needs_review",
+        "verification_status": "needs_review"
+      },
+      {
+        "gr_number": 150,
+        "student_name": "Datel",
+        "class_name": "a",
+        "source_image": "WhatsApp Image 2026-08-19 at 12.36.38 AM.jpeg",
+        "source_image_hash": "25653a3bba2ed6d07a2a9391cfc02787459689550fe8fafb3eda802a40d60b9e",
+        "confidence": 90,
+        "status": "needs_review",
+        "verification_status": "needs_review"
+      },
+      {
+        "gr_number": 152,
+        "student_name": "Ree Qe",
+        "class_name": "4",
+        "source_image": "WhatsApp Image 2026-08-19 at 12.36.38 AM.jpeg",
+        "source_image_hash": "25653a3bba2ed6d07a2a9391cfc02787459689550fe8fafb3eda802a40d60b9e",
+        "confidence": 90,
+        "status": "needs_review",
+        "verification_status": "needs_review"
+      },
+      {
+        "gr_number": 153,
+        "student_name": "Niue Qleesue",
+        "class_name": "oe",
+        "source_image": "WhatsApp Image 2026-08-19 at 12.36.38 AM.jpeg",
+        "source_image_hash": "25653a3bba2ed6d07a2a9391cfc02787459689550fe8fafb3eda802a40d60b9e",
+        "confidence": 90,
+        "status": "needs_review",
+        "verification_status": "needs_review"
+      }
+    ]
+  },
+  {
+    "image": {
+      "index": 8,
+      "imageId": "new_img_08",
+      "filename": "WhatsApp Image 2026-08-19 at 12.36.47 AM.jpeg",
+      "sha256": "06d95253f0cf85b2f4695a4d3e481ce4259f636c6ab93923206f43a805ffa137",
+      "sizeBytes": 168035,
+      "width": 720,
+      "height": 1280,
+      "format": "Portrait Page",
+      "isDuplicateOfOld": false
+    },
+    "candidatesCount": 6,
+    "candidates": [
+      {
+        "gr_number": 63,
+        "student_name": "Senne Yuen",
+        "class_name": "0 18",
+        "source_image": "WhatsApp Image 2026-08-19 at 12.36.47 AM.jpeg",
+        "source_image_hash": "06d95253f0cf85b2f4695a4d3e481ce4259f636c6ab93923206f43a805ffa137",
+        "confidence": 90,
+        "status": "needs_review",
+        "verification_status": "needs_review"
+      },
+      {
+        "gr_number": 66,
+        "student_name": "Mozamme Enel",
+        "class_name": "M",
+        "source_image": "WhatsApp Image 2026-08-19 at 12.36.47 AM.jpeg",
+        "source_image_hash": "06d95253f0cf85b2f4695a4d3e481ce4259f636c6ab93923206f43a805ffa137",
+        "confidence": 90,
+        "status": "needs_review",
+        "verification_status": "needs_review"
+      },
+      {
+        "gr_number": 16,
+        "student_name": "Roweel Rene",
+        "class_name": "C",
+        "source_image": "WhatsApp Image 2026-08-19 at 12.36.47 AM.jpeg",
+        "source_image_hash": "06d95253f0cf85b2f4695a4d3e481ce4259f636c6ab93923206f43a805ffa137",
+        "confidence": 90,
+        "status": "needs_review",
+        "verification_status": "needs_review"
+      },
+      {
+        "gr_number": 1,
+        "student_name": "Nees Maax",
+        "class_name": "Class X - Matric",
+        "source_image": "WhatsApp Image 2026-08-19 at 12.36.47 AM.jpeg",
+        "source_image_hash": "06d95253f0cf85b2f4695a4d3e481ce4259f636c6ab93923206f43a805ffa137",
+        "confidence": 90,
+        "status": "needs_review",
+        "verification_status": "needs_review"
+      },
+      {
+        "gr_number": 192,
+        "student_name": "Lea",
+        "class_name": "Class X - Matric",
+        "source_image": "WhatsApp Image 2026-08-19 at 12.36.47 AM.jpeg",
+        "source_image_hash": "06d95253f0cf85b2f4695a4d3e481ce4259f636c6ab93923206f43a805ffa137",
+        "confidence": 90,
+        "status": "needs_review",
+        "verification_status": "needs_review"
+      },
+      {
+        "gr_number": 13,
+        "student_name": "Sane",
+        "class_name": "Ire",
+        "source_image": "WhatsApp Image 2026-08-19 at 12.36.47 AM.jpeg",
+        "source_image_hash": "06d95253f0cf85b2f4695a4d3e481ce4259f636c6ab93923206f43a805ffa137",
+        "confidence": 90,
+        "status": "needs_review",
+        "verification_status": "needs_review"
+      }
+    ]
+  },
+  {
+    "image": {
+      "index": 9,
+      "imageId": "new_img_09",
+      "filename": "WhatsApp Image 2026-08-19 at 12.36.54 AM.jpeg",
+      "sha256": "bdf6feefcec330a4fa35daa0dfc9fe2b38e00de0feac06dc4f759f0d43ddbf8f",
+      "sizeBytes": 180629,
+      "width": 720,
+      "height": 1280,
+      "format": "Portrait Page",
+      "isDuplicateOfOld": false
+    },
+    "candidatesCount": 15,
+    "candidates": [
+      {
+        "gr_number": 192,
+        "student_name": "Fpaszn Xu",
+        "class_name": "Unassigned",
+        "source_image": "WhatsApp Image 2026-08-19 at 12.36.54 AM.jpeg",
+        "source_image_hash": "bdf6feefcec330a4fa35daa0dfc9fe2b38e00de0feac06dc4f759f0d43ddbf8f",
+        "confidence": 90,
+        "status": "needs_review",
+        "verification_status": "needs_review"
+      },
+      {
+        "gr_number": 186,
+        "student_name": "Tawa SCAR",
+        "class_name": "Unassigned",
+        "source_image": "WhatsApp Image 2026-08-19 at 12.36.54 AM.jpeg",
+        "source_image_hash": "bdf6feefcec330a4fa35daa0dfc9fe2b38e00de0feac06dc4f759f0d43ddbf8f",
+        "confidence": 90,
+        "status": "needs_review",
+        "verification_status": "needs_review"
+      },
+      {
+        "gr_number": 131,
+        "student_name": "Ota SHAIR AALS",
+        "class_name": "Unassigned",
+        "source_image": "WhatsApp Image 2026-08-19 at 12.36.54 AM.jpeg",
+        "source_image_hash": "bdf6feefcec330a4fa35daa0dfc9fe2b38e00de0feac06dc4f759f0d43ddbf8f",
+        "confidence": 90,
+        "status": "needs_review",
+        "verification_status": "needs_review"
+      },
+      {
+        "gr_number": 193,
+        "student_name": "Dosntes Xx",
+        "class_name": "Unassigned",
+        "source_image": "WhatsApp Image 2026-08-19 at 12.36.54 AM.jpeg",
+        "source_image_hash": "bdf6feefcec330a4fa35daa0dfc9fe2b38e00de0feac06dc4f759f0d43ddbf8f",
+        "confidence": 90,
+        "status": "needs_review",
+        "verification_status": "needs_review"
+      },
+      {
+        "gr_number": 19,
+        "student_name": "Donec nw X Com",
+        "class_name": "Unassigned",
+        "source_image": "WhatsApp Image 2026-08-19 at 12.36.54 AM.jpeg",
+        "source_image_hash": "bdf6feefcec330a4fa35daa0dfc9fe2b38e00de0feac06dc4f759f0d43ddbf8f",
+        "confidence": 90,
+        "status": "needs_review",
+        "verification_status": "needs_review"
+      },
+      {
+        "gr_number": 190,
+        "student_name": "Mere Kamel XW Sei",
+        "class_name": "Unassigned",
+        "source_image": "WhatsApp Image 2026-08-19 at 12.36.54 AM.jpeg",
+        "source_image_hash": "bdf6feefcec330a4fa35daa0dfc9fe2b38e00de0feac06dc4f759f0d43ddbf8f",
+        "confidence": 90,
+        "status": "needs_review",
+        "verification_status": "needs_review"
+      },
+      {
+        "gr_number": 1,
+        "student_name": "Oars nar ie",
+        "class_name": "Unassigned",
+        "source_image": "WhatsApp Image 2026-08-19 at 12.36.54 AM.jpeg",
+        "source_image_hash": "bdf6feefcec330a4fa35daa0dfc9fe2b38e00de0feac06dc4f759f0d43ddbf8f",
+        "confidence": 90,
+        "status": "needs_review",
+        "verification_status": "needs_review"
+      },
+      {
+        "gr_number": 9,
+        "student_name": "fata Aevreq xn Com",
+        "class_name": "Unassigned",
+        "source_image": "WhatsApp Image 2026-08-19 at 12.36.54 AM.jpeg",
+        "source_image_hash": "bdf6feefcec330a4fa35daa0dfc9fe2b38e00de0feac06dc4f759f0d43ddbf8f",
+        "confidence": 90,
+        "status": "needs_review",
+        "verification_status": "needs_review"
+      },
+      {
+        "gr_number": 29,
+        "student_name": "Sammon Reap Xn Sai",
+        "class_name": "Unassigned",
+        "source_image": "WhatsApp Image 2026-08-19 at 12.36.54 AM.jpeg",
+        "source_image_hash": "bdf6feefcec330a4fa35daa0dfc9fe2b38e00de0feac06dc4f759f0d43ddbf8f",
+        "confidence": 90,
+        "status": "needs_review",
+        "verification_status": "needs_review"
+      },
+      {
+        "gr_number": 200,
+        "student_name": "Marine Xue fe 8",
+        "class_name": "Unassigned",
+        "source_image": "WhatsApp Image 2026-08-19 at 12.36.54 AM.jpeg",
+        "source_image_hash": "bdf6feefcec330a4fa35daa0dfc9fe2b38e00de0feac06dc4f759f0d43ddbf8f",
+        "confidence": 90,
+        "status": "needs_review",
+        "verification_status": "needs_review"
+      },
+      {
+        "gr_number": 20,
+        "student_name": "Weed Rh Yann BB Com",
+        "class_name": "Unassigned",
+        "source_image": "WhatsApp Image 2026-08-19 at 12.36.54 AM.jpeg",
+        "source_image_hash": "bdf6feefcec330a4fa35daa0dfc9fe2b38e00de0feac06dc4f759f0d43ddbf8f",
+        "confidence": 90,
+        "status": "needs_review",
+        "verification_status": "needs_review"
+      },
+      {
+        "gr_number": 203,
+        "student_name": "Horde Gar 2 Con 11H",
+        "class_name": "Unassigned",
+        "source_image": "WhatsApp Image 2026-08-19 at 12.36.54 AM.jpeg",
+        "source_image_hash": "bdf6feefcec330a4fa35daa0dfc9fe2b38e00de0feac06dc4f759f0d43ddbf8f",
+        "confidence": 90,
+        "status": "needs_review",
+        "verification_status": "needs_review"
+      },
+      {
+        "gr_number": 205,
+        "student_name": "Lasazien Qegasam er i",
+        "class_name": "Unassigned",
+        "source_image": "WhatsApp Image 2026-08-19 at 12.36.54 AM.jpeg",
+        "source_image_hash": "bdf6feefcec330a4fa35daa0dfc9fe2b38e00de0feac06dc4f759f0d43ddbf8f",
+        "confidence": 90,
+        "status": "needs_review",
+        "verification_status": "needs_review"
+      },
+      {
+        "gr_number": 206,
+        "student_name": "Maven Guuzar GARR 0",
+        "class_name": "Unassigned",
+        "source_image": "WhatsApp Image 2026-08-19 at 12.36.54 AM.jpeg",
+        "source_image_hash": "bdf6feefcec330a4fa35daa0dfc9fe2b38e00de0feac06dc4f759f0d43ddbf8f",
+        "confidence": 90,
+        "status": "needs_review",
+        "verification_status": "needs_review"
+      },
+      {
+        "gr_number": 268,
+        "student_name": "nen AT va ot od er",
+        "class_name": "Unassigned",
+        "source_image": "WhatsApp Image 2026-08-19 at 12.36.54 AM.jpeg",
+        "source_image_hash": "bdf6feefcec330a4fa35daa0dfc9fe2b38e00de0feac06dc4f759f0d43ddbf8f",
+        "confidence": 90,
+        "status": "needs_review",
+        "verification_status": "needs_review"
+      }
+    ]
+  },
+  {
+    "image": {
+      "index": 10,
+      "imageId": "new_img_10",
+      "filename": "WhatsApp Image 2026-08-19 at 12.37.01 AM.jpeg",
+      "sha256": "f8bdefa5754e220f87a19925ba80eef7a8e72709190d819b281a17649535d691",
+      "sizeBytes": 173695,
+      "width": 720,
+      "height": 1280,
+      "format": "Portrait Page",
+      "isDuplicateOfOld": false
+    },
+    "candidatesCount": 10,
+    "candidates": [
+      {
+        "gr_number": 208,
+        "student_name": "Erm Origue Oem",
+        "class_name": "8",
+        "source_image": "WhatsApp Image 2026-08-19 at 12.37.01 AM.jpeg",
+        "source_image_hash": "f8bdefa5754e220f87a19925ba80eef7a8e72709190d819b281a17649535d691",
+        "confidence": 90,
+        "status": "needs_review",
+        "verification_status": "needs_review"
+      },
+      {
+        "gr_number": 209,
+        "student_name": "ML Massnas",
+        "class_name": "21",
+        "source_image": "WhatsApp Image 2026-08-19 at 12.37.01 AM.jpeg",
+        "source_image_hash": "f8bdefa5754e220f87a19925ba80eef7a8e72709190d819b281a17649535d691",
+        "confidence": 90,
+        "status": "needs_review",
+        "verification_status": "needs_review"
+      },
+      {
+        "gr_number": 213,
+        "student_name": "CG Frees Ac",
+        "class_name": "Unassigned",
+        "source_image": "WhatsApp Image 2026-08-19 at 12.37.01 AM.jpeg",
+        "source_image_hash": "f8bdefa5754e220f87a19925ba80eef7a8e72709190d819b281a17649535d691",
+        "confidence": 90,
+        "status": "needs_review",
+        "verification_status": "needs_review"
+      },
+      {
+        "gr_number": 205,
+        "student_name": "Qdomaa Naz",
+        "class_name": "A",
+        "source_image": "WhatsApp Image 2026-08-19 at 12.37.01 AM.jpeg",
+        "source_image_hash": "f8bdefa5754e220f87a19925ba80eef7a8e72709190d819b281a17649535d691",
+        "confidence": 90,
+        "status": "needs_review",
+        "verification_status": "needs_review"
+      },
+      {
+        "gr_number": 222,
+        "student_name": "IM Bea Idide",
+        "class_name": "3",
+        "source_image": "WhatsApp Image 2026-08-19 at 12.37.01 AM.jpeg",
+        "source_image_hash": "f8bdefa5754e220f87a19925ba80eef7a8e72709190d819b281a17649535d691",
+        "confidence": 90,
+        "status": "needs_review",
+        "verification_status": "needs_review"
+      },
+      {
+        "gr_number": 229,
+        "student_name": "Aser Reson",
+        "class_name": "2",
+        "source_image": "WhatsApp Image 2026-08-19 at 12.37.01 AM.jpeg",
+        "source_image_hash": "f8bdefa5754e220f87a19925ba80eef7a8e72709190d819b281a17649535d691",
+        "confidence": 90,
+        "status": "needs_review",
+        "verification_status": "needs_review"
+      },
+      {
+        "gr_number": 230,
+        "student_name": "Kewwie Quensy",
+        "class_name": "0",
+        "source_image": "WhatsApp Image 2026-08-19 at 12.37.01 AM.jpeg",
+        "source_image_hash": "f8bdefa5754e220f87a19925ba80eef7a8e72709190d819b281a17649535d691",
+        "confidence": 90,
+        "status": "needs_review",
+        "verification_status": "needs_review"
+      },
+      {
+        "gr_number": 929,
+        "student_name": "[] MM.",
+        "class_name": "Monan ie b CW-Com",
+        "source_image": "WhatsApp Image 2026-08-19 at 12.37.01 AM.jpeg",
+        "source_image_hash": "f8bdefa5754e220f87a19925ba80eef7a8e72709190d819b281a17649535d691",
+        "confidence": 75,
+        "status": "needs_review",
+        "verification_status": "needs_review"
+      },
+      {
+        "gr_number": 999,
+        "student_name": "(Pamemd",
+        "class_name": "Nias",
+        "source_image": "WhatsApp Image 2026-08-19 at 12.37.01 AM.jpeg",
+        "source_image_hash": "f8bdefa5754e220f87a19925ba80eef7a8e72709190d819b281a17649535d691",
+        "confidence": 75,
+        "status": "needs_review",
+        "verification_status": "needs_review"
+      },
+      {
+        "gr_number": 55,
+        "student_name": "Toray ETE ALN",
+        "class_name": "Class XI - Science",
+        "source_image": "WhatsApp Image 2026-08-19 at 12.37.01 AM.jpeg",
+        "source_image_hash": "f8bdefa5754e220f87a19925ba80eef7a8e72709190d819b281a17649535d691",
+        "confidence": 75,
+        "status": "needs_review",
+        "verification_status": "needs_review"
+      }
+    ]
+  },
+  {
+    "image": {
+      "index": 11,
+      "imageId": "new_img_11",
+      "filename": "WhatsApp Image 2026-08-19 at 12.37.09 AM.jpeg",
+      "sha256": "51c0fc76ee1682af4bd180e31863b4fee66f1a420fd987d31d05ee7370635ebf",
+      "sizeBytes": 168014,
+      "width": 720,
+      "height": 1280,
+      "format": "Portrait Page",
+      "isDuplicateOfOld": false
+    },
+    "candidatesCount": 16,
+    "candidates": [
+      {
+        "gr_number": 1,
+        "student_name": "Qara Aziz",
+        "class_name": "Class XI - Pre-Engineering",
+        "source_image": "WhatsApp Image 2026-08-19 at 12.37.09 AM.jpeg",
+        "source_image_hash": "51c0fc76ee1682af4bd180e31863b4fee66f1a420fd987d31d05ee7370635ebf",
+        "confidence": 90,
+        "status": "needs_review",
+        "verification_status": "needs_review"
+      },
+      {
+        "gr_number": 3,
+        "student_name": "Mawsne Lhe",
+        "class_name": "R.Qon TN",
+        "source_image": "WhatsApp Image 2026-08-19 at 12.37.09 AM.jpeg",
+        "source_image_hash": "51c0fc76ee1682af4bd180e31863b4fee66f1a420fd987d31d05ee7370635ebf",
+        "confidence": 90,
+        "status": "needs_review",
+        "verification_status": "needs_review"
+      },
+      {
+        "gr_number": 233,
+        "student_name": "Sageor Hussars",
+        "class_name": "Class XI - Pre-Engineering",
+        "source_image": "WhatsApp Image 2026-08-19 at 12.37.09 AM.jpeg",
+        "source_image_hash": "51c0fc76ee1682af4bd180e31863b4fee66f1a420fd987d31d05ee7370635ebf",
+        "confidence": 90,
+        "status": "needs_review",
+        "verification_status": "needs_review"
+      },
+      {
+        "gr_number": 223,
+        "student_name": "Mansa",
+        "class_name": "B.Com TN",
+        "source_image": "WhatsApp Image 2026-08-19 at 12.37.09 AM.jpeg",
+        "source_image_hash": "51c0fc76ee1682af4bd180e31863b4fee66f1a420fd987d31d05ee7370635ebf",
+        "confidence": 90,
+        "status": "needs_review",
+        "verification_status": "needs_review"
+      },
+      {
+        "gr_number": 225,
+        "student_name": "Nasr ped",
+        "class_name": "Unassigned",
+        "source_image": "WhatsApp Image 2026-08-19 at 12.37.09 AM.jpeg",
+        "source_image_hash": "51c0fc76ee1682af4bd180e31863b4fee66f1a420fd987d31d05ee7370635ebf",
+        "confidence": 90,
+        "status": "needs_review",
+        "verification_status": "needs_review"
+      },
+      {
+        "gr_number": 226,
+        "student_name": "MTsRAH Revs",
+        "class_name": "B Com T",
+        "source_image": "WhatsApp Image 2026-08-19 at 12.37.09 AM.jpeg",
+        "source_image_hash": "51c0fc76ee1682af4bd180e31863b4fee66f1a420fd987d31d05ee7370635ebf",
+        "confidence": 90,
+        "status": "needs_review",
+        "verification_status": "needs_review"
+      },
+      {
+        "gr_number": 239,
+        "student_name": "Ag Yass",
+        "class_name": "AC",
+        "source_image": "WhatsApp Image 2026-08-19 at 12.37.09 AM.jpeg",
+        "source_image_hash": "51c0fc76ee1682af4bd180e31863b4fee66f1a420fd987d31d05ee7370635ebf",
+        "confidence": 90,
+        "status": "needs_review",
+        "verification_status": "needs_review"
+      },
+      {
+        "gr_number": 242,
+        "student_name": "De Rae",
+        "class_name": "Unassigned",
+        "source_image": "WhatsApp Image 2026-08-19 at 12.37.09 AM.jpeg",
+        "source_image_hash": "51c0fc76ee1682af4bd180e31863b4fee66f1a420fd987d31d05ee7370635ebf",
+        "confidence": 90,
+        "status": "needs_review",
+        "verification_status": "needs_review"
+      },
+      {
+        "gr_number": 26,
+        "student_name": "Tesgat Wwax",
+        "class_name": "Er oes",
+        "source_image": "WhatsApp Image 2026-08-19 at 12.37.09 AM.jpeg",
+        "source_image_hash": "51c0fc76ee1682af4bd180e31863b4fee66f1a420fd987d31d05ee7370635ebf",
+        "confidence": 90,
+        "status": "needs_review",
+        "verification_status": "needs_review"
+      },
+      {
+        "gr_number": 9,
+        "student_name": "Faasal Mark",
+        "class_name": "N",
+        "source_image": "WhatsApp Image 2026-08-19 at 12.37.09 AM.jpeg",
+        "source_image_hash": "51c0fc76ee1682af4bd180e31863b4fee66f1a420fd987d31d05ee7370635ebf",
+        "confidence": 90,
+        "status": "needs_review",
+        "verification_status": "needs_review"
+      },
+      {
+        "gr_number": 2,
+        "student_name": "Fesza Mazuer",
+        "class_name": "Class X - Matric",
+        "source_image": "WhatsApp Image 2026-08-19 at 12.37.09 AM.jpeg",
+        "source_image_hash": "51c0fc76ee1682af4bd180e31863b4fee66f1a420fd987d31d05ee7370635ebf",
+        "confidence": 90,
+        "status": "needs_review",
+        "verification_status": "needs_review"
+      },
+      {
+        "gr_number": 249,
+        "student_name": "Finer MussosR",
+        "class_name": "E Ha",
+        "source_image": "WhatsApp Image 2026-08-19 at 12.37.09 AM.jpeg",
+        "source_image_hash": "51c0fc76ee1682af4bd180e31863b4fee66f1a420fd987d31d05ee7370635ebf",
+        "confidence": 90,
+        "status": "needs_review",
+        "verification_status": "needs_review"
+      },
+      {
+        "gr_number": 250,
+        "student_name": "Roos Aomnn",
+        "class_name": "MA",
+        "source_image": "WhatsApp Image 2026-08-19 at 12.37.09 AM.jpeg",
+        "source_image_hash": "51c0fc76ee1682af4bd180e31863b4fee66f1a420fd987d31d05ee7370635ebf",
+        "confidence": 90,
+        "status": "needs_review",
+        "verification_status": "needs_review"
+      },
+      {
+        "gr_number": 952,
+        "student_name": "Pua Mix",
+        "class_name": "LN",
+        "source_image": "WhatsApp Image 2026-08-19 at 12.37.09 AM.jpeg",
+        "source_image_hash": "51c0fc76ee1682af4bd180e31863b4fee66f1a420fd987d31d05ee7370635ebf",
+        "confidence": 90,
+        "status": "needs_review",
+        "verification_status": "needs_review"
+      },
+      {
+        "gr_number": 953,
+        "student_name": "Usama Lox",
+        "class_name": "Unassigned",
+        "source_image": "WhatsApp Image 2026-08-19 at 12.37.09 AM.jpeg",
+        "source_image_hash": "51c0fc76ee1682af4bd180e31863b4fee66f1a420fd987d31d05ee7370635ebf",
+        "confidence": 90,
+        "status": "needs_review",
+        "verification_status": "needs_review"
+      },
+      {
+        "gr_number": 222,
+        "student_name": "3",
+        "class_name": "[",
+        "source_image": "WhatsApp Image 2026-08-19 at 12.37.09 AM.jpeg",
+        "source_image_hash": "51c0fc76ee1682af4bd180e31863b4fee66f1a420fd987d31d05ee7370635ebf",
+        "confidence": 75,
+        "status": "needs_review",
+        "verification_status": "needs_review"
+      }
+    ]
+  },
+  {
+    "image": {
+      "index": 12,
+      "imageId": "new_img_12",
+      "filename": "WhatsApp Image 2026-08-19 at 12.37.19 AM.jpeg",
+      "sha256": "41c3f7a60e36eafda4c543938d78276da12415ca91da6d8eb443ab474082ed0f",
+      "sizeBytes": 166112,
+      "width": 720,
+      "height": 1280,
+      "format": "Portrait Page",
+      "isDuplicateOfOld": false
+    },
+    "candidatesCount": 16,
+    "candidates": [
+      {
+        "gr_number": 252,
+        "student_name": "Macon Uroaa",
+        "class_name": "Class X - Matric",
+        "source_image": "WhatsApp Image 2026-08-19 at 12.37.19 AM.jpeg",
+        "source_image_hash": "41c3f7a60e36eafda4c543938d78276da12415ca91da6d8eb443ab474082ed0f",
+        "confidence": 90,
+        "status": "needs_review",
+        "verification_status": "needs_review"
+      },
+      {
+        "gr_number": 260,
+        "student_name": "Precrs Gen",
+        "class_name": "iis ‘H",
+        "source_image": "WhatsApp Image 2026-08-19 at 12.37.19 AM.jpeg",
+        "source_image_hash": "41c3f7a60e36eafda4c543938d78276da12415ca91da6d8eb443ab474082ed0f",
+        "confidence": 90,
+        "status": "needs_review",
+        "verification_status": "needs_review"
+      },
+      {
+        "gr_number": 262,
+        "student_name": "Quer Guo Ywcsans",
+        "class_name": "SE j",
+        "source_image": "WhatsApp Image 2026-08-19 at 12.37.19 AM.jpeg",
+        "source_image_hash": "41c3f7a60e36eafda4c543938d78276da12415ca91da6d8eb443ab474082ed0f",
+        "confidence": 90,
+        "status": "needs_review",
+        "verification_status": "needs_review"
+      },
+      {
+        "gr_number": 263,
+        "student_name": "New Naz",
+        "class_name": "4 co",
+        "source_image": "WhatsApp Image 2026-08-19 at 12.37.19 AM.jpeg",
+        "source_image_hash": "41c3f7a60e36eafda4c543938d78276da12415ca91da6d8eb443ab474082ed0f",
+        "confidence": 90,
+        "status": "needs_review",
+        "verification_status": "needs_review"
+      },
+      {
+        "gr_number": 264,
+        "student_name": "Dou LCNITEEN",
+        "class_name": "Y i",
+        "source_image": "WhatsApp Image 2026-08-19 at 12.37.19 AM.jpeg",
+        "source_image_hash": "41c3f7a60e36eafda4c543938d78276da12415ca91da6d8eb443ab474082ed0f",
+        "confidence": 90,
+        "status": "needs_review",
+        "verification_status": "needs_review"
+      },
+      {
+        "gr_number": 270,
+        "student_name": "Quen Owmena",
+        "class_name": "Class XI - Pre-Engineering",
+        "source_image": "WhatsApp Image 2026-08-19 at 12.37.19 AM.jpeg",
+        "source_image_hash": "41c3f7a60e36eafda4c543938d78276da12415ca91da6d8eb443ab474082ed0f",
+        "confidence": 90,
+        "status": "needs_review",
+        "verification_status": "needs_review"
+      },
+      {
+        "gr_number": 21,
+        "student_name": "Loammer POST",
+        "class_name": "Coat",
+        "source_image": "WhatsApp Image 2026-08-19 at 12.37.19 AM.jpeg",
+        "source_image_hash": "41c3f7a60e36eafda4c543938d78276da12415ca91da6d8eb443ab474082ed0f",
+        "confidence": 90,
+        "status": "needs_review",
+        "verification_status": "needs_review"
+      },
+      {
+        "gr_number": 231,
+        "student_name": "mats AsvEag",
+        "class_name": "brn a",
+        "source_image": "WhatsApp Image 2026-08-19 at 12.37.19 AM.jpeg",
+        "source_image_hash": "41c3f7a60e36eafda4c543938d78276da12415ca91da6d8eb443ab474082ed0f",
+        "confidence": 90,
+        "status": "needs_review",
+        "verification_status": "needs_review"
+      },
+      {
+        "gr_number": 25,
+        "student_name": "Nymue",
+        "class_name": "z=",
+        "source_image": "WhatsApp Image 2026-08-19 at 12.37.19 AM.jpeg",
+        "source_image_hash": "41c3f7a60e36eafda4c543938d78276da12415ca91da6d8eb443ab474082ed0f",
+        "confidence": 90,
+        "status": "needs_review",
+        "verification_status": "needs_review"
+      },
+      {
+        "gr_number": 2,
+        "student_name": "Dune Zs",
+        "class_name": "Ca",
+        "source_image": "WhatsApp Image 2026-08-19 at 12.37.19 AM.jpeg",
+        "source_image_hash": "41c3f7a60e36eafda4c543938d78276da12415ca91da6d8eb443ab474082ed0f",
+        "confidence": 90,
+        "status": "needs_review",
+        "verification_status": "needs_review"
+      },
+      {
+        "gr_number": 6,
+        "student_name": "Mane",
+        "class_name": "Unassigned",
+        "source_image": "WhatsApp Image 2026-08-19 at 12.37.19 AM.jpeg",
+        "source_image_hash": "41c3f7a60e36eafda4c543938d78276da12415ca91da6d8eb443ab474082ed0f",
+        "confidence": 90,
+        "status": "needs_review",
+        "verification_status": "needs_review"
+      },
+      {
+        "gr_number": 283,
+        "student_name": "Mana ip",
+        "class_name": "Sa ~",
+        "source_image": "WhatsApp Image 2026-08-19 at 12.37.19 AM.jpeg",
+        "source_image_hash": "41c3f7a60e36eafda4c543938d78276da12415ca91da6d8eb443ab474082ed0f",
+        "confidence": 90,
+        "status": "needs_review",
+        "verification_status": "needs_review"
+      },
+      {
+        "gr_number": 213,
+        "student_name": "Weawmn Te",
+        "class_name": "el ok d",
+        "source_image": "WhatsApp Image 2026-08-19 at 12.37.19 AM.jpeg",
+        "source_image_hash": "41c3f7a60e36eafda4c543938d78276da12415ca91da6d8eb443ab474082ed0f",
+        "confidence": 90,
+        "status": "needs_review",
+        "verification_status": "needs_review"
+      },
+      {
+        "gr_number": 292,
+        "student_name": "Nome ZPey",
+        "class_name": "BUGT 8 LANE",
+        "source_image": "WhatsApp Image 2026-08-19 at 12.37.19 AM.jpeg",
+        "source_image_hash": "41c3f7a60e36eafda4c543938d78276da12415ca91da6d8eb443ab474082ed0f",
+        "confidence": 90,
+        "status": "needs_review",
+        "verification_status": "needs_review"
+      },
+      {
+        "gr_number": 269,
+        "student_name": "Aw",
+        "class_name": "Dear, R",
+        "source_image": "WhatsApp Image 2026-08-19 at 12.37.19 AM.jpeg",
+        "source_image_hash": "41c3f7a60e36eafda4c543938d78276da12415ca91da6d8eb443ab474082ed0f",
+        "confidence": 75,
+        "status": "needs_review",
+        "verification_status": "needs_review"
+      },
+      {
+        "gr_number": 54,
+        "student_name": "2c WM.",
+        "class_name": "Class XI - Pre-Engineering",
+        "source_image": "WhatsApp Image 2026-08-19 at 12.37.19 AM.jpeg",
+        "source_image_hash": "41c3f7a60e36eafda4c543938d78276da12415ca91da6d8eb443ab474082ed0f",
+        "confidence": 75,
+        "status": "needs_review",
+        "verification_status": "needs_review"
+      }
+    ]
+  },
+  {
+    "image": {
+      "index": 13,
+      "imageId": "new_img_13",
+      "filename": "WhatsApp Image 2026-08-19 at 12.37.27 AM.jpeg",
+      "sha256": "fb06e964b7385fe8b1c3911b8cb2dae1424966b315b145ad6c27a47a5dc929ce",
+      "sizeBytes": 171301,
+      "width": 720,
+      "height": 1280,
+      "format": "Portrait Page",
+      "isDuplicateOfOld": false
+    },
+    "candidatesCount": 10,
+    "candidates": [
+      {
+        "gr_number": 238,
+        "student_name": "Usama",
+        "class_name": "Class XI - Pre-Engineering",
+        "source_image": "WhatsApp Image 2026-08-19 at 12.37.27 AM.jpeg",
+        "source_image_hash": "fb06e964b7385fe8b1c3911b8cb2dae1424966b315b145ad6c27a47a5dc929ce",
+        "confidence": 90,
+        "status": "needs_review",
+        "verification_status": "needs_review"
+      },
+      {
+        "gr_number": 979,
+        "student_name": "Knnib Ann",
+        "class_name": "AD",
+        "source_image": "WhatsApp Image 2026-08-19 at 12.37.27 AM.jpeg",
+        "source_image_hash": "fb06e964b7385fe8b1c3911b8cb2dae1424966b315b145ad6c27a47a5dc929ce",
+        "confidence": 90,
+        "status": "needs_review",
+        "verification_status": "needs_review"
+      },
+      {
+        "gr_number": 290,
+        "student_name": "Neveeety",
+        "class_name": "GReeueets",
+        "source_image": "WhatsApp Image 2026-08-19 at 12.37.27 AM.jpeg",
+        "source_image_hash": "fb06e964b7385fe8b1c3911b8cb2dae1424966b315b145ad6c27a47a5dc929ce",
+        "confidence": 90,
+        "status": "needs_review",
+        "verification_status": "needs_review"
+      },
+      {
+        "gr_number": 223,
+        "student_name": "Qmr",
+        "class_name": "SN1",
+        "source_image": "WhatsApp Image 2026-08-19 at 12.37.27 AM.jpeg",
+        "source_image_hash": "fb06e964b7385fe8b1c3911b8cb2dae1424966b315b145ad6c27a47a5dc929ce",
+        "confidence": 90,
+        "status": "needs_review",
+        "verification_status": "needs_review"
+      },
+      {
+        "gr_number": 22,
+        "student_name": "Receee",
+        "class_name": "TNornry",
+        "source_image": "WhatsApp Image 2026-08-19 at 12.37.27 AM.jpeg",
+        "source_image_hash": "fb06e964b7385fe8b1c3911b8cb2dae1424966b315b145ad6c27a47a5dc929ce",
+        "confidence": 90,
+        "status": "needs_review",
+        "verification_status": "needs_review"
+      },
+      {
+        "gr_number": 235,
+        "student_name": "Jowwon",
+        "class_name": "Rea",
+        "source_image": "WhatsApp Image 2026-08-19 at 12.37.27 AM.jpeg",
+        "source_image_hash": "fb06e964b7385fe8b1c3911b8cb2dae1424966b315b145ad6c27a47a5dc929ce",
+        "confidence": 90,
+        "status": "needs_review",
+        "verification_status": "needs_review"
+      },
+      {
+        "gr_number": 25,
+        "student_name": "Ques Minwney",
+        "class_name": "Stheber",
+        "source_image": "WhatsApp Image 2026-08-19 at 12.37.27 AM.jpeg",
+        "source_image_hash": "fb06e964b7385fe8b1c3911b8cb2dae1424966b315b145ad6c27a47a5dc929ce",
+        "confidence": 90,
+        "status": "needs_review",
+        "verification_status": "needs_review"
+      },
+      {
+        "gr_number": 2,
+        "student_name": "Mweice Norn",
+        "class_name": "viteshe",
+        "source_image": "WhatsApp Image 2026-08-19 at 12.37.27 AM.jpeg",
+        "source_image_hash": "fb06e964b7385fe8b1c3911b8cb2dae1424966b315b145ad6c27a47a5dc929ce",
+        "confidence": 90,
+        "status": "needs_review",
+        "verification_status": "needs_review"
+      },
+      {
+        "gr_number": 295,
+        "student_name": "Nanaey",
+        "class_name": "biti",
+        "source_image": "WhatsApp Image 2026-08-19 at 12.37.27 AM.jpeg",
+        "source_image_hash": "fb06e964b7385fe8b1c3911b8cb2dae1424966b315b145ad6c27a47a5dc929ce",
+        "confidence": 90,
+        "status": "needs_review",
+        "verification_status": "needs_review"
+      },
+      {
+        "gr_number": 80,
+        "student_name": "2. hun",
+        "class_name": "Deer 4 &",
+        "source_image": "WhatsApp Image 2026-08-19 at 12.37.27 AM.jpeg",
+        "source_image_hash": "fb06e964b7385fe8b1c3911b8cb2dae1424966b315b145ad6c27a47a5dc929ce",
+        "confidence": 75,
+        "status": "needs_review",
+        "verification_status": "needs_review"
+      }
+    ]
+  }
+]

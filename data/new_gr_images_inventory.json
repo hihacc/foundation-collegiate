@@ -1,0 +1,145 @@
+[
+  {
+    "index": 1,
+    "imageId": "new_img_01",
+    "filename": "WhatsApp Image 2026-08-19 at 12.35.28 AM.jpeg",
+    "sha256": "2fcc9752e381762dd1f5097a6cbcbdc8b18f5bb781a96f5e705996488b17ca98",
+    "sizeBytes": 164764,
+    "width": 720,
+    "height": 1280,
+    "format": "Portrait Page",
+    "isDuplicateOfOld": false
+  },
+  {
+    "index": 2,
+    "imageId": "new_img_02",
+    "filename": "WhatsApp Image 2026-08-19 at 12.35.46 AM.jpeg",
+    "sha256": "3048b48411afb8c5da047b3eed435c6946ab4d4b1a5306f1abf511547d6ea76a",
+    "sizeBytes": 172318,
+    "width": 720,
+    "height": 1280,
+    "format": "Portrait Page",
+    "isDuplicateOfOld": false
+  },
+  {
+    "index": 3,
+    "imageId": "new_img_03",
+    "filename": "WhatsApp Image 2026-08-19 at 12.35.56 AM.jpeg",
+    "sha256": "6afe357d79faf0c5658a0a8f0dd745809123232dc087288e6985412b5bb0e94c",
+    "sizeBytes": 153661,
+    "width": 720,
+    "height": 1280,
+    "format": "Portrait Page",
+    "isDuplicateOfOld": false
+  },
+  {
+    "index": 4,
+    "imageId": "new_img_04",
+    "filename": "WhatsApp Image 2026-08-19 at 12.36.09 AM.jpeg",
+    "sha256": "c2f44c327a0b27918b23eaba7294d438f304702df26eabb2861bde2c37014b22",
+    "sizeBytes": 160906,
+    "width": 1280,
+    "height": 720,
+    "format": "Landscape Spread",
+    "isDuplicateOfOld": false
+  },
+  {
+    "index": 5,
+    "imageId": "new_img_05",
+    "filename": "WhatsApp Image 2026-08-19 at 12.36.14 AM.jpeg",
+    "sha256": "1d00dd3f498bbcff284f015f46409015db07a09eeb669f6c02cff7767e242990",
+    "sizeBytes": 164283,
+    "width": 720,
+    "height": 1280,
+    "format": "Portrait Page",
+    "isDuplicateOfOld": false
+  },
+  {
+    "index": 6,
+    "imageId": "new_img_06",
+    "filename": "WhatsApp Image 2026-08-19 at 12.36.27 AM.jpeg",
+    "sha256": "765e5d785317a969b4cc13a92183efdcecb4b15837d185b2cc180d1c4d401170",
+    "sizeBytes": 146731,
+    "width": 720,
+    "height": 1280,
+    "format": "Portrait Page",
+    "isDuplicateOfOld": false
+  },
+  {
+    "index": 7,
+    "imageId": "new_img_07",
+    "filename": "WhatsApp Image 2026-08-19 at 12.36.38 AM.jpeg",
+    "sha256": "25653a3bba2ed6d07a2a9391cfc02787459689550fe8fafb3eda802a40d60b9e",
+    "sizeBytes": 149165,
+    "width": 720,
+    "height": 1280,
+    "format": "Portrait Page",
+    "isDuplicateOfOld": false
+  },
+  {
+    "index": 8,
+    "imageId": "new_img_08",
+    "filename": "WhatsApp Image 2026-08-19 at 12.36.47 AM.jpeg",
+    "sha256": "06d95253f0cf85b2f4695a4d3e481ce4259f636c6ab93923206f43a805ffa137",
+    "sizeBytes": 168035,
+    "width": 720,
+    "height": 1280,
+    "format": "Portrait Page",
+    "isDuplicateOfOld": false
+  },
+  {
+    "index": 9,
+    "imageId": "new_img_09",
+    "filename": "WhatsApp Image 2026-08-19 at 12.36.54 AM.jpeg",
+    "sha256": "bdf6feefcec330a4fa35daa0dfc9fe2b38e00de0feac06dc4f759f0d43ddbf8f",
+    "sizeBytes": 180629,
+    "width": 720,
+    "height": 1280,
+    "format": "Portrait Page",
+    "isDuplicateOfOld": false
+  },
+  {
+    "index": 10,
+    "imageId": "new_img_10",
+    "filename": "WhatsApp Image 2026-08-19 at 12.37.01 AM.jpeg",
+    "sha256": "f8bdefa5754e220f87a19925ba80eef7a8e72709190d819b281a17649535d691",
+    "sizeBytes": 173695,
+    "width": 720,
+    "height": 1280,
+    "format": "Portrait Page",
+    "isDuplicateOfOld": false
+  },
+  {
+    "index": 11,
+    "imageId": "new_img_11",
+    "filename": "WhatsApp Image 2026-08-19 at 12.37.09 AM.jpeg",
+    "sha256": "51c0fc76ee1682af4bd180e31863b4fee66f1a420fd987d31d05ee7370635ebf",
+    "sizeBytes": 168014,
+    "width": 720,
+    "height": 1280,
+    "format": "Portrait Page",
+    "isDuplicateOfOld": false
+  },
+  {
+    "index": 12,
+    "imageId": "new_img_12",
+    "filename": "WhatsApp Image 2026-08-19 at 12.37.19 AM.jpeg",
+    "sha256": "41c3f7a60e36eafda4c543938d78276da12415ca91da6d8eb443ab474082ed0f",
+    "sizeBytes": 166112,
+    "width": 720,
+    "height": 1280,
+    "format": "Portrait Page",
+    "isDuplicateOfOld": false
+  },
+  {
+    "index": 13,
+    "imageId": "new_img_13",
+    "filename": "WhatsApp Image 2026-08-19 at 12.37.27 AM.jpeg",
+    "sha256": "fb06e964b7385fe8b1c3911b8cb2dae1424966b315b145ad6c27a47a5dc929ce",
+    "sizeBytes": 171301,
+    "width": 720,
+    "height": 1280,
+    "format": "Portrait Page",
+    "isDuplicateOfOld": false
+  }
+]
