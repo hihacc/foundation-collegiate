@@ -57,6 +57,8 @@ export interface Student {
   religion?: string | null
   nationality?: string | null
   parent_phone?: string | null
+  secondary_phone?: string | null
+  emergency_contact?: string | null
   father_occupation?: string | null
   previous_school?: string | null
   admission_number?: string | null

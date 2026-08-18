@@ -14,15 +14,42 @@ import Link from 'next/link';
 
 const isUUID = (str: any) => typeof str === 'string' && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(str);
 
+// 13-Digit Pakistani CNIC Formatter (XXXXX-XXXXXXX-X)
+export function formatCnic(input: string): string {
+  const digits = (input || '').replace(/\D/g, '').slice(0, 13);
+  if (digits.length <= 5) return digits;
+  if (digits.length <= 12) return `${digits.slice(0, 5)}-${digits.slice(5)}`;
+  return `${digits.slice(0, 5)}-${digits.slice(5, 12)}-${digits.slice(12, 13)}`;
+}
+
+// 11-Digit Pakistani Phone Formatter (03XX-XXXXXXX)
+export function formatPhoneNumber(input: string): string {
+  const digits = (input || '').replace(/\D/g, '').slice(0, 11);
+  if (digits.length <= 4) return digits;
+  return `${digits.slice(0, 4)}-${digits.slice(4)}`;
+}
+
+// WhatsApp Direct URL Formatter
+export function cleanPhoneForWhatsApp(phone: string | null | undefined): string {
+  if (!phone) return '';
+  let digits = phone.replace(/\D/g, '');
+  if (digits.startsWith('0')) {
+    digits = '92' + digits.slice(1);
+  } else if (!digits.startsWith('92')) {
+    digits = '92' + digits;
+  }
+  return digits;
+}
+
 const fallbackClassOptions = OFFICIAL_CLASSES.map(c => c.key);
 
 const defaultStudents: Student[] = [
-  { id: 's1', name: 'Asif Khan', father_name: 'Muhammad Khan', roll_number: 'FC-26-101', class_name: 'Class IX - Science / Biology', phone: '0333-1234567', email: 'asif@gmail.com', status: 'active', is_active: true, created_at: new Date().toISOString() },
-  { id: 's2', name: 'Zainab Ahmed', father_name: 'Tariq Ahmed', roll_number: 'FC-26-102', class_name: 'Class XI - Pre-Medical', phone: '0321-9876543', email: 'zainab@gmail.com', status: 'active', is_active: true, created_at: new Date().toISOString() },
-  { id: 's3', name: 'Bilal Hassan', father_name: 'Hassan Raza', roll_number: 'FC-26-103', class_name: 'Class XII - Pre-Engineering', phone: '0300-5554433', email: 'bilal@gmail.com', status: 'active', is_active: true, created_at: new Date().toISOString() },
-  { id: 's4', name: 'Hamza Malik', father_name: 'Malik Usman', roll_number: 'FC-26-104', class_name: 'Diploma in Information Technology (DIT)', phone: '0345-2233445', email: 'hamza.malik@gmail.com', status: 'active', is_active: true, created_at: new Date().toISOString() },
-  { id: 's5', name: 'Ayesha Siddiqui', father_name: 'Siddiqui Ahmed', roll_number: 'FC-26-105', class_name: 'Class XII - Computer Science', phone: '0312-7788990', email: 'ayesha.s@gmail.com', status: 'active', is_active: true, created_at: new Date().toISOString() },
-  { id: 's6', name: 'Mustafa Ali', father_name: 'Ali Raza', roll_number: 'FC-26-106', class_name: 'Class X - Computer Science', phone: '0331-4455667', email: 'mustafa.ali@gmail.com', status: 'active', is_active: true, created_at: new Date().toISOString() }
+  { id: 's1', name: 'Asif Khan', father_name: 'Muhammad Khan', roll_number: 'FC-26-101', class_name: 'Class IX - Science / Biology', phone: '0333-1234567', parent_phone: '0333-9988776', secondary_phone: '0331-5556677', email: 'asif@gmail.com', status: 'active', is_active: true, created_at: new Date().toISOString() },
+  { id: 's2', name: 'Zainab Ahmed', father_name: 'Tariq Ahmed', roll_number: 'FC-26-102', class_name: 'Class XI - Pre-Medical', phone: '0321-9876543', parent_phone: '0321-7788990', secondary_phone: '0300-1122334', email: 'zainab@gmail.com', status: 'active', is_active: true, created_at: new Date().toISOString() },
+  { id: 's3', name: 'Bilal Hassan', father_name: 'Hassan Raza', roll_number: 'FC-26-103', class_name: 'Class XII - Pre-Engineering', phone: '0300-5554433', parent_phone: '0300-2233445', secondary_phone: '0345-6677889', email: 'bilal@gmail.com', status: 'active', is_active: true, created_at: new Date().toISOString() },
+  { id: 's4', name: 'Hamza Malik', father_name: 'Malik Usman', roll_number: 'FC-26-104', class_name: 'Diploma in Information Technology (DIT)', phone: '0345-2233445', parent_phone: '0345-1122334', secondary_phone: '0312-3344556', email: 'hamza.malik@gmail.com', status: 'active', is_active: true, created_at: new Date().toISOString() },
+  { id: 's5', name: 'Ayesha Siddiqui', father_name: 'Siddiqui Ahmed', roll_number: 'FC-26-105', class_name: 'Class XII - Computer Science', phone: '0312-7788990', parent_phone: '0312-5566778', secondary_phone: '0333-8899001', email: 'ayesha.s@gmail.com', status: 'active', is_active: true, created_at: new Date().toISOString() },
+  { id: 's6', name: 'Mustafa Ali', father_name: 'Ali Raza', roll_number: 'FC-26-106', class_name: 'Class X - Computer Science', phone: '0331-4455667', parent_phone: '0331-2233445', secondary_phone: '0321-9988776', email: 'mustafa.ali@gmail.com', status: 'active', is_active: true, created_at: new Date().toISOString() }
 ];
 
 export default function AdminStudentsPage() {
@@ -207,6 +234,8 @@ export default function AdminStudentsPage() {
     class_name: 'Class XII - Computer Science', 
     section: 'A',
     phone: '', 
+    parent_phone: '',
+    secondary_phone: '',
     email: '',
     photo_url: '', 
     status: 'active',
@@ -216,7 +245,6 @@ export default function AdminStudentsPage() {
     nationality: 'Pakistani',
     cnic: '',
     address: '',
-    parent_phone: '',
     father_occupation: '',
     previous_school: '',
   });
@@ -329,7 +357,9 @@ export default function AdminStudentsPage() {
         diploma_program: dp,
         class_name: s.class_name || dynamicClasses[0],
         section: s.section || 'A',
-        phone: s.phone || '',
+        phone: s.phone ? formatPhoneNumber(s.phone) : '',
+        parent_phone: s.parent_phone ? formatPhoneNumber(s.parent_phone) : (s as any).guardian_phone ? formatPhoneNumber((s as any).guardian_phone) : '',
+        secondary_phone: s.secondary_phone ? formatPhoneNumber(s.secondary_phone) : (s as any).emergency_contact ? formatPhoneNumber((s as any).emergency_contact) : '',
         email: s.email || '',
         photo_url: s.photo_url || '',
         status: s.status || 'active',
@@ -337,9 +367,8 @@ export default function AdminStudentsPage() {
         gender: s.gender || 'Male',
         religion: s.religion || 'Islam',
         nationality: s.nationality || 'Pakistani',
-        cnic: s.cnic || (s as any).cnic_number || '',
+        cnic: (s.cnic || (s as any).cnic_number) ? formatCnic(s.cnic || (s as any).cnic_number) : '',
         address: s.address || '',
-        parent_phone: s.parent_phone || (s as any).guardian_phone || '',
         father_occupation: s.father_occupation || '',
         previous_school: s.previous_school || '',
       });
@@ -356,6 +385,8 @@ export default function AdminStudentsPage() {
         class_name: 'Class XII - Computer Science',
         section: 'A',
         phone: '',
+        parent_phone: '',
+        secondary_phone: '',
         email: '',
         photo_url: '',
         status: 'active',
@@ -365,7 +396,6 @@ export default function AdminStudentsPage() {
         nationality: 'Pakistani',
         cnic: '',
         address: '',
-        parent_phone: '',
         father_occupation: '',
         previous_school: '',
       });
@@ -388,13 +418,42 @@ export default function AdminStudentsPage() {
       return toast.error(`Roll Number "${targetRoll}" is already assigned to ${duplicate.name}! Roll numbers must be unique.`);
     }
 
+    // 13-Digit CNIC Validation
+    const cnicDigits = (form.cnic || '').replace(/\D/g, '');
+    if (cnicDigits.length > 0 && cnicDigits.length !== 13) {
+      setSubmitting(false);
+      return toast.error(`CNIC / B-Form Number must be exactly 13 digits (Current: ${cnicDigits.length} digits). Example: 42101-1234567-1`);
+    }
+
+    // 11-Digit Phone Number Validations
+    const parentDigits = (form.parent_phone || '').replace(/\D/g, '');
+    if (parentDigits.length > 0 && parentDigits.length !== 11) {
+      setSubmitting(false);
+      return toast.error(`Parent Cell Number must be exactly 11 digits (Current: ${parentDigits.length} digits). Example: 0333-1112233`);
+    }
+
+    const studentDigits = (form.phone || '').replace(/\D/g, '');
+    if (studentDigits.length > 0 && studentDigits.length !== 11) {
+      setSubmitting(false);
+      return toast.error(`Student Cell Phone must be exactly 11 digits (Current: ${studentDigits.length} digits). Example: 0300-1234567`);
+    }
+
+    const secDigits = (form.secondary_phone || '').replace(/\D/g, '');
+    if (secDigits.length > 0 && secDigits.length !== 11) {
+      setSubmitting(false);
+      return toast.error(`Secondary / Alternate Phone must be exactly 11 digits (Current: ${secDigits.length} digits). Example: 0345-1122334`);
+    }
+
     const payload = {
       name: form.name.trim(),
       father_name: form.father_name.trim(),
       roll_number: form.roll_number.trim().toUpperCase(),
       class_name: form.class_name.trim(),
       section: form.section.trim() || 'A',
-      phone: form.phone.trim() || (editing?.phone ?? null),
+      phone: form.phone.trim() ? formatPhoneNumber(form.phone.trim()) : (editing?.phone ?? null),
+      parent_phone: form.parent_phone.trim() ? formatPhoneNumber(form.parent_phone.trim()) : (editing?.parent_phone ?? null),
+      secondary_phone: form.secondary_phone.trim() ? formatPhoneNumber(form.secondary_phone.trim()) : (editing?.secondary_phone ?? null),
+      emergency_contact: form.secondary_phone.trim() ? formatPhoneNumber(form.secondary_phone.trim()) : (editing?.emergency_contact ?? null),
       email: form.email.trim() || (editing?.email ?? null),
       photo_url: form.photo_url.trim() || (editing?.photo_url ?? null),
       status: form.status || (editing?.status ?? 'active'),
@@ -402,9 +461,9 @@ export default function AdminStudentsPage() {
       gender: form.gender || (editing?.gender ?? 'Male'),
       religion: form.religion || (editing?.religion ?? 'Islam'),
       nationality: form.nationality || (editing?.nationality ?? 'Pakistani'),
-      cnic: form.cnic.trim() || (editing?.cnic ?? null),
+      cnic: form.cnic.trim() ? formatCnic(form.cnic.trim()) : (editing?.cnic ?? null),
+      cnic_number: form.cnic.trim() ? formatCnic(form.cnic.trim()) : (editing?.cnic ?? null),
       address: form.address.trim() || (editing?.address ?? null),
-      parent_phone: form.parent_phone.trim() || (editing?.parent_phone ?? null),
       father_occupation: form.father_occupation.trim() || (editing?.father_occupation ?? null),
       previous_school: form.previous_school.trim() || (editing?.previous_school ?? null),
       is_active: form.status !== 'inactive',
@@ -513,7 +572,7 @@ export default function AdminStudentsPage() {
 
   const handleExportCSV = () => {
     if (filtered.length === 0) return toast.info('No student data to export.');
-    const headers = ['Roll Number', 'Student Name', 'Father Name', 'Class Name', 'Email', 'Phone', 'Status'];
+    const headers = ['Roll Number', 'Student Name', 'Father Name', 'Class Name', 'Email', 'Student Cell', 'Parent Phone', 'Alternate / Emergency Phone', 'CNIC', 'Status'];
     const rows = filtered.map(s => [
       `"${s.roll_number || ''}"`,
       `"${s.name || ''}"`,
@@ -521,6 +580,9 @@ export default function AdminStudentsPage() {
       `"${s.class_name || ''}"`,
       `"${s.email || ''}"`,
       `"${s.phone || ''}"`,
+      `"${s.parent_phone || ''}"`,
+      `"${s.secondary_phone || (s as any).emergency_contact || ''}"`,
+      `"${s.cnic || (s as any).cnic_number || ''}"`,
       `"${s.status || 'Active'}"`
     ]);
     const csvContent = 'data:text/csv;charset=utf-8,' + [headers.join(','), ...rows.map(e => e.join(','))].join('\n');
@@ -531,7 +593,7 @@ export default function AdminStudentsPage() {
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
-    toast.success('Exported Student Directory CSV file!');
+    toast.success('Exported Student Directory CSV file with multi-phone contacts!');
   };
 
   const [statusFilter, setStatusFilter] = useState<'all' | 'active' | 'inactive' | 'graduated'>('all');
@@ -553,13 +615,30 @@ export default function AdminStudentsPage() {
   };
 
   const filtered = students.filter(s => {
+    const cleanSearchDigits = (search || '').replace(/\D/g, '');
+    const cleanPhone = (s.phone || '').replace(/\D/g, '');
+    const cleanParentPhone = (s.parent_phone || '').replace(/\D/g, '');
+    const cleanSecPhone = ((s.secondary_phone || (s as any).emergency_contact) || '').replace(/\D/g, '');
+    const cleanCnic = (s.cnic || (s as any).cnic_number || '').replace(/\D/g, '');
+
+    const phoneMatch = cleanSearchDigits.length >= 3 && (
+      cleanPhone.includes(cleanSearchDigits) ||
+      cleanParentPhone.includes(cleanSearchDigits) ||
+      cleanSecPhone.includes(cleanSearchDigits) ||
+      cleanCnic.includes(cleanSearchDigits)
+    );
+
     const matchesSearch =
       !search ||
       (s.name || '').toLowerCase().includes(search.toLowerCase()) ||
       (s.roll_number || '').toLowerCase().includes(search.toLowerCase()) ||
       (s.father_name || '').toLowerCase().includes(search.toLowerCase()) ||
       (s.email || '').toLowerCase().includes(search.toLowerCase()) ||
-      (s.phone || '').toLowerCase().includes(search.toLowerCase());
+      (s.phone || '').toLowerCase().includes(search.toLowerCase()) ||
+      (s.parent_phone || '').toLowerCase().includes(search.toLowerCase()) ||
+      ((s.secondary_phone || (s as any).emergency_contact) || '').toLowerCase().includes(search.toLowerCase()) ||
+      (s.cnic || (s as any).cnic_number || '').toLowerCase().includes(search.toLowerCase()) ||
+      phoneMatch;
 
     const matchesClass = matchStudentToClass(s.class_name, selectedClass);
 
@@ -950,12 +1029,17 @@ export default function AdminStudentsPage() {
                   </div>
 
                   <div>
-                    <label className="text-xs font-bold text-slate-700 uppercase tracking-wider block mb-1">CNIC / B-Form Number</label>
+                    <div className="flex items-center justify-between mb-1">
+                      <label className="text-xs font-bold text-slate-700 uppercase tracking-wider block">
+                        CNIC / B-Form Number
+                      </label>
+                      <span className="text-[10px] text-blue-600 font-mono font-bold">13 Digits</span>
+                    </div>
                     <input
                       type="text"
                       value={form.cnic}
-                      onChange={e => setForm(prev => ({ ...prev, cnic: e.target.value }))}
-                      placeholder="e.g. 42101-1234567-1"
+                      onChange={e => setForm(prev => ({ ...prev, cnic: formatCnic(e.target.value) }))}
+                      placeholder="42101-1234567-1"
                       className="w-full px-3.5 py-2 bg-slate-50 border border-slate-200 text-slate-800 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none font-mono text-xs"
                     />
                   </div>
@@ -976,7 +1060,7 @@ export default function AdminStudentsPage() {
               {/* Section 2: Parent & Guardian Info */}
               <div className="space-y-3 pt-2">
                 <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-emerald-600 border-b border-slate-100 pb-1">
-                  <span>2. Parent / Guardian Contact Details</span>
+                  <span>2. Parent &amp; Contact Registry (11-Digit Numbers)</span>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                   <div>
@@ -1003,24 +1087,50 @@ export default function AdminStudentsPage() {
                   </div>
 
                   <div>
-                    <label className="text-xs font-bold text-slate-700 uppercase tracking-wider block mb-1">Parent Cell Number <span className="text-red-500">*</span></label>
+                    <div className="flex items-center justify-between mb-1">
+                      <label className="text-xs font-bold text-slate-700 uppercase tracking-wider block">
+                        Parent Primary Cell <span className="text-red-500">*</span>
+                      </label>
+                      <span className="text-[10px] text-emerald-600 font-mono font-bold">11 Digits</span>
+                    </div>
                     <input
                       type="text"
                       required
                       value={form.parent_phone}
-                      onChange={e => setForm(prev => ({ ...prev, parent_phone: e.target.value }))}
-                      placeholder="e.g. 0333-1112233"
+                      onChange={e => setForm(prev => ({ ...prev, parent_phone: formatPhoneNumber(e.target.value) }))}
+                      placeholder="0333-1112233"
                       className="w-full px-3.5 py-2 bg-slate-50 border border-slate-200 text-slate-800 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none font-mono text-xs"
                     />
                   </div>
 
                   <div>
-                    <label className="text-xs font-bold text-slate-700 uppercase tracking-wider block mb-1">Student Cell Phone</label>
+                    <div className="flex items-center justify-between mb-1">
+                      <label className="text-xs font-bold text-slate-700 uppercase tracking-wider block">
+                        Student Cell Phone
+                      </label>
+                      <span className="text-[10px] text-blue-600 font-mono font-bold">11 Digits</span>
+                    </div>
                     <input
                       type="text"
                       value={form.phone}
-                      onChange={e => setForm(prev => ({ ...prev, phone: e.target.value }))}
-                      placeholder="e.g. 0321-4445566"
+                      onChange={e => setForm(prev => ({ ...prev, phone: formatPhoneNumber(e.target.value) }))}
+                      placeholder="0321-4445566"
+                      className="w-full px-3.5 py-2 bg-slate-50 border border-slate-200 text-slate-800 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none font-mono text-xs"
+                    />
+                  </div>
+
+                  <div>
+                    <div className="flex items-center justify-between mb-1">
+                      <label className="text-xs font-bold text-slate-700 uppercase tracking-wider block">
+                        Secondary / Alternate Phone
+                      </label>
+                      <span className="text-[10px] text-amber-600 font-mono font-bold">11 Digits (Alt/WhatsApp)</span>
+                    </div>
+                    <input
+                      type="text"
+                      value={form.secondary_phone}
+                      onChange={e => setForm(prev => ({ ...prev, secondary_phone: formatPhoneNumber(e.target.value) }))}
+                      placeholder="0345-1122334"
                       className="w-full px-3.5 py-2 bg-slate-50 border border-slate-200 text-slate-800 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none font-mono text-xs"
                     />
                   </div>
@@ -1139,7 +1249,7 @@ export default function AdminStudentsPage() {
                   <th className="py-3.5 px-4 font-bold text-left">Student Profile</th>
                   <th className="py-3.5 px-4 font-bold text-left">Roll No.</th>
                   <th className="py-3.5 px-4 font-bold text-left">Assigned Class</th>
-                  <th className="py-3.5 px-4 font-bold text-left">Email & Phone</th>
+                  <th className="py-3.5 px-4 font-bold text-left">Contact &amp; Phone Directory</th>
                   <th className="py-3.5 px-4 font-bold text-right">Actions</th>
                 </tr>
               </thead>
@@ -1200,13 +1310,77 @@ export default function AdminStudentsPage() {
                       </div>
                     </td>
                     <td className="py-4 px-4">
-                      <div className="flex flex-col text-xs space-y-0.5">
-                        <div className="font-medium text-slate-800 flex items-center gap-1">
-                          <Mail size={12} className="text-slate-400 shrink-0" /> {s.email || 'No email set'}
-                        </div>
-                        <div className="text-slate-500 font-mono">
-                          {s.phone || 'No phone set'}
-                        </div>
+                      <div className="flex flex-col text-xs space-y-1.5 min-w-[210px]">
+                        {s.email && (
+                          <div className="font-medium text-slate-700 flex items-center gap-1.5 truncate">
+                            <Mail size={12} className="text-slate-400 shrink-0" />
+                            <span className="truncate">{s.email}</span>
+                          </div>
+                        )}
+
+                        {/* Parent Phone */}
+                        {s.parent_phone ? (
+                          <div className="flex items-center justify-between gap-2 bg-emerald-50/80 border border-emerald-200/80 px-2 py-1 rounded-lg">
+                            <div className="flex items-center gap-1 text-[11px] font-mono font-bold text-emerald-950">
+                              <span className="text-[10px] text-emerald-700 font-sans font-bold">👨‍👦 Parent:</span>
+                              <span>{s.parent_phone}</span>
+                            </div>
+                            <a
+                              href={`https://wa.me/${cleanPhoneForWhatsApp(s.parent_phone)}?text=${encodeURIComponent(`Assalam-o-Alaikum, Parent of ${s.name} (${s.roll_number}) - The Foundation Collegiate`)}`}
+                              target="_blank"
+                              rel="noreferrer"
+                              title="Chat with Parent on WhatsApp"
+                              className="text-[9px] font-bold text-emerald-700 hover:text-emerald-900 bg-white px-1.5 py-0.5 rounded border border-emerald-300 shadow-2xs transition-colors shrink-0"
+                            >
+                              💬 WhatsApp
+                            </a>
+                          </div>
+                        ) : null}
+
+                        {/* Student Cell */}
+                        {s.phone ? (
+                          <div className="flex items-center justify-between gap-2 bg-blue-50/80 border border-blue-200/80 px-2 py-1 rounded-lg">
+                            <div className="flex items-center gap-1 text-[11px] font-mono font-bold text-blue-950">
+                              <span className="text-[10px] text-blue-700 font-sans font-bold">📱 Student:</span>
+                              <span>{s.phone}</span>
+                            </div>
+                            <a
+                              href={`https://wa.me/${cleanPhoneForWhatsApp(s.phone)}?text=${encodeURIComponent(`Assalam-o-Alaikum ${s.name} (${s.roll_number}) - The Foundation Collegiate`)}`}
+                              target="_blank"
+                              rel="noreferrer"
+                              title="Chat with Student on WhatsApp"
+                              className="text-[9px] font-bold text-blue-700 hover:text-blue-900 bg-white px-1.5 py-0.5 rounded border border-blue-300 shadow-2xs transition-colors shrink-0"
+                            >
+                              💬 WhatsApp
+                            </a>
+                          </div>
+                        ) : null}
+
+                        {/* Secondary Phone */}
+                        {(s.secondary_phone || (s as any).emergency_contact) ? (
+                          <div className="flex items-center justify-between gap-2 bg-amber-50/80 border border-amber-200/80 px-2 py-1 rounded-lg">
+                            <div className="flex items-center gap-1 text-[11px] font-mono font-bold text-amber-950">
+                              <span className="text-[10px] text-amber-700 font-sans font-bold">🚨 Alt:</span>
+                              <span>{s.secondary_phone || (s as any).emergency_contact}</span>
+                            </div>
+                            <a
+                              href={`https://wa.me/${cleanPhoneForWhatsApp(s.secondary_phone || (s as any).emergency_contact)}?text=${encodeURIComponent(`Assalam-o-Alaikum, Guardian of ${s.name} (${s.roll_number}) - The Foundation Collegiate`)}`}
+                              target="_blank"
+                              rel="noreferrer"
+                              title="Chat with Alternate on WhatsApp"
+                              className="text-[9px] font-bold text-amber-700 hover:text-amber-900 bg-white px-1.5 py-0.5 rounded border border-amber-300 shadow-2xs transition-colors shrink-0"
+                            >
+                              💬 WhatsApp
+                            </a>
+                          </div>
+                        ) : null}
+
+                        {/* CNIC / B-Form */}
+                        {(s.cnic || (s as any).cnic_number) && (
+                          <div className="text-[10px] font-mono text-slate-500 flex items-center gap-1 bg-slate-50 px-2 py-0.5 rounded border border-slate-200">
+                            <span className="font-bold text-slate-700 font-sans">🪪 CNIC (13d):</span> {s.cnic || (s as any).cnic_number}
+                          </div>
+                        )}
                       </div>
                     </td>
                     <td className="py-4 px-4">
@@ -1272,8 +1446,18 @@ export default function AdminStudentsPage() {
                 <div className="w-full bg-blue-50 border border-blue-100 rounded-xl p-3 text-xs space-y-1 text-left">
                   <div className="flex justify-between"><span className="text-slate-500 font-medium">Roll Number:</span> <span className="font-mono font-bold text-blue-900">{printStudent.roll_number}</span></div>
                   <div className="flex justify-between"><span className="text-slate-500 font-medium">Class / Group:</span> <span className="font-bold text-slate-800">{printStudent.class_name}</span></div>
-                  <div className="flex justify-between"><span className="text-slate-500 font-medium">Email:</span> <span className="font-medium text-slate-800">{printStudent.email || 'N/A'}</span></div>
-                  <div className="flex justify-between"><span className="text-slate-500 font-medium">Contact:</span> <span className="font-mono text-slate-800">{printStudent.phone || 'N/A'}</span></div>
+                  {(printStudent.cnic || (printStudent as any).cnic_number) && (
+                    <div className="flex justify-between"><span className="text-slate-500 font-medium">CNIC (13-Digit):</span> <span className="font-mono font-bold text-slate-800">{printStudent.cnic || (printStudent as any).cnic_number}</span></div>
+                  )}
+                  {printStudent.parent_phone && (
+                    <div className="flex justify-between"><span className="text-slate-500 font-medium">Parent Cell:</span> <span className="font-mono text-slate-800">{printStudent.parent_phone}</span></div>
+                  )}
+                  {printStudent.phone && (
+                    <div className="flex justify-between"><span className="text-slate-500 font-medium">Student Cell:</span> <span className="font-mono text-slate-800">{printStudent.phone}</span></div>
+                  )}
+                  {printStudent.email && (
+                    <div className="flex justify-between"><span className="text-slate-500 font-medium">Email:</span> <span className="font-medium text-slate-800">{printStudent.email}</span></div>
+                  )}
                 </div>
 
                 <div className="w-full pt-2 flex justify-between items-end text-[9px] text-slate-500 border-t border-slate-200">
