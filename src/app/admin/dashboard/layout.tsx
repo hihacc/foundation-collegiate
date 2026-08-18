@@ -87,6 +87,7 @@ export const navGroups: NavGroup[] = [
     category: 'People & Directory',
     items: [
       { name: 'Students Roster', href: '/admin/dashboard/students', icon: Users },
+      { name: '📋 G.R. Register Ledger', href: '/admin/dashboard/students/gr-register', icon: BookOpen, isHot: true },
       { name: 'Student Birthdays', href: '/admin/dashboard/students/birthdays', icon: Cake },
       { name: 'Faculty & Teachers', href: '/admin/dashboard/teachers', icon: UserCog }
     ]

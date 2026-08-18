@@ -3,7 +3,7 @@ export const dynamic = 'force-dynamic';
 
 import { useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabase/client';
-import { Users, Search, GraduationCap, Plus, Pencil, Trash2, Loader2, Upload, Filter, UserCheck, Download, Printer, Mail, X, FileSpreadsheet, RotateCcw, Sparkles } from 'lucide-react';
+import { Users, Search, GraduationCap, Plus, Pencil, Trash2, Loader2, Upload, Filter, UserCheck, Download, Printer, Mail, X, FileSpreadsheet, RotateCcw, Sparkles, BookOpen } from 'lucide-react';
 import { m, AnimatePresence } from 'framer-motion';
 import Button from '@/components/ui/Button';
 import { toast } from 'sonner';
@@ -683,18 +683,26 @@ export default function AdminStudentsPage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <div className="flex items-center gap-2 mb-1">
+          <div className="flex items-center gap-2 mb-1 flex-wrap">
             <span className="text-sm font-semibold text-slate-500">Active Directory</span>
+            <span className="text-slate-400">/</span>
+            <Link href="/admin/dashboard/students/gr-register" className="text-sm font-bold text-blue-600 hover:underline flex items-center gap-1">📋 G.R. Register Ledger</Link>
             <span className="text-slate-400">/</span>
             <Link href="/admin/dashboard/students/birthdays" className="text-sm font-semibold text-rose-600 hover:underline flex items-center gap-1">🎂 Student Birthdays</Link>
             <span className="text-slate-400">/</span>
-            <Link href="/admin/dashboard/students/old" className="text-sm font-semibold text-blue-600 hover:underline">View Archive (Old Students)</Link>
+            <Link href="/admin/dashboard/students/old" className="text-sm font-semibold text-slate-600 hover:underline">View Archive</Link>
           </div>
           <h1 className="text-2xl sm:text-3xl font-display font-bold text-slate-800">Student Directory</h1>
-          <p className="text-slate-500 text-sm mt-1">Manage currently enrolled active students</p>
+          <p className="text-slate-500 text-sm mt-1">Manage currently enrolled active students &amp; linked General Registers</p>
         </div>
 
         <div className="flex flex-wrap items-center gap-3">
+          <Link
+            href="/admin/dashboard/students/gr-register"
+            className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2.5 rounded-xl font-bold text-xs shadow-md shadow-blue-500/20 transition-all active:scale-95"
+          >
+            <BookOpen size={16} /> 📋 G.R. Register (27 Scans)
+          </Link>
           <Link
             href="/admin/dashboard/students/scanner"
             className="flex items-center gap-2 bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white px-4 py-2.5 rounded-xl font-bold text-xs shadow-md shadow-amber-500/20 transition-all active:scale-95"
