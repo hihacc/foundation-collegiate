@@ -148,7 +148,11 @@ function generateSmartReply({ lastMessage, context, studentName }: { lastMessage
     return `Assalam-o-Alaikum,\n\nRegarding examination schedules and results for ${studentName || 'the student'}:\n\nOfficial date sheets, roll number slips, and term results are uploaded to the student portal. You can download official PDFs directly from:\n👉 https://foundation-collegiate.vercel.app/downloads\n\nWarm regards,\n*TFC Examination Branch*`;
   }
 
-  return `Assalam-o-Alaikum,\n\nThank you for contacting The Foundation Collegiate (TFC).\n\nWe have received your message regarding: "${lastMessage.slice(0, 80)}${lastMessage.length > 80 ? '...' : ''}". Our administrative desk is looking into this and will provide complete assistance shortly.\n\nWarm regards,\n*The Foundation Collegiate Administration*`;
+  if (studentName) {
+    return `Assalam-o-Alaikum,\n\nThank you for reaching out regarding ${studentName}.\n\nOur administrative desk has received your query and will provide complete assistance shortly. If you have an urgent question, feel free to contact us at 0333-3439458.\n\nWarm regards,\n*The Foundation Collegiate Administration*`;
+  }
+
+  return `Assalam-o-Alaikum,\n\nThank you for contacting The Foundation Collegiate (TFC).\n\nOur administrative desk is here to assist you with admissions, academic classes, fee structures, and examination details. Please let us know how we can best help you today.\n\nWarm regards,\n*The Foundation Collegiate Administration*\n📞 0333-3439458 | 🌐 foundation-collegiate.vercel.app`;
 }
 
 function generateUrduTranslation(text: string): string {

@@ -852,54 +852,45 @@ export default function WhatsAppInboxPage() {
           ) : (
             <>
               {/* Chat Header */}
-              <div className="p-3.5 sm:p-4 bg-white border-b border-slate-200 flex items-center justify-between gap-3 shrink-0">
-                <div className="flex items-center gap-3 min-w-0">
+              <div className="p-3 sm:p-4 bg-white border-b border-slate-200 flex items-center justify-between gap-2 sm:gap-4 shrink-0">
+                <div className="flex items-center gap-2.5 sm:gap-3 min-w-0 flex-1">
                   {/* Mobile Back Button */}
                   <button
                     onClick={() => setMobileView('list')}
-                    className="md:hidden p-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 transition-colors"
+                    className="md:hidden p-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 transition-colors shrink-0"
                     title="Back to Conversations"
                   >
                     <ArrowLeft size={16} />
                   </button>
 
-                  <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-emerald-600 to-teal-600 text-white font-bold text-sm flex items-center justify-center shrink-0">
-                    {currentConv.contact_name ? currentConv.contact_name.charAt(0) : 'W'}
+                  <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-emerald-600 to-teal-600 text-white font-bold text-sm flex items-center justify-center shrink-0 shadow-xs">
+                    {currentConv.contact_name ? currentConv.contact_name.charAt(0).toUpperCase() : 'W'}
                   </div>
-                  <div className="min-w-0">
-                    <div className="flex items-center gap-2">
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-center gap-1.5 flex-wrap">
                       <h3 className="font-bold text-slate-900 text-sm truncate">{currentConv.contact_name}</h3>
-                      <span className="px-2 py-0.5 rounded-md text-[10px] font-bold bg-emerald-50 text-emerald-800 border border-emerald-200">
-                        {currentConv.relationship || 'Contact'}
+                      <span className="px-2 py-0.5 rounded-md text-[10px] font-bold bg-emerald-50 text-emerald-800 border border-emerald-200 shrink-0">
+                        {currentConv.relationship || 'Inquiry'}
                       </span>
                     </div>
                     <p className="text-xs font-mono text-slate-500 flex items-center gap-1.5 truncate">
                       <span>📱 {formatDisplayPhone(currentConv.phone)}</span>
-                      {currentConv.student_class && <span className="text-blue-600 font-sans font-semibold">· {currentConv.student_class}</span>}
+                      {currentConv.student_class && <span className="text-blue-600 font-sans font-semibold truncate">· {currentConv.student_class}</span>}
                     </p>
                   </div>
                 </div>
 
-                <div className="flex items-center gap-2 shrink-0">
-                  {/* Info Toggle for Mobile / Tablet */}
-                  <button
-                    onClick={() => setMobileView(mobileView === 'info' ? 'chat' : 'info')}
-                    className="xl:hidden p-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition-colors"
-                    title="Toggle Student Details"
-                  >
-                    <Info size={15} />
-                  </button>
-
+                <div className="flex items-center gap-1 sm:gap-1.5 shrink-0">
                   {/* WhatsApp Web Launch */}
                   <a
                     href={`https://wa.me/${currentConv.normalized_phone}`}
                     target="_blank"
                     rel="noreferrer"
-                    className="p-2 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 text-xs font-bold flex items-center gap-1 transition-colors"
+                    className="px-2.5 py-1.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 text-xs font-bold flex items-center gap-1 transition-colors"
                     title="Open in WhatsApp Web"
                   >
-                    <MessageCircle size={15} />
-                    <span className="hidden sm:inline">WhatsApp Web</span>
+                    <MessageCircle size={14} />
+                    <span className="hidden lg:inline">WhatsApp Web</span>
                   </a>
 
                   {/* Direct Phone Call */}
@@ -908,27 +899,36 @@ export default function WhatsAppInboxPage() {
                     className="p-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition-colors"
                     title="Direct Phone Call"
                   >
-                    <Phone size={15} />
+                    <Phone size={14} />
                   </a>
 
                   {/* Export Chat Transcript */}
                   <button
                     onClick={handleExportChat}
-                    className="p-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 text-xs font-bold flex items-center gap-1 transition-colors cursor-pointer"
+                    className="p-2 sm:px-2.5 sm:py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 text-xs font-bold flex items-center gap-1 transition-colors cursor-pointer"
                     title="Export Chat History to Text File"
                   >
-                    <Download size={15} />
-                    <span className="hidden sm:inline">Export</span>
+                    <Download size={14} />
+                    <span className="hidden lg:inline">Export</span>
                   </button>
 
                   {/* Delete / Clear Conversation */}
                   <button
                     onClick={() => handleDeleteConversation(currentConv.id)}
-                    className="p-2 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 text-xs font-bold flex items-center gap-1 transition-colors cursor-pointer"
+                    className="p-2 sm:px-2.5 sm:py-1.5 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 text-xs font-bold flex items-center gap-1 transition-colors cursor-pointer"
                     title="Delete Conversation and History"
                   >
-                    <Trash2 size={15} />
-                    <span className="hidden sm:inline">Delete</span>
+                    <Trash2 size={14} />
+                    <span className="hidden lg:inline">Delete</span>
+                  </button>
+
+                  {/* Info Toggle for Mobile / Tablet */}
+                  <button
+                    onClick={() => setMobileView(mobileView === 'info' ? 'chat' : 'info')}
+                    className="xl:hidden p-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition-colors"
+                    title="Toggle Student Details"
+                  >
+                    <Info size={14} />
                   </button>
                 </div>
               </div>
