@@ -4,6 +4,7 @@ import { getAllAiConnections } from '@/lib/ai/aiConnectionService';
 import { decryptApiKey } from '@/lib/utils/encryption';
 import { checkRateLimit } from '@/lib/security/rateLimiter';
 import { sanitizeInput } from '@/lib/security/sanitize';
+import { ALL_IMPORTED_STUDENT_CONTACTS, IMPORTED_BROADCAST_LISTS } from '@/lib/whatsapp/importedContacts';
 
 export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';
@@ -31,6 +32,8 @@ export async function POST(req: NextRequest) {
       { data: results },
       { data: feeChallans },
       { data: admissions },
+      { data: inquiries },
+      { data: attendance },
       { data: notices },
       { data: achievers },
       { data: teachers },
@@ -40,6 +43,8 @@ export async function POST(req: NextRequest) {
       supabase.from('results').select('id, student_name, roll_number, class_name, exam_name, month, total_marks, obtained_marks, percentage, grade, position').limit(200),
       supabase.from('fee_challans').select('id, student_id, challan_no, student_name, class_name, month_year, total_amount, status, due_date').limit(150),
       supabase.from('admissions').select('id, student_name, father_name, class_applied, parent_phone, status, created_at').limit(100),
+      supabase.from('inquiries').select('*').limit(300),
+      supabase.from('attendance').select('*').limit(200),
       supabase.from('notices').select('id, title, category, is_active, created_at').limit(50),
       supabase.from('achievers').select('id, name, position, board, percentage').limit(50),
       supabase.from('teachers').select('id, name, subject, qualification, is_active').limit(50),
@@ -95,10 +100,33 @@ export async function POST(req: NextRequest) {
       );
     });
 
+    // Also search the 762 imported WhatsApp phonebook contacts
+    const phonebookMatches = ALL_IMPORTED_STUDENT_CONTACTS.filter(c => {
+      const cName = (c.name || '').toLowerCase();
+      const cPhone = (c.phone || '').replace(/\D/g, '');
+      return promptTokens.some(token => 
+        cName.includes(token) || (token.length >= 4 && cPhone.includes(token))
+      );
+    });
+
+    // Also search Admission Inquiries
+    const inquiryMatches = (inquiries || []).filter((inq: any) => {
+      const inqName = (inq.name || '').toLowerCase();
+      const inqContact = (inq.contact || '').replace(/\D/g, '');
+      return promptTokens.some(token => 
+        inqName.includes(token) || (token.length >= 4 && inqContact.includes(token))
+      );
+    });
+
     const dataContext = {
       students_total_count: mergedStudents.length,
       matched_students_for_query: searchMatches,
-      students_directory: mergedStudents,
+      phonebook_contacts_total: ALL_IMPORTED_STUDENT_CONTACTS.length,
+      matched_phonebook_contacts: phonebookMatches.slice(0, 20),
+      inquiries_total: (inquiries || []).length,
+      matched_inquiries: inquiryMatches.slice(0, 15),
+      attendance_records_count: (attendance || []).length,
+      whatsapp_broadcast_lists: IMPORTED_BROADCAST_LISTS.map(l => ({ name: l.name, count: l.contacts.length })),
       results_count: results?.length || 0,
       results_sample: results || [],
       fee_challans_count: feeChallans?.length || 0,

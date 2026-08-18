@@ -10,7 +10,8 @@ import {
   ExternalLink, Clock, FileText, Check, X, Loader2, Plus, Copy, KeyRound, 
   Sparkles, Calendar, Play, Download, Search, Filter, Image as ImageIcon,
   Paperclip, MapPin, Bell, Award, UserCheck, Trash2, ChevronRight, Eye,
-  ListPlus, UserPlus, Contact, Share2, ArrowRight, Activity, Upload, FileSpreadsheet
+  ListPlus, UserPlus, Contact, Share2, ArrowRight, Activity, Upload, FileSpreadsheet,
+  Film, Music, FileUp
 } from 'lucide-react';
 import { OFFICIAL_CLASSES } from '@/lib/utils/classes';
 import { getStoredData, setStoredData } from '@/lib/utils/storage';
@@ -95,7 +96,7 @@ const TEMPLATE_LIBRARY = [
     title: 'Student Daily Absentee Notification',
     category: 'Attendance',
     tag: 'Discipline',
-    text: `🚨 *ABSENCE NOTIFICATION - THE FOUNDATION COLLEGIATE*\n\nRespected Parent,\nStudent *{{name}}* (Roll: *{{roll}}*, Class: *{{class}}*) was marked *ABSENT* from college today (*{{date}}*) without prior leave submission.\n\nKindly contact college administration if this is an error.\n\n*TFC Attendance Office*`
+    text: `TFC Alert! {{name}} is absent from class today.`
   },
   {
     title: 'Exam Date Sheet & Roll Number Slip Issued',
@@ -158,8 +159,15 @@ export default function WhatsAppCenterPage() {
   const [recipientPhone, setRecipientPhone] = useState('');
   const [selectedClass, setSelectedClass] = useState('IX-CS');
   const [selectedListId, setSelectedListId] = useState<string>('list_premed_toppers');
-  const [messageType, setMessageType] = useState<'TEXT' | 'DOCUMENT' | 'IMAGE' | 'LOCATION'>('TEXT');
+  const [messageType, setMessageType] = useState<'TEXT' | 'DOCUMENT' | 'IMAGE' | 'VIDEO' | 'AUDIO' | 'LOCATION'>('TEXT');
   const [attachmentUrl, setAttachmentUrl] = useState('');
+  const [attachedFile, setAttachedFile] = useState<{
+    name: string;
+    size: number;
+    type: string;
+    dataUrl: string;
+  } | null>(null);
+  const attachmentFileInputRef = useRef<HTMLInputElement>(null);
   const [messageBody, setMessageBody] = useState('');
   const [sending, setSending] = useState(false);
 
@@ -659,9 +667,13 @@ export default function WhatsAppCenterPage() {
             recipient: recipientPhone.trim(),
             messageBody: messageBody.trim(),
             messageType: messageType,
+            attachmentUrl: attachedFile?.dataUrl || attachmentUrl || undefined,
+            fileName: attachedFile?.name || undefined,
+            mimeType: attachedFile?.type || undefined,
             metadata: {
               target: 'direct',
-              attachmentUrl: attachmentUrl || undefined
+              attachmentUrl: attachedFile?.dataUrl || attachmentUrl || undefined,
+              fileName: attachedFile?.name || undefined
             }
           }
         })
@@ -784,6 +796,10 @@ export default function WhatsAppCenterPage() {
         return {
           recipient: st.phone,
           messageBody: personalized,
+          messageType: messageType,
+          attachmentUrl: attachedFile?.dataUrl || attachmentUrl || undefined,
+          fileName: attachedFile?.name || undefined,
+          mimeType: attachedFile?.type || undefined,
           metadata: { studentId: st.id, name: st.name, roll: st.roll_number, class: st.current_class }
         };
       });
@@ -836,6 +852,10 @@ export default function WhatsAppCenterPage() {
       const bulkPayload = list.contacts.map(c => ({
         recipient: c.phone,
         messageBody: messageBody.replace(/{{name}}/g, c.name),
+        messageType: messageType,
+        attachmentUrl: attachedFile?.dataUrl || attachmentUrl || undefined,
+        fileName: attachedFile?.name || undefined,
+        mimeType: attachedFile?.type || undefined,
         metadata: { listId: list.id, listName: list.name, name: c.name }
       }));
 
@@ -1331,66 +1351,187 @@ export default function WhatsAppCenterPage() {
             )}
 
             {/* Rich Format Type */}
-            <div className="space-y-1.5">
-              <label className="text-xs font-bold text-slate-700">Message Format</label>
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+            <div className="space-y-2">
+              <div className="flex items-center justify-between">
+                <label className="text-xs font-bold text-slate-700">Message Format &amp; Media Attachments</label>
+                <span className="text-[11px] text-emerald-700 font-medium">Attach Any PDF, Image, Video, Audio, or Doc</span>
+              </div>
+              <div className="grid grid-cols-3 sm:grid-cols-6 gap-2">
                 <button
                   type="button"
                   onClick={() => setMessageType('TEXT')}
-                  className={`p-3 rounded-2xl border text-xs font-bold flex items-center gap-2 justify-center transition-all ${
+                  className={`p-2.5 rounded-2xl border text-xs font-bold flex flex-col items-center gap-1 justify-center transition-all ${
                     messageType === 'TEXT'
                       ? 'bg-emerald-50 border-emerald-300 text-emerald-800 shadow-2xs'
                       : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50'
                   }`}
                 >
-                  <MessageCircle size={15} /> Text Only
+                  <MessageCircle size={16} /> <span>Text Only</span>
                 </button>
                 <button
                   type="button"
-                  onClick={() => setMessageType('DOCUMENT')}
-                  className={`p-3 rounded-2xl border text-xs font-bold flex items-center gap-2 justify-center transition-all ${
+                  onClick={() => {
+                    setMessageType('DOCUMENT');
+                    attachmentFileInputRef.current?.click();
+                  }}
+                  className={`p-2.5 rounded-2xl border text-xs font-bold flex flex-col items-center gap-1 justify-center transition-all ${
                     messageType === 'DOCUMENT'
                       ? 'bg-emerald-50 border-emerald-300 text-emerald-800 shadow-2xs'
                       : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50'
                   }`}
                 >
-                  <Paperclip size={15} /> PDF / Doc Link
+                  <Paperclip size={16} /> <span>PDF / Doc</span>
                 </button>
                 <button
                   type="button"
-                  onClick={() => setMessageType('IMAGE')}
-                  className={`p-3 rounded-2xl border text-xs font-bold flex items-center gap-2 justify-center transition-all ${
+                  onClick={() => {
+                    setMessageType('IMAGE');
+                    attachmentFileInputRef.current?.click();
+                  }}
+                  className={`p-2.5 rounded-2xl border text-xs font-bold flex flex-col items-center gap-1 justify-center transition-all ${
                     messageType === 'IMAGE'
                       ? 'bg-emerald-50 border-emerald-300 text-emerald-800 shadow-2xs'
                       : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50'
                   }`}
                 >
-                  <ImageIcon size={15} /> Image / Poster
+                  <ImageIcon size={16} /> <span>Image / Poster</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setMessageType('VIDEO');
+                    attachmentFileInputRef.current?.click();
+                  }}
+                  className={`p-2.5 rounded-2xl border text-xs font-bold flex flex-col items-center gap-1 justify-center transition-all ${
+                    messageType === 'VIDEO'
+                      ? 'bg-emerald-50 border-emerald-300 text-emerald-800 shadow-2xs'
+                      : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50'
+                  }`}
+                >
+                  <Film size={16} /> <span>Video Clip</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setMessageType('AUDIO');
+                    attachmentFileInputRef.current?.click();
+                  }}
+                  className={`p-2.5 rounded-2xl border text-xs font-bold flex flex-col items-center gap-1 justify-center transition-all ${
+                    messageType === 'AUDIO'
+                      ? 'bg-emerald-50 border-emerald-300 text-emerald-800 shadow-2xs'
+                      : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50'
+                  }`}
+                >
+                  <Music size={16} /> <span>Audio Note</span>
                 </button>
                 <button
                   type="button"
                   onClick={() => setMessageType('LOCATION')}
-                  className={`p-3 rounded-2xl border text-xs font-bold flex items-center gap-2 justify-center transition-all ${
+                  className={`p-2.5 rounded-2xl border text-xs font-bold flex flex-col items-center gap-1 justify-center transition-all ${
                     messageType === 'LOCATION'
                       ? 'bg-emerald-50 border-emerald-300 text-emerald-800 shadow-2xs'
                       : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50'
                   }`}
                 >
-                  <MapPin size={15} /> Campus Pin
+                  <MapPin size={16} /> <span>Campus Pin</span>
                 </button>
               </div>
             </div>
 
+            {/* Hidden File Input for any file attachment */}
+            <input
+              type="file"
+              ref={attachmentFileInputRef}
+              accept="*/*"
+              className="hidden"
+              onChange={(e) => {
+                const file = e.target.files?.[0];
+                if (!file) return;
+                
+                // Determine category
+                if (file.type.startsWith('image/')) setMessageType('IMAGE');
+                else if (file.type.startsWith('video/')) setMessageType('VIDEO');
+                else if (file.type.startsWith('audio/')) setMessageType('AUDIO');
+                else setMessageType('DOCUMENT');
+
+                const reader = new FileReader();
+                reader.onload = (evt) => {
+                  const dataUrl = evt.target?.result as string;
+                  setAttachedFile({
+                    name: file.name,
+                    size: file.size,
+                    type: file.type || 'application/octet-stream',
+                    dataUrl: dataUrl
+                  });
+                  setAttachmentUrl(dataUrl);
+                  toast.success(`Attached: ${file.name} (${(file.size / 1024 / 1024).toFixed(2)} MB)`);
+                };
+                reader.readAsDataURL(file);
+              }}
+            />
+
+            {/* Attachment Box: Shows uploaded file details OR allows public URL */}
             {messageType !== 'TEXT' && (
-              <div className="space-y-1.5">
-                <label className="text-xs font-bold text-slate-700">Attachment Public URL</label>
-                <input
-                  type="url"
-                  placeholder="https://foundation-collegiate.vercel.app/downloads/datesheet.pdf"
-                  value={attachmentUrl}
-                  onChange={(e) => setAttachmentUrl(e.target.value)}
-                  className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-2.5 text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 shadow-2xs"
-                />
+              <div className="p-4 bg-slate-50 border border-slate-200/90 rounded-2xl space-y-3 animate-in fade-in">
+                {attachedFile ? (
+                  <div className="flex items-center justify-between bg-white p-3 rounded-xl border border-emerald-200 shadow-2xs">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-800 flex items-center justify-center font-bold shrink-0">
+                        {attachedFile.type.startsWith('image/') ? <ImageIcon size={20} /> :
+                         attachedFile.type.startsWith('video/') ? <Film size={20} /> :
+                         attachedFile.type.startsWith('audio/') ? <Music size={20} /> :
+                         <FileText size={20} />}
+                      </div>
+                      <div className="overflow-hidden">
+                        <span className="font-bold text-xs text-slate-900 block truncate max-w-xs">{attachedFile.name}</span>
+                        <div className="flex items-center gap-2 text-[10px] text-slate-500 font-mono">
+                          <span>{(attachedFile.size / 1024 / 1024).toFixed(2)} MB</span>
+                          <span>•</span>
+                          <span className="uppercase text-emerald-700 font-bold">{attachedFile.type.split('/')[1] || 'FILE'}</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-2">
+                      <button
+                        type="button"
+                        onClick={() => attachmentFileInputRef.current?.click()}
+                        className="px-2.5 py-1 text-[11px] font-bold text-emerald-700 bg-emerald-50 hover:bg-emerald-100 rounded-lg"
+                      >
+                        Change
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setAttachedFile(null);
+                          setAttachmentUrl('');
+                          setMessageType('TEXT');
+                        }}
+                        className="p-1 text-slate-400 hover:text-rose-600 rounded-lg"
+                      >
+                        <X size={16} />
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="flex flex-col sm:flex-row items-center gap-3">
+                    <button
+                      type="button"
+                      onClick={() => attachmentFileInputRef.current?.click()}
+                      className="w-full sm:w-auto px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs flex items-center justify-center gap-1.5 shadow-2xs cursor-pointer shrink-0"
+                    >
+                      <FileUp size={15} /> Choose Any File from Computer
+                    </button>
+                    <span className="text-[11px] text-slate-400 font-bold">OR</span>
+                    <input
+                      type="url"
+                      placeholder="Paste Public Web / Document URL..."
+                      value={attachmentUrl}
+                      onChange={(e) => setAttachmentUrl(e.target.value)}
+                      className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                    />
+                  </div>
+                )}
               </div>
             )}
 
