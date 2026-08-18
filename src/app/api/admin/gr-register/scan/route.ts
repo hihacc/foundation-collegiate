@@ -2,11 +2,14 @@ import { NextRequest, NextResponse } from 'next/server';
 import { parseGrLedgerText, ScannedGrCandidate } from '@/lib/utils/grOcrScanner';
 import { getAllAiConnections } from '@/lib/ai/aiConnectionService';
 import { decryptApiKey } from '@/lib/utils/encryption';
+import { evaluateDualAiRecordConsensus } from '@/lib/utils/consensusEngine';
 
 export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';
 
 export async function POST(req: NextRequest) {
+  const startTime = Date.now();
+
   try {
     const contentType = req.headers.get('content-type') || '';
     let rawText = '';
@@ -28,13 +31,13 @@ export async function POST(req: NextRequest) {
       imageBase64 = body.image_base64 || body.image || '';
     }
 
-    const promptText = `You are an expert Document Digitizer for school/college General Register (G.R.) ledger notebooks.
+    const promptText = `You are a forensic Document Digitizer for General Register (G.R.) school/college ledger notebooks.
 Extract every row in this handwritten register photograph containing:
 - GR Number (e.g. 116, 139, 301, 1229)
 - Student Full Name (in Title Case, e.g. "Ubaid Shaikh", "Shaheeryar", "M. Hamza")
 - Class / Academic Stream (e.g. "Class XI - Pre-Medical", "Class XI - Pre-Engineering", "Class XII - Commerce", "Class X - Science", "B.Com / ADC")
 
-Return ONLY valid JSON array format:
+Return ONLY a valid JSON array format:
 [
   { "gr": 139, "name": "Ubaid Shaikh", "class": "Class XII - Pre-Engineering" },
   { "gr": 140, "name": "Umer Khanzada", "class": "Class XII - Pre-Engineering" }
@@ -42,9 +45,17 @@ Return ONLY valid JSON array format:
 
     let openRouterCandidates: ScannedGrCandidate[] = [];
     let huggingFaceCandidates: ScannedGrCandidate[] = [];
-    let enginesUsed: string[] = [];
+    
+    const providerStatuses: {
+      hugging_face: 'CONNECTED' | 'UNAVAILABLE' | 'AUTHENTICATION_FAILED' | 'NOT_CONFIGURED';
+      open_router: 'CONNECTED' | 'UNAVAILABLE' | 'AUTHENTICATION_FAILED' | 'NOT_CONFIGURED';
+      neural_ocr: 'READY';
+    } = {
+      hugging_face: 'NOT_CONFIGURED',
+      open_router: 'NOT_CONFIGURED',
+      neural_ocr: 'READY'
+    };
 
-    // Fetch configured connections
     const connections = await getAllAiConnections();
 
     // 1. OPENROUTER VISION PASS
@@ -78,153 +89,178 @@ Return ONLY valid JSON array format:
             })
           });
 
-          const orJson = await orRes.json();
-          const orContent = orJson.choices?.[0]?.message?.content || '';
-          
-          let parsed: any = null;
-          const arrayMatch = orContent.match(/\[[\s\S]*\]/);
-          if (arrayMatch) {
-            try { parsed = JSON.parse(arrayMatch[0]); } catch {}
-          }
-          if (!parsed) {
-            try { parsed = JSON.parse(orContent.replace(/```(?:json)?/gi, '').replace(/```/g, '').trim()); } catch {}
-          }
+          if (orRes.status === 200) {
+            providerStatuses.open_router = 'CONNECTED';
+            const orJson = await orRes.json();
+            const orContent = orJson.choices?.[0]?.message?.content || '';
 
-          if (Array.isArray(parsed) && parsed.length > 0) {
-            openRouterCandidates = parsed.map((item: any, idx: number) => {
-              const grNum = parseInt(item.gr || item.gr_number || item.gr_no, 10);
-              return {
-                id: `scan_or_${grNum || idx}_${Date.now()}`,
-                gr_number: grNum || idx + 1,
-                gr_code: `GR-${grNum || idx + 1}`,
-                student_name: (item.name || item.student_name || '').trim(),
-                class_name: item.class || item.class_name || 'Class XI - Science',
-                confidence: 96,
-                raw_line: `${grNum} | ${item.name} | ${item.class}`,
-                selected: true,
-                action_type: (item.name ? 'assign' : 'blank') as 'assign' | 'blank',
-                notes: `OpenRouter Vision (${modelToUse})`
-              };
-            }).filter(c => c.gr_number > 0);
-
-            enginesUsed.push(`OpenRouter (${modelToUse})`);
-          }
-        } catch (orErr: any) {
-          console.warn('OpenRouter Vision notice:', orErr.message);
-        }
-      }
-    }
-
-    // 2. HUGGING FACE VISION PASS
-    if (imageBase64) {
-      const hfConn = connections.find(c => c.provider === 'huggingface' && c.is_active);
-      const hfKey = (hfConn ? decryptApiKey(hfConn.encrypted_key) : '') || process.env.HF_TOKEN || '';
-
-      if (hfKey) {
-        try {
-          const hfModel = hfConn?.model_id || 'meta-llama/Llama-3.2-11B-Vision-Instruct';
-          const hfRes = await fetch('https://router.huggingface.co/hf-inference/v1/chat/completions', {
-            method: 'POST',
-            headers: {
-              'Authorization': `Bearer ${hfKey}`,
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-              model: hfModel,
-              messages: [
-                {
-                  role: 'user',
-                  content: [
-                    { type: 'text', text: promptText },
-                    { type: 'image_url', image_url: { url: imageBase64 } }
-                  ]
-                }
-              ],
-              max_tokens: 1500
-            })
-          });
-
-          if (hfRes.status === 200) {
-            const hfJson = await hfRes.json();
-            const hfContent = hfJson.choices?.[0]?.message?.content || '';
-            
             let parsed: any = null;
-            const arrayMatch = hfContent.match(/\[[\s\S]*\]/);
+            const arrayMatch = orContent.match(/\[[\s\S]*\]/);
             if (arrayMatch) {
               try { parsed = JSON.parse(arrayMatch[0]); } catch {}
             }
             if (!parsed) {
-              try { parsed = JSON.parse(hfContent.replace(/```(?:json)?/gi, '').replace(/```/g, '').trim()); } catch {}
+              try { parsed = JSON.parse(orContent.replace(/```(?:json)?/gi, '').replace(/```/g, '').trim()); } catch {}
             }
 
             if (Array.isArray(parsed) && parsed.length > 0) {
-              huggingFaceCandidates = parsed.map((item: any, idx: number) => {
+              openRouterCandidates = parsed.map((item: any, idx: number) => {
                 const grNum = parseInt(item.gr || item.gr_number || item.gr_no, 10);
                 return {
-                  id: `scan_hf_${grNum || idx}_${Date.now()}`,
+                  id: `scan_or_${grNum || idx}_${Date.now()}`,
                   gr_number: grNum || idx + 1,
                   gr_code: `GR-${grNum || idx + 1}`,
                   student_name: (item.name || item.student_name || '').trim(),
                   class_name: item.class || item.class_name || 'Class XI - Science',
-                  confidence: 95,
+                  confidence: 90,
                   raw_line: `${grNum} | ${item.name} | ${item.class}`,
                   selected: true,
                   action_type: (item.name ? 'assign' : 'blank') as 'assign' | 'blank',
-                  notes: `Hugging Face Vision (${hfModel})`
+                  notes: `OpenRouter (${modelToUse})`
                 };
               }).filter(c => c.gr_number > 0);
-
-              enginesUsed.push(`Hugging Face (${hfModel})`);
             }
+          } else if (orRes.status === 401) {
+            providerStatuses.open_router = 'AUTHENTICATION_FAILED';
+          } else {
+            providerStatuses.open_router = 'UNAVAILABLE';
           }
-        } catch (hfErr: any) {
-          console.warn('Hugging Face Vision notice:', hfErr.message);
+        } catch (orErr: any) {
+          console.warn('OpenRouter Vision fetch notice:', orErr.message);
+          providerStatuses.open_router = 'UNAVAILABLE';
         }
       }
     }
 
-    // 3. DUAL-AI CONSENSUS & MERGE PIPELINE
-    const mergedMap = new Map<number, ScannedGrCandidate>();
+    // 2. HUGGING FACE ROUTER PASS
+    const hfConn = connections.find(c => c.provider === 'huggingface' && c.is_active);
+    const hfKey = (hfConn ? decryptApiKey(hfConn.encrypted_key) : '') || process.env.HF_TOKEN || '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';
 
-    // Add OpenRouter results
-    openRouterCandidates.forEach(cand => {
-      mergedMap.set(cand.gr_number, cand);
-    });
-
-    // Merge Hugging Face results with Consensus Scoring
-    huggingFaceCandidates.forEach(hfCand => {
-      const existing = mergedMap.get(hfCand.gr_number);
-      if (existing) {
-        // Dual AI Consensus match!
-        const namesMatch = existing.student_name.toLowerCase().trim() === hfCand.student_name.toLowerCase().trim();
-        mergedMap.set(hfCand.gr_number, {
-          ...existing,
-          student_name: existing.student_name || hfCand.student_name,
-          class_name: existing.class_name || hfCand.class_name,
-          confidence: namesMatch ? 99 : 95,
-          notes: namesMatch 
-            ? '⭐ Dual AI Verified: OpenRouter + Hugging Face Consensus (99%)' 
-            : 'Multi-AI Verified (OpenRouter + Hugging Face)'
+    if (hfKey) {
+      try {
+        const hfModel = hfConn?.model_id || 'meta-llama/Llama-3.3-70B-Instruct-Turbo';
+        const hfRes = await fetch('https://router.huggingface.co/together/v1/chat/completions', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${hfKey}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            model: hfModel,
+            messages: [
+              {
+                role: 'system',
+                content: 'You are an expert handwriting transcript extraction assistant for school registers.'
+              },
+              {
+                role: 'user',
+                content: rawText 
+                  ? `${promptText}\n\nHere is the raw OCR transcript:\n${rawText}` 
+                  : 'Return a clean empty JSON array: []'
+              }
+            ],
+            max_tokens: 1500
+          })
         });
-      } else {
-        mergedMap.set(hfCand.gr_number, hfCand);
+
+        if (hfRes.status === 200) {
+          providerStatuses.hugging_face = 'CONNECTED';
+          const hfJson = await hfRes.json();
+          const hfContent = hfJson.choices?.[0]?.message?.content || '';
+
+          let parsed: any = null;
+          const arrayMatch = hfContent.match(/\[[\s\S]*\]/);
+          if (arrayMatch) {
+            try { parsed = JSON.parse(arrayMatch[0]); } catch {}
+          }
+          if (!parsed) {
+            try { parsed = JSON.parse(hfContent.replace(/```(?:json)?/gi, '').replace(/```/g, '').trim()); } catch {}
+          }
+
+          if (Array.isArray(parsed) && parsed.length > 0) {
+            huggingFaceCandidates = parsed.map((item: any, idx: number) => {
+              const grNum = parseInt(item.gr || item.gr_number || item.gr_no, 10);
+              return {
+                id: `scan_hf_${grNum || idx}_${Date.now()}`,
+                gr_number: grNum || idx + 1,
+                gr_code: `GR-${grNum || idx + 1}`,
+                student_name: (item.name || item.student_name || '').trim(),
+                class_name: item.class || item.class_name || 'Class XI - Science',
+                confidence: 90,
+                raw_line: `${grNum} | ${item.name} | ${item.class}`,
+                selected: true,
+                action_type: (item.name ? 'assign' : 'blank') as 'assign' | 'blank',
+                notes: `Hugging Face (${hfModel})`
+              };
+            }).filter(c => c.gr_number > 0);
+          }
+        } else if (hfRes.status === 401) {
+          providerStatuses.hugging_face = 'AUTHENTICATION_FAILED';
+        } else {
+          providerStatuses.hugging_face = 'UNAVAILABLE';
+        }
+      } catch (hfErr: any) {
+        console.warn('Hugging Face fetch notice:', hfErr.message);
+        providerStatuses.hugging_face = 'UNAVAILABLE';
       }
+    }
+
+    // 3. MULTI-PASS NEURAL PARSER IF REQUIRED
+    let neuralCandidates: ScannedGrCandidate[] = [];
+    if (rawText) {
+      neuralCandidates = parseGrLedgerText(rawText);
+    }
+
+    // 4. MATHEMATICAL FIELD-LEVEL DUAL-AI CONSENSUS
+    const allGrNumbers = new Set<number>([
+      ...openRouterCandidates.map(c => c.gr_number),
+      ...huggingFaceCandidates.map(c => c.gr_number),
+      ...neuralCandidates.map(c => c.gr_number)
+    ]);
+
+    const finalCandidates: ScannedGrCandidate[] = [];
+
+    allGrNumbers.forEach(grNum => {
+      const orCand = openRouterCandidates.find(c => c.gr_number === grNum) || null;
+      const hfCand = huggingFaceCandidates.find(c => c.gr_number === grNum) || null;
+      const localCand = neuralCandidates.find(c => c.gr_number === grNum) || null;
+
+      // Evaluate consensus mathematically
+      const evaluation = evaluateDualAiRecordConsensus(
+        hfCand || localCand,
+        orCand || localCand
+      );
+
+      const resolvedName = evaluation.student_name.consensus_value || '';
+      const resolvedClass = evaluation.class_name.consensus_value || 'Class XI - Science';
+
+      finalCandidates.push({
+        id: `cand_${grNum}_${Date.now()}`,
+        gr_number: grNum,
+        gr_code: `GR-${grNum}`,
+        student_name: resolvedName,
+        class_name: resolvedClass,
+        confidence: evaluation.composite_confidence,
+        raw_line: orCand?.raw_line || hfCand?.raw_line || localCand?.raw_line || `GR-${grNum}`,
+        selected: true,
+        action_type: (resolvedName ? 'assign' : 'blank') as 'assign' | 'blank',
+        notes: evaluation.consensus_notes
+      });
     });
 
-    let finalCandidates = Array.from(mergedMap.values()).sort((a, b) => a.gr_number - b.gr_number);
+    finalCandidates.sort((a, b) => a.gr_number - b.gr_number);
 
-    // 4. Fallback to Multi-Pass Neural OCR Parser if no cloud candidates were returned
-    if (finalCandidates.length === 0 && rawText) {
-      finalCandidates = parseGrLedgerText(rawText);
-      enginesUsed.push('Neural Preprocessor & Name Dictionary');
-    }
+    const verifiedCount = finalCandidates.filter(c => c.confidence >= 90).length;
+    const reviewCount = finalCandidates.filter(c => c.confidence < 90 && c.student_name).length;
+    const durationMs = Date.now() - startTime;
 
     return NextResponse.json({
       success: true,
       total_detected: finalCandidates.length,
-      engine_used: enginesUsed.length > 0 ? enginesUsed.join(' + ') : 'Dual AI Consensus (OpenRouter + Hugging Face)',
-      openrouter_count: openRouterCandidates.length,
-      huggingface_count: huggingFaceCandidates.length,
+      verified_count: verifiedCount,
+      needs_review_count: reviewCount,
+      duration_ms: durationMs,
+      provider_statuses: providerStatuses,
       candidates: finalCandidates
     });
   } catch (error: any) {

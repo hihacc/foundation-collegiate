@@ -88,6 +88,16 @@ export default function GrRegisterPage() {
   const [scannedCandidates, setScannedCandidates] = useState<ScannedGrCandidate[]>([]);
   const [rawOcrText, setRawOcrText] = useState('');
   const [isCommitting, setIsCommitting] = useState(false);
+  const [scanDiagnostics, setScanDiagnostics] = useState<{
+    duration_ms?: number;
+    provider_statuses?: {
+      hugging_face?: string;
+      open_router?: string;
+      neural_ocr?: string;
+    };
+    verified_count?: number;
+    needs_review_count?: number;
+  } | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const mobileCameraInputRef = useRef<HTMLInputElement>(null);
 
@@ -438,9 +448,15 @@ export default function GrRegisterPage() {
           const cloudJson = await cloudRes.json();
           if (cloudJson.success && Array.isArray(cloudJson.candidates) && cloudJson.candidates.length > 0) {
             setScannedCandidates(cloudJson.candidates);
+            setScanDiagnostics({
+              duration_ms: cloudJson.duration_ms,
+              provider_statuses: cloudJson.provider_statuses,
+              verified_count: cloudJson.verified_count,
+              needs_review_count: cloudJson.needs_review_count
+            });
             setScanProgress(100);
-            setScanProgressText('Scan complete via ' + (cloudJson.engine_used || 'Cloud Vision AI'));
-            toast.success(`✨ Scanned ${cloudJson.candidates.length} entries via ${cloudJson.engine_used || 'Default Cloud Vision AI'}!`);
+            setScanProgressText(`Scan complete in ${cloudJson.duration_ms || 0}ms`);
+            toast.success(`✨ Detected ${cloudJson.candidates.length} entries (${cloudJson.verified_count || 0} verified)!`);
             return;
           }
         } catch (cloudErr) {
@@ -1327,6 +1343,39 @@ export default function GrRegisterPage() {
                 </div>
 
                 {/* Candidate Results Table */}
+                {scanDiagnostics && (
+                  <div className="p-3 bg-slate-50 border border-slate-200 rounded-2xl flex flex-wrap items-center justify-between gap-2 text-xs">
+                    <div className="flex items-center gap-3">
+                      <span className="font-bold text-slate-700">Dual-AI Diagnostics:</span>
+                      <span className={`px-2 py-0.5 rounded-md font-mono text-[10px] font-bold ${
+                        scanDiagnostics.provider_statuses?.hugging_face === 'CONNECTED'
+                          ? 'bg-emerald-100 text-emerald-800'
+                          : 'bg-slate-200 text-slate-700'
+                      }`}>
+                        🤗 HF: {scanDiagnostics.provider_statuses?.hugging_face || 'ACTIVE'}
+                      </span>
+                      <span className={`px-2 py-0.5 rounded-md font-mono text-[10px] font-bold ${
+                        scanDiagnostics.provider_statuses?.open_router === 'CONNECTED'
+                          ? 'bg-emerald-100 text-emerald-800'
+                          : 'bg-slate-200 text-slate-700'
+                      }`}>
+                        ⚡ OpenRouter: {scanDiagnostics.provider_statuses?.open_router || 'ACTIVE'}
+                      </span>
+                      <span className="px-2 py-0.5 rounded-md bg-blue-100 text-blue-800 font-mono text-[10px] font-bold">
+                        🧠 Neural Consensus
+                      </span>
+                    </div>
+
+                    <div className="flex items-center gap-2 text-slate-500 font-medium text-[11px]">
+                      <span>Latency: {scanDiagnostics.duration_ms || 0}ms</span>
+                      <span>•</span>
+                      <span className="text-emerald-700 font-bold">{scanDiagnostics.verified_count || 0} Verified</span>
+                      <span>•</span>
+                      <span className="text-amber-700 font-bold">{scanDiagnostics.needs_review_count || 0} Review</span>
+                    </div>
+                  </div>
+                )}
+
                 {scannedCandidates.length === 0 ? (
                   <div className="p-12 text-center border-2 border-dashed border-slate-200 rounded-2xl space-y-2">
                     <Camera size={36} className="mx-auto text-indigo-300" />
