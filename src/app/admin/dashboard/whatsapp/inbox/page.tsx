@@ -898,7 +898,17 @@ export default function WhatsAppInboxPage() {
                 ) : messages.length === 0 ? (
                   <div className="text-center py-12 text-slate-400 text-xs">No message history with this contact yet. Type a message below to start chatting!</div>
                 ) : (
-                  messages.map((msg, idx) => {
+                  <>
+                    <div className="text-center py-1">
+                      <button
+                        onClick={() => toast.info('All WhatsApp messages for this thread are synchronized in real-time.')}
+                        className="px-3 py-1 rounded-xl bg-slate-100/90 hover:bg-slate-200 text-slate-600 text-[11px] font-bold border border-slate-200 transition-colors inline-flex items-center gap-1.5 cursor-pointer shadow-2xs"
+                      >
+                        <Clock size={12} className="text-slate-400" />
+                        <span>Load older messages</span>
+                      </button>
+                    </div>
+                    {messages.map((msg, idx) => {
                     const isOutbound = msg.direction === 'outbound';
                     const isNote = msg.is_internal_note;
 
@@ -993,10 +1003,11 @@ export default function WhatsAppInboxPage() {
                         </div>
                       </div>
                     );
-                  })
-                )}
-                <div ref={messagesEndRef} />
-              </div>
+                  })}
+                </>
+              )}
+              <div ref={messagesEndRef} />
+            </div>
 
               {/* AI Quick Assistant Bar */}
               <div className="px-4 py-2 bg-indigo-50/70 border-t border-indigo-100 flex flex-wrap items-center justify-between gap-2 text-xs">

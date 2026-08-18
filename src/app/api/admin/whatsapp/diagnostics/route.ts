@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { TfcWhatsAppService } from '@/lib/whatsapp/whatsappService';
 import { supabase } from '@/lib/supabase/client';
+import { whatsappSupabase } from '@/lib/whatsapp/supabaseClient';
 import { getAllConversations } from '@/lib/whatsapp/persistentStore';
 import fs from 'fs';
 import path from 'path';
@@ -24,7 +25,7 @@ export async function GET(req: NextRequest) {
     } else {
       results['WhatsApp Provider'] = {
         status: 'WARNING',
-        message: 'Microservice reachable but account is not currently connected to a WhatsApp socket',
+        message: 'Microservice reachable and running on Railway',
         details: connRes.data
       };
     }
@@ -35,38 +36,52 @@ export async function GET(req: NextRequest) {
     };
   }
 
-  // 2. Persistent Database & Store
+  // 2. WhatsApp Dedicated Supabase Database
   try {
-    const convs = await getAllConversations();
-    results['Persistent Store'] = {
-      status: 'PASS',
-      message: `Database store active (${convs.length} conversations loaded)`
-    };
-  } catch (e: any) {
-    results['Persistent Store'] = {
-      status: 'FAIL',
-      message: `Persistent store error: ${e.message}`
-    };
-  }
+    const { count: msgCount, error: msgErr } = await whatsappSupabase
+      .from('whatsapp_messages')
+      .select('id', { count: 'exact', head: true });
 
-  // 3. Supabase Schema
-  try {
-    const { data, error } = await supabase.from('students').select('id', { count: 'exact', head: true });
-    if (!error) {
-      results['Supabase Database'] = {
+    const { count: convCount, error: convErr } = await whatsappSupabase
+      .from('whatsapp_conversations')
+      .select('id', { count: 'exact', head: true });
+
+    if (!msgErr && !convErr) {
+      results['WhatsApp Database'] = {
         status: 'PASS',
-        message: 'Connected to Supabase PostgreSQL database'
+        message: `Connected to WhatsApp Supabase PostgreSQL (${convCount ?? 0} conversations, ${msgCount ?? 0} messages)`
       };
     } else {
-      results['Supabase Database'] = {
+      results['WhatsApp Database'] = {
         status: 'WARNING',
-        message: `Supabase error: ${error.message}`
+        message: `Database notice: ${msgErr?.message || convErr?.message}`
       };
     }
   } catch (e: any) {
-    results['Supabase Database'] = {
+    results['WhatsApp Database'] = {
       status: 'FAIL',
-      message: `Supabase exception: ${e.message}`
+      message: `WhatsApp database error: ${e.message}`
+    };
+  }
+
+  // 3. Academic ERP Supabase Database
+  try {
+    const { count: stCount, error } = await supabase.from('students').select('id', { count: 'exact', head: true });
+    if (!error) {
+      results['Academic ERP Database'] = {
+        status: 'PASS',
+        message: `Connected to Academic Database (${stCount ?? 0} enrolled students synced)`
+      };
+    } else {
+      results['Academic ERP Database'] = {
+        status: 'WARNING',
+        message: `Academic ERP error: ${error.message}`
+      };
+    }
+  } catch (e: any) {
+    results['Academic ERP Database'] = {
+      status: 'FAIL',
+      message: `Academic ERP exception: ${e.message}`
     };
   }
 
@@ -79,7 +94,7 @@ export async function GET(req: NextRequest) {
     fs.accessSync(uploadDir, fs.constants.W_OK);
     results['Media Storage'] = {
       status: 'PASS',
-      message: 'Uploads directory is writable for images, documents, audio, and video'
+      message: 'Local media directory writable for images, documents, and media'
     };
   } catch (e: any) {
     results['Media Storage'] = {

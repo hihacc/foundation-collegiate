@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { processInboundWhatsAppMessage, normalizePhone } from '@/lib/whatsapp/enterpriseDb';
 import { findOrCreateConversation, appendMessage } from '@/lib/whatsapp/persistentStore';
 import { supabase } from '@/lib/supabase/client';
+import { whatsappSupabase } from '@/lib/whatsapp/supabaseClient';
 
 export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';
@@ -122,13 +123,13 @@ export async function POST(req: NextRequest) {
     }
 
     // 2. Message Status Event (Sent / Delivered / Read / Failed)
-    if (eventType === 'MESSAGE_STATUS' || eventType === 'messages.update' || payload.status) {
-      const providerId = payload.id || payload.messageId || payload.key?.id;
+    if (eventType === 'MESSAGE_STATUS' || eventType === 'MESSAGE_STATUS_UPDATE' || eventType === 'messages.update' || payload.status) {
+      const providerId = payload.id || payload.messageId || payload.providerMessageId || payload.key?.id;
       const newStatus = (payload.status || 'delivered').toLowerCase();
 
       if (providerId) {
         try {
-          await supabase
+          await whatsappSupabase
             .from('whatsapp_messages')
             .update({ status: newStatus })
             .eq('provider_message_id', providerId);
