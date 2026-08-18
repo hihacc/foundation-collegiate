@@ -9,12 +9,13 @@ import {
   ChevronsLeft, ChevronsRight, Eye, ShieldCheck, FileCheck, Layers,
   ExternalLink, ZoomIn, ZoomOut, RotateCw, Image as ImageIcon,
   UploadCloud, FileText, CheckSquare, Square, ArrowRight, ShieldAlert,
-  Sliders, Info, Sparkle, Camera, SwitchCamera, VideoOff
+  Sliders, Info, Sparkle, Camera, SwitchCamera, VideoOff, Wand2, SplitSquareVertical
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { GrRecord, INITIAL_GR_RECORDS } from '@/lib/data/grRegisterData';
 import { OFFICIAL_CLASSES } from '@/lib/utils/classes';
-import { ScannedGrCandidate } from '@/lib/utils/grOcrScanner';
+import { ScannedGrCandidate, parseGrLedgerText } from '@/lib/utils/grOcrScanner';
+import { preprocessDocumentCanvas, DocumentFilter } from '@/lib/utils/documentPreprocessor';
 import Link from 'next/link';
 
 interface AuditReport {
@@ -75,9 +76,12 @@ export default function GrRegisterPage() {
     class_name: 'Class XI - Pre-Medical'
   });
 
-  // --- AI SCANNER STATE ---
+  // --- AI SCANNER STATE (UPGRADED TO MATCH STUDENT OCR) ---
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [rawPreviewUrl, setRawPreviewUrl] = useState<string | null>(null);
+  const [processedPreviewUrl, setProcessedPreviewUrl] = useState<string | null>(null);
+  const [activeFilter, setActiveFilter] = useState<DocumentFilter>('magic');
+  const [splitTwoPageSpread, setSplitTwoPageSpread] = useState(true);
   const [isScanning, setIsScanning] = useState(false);
   const [scanProgress, setScanProgress] = useState(0);
   const [scanProgressText, setScanProgressText] = useState('');
@@ -129,6 +133,27 @@ export default function GrRegisterPage() {
       stopCamera();
     };
   }, []);
+
+  // Re-run document preprocessor whenever raw preview or filter changes
+  useEffect(() => {
+    if (!rawPreviewUrl) {
+      setProcessedPreviewUrl(null);
+      return;
+    }
+    const applyFilter = async () => {
+      try {
+        const enhanced = await preprocessDocumentCanvas(rawPreviewUrl, {
+          filter: activeFilter,
+          contrast: activeFilter === 'bw' ? 30 : 15,
+          brightness: 5
+        });
+        setProcessedPreviewUrl(enhanced);
+      } catch {
+        setProcessedPreviewUrl(rawPreviewUrl);
+      }
+    };
+    applyFilter();
+  }, [rawPreviewUrl, activeFilter]);
 
   // Filtered & Sorted Records
   const filteredRecords = useMemo(() => {
@@ -291,7 +316,7 @@ export default function GrRegisterPage() {
     setCameraError(null);
     try {
       if (!navigator?.mediaDevices?.getUserMedia) {
-        throw new Error('Camera not supported by browser. Tap "Snap with Mobile Camera" below.');
+        throw new Error('Camera not supported by browser. Tap "Mobile Camera" below.');
       }
 
       let stream: MediaStream | null = null;
@@ -317,7 +342,7 @@ export default function GrRegisterPage() {
       }
       setIsCameraActive(true);
       setCameraError(null);
-      toast.info('Camera viewfinder active! Frame the register page & capture.');
+      toast.info('Camera active! Align ledger page inside green guides & snap.');
     } catch (err: any) {
       console.warn('Camera error:', err.message);
       setCameraError(err.message || 'Camera permission denied or device unavailable.');
@@ -357,11 +382,11 @@ export default function GrRegisterPage() {
     ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
     const dataUrl = canvas.toDataURL('image/jpeg', 0.95);
 
-    setPreviewUrl(dataUrl);
+    setRawPreviewUrl(dataUrl);
     setSelectedFile(null);
     setScannedCandidates([]);
     stopCamera();
-    toast.success('📸 Ledger photo captured! Ready to run AI Scan.');
+    toast.success('📸 Ledger photo captured! Applying Magic Anti-Glare filter...');
   };
 
   // --- AI SCANNER ACTIONS ---
@@ -369,75 +394,115 @@ export default function GrRegisterPage() {
     const file = e.target.files?.[0];
     if (file) {
       setSelectedFile(file);
-      setPreviewUrl(URL.createObjectURL(file));
+      const url = URL.createObjectURL(file);
+      setRawPreviewUrl(url);
       setScannedCandidates([]);
       stopCamera();
     }
   };
 
   const handleSelectSampleImage = (fileName: string) => {
-    setPreviewUrl(`/gr/${encodeURIComponent(fileName)}`);
+    const url = `/gr/${encodeURIComponent(fileName)}`;
+    setRawPreviewUrl(url);
     setSelectedFile(null);
     setScannedCandidates([]);
     stopCamera();
-    toast.info(`Loaded sample ledger photo: ${fileName}`);
+    toast.info(`Loaded sample register photo: ${fileName}`);
   };
 
   const handleRunAiScanner = async () => {
-    if (!previewUrl && !rawOcrText) {
-      toast.error('Please upload a register photo, open camera, or paste raw OCR text');
+    const imageToScan = processedPreviewUrl || rawPreviewUrl;
+    if (!imageToScan && !rawOcrText) {
+      toast.error('Please snap a photo, upload a ledger image, or paste OCR text');
       return;
     }
 
     try {
       setIsScanning(true);
       setScanProgress(10);
-      setScanProgressText('Initializing OCR neural engine...');
+      setScanProgressText('Initializing OCR neural engine & preprocessor...');
 
       let textToParse = rawOcrText;
 
-      if (previewUrl && !textToParse) {
-        // Run OCR with Tesseract
-        setScanProgress(30);
-        setScanProgressText('Enhancing image contrast & thresholding...');
+      if (imageToScan && !textToParse) {
+        setScanProgress(25);
+        setScanProgressText('Applying Adaptive Local Thresholding & Anti-Glare Equalizer...');
         
         const Tesseract = (await import('tesseract.js')).default;
         
-        setScanProgress(50);
-        setScanProgressText('Running OCR multi-pass text detection...');
+        // Multi-Pass Extraction: Left Page & Right Page for 2-page ledger spreads
+        if (splitTwoPageSpread) {
+          setScanProgress(40);
+          setScanProgressText('Scanning Left Column / Left Ledger Page...');
 
-        const result = await Tesseract.recognize(previewUrl, 'eng', {
-          logger: m => {
-            if (m.status === 'recognizing text' && m.progress) {
-              setScanProgress(50 + Math.round(m.progress * 40));
-              setScanProgressText(`Recognizing handwriting: ${Math.round(m.progress * 100)}%`);
+          // Crop left half
+          const leftImgUrl = await preprocessDocumentCanvas(imageToScan, {
+            filter: activeFilter,
+            cropBox: { x: 0, y: 0, width: 0.52, height: 1.0 }
+          });
+
+          const leftRes = await Tesseract.recognize(leftImgUrl, 'eng', {
+            logger: m => {
+              if (m.status === 'recognizing text' && m.progress) {
+                setScanProgress(40 + Math.round(m.progress * 25));
+              }
             }
-          }
-        });
+          });
 
-        textToParse = result.data.text;
-        setRawOcrText(textToParse);
+          setScanProgress(68);
+          setScanProgressText('Scanning Right Column / Right Ledger Page...');
+
+          // Crop right half
+          const rightImgUrl = await preprocessDocumentCanvas(imageToScan, {
+            filter: activeFilter,
+            cropBox: { x: 0.48, y: 0, width: 0.52, height: 1.0 }
+          });
+
+          const rightRes = await Tesseract.recognize(rightImgUrl, 'eng', {
+            logger: m => {
+              if (m.status === 'recognizing text' && m.progress) {
+                setScanProgress(68 + Math.round(m.progress * 22));
+              }
+            }
+          });
+
+          const leftCandidates = parseGrLedgerText(leftRes.data.text, 'left_page');
+          const rightCandidates = parseGrLedgerText(rightRes.data.text, 'right_page');
+          
+          const combined = [...leftCandidates, ...rightCandidates];
+          setScannedCandidates(combined);
+          setRawOcrText(`--- LEFT PAGE ---\n${leftRes.data.text}\n\n--- RIGHT PAGE ---\n${rightRes.data.text}`);
+          setScanProgress(100);
+          setScanProgressText('Scan complete!');
+          toast.success(`AI scanned & detected ${combined.length} accurate ledger entries!`);
+          return;
+        } else {
+          // Single-pass Full image OCR
+          setScanProgress(50);
+          setScanProgressText('Running OCR multi-pass text recognition...');
+
+          const result = await Tesseract.recognize(imageToScan, 'eng', {
+            logger: m => {
+              if (m.status === 'recognizing text' && m.progress) {
+                setScanProgress(50 + Math.round(m.progress * 40));
+                setScanProgressText(`Recognizing handwriting: ${Math.round(m.progress * 100)}%`);
+              }
+            }
+          });
+
+          textToParse = result.data.text;
+          setRawOcrText(textToParse);
+        }
       }
 
       setScanProgress(92);
-      setScanProgressText('Extracting G.R. numbers, names & academic streams...');
+      setScanProgressText('Applying Pakistani Name Dictionary & Class Mapping...');
 
-      const res = await fetch('/api/admin/gr-register/scan', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ raw_text: textToParse })
-      });
-
-      const data = await res.json();
-
-      if (data.success && Array.isArray(data.candidates)) {
-        setScannedCandidates(data.candidates);
-        setScanProgress(100);
-        setScanProgressText('Scan complete!');
-        toast.success(`AI scanned & detected ${data.candidates.length} G.R. entries!`);
-      } else {
-        toast.error(data.error || 'Failed to extract ledger entries');
-      }
+      const candidates = parseGrLedgerText(textToParse, 'full');
+      setScannedCandidates(candidates);
+      setScanProgress(100);
+      setScanProgressText('Scan complete!');
+      toast.success(`AI scanned & detected ${candidates.length} accurate G.R. entries!`);
     } catch (e: any) {
       toast.error('Scan error: ' + e.message);
     } finally {
@@ -504,7 +569,8 @@ export default function GrRegisterPage() {
         // Clear scanner review and go back to ledger
         setScannedCandidates([]);
         setSelectedFile(null);
-        setPreviewUrl(null);
+        setRawPreviewUrl(null);
+        setProcessedPreviewUrl(null);
         setRawOcrText('');
         setActiveTab('ledger');
       } else {
@@ -934,32 +1000,34 @@ export default function GrRegisterPage() {
         </>
       )}
 
-      {/* TAB 2: AI CAMERA & LEDGER SCANNER (NEW) */}
+      {/* TAB 2: ADVANCED AI CAMERA & LEDGER SCANNER (UPGRADED) */}
       {activeTab === 'scanner' && (
         <div className="space-y-6">
           {/* Header Banner */}
           <div className="p-6 bg-linear-to-r from-indigo-900 via-blue-900 to-slate-900 text-white rounded-3xl shadow-md space-y-2">
             <div className="flex items-center gap-2">
               <span className="p-2 rounded-xl bg-white/10 text-indigo-300">
-                <Camera size={20} />
+                <Sparkles size={20} />
               </span>
-              <h2 className="text-lg font-black tracking-tight">Open Camera &amp; AI Ledger Scanner Hub</h2>
+              <h2 className="text-lg font-black tracking-tight">Advanced AI Camera &amp; G.R. Ledger Scanner Hub</h2>
             </div>
             <p className="text-xs text-indigo-200 max-w-3xl leading-relaxed">
-              Snap a live photo of a handwritten register book with your device camera or upload an image. The neural OCR engine detects G.R. numbers, student names, and classes. You can review, edit, and confirm the extracted entries before committing them directly into the official G.R. Register ledger.
+              Equipped with Local Adaptive Shadow Equalization, Multi-Pass Left/Right Column Decomposition, and Pakistani Name Dictionaries. Snap photos directly with your camera, select filters, review candidate extractions, and commit verified records.
             </p>
           </div>
 
           {/* Scanner Input & Workflow Grid */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
             
-            {/* Left: Image Upload, Live Camera & Preview (5 cols) */}
+            {/* Left: Image Upload, Live Camera, Filters & Preview (5 cols) */}
             <div className="lg:col-span-5 space-y-4">
               <div className="bg-white p-5 rounded-3xl border border-slate-200 shadow-sm space-y-4">
-                <h3 className="font-bold text-slate-900 text-sm flex items-center gap-2">
-                  <Camera size={16} className="text-indigo-600" />
-                  Step 1: Capture or Upload Ledger Photo
-                </h3>
+                <div className="flex items-center justify-between">
+                  <h3 className="font-bold text-slate-900 text-sm flex items-center gap-2">
+                    <Camera size={16} className="text-indigo-600" />
+                    Step 1: Capture / Upload Ledger Photo
+                  </h3>
+                </div>
 
                 {/* Camera Trigger Buttons */}
                 <div className="grid grid-cols-2 gap-2">
@@ -972,7 +1040,7 @@ export default function GrRegisterPage() {
                     }`}
                   >
                     {isCameraActive ? <VideoOff size={16} /> : <Camera size={16} />}
-                    {isCameraActive ? 'Close Camera' : 'Open Camera to Scan'}
+                    {isCameraActive ? 'Close Camera' : 'Open Camera'}
                   </button>
 
                   <button
@@ -980,7 +1048,7 @@ export default function GrRegisterPage() {
                     className="py-3 px-4 bg-slate-900 hover:bg-slate-800 text-white rounded-2xl font-black text-xs flex items-center justify-center gap-2 shadow-sm transition-colors cursor-pointer"
                   >
                     <Camera size={16} />
-                    Mobile Camera
+                    Mobile Snap
                   </button>
                 </div>
 
@@ -1013,12 +1081,12 @@ export default function GrRegisterPage() {
                     />
 
                     {/* Viewfinder Target Framing Guides */}
-                    <div className="absolute inset-4 border-2 border-dashed border-white/60 rounded-xl pointer-events-none flex flex-col justify-between p-3">
-                      <div className="flex justify-between text-[10px] font-mono font-bold text-white bg-black/50 px-2 py-0.5 rounded-md w-fit">
-                        LEDGER SCANNER FRAME
+                    <div className="absolute inset-4 border-2 border-dashed border-emerald-400/80 rounded-xl pointer-events-none flex flex-col justify-between p-3">
+                      <div className="flex justify-between text-[10px] font-mono font-bold text-white bg-black/60 px-2.5 py-1 rounded-md w-fit">
+                        ✨ AUTO-ALIGNMENT FRAME
                       </div>
-                      <div className="text-center text-[11px] font-bold text-white/90 bg-black/60 backdrop-blur-xs py-1 px-3 rounded-lg mx-auto">
-                        Hold document steady &amp; click Capture
+                      <div className="text-center text-[11px] font-bold text-white/95 bg-black/70 backdrop-blur-xs py-1 px-3 rounded-lg mx-auto">
+                        Hold document steady &amp; click Snap Photo
                       </div>
                     </div>
 
@@ -1034,9 +1102,9 @@ export default function GrRegisterPage() {
 
                       <button
                         onClick={captureCameraFrame}
-                        className="px-6 py-2.5 rounded-full bg-white text-slate-950 font-black text-xs flex items-center gap-2 hover:bg-slate-100 shadow-xl hover:scale-105 active:scale-95 transition-all cursor-pointer"
+                        className="px-6 py-2.5 rounded-full bg-emerald-500 hover:bg-emerald-600 text-white font-black text-xs flex items-center gap-2 shadow-xl hover:scale-105 active:scale-95 transition-all cursor-pointer"
                       >
-                        <Camera size={16} className="text-indigo-600" />
+                        <Camera size={16} />
                         Snap Photo
                       </button>
 
@@ -1051,7 +1119,6 @@ export default function GrRegisterPage() {
                   </div>
                 )}
 
-                {/* Hidden Canvas for Frame Grab */}
                 <canvas ref={canvasRef} className="hidden" />
 
                 {cameraError && (
@@ -1070,14 +1137,51 @@ export default function GrRegisterPage() {
                     <UploadCloud size={26} className="mx-auto text-indigo-500" />
                     <div>
                       <p className="text-xs font-black text-slate-800">Or click to browse register image file</p>
-                      <p className="text-[10px] text-slate-400">JPEG, PNG, WebP</p>
+                      <p className="text-[10px] text-slate-400">JPEG, PNG, WebP (Multi-resolution support)</p>
+                    </div>
+                  </div>
+                )}
+
+                {/* Filter Options & Preprocessing Controls */}
+                {rawPreviewUrl && !isCameraActive && (
+                  <div className="space-y-3 pt-2 border-t border-slate-100">
+                    <div className="flex items-center justify-between">
+                      <label className="text-[11px] font-bold text-slate-600 flex items-center gap-1">
+                        <Wand2 size={13} className="text-indigo-600" /> Image Filter:
+                      </label>
+                      <div className="flex items-center gap-1 bg-slate-100 p-1 rounded-xl text-[10px] font-bold">
+                        {(['magic', 'bw', 'grayscale', 'original'] as const).map(f => (
+                          <button
+                            key={f}
+                            onClick={() => setActiveFilter(f)}
+                            className={`px-2 py-0.5 rounded-lg capitalize transition-colors cursor-pointer ${
+                              activeFilter === f ? 'bg-white text-indigo-900 shadow-2xs font-black' : 'text-slate-600'
+                            }`}
+                          >
+                            {f === 'magic' ? 'Magic AI' : f === 'bw' ? 'B&W' : f === 'grayscale' ? 'Gray' : 'Raw'}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+
+                    <div className="flex items-center justify-between text-xs font-semibold bg-slate-50 p-2.5 rounded-xl">
+                      <span className="text-slate-700 flex items-center gap-1.5 text-[11px]">
+                        <SplitSquareVertical size={14} className="text-blue-600" />
+                        Split Two-Page Ledger Spread:
+                      </span>
+                      <input
+                        type="checkbox"
+                        checked={splitTwoPageSpread}
+                        onChange={e => setSplitTwoPageSpread(e.target.checked)}
+                        className="w-4 h-4 rounded text-indigo-600 focus:ring-indigo-500 cursor-pointer"
+                      />
                     </div>
                   </div>
                 )}
 
                 {/* Quick Sample Selector */}
                 <div className="space-y-2">
-                  <p className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Or select physical register scan:</p>
+                  <p className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Or choose physical register scan:</p>
                   <div className="grid grid-cols-2 gap-2">
                     {[
                       { name: 'GR 116–161 (Two-Page Ledger)', file: 'WhatsApp Image 2026-08-18 at 10.01.31 PM (1).jpeg' },
@@ -1096,16 +1200,16 @@ export default function GrRegisterPage() {
                   </div>
                 </div>
 
-                {/* Image Preview Box */}
-                {previewUrl && !isCameraActive && (
+                {/* Enhanced Image Preview Box */}
+                {(processedPreviewUrl || rawPreviewUrl) && !isCameraActive && (
                   <div className="relative rounded-2xl overflow-hidden border border-slate-200 bg-slate-950 max-h-60 flex items-center justify-center">
                     <img
-                      src={previewUrl}
+                      src={processedPreviewUrl || rawPreviewUrl || ''}
                       alt="Ledger Preview"
                       className="max-h-60 object-contain"
                     />
                     <div className="absolute top-2 right-2 px-2 py-1 rounded-lg bg-black/70 text-white text-[10px] font-mono font-bold flex items-center gap-1">
-                      <CheckCircle2 size={12} className="text-emerald-400" /> Image Ready
+                      <CheckCircle2 size={12} className="text-emerald-400" /> Filter: {activeFilter.toUpperCase()}
                     </div>
                   </div>
                 )}
@@ -1113,7 +1217,7 @@ export default function GrRegisterPage() {
                 {/* Action Trigger Button */}
                 <button
                   onClick={handleRunAiScanner}
-                  disabled={isScanning || (!previewUrl && !rawOcrText)}
+                  disabled={isScanning || (!rawPreviewUrl && !rawOcrText)}
                   className="w-full py-3 bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 text-white font-black text-xs rounded-2xl flex items-center justify-center gap-2 shadow-sm transition-colors cursor-pointer"
                 >
                   {isScanning ? (
