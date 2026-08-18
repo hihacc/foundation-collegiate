@@ -7,6 +7,8 @@ export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';
 
 const STORE_PATH = path.join(process.cwd(), 'data', 'gr_register.json');
+const AUDIT_REPORT_PATH = path.join(process.cwd(), 'data', 'gr_forensic_audit_report.json');
+const SOURCES_PATH = path.join(process.cwd(), 'data', 'gr_forensic_sources.json');
 
 function getGrRecords(): GrRecord[] {
   try {
@@ -44,6 +46,23 @@ function saveGrRecords(records: GrRecord[]) {
 export async function GET(req: NextRequest) {
   try {
     const { searchParams } = new URL(req.url);
+
+    // If audit report requested
+    if (searchParams.get('report') === 'true') {
+      if (fs.existsSync(AUDIT_REPORT_PATH)) {
+        const report = JSON.parse(fs.readFileSync(AUDIT_REPORT_PATH, 'utf8'));
+        return NextResponse.json({ success: true, report });
+      }
+    }
+
+    // If source images manifest requested
+    if (searchParams.get('sources') === 'true') {
+      if (fs.existsSync(SOURCES_PATH)) {
+        const sources = JSON.parse(fs.readFileSync(SOURCES_PATH, 'utf8'));
+        return NextResponse.json({ success: true, sources });
+      }
+    }
+
     const search = (searchParams.get('search') || '').toLowerCase().trim();
     const status = searchParams.get('status') || 'all';
     const className = searchParams.get('class') || 'all';
@@ -90,13 +109,15 @@ export async function POST(req: NextRequest) {
     const formattedCode = `GR-${nextGr}`;
 
     const newRecord: GrRecord = {
-      id: `gr_${Date.now()}_${nextGr}`,
+      id: `gr_${nextGr}`,
       gr_number: nextGr,
       gr_code: body.gr_code || formattedCode,
       student_name: body.student_name || '',
       class_name: body.class_name || '',
-      status: body.student_name ? 'assigned' : 'blank',
-      page_scan_ref: body.page_scan_ref || '',
+      status: body.student_name ? 'assigned' : 'blank_slot',
+      confidence: 100,
+      verification_status: 'verified',
+      audit_notes: body.audit_notes || 'Manually added by administrator',
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString()
     };
@@ -110,7 +131,7 @@ export async function POST(req: NextRequest) {
   }
 }
 
-// PUT /api/admin/gr-register - Update existing GR
+// PUT /api/admin/gr-register - Update & Verify existing GR
 export async function PUT(req: NextRequest) {
   try {
     const body = await req.json();
@@ -125,10 +146,13 @@ export async function PUT(req: NextRequest) {
       return NextResponse.json({ success: false, error: 'GR record not found' }, { status: 404 });
     }
 
+    const isAssigned = (body.student_name !== undefined ? body.student_name : records[idx].student_name).trim().length > 0;
+
     const updated: GrRecord = {
       ...records[idx],
       ...body,
-      status: body.student_name ? (body.status || 'assigned') : 'blank',
+      status: isAssigned ? (body.status || 'assigned') : 'blank_slot',
+      verification_status: body.verification_status || (isAssigned ? 'verified' : 'blank'),
       updated_at: new Date().toISOString()
     };
 
@@ -141,7 +165,7 @@ export async function PUT(req: NextRequest) {
   }
 }
 
-// DELETE /api/admin/gr-register
+// DELETE /api/admin/gr-register - Reset to blank slot
 export async function DELETE(req: NextRequest) {
   try {
     const { searchParams } = new URL(req.url);
@@ -152,10 +176,19 @@ export async function DELETE(req: NextRequest) {
     }
 
     const records = getGrRecords();
-    const filtered = records.filter(r => r.id !== id);
-    saveGrRecords(filtered);
+    const idx = records.findIndex(r => r.id === id);
 
-    return NextResponse.json({ success: true, deleted: id });
+    if (idx !== -1) {
+      records[idx].student_name = '';
+      records[idx].class_name = '';
+      records[idx].status = 'blank_slot';
+      records[idx].verification_status = 'blank';
+      records[idx].audit_notes = 'Cleared by administrator';
+      records[idx].updated_at = new Date().toISOString();
+      saveGrRecords(records);
+    }
+
+    return NextResponse.json({ success: true, record: records[idx] });
   } catch (error: any) {
     return NextResponse.json({ success: false, error: error.message }, { status: 500 });
   }

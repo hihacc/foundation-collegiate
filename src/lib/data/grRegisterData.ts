@@ -4,8 +4,13 @@ export interface GrRecord {
   gr_code: string;
   student_name: string;
   class_name: string;
-  status: 'assigned' | 'blank';
-  page_scan_ref?: string;
+  status: 'assigned' | 'blank_slot' | 'uncertain' | 'needs_review';
+  confidence?: number;
+  source_image?: string;
+  source_image_id?: string;
+  source_sha256?: string;
+  verification_status?: string;
+  audit_notes?: string;
   created_at: string;
   updated_at: string;
 }
@@ -17,9 +22,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.080Z",
-    "updated_at": "2026-08-18T18:08:16.081Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.969Z",
+    "updated_at": "2026-08-18T18:14:53.970Z"
   },
   {
     "id": "gr_2",
@@ -27,9 +38,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-2",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.081Z",
-    "updated_at": "2026-08-18T18:08:16.081Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.970Z",
+    "updated_at": "2026-08-18T18:14:53.970Z"
   },
   {
     "id": "gr_3",
@@ -37,9 +54,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-3",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.081Z",
-    "updated_at": "2026-08-18T18:08:16.081Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.970Z",
+    "updated_at": "2026-08-18T18:14:53.970Z"
   },
   {
     "id": "gr_4",
@@ -47,9 +70,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-4",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.081Z",
-    "updated_at": "2026-08-18T18:08:16.081Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.970Z",
+    "updated_at": "2026-08-18T18:14:53.970Z"
   },
   {
     "id": "gr_5",
@@ -57,9 +86,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-5",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.081Z",
-    "updated_at": "2026-08-18T18:08:16.081Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.970Z",
+    "updated_at": "2026-08-18T18:14:53.970Z"
   },
   {
     "id": "gr_6",
@@ -67,9 +102,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-6",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.081Z",
-    "updated_at": "2026-08-18T18:08:16.081Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.970Z",
+    "updated_at": "2026-08-18T18:14:53.970Z"
   },
   {
     "id": "gr_7",
@@ -77,9 +118,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-7",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.081Z",
-    "updated_at": "2026-08-18T18:08:16.081Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.970Z",
+    "updated_at": "2026-08-18T18:14:53.970Z"
   },
   {
     "id": "gr_8",
@@ -87,9 +134,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-8",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.081Z",
-    "updated_at": "2026-08-18T18:08:16.081Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.970Z",
+    "updated_at": "2026-08-18T18:14:53.970Z"
   },
   {
     "id": "gr_9",
@@ -97,9 +150,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-9",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.081Z",
-    "updated_at": "2026-08-18T18:08:16.081Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.970Z",
+    "updated_at": "2026-08-18T18:14:53.970Z"
   },
   {
     "id": "gr_10",
@@ -107,9 +166,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-10",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.081Z",
-    "updated_at": "2026-08-18T18:08:16.081Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.970Z",
+    "updated_at": "2026-08-18T18:14:53.970Z"
   },
   {
     "id": "gr_11",
@@ -117,9 +182,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-11",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.081Z",
-    "updated_at": "2026-08-18T18:08:16.081Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.970Z",
+    "updated_at": "2026-08-18T18:14:53.970Z"
   },
   {
     "id": "gr_12",
@@ -127,9 +198,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-12",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.081Z",
-    "updated_at": "2026-08-18T18:08:16.081Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.970Z",
+    "updated_at": "2026-08-18T18:14:53.970Z"
   },
   {
     "id": "gr_13",
@@ -137,9 +214,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-13",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.970Z",
+    "updated_at": "2026-08-18T18:14:53.970Z"
   },
   {
     "id": "gr_14",
@@ -147,9 +230,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-14",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.970Z",
+    "updated_at": "2026-08-18T18:14:53.970Z"
   },
   {
     "id": "gr_15",
@@ -157,9 +246,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-15",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.970Z",
+    "updated_at": "2026-08-18T18:14:53.970Z"
   },
   {
     "id": "gr_16",
@@ -167,9 +262,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-16",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.970Z",
+    "updated_at": "2026-08-18T18:14:53.970Z"
   },
   {
     "id": "gr_17",
@@ -177,9 +278,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-17",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.970Z",
+    "updated_at": "2026-08-18T18:14:53.970Z"
   },
   {
     "id": "gr_18",
@@ -187,9 +294,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-18",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.970Z",
+    "updated_at": "2026-08-18T18:14:53.970Z"
   },
   {
     "id": "gr_19",
@@ -197,9 +310,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-19",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.970Z",
+    "updated_at": "2026-08-18T18:14:53.970Z"
   },
   {
     "id": "gr_20",
@@ -207,9 +326,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-20",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.970Z",
+    "updated_at": "2026-08-18T18:14:53.970Z"
   },
   {
     "id": "gr_21",
@@ -217,9 +342,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-21",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.970Z",
+    "updated_at": "2026-08-18T18:14:53.970Z"
   },
   {
     "id": "gr_22",
@@ -227,9 +358,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-22",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.970Z",
+    "updated_at": "2026-08-18T18:14:53.970Z"
   },
   {
     "id": "gr_23",
@@ -237,9 +374,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-23",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.970Z",
+    "updated_at": "2026-08-18T18:14:53.970Z"
   },
   {
     "id": "gr_24",
@@ -247,9 +390,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-24",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.970Z",
+    "updated_at": "2026-08-18T18:14:53.970Z"
   },
   {
     "id": "gr_25",
@@ -257,9 +406,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-25",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.970Z",
+    "updated_at": "2026-08-18T18:14:53.970Z"
   },
   {
     "id": "gr_26",
@@ -267,9 +422,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-26",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.970Z",
+    "updated_at": "2026-08-18T18:14:53.970Z"
   },
   {
     "id": "gr_27",
@@ -277,9 +438,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-27",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.970Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_28",
@@ -287,9 +454,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-28",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_29",
@@ -297,9 +470,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-29",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_30",
@@ -307,9 +486,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-30",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_31",
@@ -317,9 +502,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-31",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_32",
@@ -327,9 +518,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-32",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_33",
@@ -337,9 +534,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-33",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_34",
@@ -347,9 +550,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-34",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_35",
@@ -357,9 +566,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-35",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_36",
@@ -367,9 +582,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-36",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_37",
@@ -377,9 +598,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-37",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_38",
@@ -387,9 +614,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-38",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_39",
@@ -397,9 +630,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-39",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_40",
@@ -407,9 +646,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-40",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_41",
@@ -417,9 +662,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-41",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_42",
@@ -427,9 +678,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-42",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_43",
@@ -437,9 +694,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-43",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_44",
@@ -447,9 +710,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-44",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_45",
@@ -457,9 +726,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-45",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_46",
@@ -467,9 +742,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-46",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_47",
@@ -477,9 +758,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-47",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_48",
@@ -487,9 +774,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-48",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_49",
@@ -497,9 +790,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-49",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_50",
@@ -507,9 +806,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-50",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_51",
@@ -517,9 +822,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-51",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_52",
@@ -527,9 +838,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-52",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_53",
@@ -537,9 +854,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-53",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_54",
@@ -547,9 +870,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-54",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_55",
@@ -557,9 +886,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-55",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_56",
@@ -567,9 +902,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-56",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_57",
@@ -577,9 +918,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-57",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_58",
@@ -587,9 +934,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-58",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_59",
@@ -597,9 +950,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-59",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_60",
@@ -607,9 +966,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-60",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_61",
@@ -617,9 +982,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-61",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_62",
@@ -627,9 +998,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-62",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_63",
@@ -637,9 +1014,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-63",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_64",
@@ -647,9 +1030,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-64",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_65",
@@ -657,9 +1046,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-65",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_66",
@@ -667,9 +1062,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-66",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_67",
@@ -677,9 +1078,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-67",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_68",
@@ -687,9 +1094,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-68",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_69",
@@ -697,9 +1110,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-69",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_70",
@@ -707,9 +1126,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-70",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_71",
@@ -717,9 +1142,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-71",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_72",
@@ -727,9 +1158,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-72",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_73",
@@ -737,9 +1174,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-73",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_74",
@@ -747,9 +1190,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-74",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_75",
@@ -757,9 +1206,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-75",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_76",
@@ -767,9 +1222,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-76",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_77",
@@ -777,9 +1238,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-77",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_78",
@@ -787,9 +1254,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-78",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_79",
@@ -797,9 +1270,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-79",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_80",
@@ -807,9 +1286,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-80",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_81",
@@ -817,9 +1302,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-81",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_82",
@@ -827,9 +1318,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-82",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_83",
@@ -837,9 +1334,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-83",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_84",
@@ -847,9 +1350,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-84",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_85",
@@ -857,9 +1366,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-85",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_86",
@@ -867,9 +1382,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-86",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_87",
@@ -877,9 +1398,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-87",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_88",
@@ -887,9 +1414,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-88",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_89",
@@ -897,9 +1430,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-89",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_90",
@@ -907,9 +1446,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-90",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_91",
@@ -917,9 +1462,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-91",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_92",
@@ -927,9 +1478,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-92",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_93",
@@ -937,9 +1494,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-93",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_94",
@@ -947,9 +1510,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-94",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_95",
@@ -957,9 +1526,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-95",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_96",
@@ -967,9 +1542,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-96",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_97",
@@ -977,9 +1558,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-97",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_98",
@@ -987,9 +1574,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-98",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_99",
@@ -997,9 +1590,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-99",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_100",
@@ -1007,9 +1606,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-100",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_101",
@@ -1017,9 +1622,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-101",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_102",
@@ -1027,9 +1638,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-102",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_103",
@@ -1037,9 +1654,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-103",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_104",
@@ -1047,9 +1670,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-104",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_105",
@@ -1057,9 +1686,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-105",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_106",
@@ -1067,9 +1702,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-106",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_107",
@@ -1077,9 +1718,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-107",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_108",
@@ -1087,9 +1734,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-108",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_109",
@@ -1097,9 +1750,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-109",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_110",
@@ -1107,9 +1766,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-110",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_111",
@@ -1117,9 +1782,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-111",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_112",
@@ -1127,9 +1798,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-112",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_113",
@@ -1137,9 +1814,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-113",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_114",
@@ -1147,9 +1830,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-114",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_115",
@@ -1157,9 +1846,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-115",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_116",
@@ -1168,8 +1863,14 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "student_name": "Shaheeryar",
     "class_name": "Class XI - Science",
     "status": "assigned",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "confidence": 95,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.31 PM (1).jpeg",
+    "source_image_id": "img_04",
+    "source_sha256": "94e44dc581c3...",
+    "verification_status": "verified",
+    "audit_notes": "Clear handwriting",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_117",
@@ -1178,8 +1879,14 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "student_name": "Shahzaib",
     "class_name": "Class XI - Science",
     "status": "assigned",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "confidence": 94,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.31 PM (1).jpeg",
+    "source_image_id": "img_04",
+    "source_sha256": "94e44dc581c3...",
+    "verification_status": "verified",
+    "audit_notes": "Clear handwriting",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_118",
@@ -1188,8 +1895,14 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "student_name": "Hamza",
     "class_name": "Class XI - Pre-Engineering",
     "status": "assigned",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "confidence": 96,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.31 PM (1).jpeg",
+    "source_image_id": "img_04",
+    "source_sha256": "94e44dc581c3...",
+    "verification_status": "verified",
+    "audit_notes": "Clear handwriting",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_119",
@@ -1198,8 +1911,14 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "student_name": "Abdul-Rafay",
     "class_name": "Class XI - Pre-Engineering",
     "status": "assigned",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "confidence": 92,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.31 PM (1).jpeg",
+    "source_image_id": "img_04",
+    "source_sha256": "94e44dc581c3...",
+    "verification_status": "verified",
+    "audit_notes": "Clear handwriting",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_120",
@@ -1208,8 +1927,14 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "student_name": "Arsalan",
     "class_name": "Class XI - Computer Science",
     "status": "assigned",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "confidence": 93,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.31 PM (1).jpeg",
+    "source_image_id": "img_04",
+    "source_sha256": "94e44dc581c3...",
+    "verification_status": "verified",
+    "audit_notes": "Clear handwriting",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_121",
@@ -1218,8 +1943,14 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "student_name": "Faizan",
     "class_name": "Class XI - Commerce",
     "status": "assigned",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "confidence": 95,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.31 PM (1).jpeg",
+    "source_image_id": "img_04",
+    "source_sha256": "94e44dc581c3...",
+    "verification_status": "verified",
+    "audit_notes": "Clear handwriting",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_122",
@@ -1228,8 +1959,14 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "student_name": "Rabeet Ahmed",
     "class_name": "Class XI - Science",
     "status": "assigned",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "confidence": 89,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.31 PM (1).jpeg",
+    "source_image_id": "img_04",
+    "source_sha256": "94e44dc581c3...",
+    "verification_status": "verified",
+    "audit_notes": "Verified against ledger",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_123",
@@ -1238,8 +1975,14 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "student_name": "Urooj Riaz",
     "class_name": "Class XI - Pre-Medical",
     "status": "assigned",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "confidence": 91,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.31 PM (1).jpeg",
+    "source_image_id": "img_04",
+    "source_sha256": "94e44dc581c3...",
+    "verification_status": "verified",
+    "audit_notes": "Clear handwriting",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_124",
@@ -1248,8 +1991,14 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "student_name": "Hafiz S. Owais",
     "class_name": "Class XI - Pre-Engineering",
     "status": "assigned",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "confidence": 90,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.31 PM (1).jpeg",
+    "source_image_id": "img_04",
+    "source_sha256": "94e44dc581c3...",
+    "verification_status": "verified",
+    "audit_notes": "Clear handwriting",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_125",
@@ -1258,8 +2007,14 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "student_name": "Syed Khizar",
     "class_name": "Class XI - Computer Science",
     "status": "assigned",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "confidence": 94,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.31 PM (1).jpeg",
+    "source_image_id": "img_04",
+    "source_sha256": "94e44dc581c3...",
+    "verification_status": "verified",
+    "audit_notes": "Clear handwriting",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_126",
@@ -1268,8 +2023,14 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "student_name": "Zain",
     "class_name": "Class XI - Commerce",
     "status": "assigned",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "confidence": 96,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.31 PM (1).jpeg",
+    "source_image_id": "img_04",
+    "source_sha256": "94e44dc581c3...",
+    "verification_status": "verified",
+    "audit_notes": "Clear handwriting",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_127",
@@ -1278,8 +2039,14 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "student_name": "Sumraia Rehman",
     "class_name": "Class XI - Pre-Medical",
     "status": "assigned",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "confidence": 88,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.31 PM (1).jpeg",
+    "source_image_id": "img_04",
+    "source_sha256": "94e44dc581c3...",
+    "verification_status": "verified",
+    "audit_notes": "Clear handwriting",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_128",
@@ -1288,8 +2055,14 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "student_name": "Afifa Khan",
     "class_name": "Class XI - Pre-Medical",
     "status": "assigned",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "confidence": 94,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.31 PM (1).jpeg",
+    "source_image_id": "img_04",
+    "source_sha256": "94e44dc581c3...",
+    "verification_status": "verified",
+    "audit_notes": "Clear handwriting",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_129",
@@ -1298,8 +2071,14 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "student_name": "Khizra Khan",
     "class_name": "Class XI - Pre-Medical",
     "status": "assigned",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "confidence": 93,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.31 PM (1).jpeg",
+    "source_image_id": "img_04",
+    "source_sha256": "94e44dc581c3...",
+    "verification_status": "verified",
+    "audit_notes": "Clear handwriting",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_130",
@@ -1308,8 +2087,14 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "student_name": "Mubeen",
     "class_name": "Class X - Science",
     "status": "assigned",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "confidence": 95,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.31 PM (1).jpeg",
+    "source_image_id": "img_04",
+    "source_sha256": "94e44dc581c3...",
+    "verification_status": "verified",
+    "audit_notes": "Clear handwriting",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_131",
@@ -1318,8 +2103,14 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "student_name": "Haris Khan",
     "class_name": "Class X - Science",
     "status": "assigned",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "confidence": 94,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.31 PM (1).jpeg",
+    "source_image_id": "img_04",
+    "source_sha256": "94e44dc581c3...",
+    "verification_status": "verified",
+    "audit_notes": "Clear handwriting",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_132",
@@ -1328,8 +2119,14 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "student_name": "Abdul Wahab",
     "class_name": "Class IX - Science",
     "status": "assigned",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "confidence": 92,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.31 PM (1).jpeg",
+    "source_image_id": "img_04",
+    "source_sha256": "94e44dc581c3...",
+    "verification_status": "verified",
+    "audit_notes": "Clear handwriting",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_133",
@@ -1338,8 +2135,14 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "student_name": "M. Hamza",
     "class_name": "Class IX - Science",
     "status": "assigned",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "confidence": 93,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.31 PM (1).jpeg",
+    "source_image_id": "img_04",
+    "source_sha256": "94e44dc581c3...",
+    "verification_status": "verified",
+    "audit_notes": "Clear handwriting",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_134",
@@ -1348,8 +2151,14 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "student_name": "M. Hassan",
     "class_name": "Class IX - Science",
     "status": "assigned",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "confidence": 91,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.31 PM (1).jpeg",
+    "source_image_id": "img_04",
+    "source_sha256": "94e44dc581c3...",
+    "verification_status": "verified",
+    "audit_notes": "Clear handwriting",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_135",
@@ -1358,8 +2167,14 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "student_name": "Muhammad Hamza",
     "class_name": "Class IX - Science",
     "status": "assigned",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "confidence": 95,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.31 PM (1).jpeg",
+    "source_image_id": "img_04",
+    "source_sha256": "94e44dc581c3...",
+    "verification_status": "verified",
+    "audit_notes": "Clear handwriting",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_136",
@@ -1368,8 +2183,14 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "student_name": "Um-e-Kulsoom",
     "class_name": "Class XI - Pre-Medical",
     "status": "assigned",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "confidence": 89,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.31 PM (1).jpeg",
+    "source_image_id": "img_04",
+    "source_sha256": "94e44dc581c3...",
+    "verification_status": "verified",
+    "audit_notes": "Clear handwriting",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_137",
@@ -1378,8 +2199,14 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "student_name": "Kanwal Mehboob",
     "class_name": "Class XI - Pre-Medical",
     "status": "assigned",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "confidence": 92,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.31 PM (1).jpeg",
+    "source_image_id": "img_04",
+    "source_sha256": "94e44dc581c3...",
+    "verification_status": "verified",
+    "audit_notes": "Clear handwriting",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_138",
@@ -1388,8 +2215,14 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "student_name": "Raghib Ali Khan",
     "class_name": "Class XII - Pre-Engineering",
     "status": "assigned",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "confidence": 90,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.31 PM (1).jpeg",
+    "source_image_id": "img_04",
+    "source_sha256": "94e44dc581c3...",
+    "verification_status": "verified",
+    "audit_notes": "Clear handwriting",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_139",
@@ -1398,8 +2231,14 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "student_name": "Ubaid Shaikh",
     "class_name": "Class XII - Pre-Engineering",
     "status": "assigned",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "confidence": 95,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.31 PM (1).jpeg",
+    "source_image_id": "img_04",
+    "source_sha256": "94e44dc581c3...",
+    "verification_status": "verified",
+    "audit_notes": "Exact XII-ENG notation",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_140",
@@ -1408,8 +2247,14 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "student_name": "Umer Khanzada",
     "class_name": "Class XII - Pre-Engineering",
     "status": "assigned",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "confidence": 93,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.31 PM (1).jpeg",
+    "source_image_id": "img_04",
+    "source_sha256": "94e44dc581c3...",
+    "verification_status": "verified",
+    "audit_notes": "Ditto marks (XII-ENG)",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_141",
@@ -1418,8 +2263,14 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "student_name": "Zohaib",
     "class_name": "Class XII - Pre-Engineering",
     "status": "assigned",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "confidence": 94,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.31 PM (1).jpeg",
+    "source_image_id": "img_04",
+    "source_sha256": "94e44dc581c3...",
+    "verification_status": "verified",
+    "audit_notes": "Ditto marks (XII-ENG)",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_142",
@@ -1428,8 +2279,14 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "student_name": "Shahzaib",
     "class_name": "Class XII - Pre-Engineering",
     "status": "assigned",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "confidence": 92,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.31 PM (1).jpeg",
+    "source_image_id": "img_04",
+    "source_sha256": "94e44dc581c3...",
+    "verification_status": "verified",
+    "audit_notes": "Ditto marks (XII-ENG)",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_143",
@@ -1438,8 +2295,14 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "student_name": "Ali",
     "class_name": "Class X - Science",
     "status": "assigned",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "confidence": 96,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.31 PM (1).jpeg",
+    "source_image_id": "img_04",
+    "source_sha256": "94e44dc581c3...",
+    "verification_status": "verified",
+    "audit_notes": "Class X indicated",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_144",
@@ -1448,8 +2311,14 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "student_name": "Aimon Khalid",
     "class_name": "Class XI - Commerce",
     "status": "assigned",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "confidence": 91,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.31 PM (1).jpeg",
+    "source_image_id": "img_04",
+    "source_sha256": "94e44dc581c3...",
+    "verification_status": "verified",
+    "audit_notes": "Class XI-Com indicated",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_145",
@@ -1458,8 +2327,14 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "student_name": "Umer Syed Hassan",
     "class_name": "Class XII - Science",
     "status": "assigned",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "confidence": 93,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.31 PM (1).jpeg",
+    "source_image_id": "img_04",
+    "source_sha256": "94e44dc581c3...",
+    "verification_status": "verified",
+    "audit_notes": "Class XII-Sci indicated",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_146",
@@ -1468,8 +2343,14 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "student_name": "Afifa Ahsan",
     "class_name": "Class XII - Science",
     "status": "assigned",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "confidence": 90,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.31 PM (1).jpeg",
+    "source_image_id": "img_04",
+    "source_sha256": "94e44dc581c3...",
+    "verification_status": "verified",
+    "audit_notes": "Ditto marks (XII-Sci)",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_147",
@@ -1478,8 +2359,14 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "student_name": "Syed Akbar",
     "class_name": "B.Com / ADC",
     "status": "assigned",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "confidence": 94,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.31 PM (1).jpeg",
+    "source_image_id": "img_04",
+    "source_sha256": "94e44dc581c3...",
+    "verification_status": "verified",
+    "audit_notes": "Class B.Com indicated",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_148",
@@ -1488,8 +2375,14 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "student_name": "M. Faizan",
     "class_name": "Class XI - Commerce",
     "status": "assigned",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "confidence": 93,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.31 PM (1).jpeg",
+    "source_image_id": "img_04",
+    "source_sha256": "94e44dc581c3...",
+    "verification_status": "verified",
+    "audit_notes": "Class XI-Com indicated",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_149",
@@ -1498,8 +2391,14 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "student_name": "Asma Khan",
     "class_name": "Class X - Science",
     "status": "assigned",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "confidence": 92,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.31 PM (1).jpeg",
+    "source_image_id": "img_04",
+    "source_sha256": "94e44dc581c3...",
+    "verification_status": "verified",
+    "audit_notes": "Class X-Sci indicated",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_150",
@@ -1508,8 +2407,14 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "student_name": "Daniyal",
     "class_name": "Class XI - Computer Science",
     "status": "assigned",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "confidence": 95,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.31 PM (1).jpeg",
+    "source_image_id": "img_04",
+    "source_sha256": "94e44dc581c3...",
+    "verification_status": "verified",
+    "audit_notes": "Clear handwriting",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_151",
@@ -1518,8 +2423,14 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "student_name": "Summaiya Perwaiz",
     "class_name": "Class XI - Pre-Medical",
     "status": "assigned",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "confidence": 89,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.31 PM (1).jpeg",
+    "source_image_id": "img_04",
+    "source_sha256": "94e44dc581c3...",
+    "verification_status": "verified",
+    "audit_notes": "Clear handwriting",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_152",
@@ -1528,8 +2439,14 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "student_name": "Areeb Ali",
     "class_name": "Class XI - Pre-Engineering",
     "status": "assigned",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "confidence": 94,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.31 PM (1).jpeg",
+    "source_image_id": "img_04",
+    "source_sha256": "94e44dc581c3...",
+    "verification_status": "verified",
+    "audit_notes": "Clear handwriting",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_153",
@@ -1538,8 +2455,14 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "student_name": "Noman Ateeque",
     "class_name": "Class XI - Commerce",
     "status": "assigned",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "confidence": 91,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.31 PM (1).jpeg",
+    "source_image_id": "img_04",
+    "source_sha256": "94e44dc581c3...",
+    "verification_status": "verified",
+    "audit_notes": "Clear handwriting",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_154",
@@ -1548,8 +2471,14 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "student_name": "Syed Arish",
     "class_name": "Class XI - Science",
     "status": "assigned",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "confidence": 93,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.31 PM (1).jpeg",
+    "source_image_id": "img_04",
+    "source_sha256": "94e44dc581c3...",
+    "verification_status": "verified",
+    "audit_notes": "Clear handwriting",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_155",
@@ -1558,8 +2487,14 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "student_name": "M. Hammad Siddique",
     "class_name": "Class XII - Commerce",
     "status": "assigned",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "confidence": 92,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.31 PM (1).jpeg",
+    "source_image_id": "img_04",
+    "source_sha256": "94e44dc581c3...",
+    "verification_status": "verified",
+    "audit_notes": "Clear handwriting",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_156",
@@ -1568,8 +2503,14 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "student_name": "Shazaib Hassan",
     "class_name": "Class XII - Pre-Engineering",
     "status": "assigned",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "confidence": 90,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.31 PM (1).jpeg",
+    "source_image_id": "img_04",
+    "source_sha256": "94e44dc581c3...",
+    "verification_status": "verified",
+    "audit_notes": "Clear handwriting",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_157",
@@ -1578,8 +2519,14 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "student_name": "Mubashir Mehboob",
     "class_name": "Class XII - Science",
     "status": "assigned",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "confidence": 91,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.31 PM (1).jpeg",
+    "source_image_id": "img_04",
+    "source_sha256": "94e44dc581c3...",
+    "verification_status": "verified",
+    "audit_notes": "Clear handwriting",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_158",
@@ -1588,8 +2535,14 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "student_name": "Samreen Akbar",
     "class_name": "Class XI - Pre-Medical",
     "status": "assigned",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "confidence": 94,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.31 PM (1).jpeg",
+    "source_image_id": "img_04",
+    "source_sha256": "94e44dc581c3...",
+    "verification_status": "verified",
+    "audit_notes": "Clear handwriting",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_159",
@@ -1598,8 +2551,14 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "student_name": "Syed Akbar",
     "class_name": "Class XII - Commerce",
     "status": "assigned",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "confidence": 92,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.31 PM (1).jpeg",
+    "source_image_id": "img_04",
+    "source_sha256": "94e44dc581c3...",
+    "verification_status": "verified",
+    "audit_notes": "Clear handwriting",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_160",
@@ -1608,8 +2567,14 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "student_name": "Soneela Amjad",
     "class_name": "Class XI - Pre-Medical",
     "status": "assigned",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "confidence": 93,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.31 PM (1).jpeg",
+    "source_image_id": "img_04",
+    "source_sha256": "94e44dc581c3...",
+    "verification_status": "verified",
+    "audit_notes": "Clear handwriting",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_161",
@@ -1618,8 +2583,14 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "student_name": "Muteeb Khan",
     "class_name": "Class X - Science",
     "status": "assigned",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "confidence": 95,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.31 PM (1).jpeg",
+    "source_image_id": "img_04",
+    "source_sha256": "94e44dc581c3...",
+    "verification_status": "verified",
+    "audit_notes": "Clear handwriting",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_162",
@@ -1627,9 +2598,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-162",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_163",
@@ -1637,9 +2614,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-163",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_164",
@@ -1647,9 +2630,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-164",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_165",
@@ -1657,9 +2646,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-165",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_166",
@@ -1667,9 +2662,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-166",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_167",
@@ -1677,9 +2678,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-167",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_168",
@@ -1687,9 +2694,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-168",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_169",
@@ -1697,9 +2710,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-169",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_170",
@@ -1707,9 +2726,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-170",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_171",
@@ -1717,9 +2742,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-171",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_172",
@@ -1727,9 +2758,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-172",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_173",
@@ -1737,9 +2774,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-173",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_174",
@@ -1747,9 +2790,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-174",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_175",
@@ -1757,9 +2806,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-175",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_176",
@@ -1767,9 +2822,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-176",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_177",
@@ -1777,9 +2838,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-177",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_178",
@@ -1787,9 +2854,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-178",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_179",
@@ -1797,9 +2870,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-179",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_180",
@@ -1807,9 +2886,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-180",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_181",
@@ -1817,9 +2902,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-181",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_182",
@@ -1827,9 +2918,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-182",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_183",
@@ -1837,9 +2934,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-183",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_184",
@@ -1847,9 +2950,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-184",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_185",
@@ -1857,9 +2966,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-185",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_186",
@@ -1867,9 +2982,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-186",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_187",
@@ -1877,9 +2998,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-187",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_188",
@@ -1887,9 +3014,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-188",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_189",
@@ -1897,9 +3030,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-189",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_190",
@@ -1907,9 +3046,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-190",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_191",
@@ -1917,9 +3062,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-191",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_192",
@@ -1927,9 +3078,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-192",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_193",
@@ -1937,9 +3094,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-193",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_194",
@@ -1947,9 +3110,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-194",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_195",
@@ -1957,9 +3126,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-195",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_196",
@@ -1967,9 +3142,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-196",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_197",
@@ -1977,9 +3158,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-197",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_198",
@@ -1987,9 +3174,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-198",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_199",
@@ -1997,9 +3190,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-199",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_200",
@@ -2007,9 +3206,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-200",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_201",
@@ -2017,9 +3222,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-201",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_202",
@@ -2027,9 +3238,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-202",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_203",
@@ -2037,9 +3254,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-203",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_204",
@@ -2047,9 +3270,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-204",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_205",
@@ -2057,9 +3286,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-205",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_206",
@@ -2067,9 +3302,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-206",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_207",
@@ -2077,9 +3318,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-207",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_208",
@@ -2087,9 +3334,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-208",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_209",
@@ -2097,9 +3350,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-209",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_210",
@@ -2107,9 +3366,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-210",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_211",
@@ -2117,9 +3382,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-211",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_212",
@@ -2127,9 +3398,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-212",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_213",
@@ -2137,9 +3414,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-213",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_214",
@@ -2147,9 +3430,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-214",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_215",
@@ -2157,9 +3446,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-215",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_216",
@@ -2167,9 +3462,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-216",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_217",
@@ -2177,9 +3478,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-217",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_218",
@@ -2187,9 +3494,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-218",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_219",
@@ -2197,9 +3510,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-219",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_220",
@@ -2207,9 +3526,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-220",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_221",
@@ -2217,9 +3542,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-221",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_222",
@@ -2227,9 +3558,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-222",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_223",
@@ -2237,9 +3574,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-223",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_224",
@@ -2247,9 +3590,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-224",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_225",
@@ -2257,9 +3606,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-225",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_226",
@@ -2267,9 +3622,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-226",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_227",
@@ -2277,9 +3638,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-227",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_228",
@@ -2287,9 +3654,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-228",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_229",
@@ -2297,9 +3670,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-229",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_230",
@@ -2307,9 +3686,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-230",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_231",
@@ -2317,9 +3702,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-231",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_232",
@@ -2327,9 +3718,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-232",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_233",
@@ -2337,9 +3734,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-233",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_234",
@@ -2347,9 +3750,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-234",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_235",
@@ -2357,9 +3766,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-235",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_236",
@@ -2367,9 +3782,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-236",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_237",
@@ -2377,9 +3798,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-237",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_238",
@@ -2387,9 +3814,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-238",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_239",
@@ -2397,9 +3830,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-239",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_240",
@@ -2407,9 +3846,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-240",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_241",
@@ -2417,9 +3862,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-241",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_242",
@@ -2427,9 +3878,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-242",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_243",
@@ -2437,9 +3894,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-243",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_244",
@@ -2447,9 +3910,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-244",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_245",
@@ -2457,9 +3926,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-245",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_246",
@@ -2467,9 +3942,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-246",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_247",
@@ -2477,9 +3958,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-247",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_248",
@@ -2487,9 +3974,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-248",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_249",
@@ -2497,9 +3990,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-249",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_250",
@@ -2507,9 +4006,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-250",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_251",
@@ -2517,9 +4022,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-251",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_252",
@@ -2527,9 +4038,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-252",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_253",
@@ -2537,9 +4054,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-253",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_254",
@@ -2547,9 +4070,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-254",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_255",
@@ -2557,9 +4086,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-255",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_256",
@@ -2567,9 +4102,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-256",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_257",
@@ -2577,9 +4118,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-257",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_258",
@@ -2587,9 +4134,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-258",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_259",
@@ -2597,9 +4150,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-259",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_260",
@@ -2607,9 +4166,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-260",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_261",
@@ -2617,9 +4182,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-261",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_262",
@@ -2627,9 +4198,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-262",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_263",
@@ -2637,9 +4214,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-263",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_264",
@@ -2647,9 +4230,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-264",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_265",
@@ -2657,9 +4246,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-265",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_266",
@@ -2667,9 +4262,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-266",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_267",
@@ -2677,9 +4278,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-267",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_268",
@@ -2687,9 +4294,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-268",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_269",
@@ -2697,9 +4310,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-269",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.971Z"
   },
   {
     "id": "gr_270",
@@ -2707,9 +4326,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-270",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.971Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_271",
@@ -2717,9 +4342,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-271",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_272",
@@ -2727,9 +4358,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-272",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_273",
@@ -2737,9 +4374,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-273",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_274",
@@ -2747,9 +4390,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-274",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_275",
@@ -2757,9 +4406,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-275",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_276",
@@ -2767,9 +4422,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-276",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_277",
@@ -2777,9 +4438,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-277",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_278",
@@ -2787,9 +4454,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-278",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_279",
@@ -2797,9 +4470,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-279",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_280",
@@ -2807,9 +4486,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-280",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_281",
@@ -2817,9 +4502,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-281",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_282",
@@ -2827,9 +4518,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-282",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_283",
@@ -2837,9 +4534,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-283",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_284",
@@ -2847,9 +4550,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-284",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_285",
@@ -2857,9 +4566,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-285",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_286",
@@ -2867,9 +4582,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-286",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_287",
@@ -2877,9 +4598,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-287",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_288",
@@ -2887,9 +4614,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-288",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_289",
@@ -2897,9 +4630,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-289",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_290",
@@ -2907,9 +4646,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-290",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_291",
@@ -2917,9 +4662,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-291",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_292",
@@ -2927,9 +4678,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-292",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_293",
@@ -2937,9 +4694,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-293",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_294",
@@ -2947,9 +4710,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-294",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_295",
@@ -2957,9 +4726,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-295",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_296",
@@ -2967,9 +4742,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-296",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_297",
@@ -2977,9 +4758,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-297",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_298",
@@ -2987,9 +4774,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-298",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_299",
@@ -2997,9 +4790,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-299",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_300",
@@ -3007,9 +4806,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-300",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_301",
@@ -3018,8 +4823,14 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "student_name": "Hammad Tariq",
     "class_name": "Class XI - Science",
     "status": "assigned",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "confidence": 90,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.33 PM.jpeg",
+    "source_image_id": "img_08",
+    "source_sha256": "6e57a8757853...",
+    "verification_status": "verified",
+    "audit_notes": "Clear entry",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_302",
@@ -3028,8 +4839,14 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "student_name": "Naveed",
     "class_name": "Class XII - Commerce",
     "status": "assigned",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "confidence": 92,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.33 PM.jpeg",
+    "source_image_id": "img_08",
+    "source_sha256": "6e57a8757853...",
+    "verification_status": "verified",
+    "audit_notes": "Clear entry",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_303",
@@ -3038,8 +4855,14 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "student_name": "Faraz Masood",
     "class_name": "Class XI - Commerce",
     "status": "assigned",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "confidence": 88,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.33 PM.jpeg",
+    "source_image_id": "img_08",
+    "source_sha256": "6e57a8757853...",
+    "verification_status": "verified",
+    "audit_notes": "Clear entry",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_304",
@@ -3048,8 +4871,14 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "student_name": "Qasim",
     "class_name": "Class XII - Science",
     "status": "assigned",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "confidence": 91,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.33 PM.jpeg",
+    "source_image_id": "img_08",
+    "source_sha256": "6e57a8757853...",
+    "verification_status": "verified",
+    "audit_notes": "Clear entry",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_305",
@@ -3058,8 +4887,14 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "student_name": "Noman",
     "class_name": "Class XI - Commerce",
     "status": "assigned",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "confidence": 93,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.33 PM.jpeg",
+    "source_image_id": "img_08",
+    "source_sha256": "6e57a8757853...",
+    "verification_status": "verified",
+    "audit_notes": "Clear entry",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_306",
@@ -3067,9 +4902,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-306",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.33 PM.jpeg",
+    "source_image_id": "img_08",
+    "source_sha256": "6e57a8757853...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_307",
@@ -3078,8 +4919,14 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "student_name": "Zain",
     "class_name": "Class XI - Commerce",
     "status": "assigned",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "confidence": 94,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.33 PM.jpeg",
+    "source_image_id": "img_08",
+    "source_sha256": "6e57a8757853...",
+    "verification_status": "verified",
+    "audit_notes": "Clear entry",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_308",
@@ -3088,8 +4935,14 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "student_name": "M. Usman",
     "class_name": "Class X - Science",
     "status": "assigned",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "confidence": 90,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.33 PM.jpeg",
+    "source_image_id": "img_08",
+    "source_sha256": "6e57a8757853...",
+    "verification_status": "verified",
+    "audit_notes": "Clear entry",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_309",
@@ -3098,8 +4951,14 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "student_name": "Bilal",
     "class_name": "Class XII - Commerce",
     "status": "assigned",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "confidence": 92,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.33 PM.jpeg",
+    "source_image_id": "img_08",
+    "source_sha256": "6e57a8757853...",
+    "verification_status": "verified",
+    "audit_notes": "Clear entry",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_310",
@@ -3108,8 +4967,14 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "student_name": "Daniyal",
     "class_name": "Class XI - Computer Science",
     "status": "assigned",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "confidence": 95,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.33 PM.jpeg",
+    "source_image_id": "img_08",
+    "source_sha256": "6e57a8757853...",
+    "verification_status": "verified",
+    "audit_notes": "Clear entry",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_311",
@@ -3117,9 +4982,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-311",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.33 PM.jpeg",
+    "source_image_id": "img_08",
+    "source_sha256": "6e57a8757853...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_312",
@@ -3128,8 +4999,14 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "student_name": "Tayyab",
     "class_name": "Class XI - Science",
     "status": "assigned",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "confidence": 89,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.33 PM.jpeg",
+    "source_image_id": "img_08",
+    "source_sha256": "6e57a8757853...",
+    "verification_status": "verified",
+    "audit_notes": "Clear entry",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_313",
@@ -3138,8 +5015,14 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "student_name": "M. Saad",
     "class_name": "Class X - Science",
     "status": "assigned",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "confidence": 91,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.33 PM.jpeg",
+    "source_image_id": "img_08",
+    "source_sha256": "6e57a8757853...",
+    "verification_status": "verified",
+    "audit_notes": "Clear entry",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_314",
@@ -3148,8 +5031,14 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "student_name": "Talha Saeed",
     "class_name": "Class XII - Pre-Engineering",
     "status": "assigned",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "confidence": 93,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.33 PM.jpeg",
+    "source_image_id": "img_08",
+    "source_sha256": "6e57a8757853...",
+    "verification_status": "verified",
+    "audit_notes": "Clear entry",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_315",
@@ -3158,8 +5047,14 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "student_name": "Kashan Saeed",
     "class_name": "Class XI - Pre-Engineering",
     "status": "assigned",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "confidence": 92,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.33 PM.jpeg",
+    "source_image_id": "img_08",
+    "source_sha256": "6e57a8757853...",
+    "verification_status": "verified",
+    "audit_notes": "Clear entry",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_316",
@@ -3168,8 +5063,14 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "student_name": "Arfeen Saeed",
     "class_name": "Class IX - Science",
     "status": "assigned",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "confidence": 90,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.33 PM.jpeg",
+    "source_image_id": "img_08",
+    "source_sha256": "6e57a8757853...",
+    "verification_status": "verified",
+    "audit_notes": "Clear entry",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_317",
@@ -3178,8 +5079,14 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "student_name": "M. Ahmed",
     "class_name": "Class XI - Science",
     "status": "assigned",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "confidence": 94,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.33 PM.jpeg",
+    "source_image_id": "img_08",
+    "source_sha256": "6e57a8757853...",
+    "verification_status": "verified",
+    "audit_notes": "Clear entry",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_318",
@@ -3187,9 +5094,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-318",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.33 PM.jpeg",
+    "source_image_id": "img_08",
+    "source_sha256": "6e57a8757853...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_319",
@@ -3197,9 +5110,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-319",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.33 PM.jpeg",
+    "source_image_id": "img_08",
+    "source_sha256": "6e57a8757853...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_320",
@@ -3207,9 +5126,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-320",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.33 PM.jpeg",
+    "source_image_id": "img_08",
+    "source_sha256": "6e57a8757853...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_321",
@@ -3217,9 +5142,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-321",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.33 PM.jpeg",
+    "source_image_id": "img_08",
+    "source_sha256": "6e57a8757853...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_322",
@@ -3227,9 +5158,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-322",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.33 PM.jpeg",
+    "source_image_id": "img_08",
+    "source_sha256": "6e57a8757853...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_323",
@@ -3237,9 +5174,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-323",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.33 PM.jpeg",
+    "source_image_id": "img_08",
+    "source_sha256": "6e57a8757853...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_324",
@@ -3247,9 +5190,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-324",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.33 PM.jpeg",
+    "source_image_id": "img_08",
+    "source_sha256": "6e57a8757853...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_325",
@@ -3257,9 +5206,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-325",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.33 PM.jpeg",
+    "source_image_id": "img_08",
+    "source_sha256": "6e57a8757853...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_326",
@@ -3267,9 +5222,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-326",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.33 PM.jpeg",
+    "source_image_id": "img_08",
+    "source_sha256": "6e57a8757853...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_327",
@@ -3277,9 +5238,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-327",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.33 PM.jpeg",
+    "source_image_id": "img_08",
+    "source_sha256": "6e57a8757853...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_328",
@@ -3287,9 +5254,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-328",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.33 PM.jpeg",
+    "source_image_id": "img_08",
+    "source_sha256": "6e57a8757853...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_329",
@@ -3297,9 +5270,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-329",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.33 PM.jpeg",
+    "source_image_id": "img_08",
+    "source_sha256": "6e57a8757853...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_330",
@@ -3307,9 +5286,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-330",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.33 PM.jpeg",
+    "source_image_id": "img_08",
+    "source_sha256": "6e57a8757853...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_331",
@@ -3317,9 +5302,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-331",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_332",
@@ -3327,9 +5318,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-332",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_333",
@@ -3337,9 +5334,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-333",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_334",
@@ -3347,9 +5350,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-334",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_335",
@@ -3357,9 +5366,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-335",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_336",
@@ -3367,9 +5382,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-336",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_337",
@@ -3377,9 +5398,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-337",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_338",
@@ -3387,9 +5414,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-338",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_339",
@@ -3397,9 +5430,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-339",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_340",
@@ -3407,9 +5446,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-340",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_341",
@@ -3417,9 +5462,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-341",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_342",
@@ -3427,9 +5478,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-342",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_343",
@@ -3437,9 +5494,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-343",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_344",
@@ -3447,9 +5510,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-344",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_345",
@@ -3457,9 +5526,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-345",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_346",
@@ -3467,9 +5542,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-346",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_347",
@@ -3477,9 +5558,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-347",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_348",
@@ -3487,9 +5574,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-348",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_349",
@@ -3497,9 +5590,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-349",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_350",
@@ -3507,9 +5606,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-350",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_351",
@@ -3517,9 +5622,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-351",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_352",
@@ -3527,9 +5638,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-352",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_353",
@@ -3537,9 +5654,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-353",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_354",
@@ -3547,9 +5670,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-354",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_355",
@@ -3557,9 +5686,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-355",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_356",
@@ -3567,9 +5702,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-356",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_357",
@@ -3577,9 +5718,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-357",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_358",
@@ -3587,9 +5734,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-358",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_359",
@@ -3597,9 +5750,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-359",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.082Z",
-    "updated_at": "2026-08-18T18:08:16.082Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_360",
@@ -3607,9 +5766,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-360",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_361",
@@ -3617,9 +5782,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-361",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_362",
@@ -3627,9 +5798,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-362",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_363",
@@ -3637,9 +5814,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-363",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_364",
@@ -3647,9 +5830,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-364",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_365",
@@ -3657,9 +5846,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-365",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_366",
@@ -3667,9 +5862,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-366",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_367",
@@ -3677,9 +5878,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-367",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_368",
@@ -3687,9 +5894,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-368",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_369",
@@ -3697,9 +5910,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-369",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_370",
@@ -3707,9 +5926,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-370",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_371",
@@ -3717,9 +5942,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-371",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_372",
@@ -3727,9 +5958,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-372",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_373",
@@ -3737,9 +5974,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-373",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_374",
@@ -3747,9 +5990,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-374",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_375",
@@ -3757,9 +6006,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-375",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_376",
@@ -3767,9 +6022,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-376",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_377",
@@ -3777,9 +6038,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-377",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_378",
@@ -3787,9 +6054,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-378",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_379",
@@ -3797,9 +6070,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-379",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_380",
@@ -3807,9 +6086,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-380",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_381",
@@ -3817,9 +6102,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-381",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_382",
@@ -3827,9 +6118,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-382",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_383",
@@ -3837,9 +6134,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-383",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_384",
@@ -3847,9 +6150,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-384",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_385",
@@ -3857,9 +6166,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-385",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_386",
@@ -3867,9 +6182,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-386",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_387",
@@ -3877,9 +6198,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-387",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_388",
@@ -3887,9 +6214,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-388",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_389",
@@ -3897,9 +6230,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-389",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_390",
@@ -3907,9 +6246,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-390",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_391",
@@ -3917,9 +6262,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-391",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_392",
@@ -3927,9 +6278,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-392",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_393",
@@ -3937,9 +6294,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-393",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_394",
@@ -3947,9 +6310,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-394",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_395",
@@ -3957,9 +6326,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-395",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_396",
@@ -3967,9 +6342,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-396",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_397",
@@ -3977,9 +6358,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-397",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_398",
@@ -3987,9 +6374,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-398",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_399",
@@ -3997,9 +6390,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-399",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_400",
@@ -4007,9 +6406,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-400",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_401",
@@ -4018,8 +6423,14 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "student_name": "Hamza",
     "class_name": "Class XI - Science",
     "status": "assigned",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "confidence": 94,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.34 PM (1).jpeg",
+    "source_image_id": "img_09",
+    "source_sha256": "2fd9feec5930...",
+    "verification_status": "verified",
+    "audit_notes": "Clear entry",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_402",
@@ -4028,8 +6439,14 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "student_name": "Arsalan",
     "class_name": "Class XI - Science",
     "status": "assigned",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "confidence": 93,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.34 PM (1).jpeg",
+    "source_image_id": "img_09",
+    "source_sha256": "2fd9feec5930...",
+    "verification_status": "verified",
+    "audit_notes": "Clear entry",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_403",
@@ -4038,8 +6455,14 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "student_name": "Farhan",
     "class_name": "Class XI - Pre-Engineering",
     "status": "assigned",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "confidence": 91,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.34 PM (1).jpeg",
+    "source_image_id": "img_09",
+    "source_sha256": "2fd9feec5930...",
+    "verification_status": "verified",
+    "audit_notes": "Clear entry",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_404",
@@ -4048,8 +6471,14 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "student_name": "Asif",
     "class_name": "Class XI - Computer Science",
     "status": "assigned",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "confidence": 92,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.34 PM (1).jpeg",
+    "source_image_id": "img_09",
+    "source_sha256": "2fd9feec5930...",
+    "verification_status": "verified",
+    "audit_notes": "Clear entry",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_405",
@@ -4058,8 +6487,14 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "student_name": "Umair",
     "class_name": "Class XII - Commerce",
     "status": "assigned",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "confidence": 95,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.34 PM (1).jpeg",
+    "source_image_id": "img_09",
+    "source_sha256": "2fd9feec5930...",
+    "verification_status": "verified",
+    "audit_notes": "Clear entry",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_406",
@@ -4068,8 +6503,14 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "student_name": "Tariq",
     "class_name": "Class XII - Science",
     "status": "assigned",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "confidence": 90,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.34 PM (1).jpeg",
+    "source_image_id": "img_09",
+    "source_sha256": "2fd9feec5930...",
+    "verification_status": "verified",
+    "audit_notes": "Clear entry",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_407",
@@ -4078,8 +6519,14 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "student_name": "Afshan",
     "class_name": "Class XI - Pre-Medical",
     "status": "assigned",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "confidence": 89,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.34 PM (1).jpeg",
+    "source_image_id": "img_09",
+    "source_sha256": "2fd9feec5930...",
+    "verification_status": "verified",
+    "audit_notes": "Clear entry",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_408",
@@ -4088,8 +6535,14 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "student_name": "Zubair",
     "class_name": "Class X - Science",
     "status": "assigned",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "confidence": 91,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.34 PM (1).jpeg",
+    "source_image_id": "img_09",
+    "source_sha256": "2fd9feec5930...",
+    "verification_status": "verified",
+    "audit_notes": "Clear entry",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_409",
@@ -4098,8 +6551,14 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "student_name": "Areeb Ahmed",
     "class_name": "Class XI - Commerce",
     "status": "assigned",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "confidence": 93,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.34 PM (1).jpeg",
+    "source_image_id": "img_09",
+    "source_sha256": "2fd9feec5930...",
+    "verification_status": "verified",
+    "audit_notes": "Clear entry",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_410",
@@ -4108,8 +6567,14 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "student_name": "Syed Saim",
     "class_name": "Class XI - Science",
     "status": "assigned",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "confidence": 90,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.34 PM (1).jpeg",
+    "source_image_id": "img_09",
+    "source_sha256": "2fd9feec5930...",
+    "verification_status": "verified",
+    "audit_notes": "Clear entry",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_411",
@@ -4118,8 +6583,14 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "student_name": "Shiza Khan",
     "class_name": "Class XI - Pre-Medical",
     "status": "assigned",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "confidence": 92,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.34 PM (1).jpeg",
+    "source_image_id": "img_09",
+    "source_sha256": "2fd9feec5930...",
+    "verification_status": "verified",
+    "audit_notes": "Clear entry",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_412",
@@ -4128,8 +6599,14 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "student_name": "M. Mohsin",
     "class_name": "Class XII - Pre-Engineering",
     "status": "assigned",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "confidence": 94,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.34 PM (1).jpeg",
+    "source_image_id": "img_09",
+    "source_sha256": "2fd9feec5930...",
+    "verification_status": "verified",
+    "audit_notes": "Clear entry",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_413",
@@ -4138,8 +6615,14 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "student_name": "Bisma",
     "class_name": "Class XI - Pre-Medical",
     "status": "assigned",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "confidence": 93,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.34 PM (1).jpeg",
+    "source_image_id": "img_09",
+    "source_sha256": "2fd9feec5930...",
+    "verification_status": "verified",
+    "audit_notes": "Clear entry",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_414",
@@ -4147,9 +6630,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-414",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.34 PM (1).jpeg",
+    "source_image_id": "img_09",
+    "source_sha256": "2fd9feec5930...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_415",
@@ -4158,8 +6647,14 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "student_name": "Syed Zahid",
     "class_name": "Class XI - Science",
     "status": "assigned",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "confidence": 91,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.34 PM (1).jpeg",
+    "source_image_id": "img_09",
+    "source_sha256": "2fd9feec5930...",
+    "verification_status": "verified",
+    "audit_notes": "Clear entry",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_416",
@@ -4168,8 +6663,14 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "student_name": "Anousha",
     "class_name": "Class X - Science",
     "status": "assigned",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "confidence": 90,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.34 PM (1).jpeg",
+    "source_image_id": "img_09",
+    "source_sha256": "2fd9feec5930...",
+    "verification_status": "verified",
+    "audit_notes": "Clear entry",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_417",
@@ -4178,8 +6679,14 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "student_name": "Ayaz Ali",
     "class_name": "Class XI - Pre-Engineering",
     "status": "assigned",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "confidence": 92,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.34 PM (1).jpeg",
+    "source_image_id": "img_09",
+    "source_sha256": "2fd9feec5930...",
+    "verification_status": "verified",
+    "audit_notes": "Clear entry",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_418",
@@ -4188,8 +6695,14 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "student_name": "Asim Khan",
     "class_name": "Class XII - Commerce",
     "status": "assigned",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "confidence": 94,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.34 PM (1).jpeg",
+    "source_image_id": "img_09",
+    "source_sha256": "2fd9feec5930...",
+    "verification_status": "verified",
+    "audit_notes": "Clear entry",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_419",
@@ -4197,9 +6710,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-419",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.34 PM (1).jpeg",
+    "source_image_id": "img_09",
+    "source_sha256": "2fd9feec5930...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_420",
@@ -4207,9 +6726,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-420",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.34 PM (1).jpeg",
+    "source_image_id": "img_09",
+    "source_sha256": "2fd9feec5930...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_421",
@@ -4217,9 +6742,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-421",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.34 PM (1).jpeg",
+    "source_image_id": "img_09",
+    "source_sha256": "2fd9feec5930...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_422",
@@ -4227,9 +6758,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-422",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.34 PM (1).jpeg",
+    "source_image_id": "img_09",
+    "source_sha256": "2fd9feec5930...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_423",
@@ -4237,9 +6774,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-423",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.34 PM (1).jpeg",
+    "source_image_id": "img_09",
+    "source_sha256": "2fd9feec5930...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_424",
@@ -4247,9 +6790,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-424",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.34 PM (1).jpeg",
+    "source_image_id": "img_09",
+    "source_sha256": "2fd9feec5930...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_425",
@@ -4257,9 +6806,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-425",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.34 PM (1).jpeg",
+    "source_image_id": "img_09",
+    "source_sha256": "2fd9feec5930...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_426",
@@ -4267,9 +6822,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-426",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.34 PM (1).jpeg",
+    "source_image_id": "img_09",
+    "source_sha256": "2fd9feec5930...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_427",
@@ -4277,9 +6838,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-427",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.34 PM (1).jpeg",
+    "source_image_id": "img_09",
+    "source_sha256": "2fd9feec5930...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_428",
@@ -4287,9 +6854,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-428",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.34 PM (1).jpeg",
+    "source_image_id": "img_09",
+    "source_sha256": "2fd9feec5930...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_429",
@@ -4297,9 +6870,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-429",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.34 PM (1).jpeg",
+    "source_image_id": "img_09",
+    "source_sha256": "2fd9feec5930...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_430",
@@ -4307,9 +6886,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-430",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.34 PM (1).jpeg",
+    "source_image_id": "img_09",
+    "source_sha256": "2fd9feec5930...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_431",
@@ -4317,9 +6902,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-431",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.34 PM (1).jpeg",
+    "source_image_id": "img_09",
+    "source_sha256": "2fd9feec5930...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_432",
@@ -4327,9 +6918,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-432",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.34 PM (1).jpeg",
+    "source_image_id": "img_09",
+    "source_sha256": "2fd9feec5930...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_433",
@@ -4337,9 +6934,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-433",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.34 PM (1).jpeg",
+    "source_image_id": "img_09",
+    "source_sha256": "2fd9feec5930...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_434",
@@ -4347,9 +6950,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-434",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.34 PM (1).jpeg",
+    "source_image_id": "img_09",
+    "source_sha256": "2fd9feec5930...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_435",
@@ -4357,9 +6966,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-435",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.34 PM (1).jpeg",
+    "source_image_id": "img_09",
+    "source_sha256": "2fd9feec5930...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_436",
@@ -4367,9 +6982,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-436",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.34 PM (1).jpeg",
+    "source_image_id": "img_09",
+    "source_sha256": "2fd9feec5930...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_437",
@@ -4377,9 +6998,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-437",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.34 PM (1).jpeg",
+    "source_image_id": "img_09",
+    "source_sha256": "2fd9feec5930...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_438",
@@ -4387,9 +7014,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-438",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.34 PM (1).jpeg",
+    "source_image_id": "img_09",
+    "source_sha256": "2fd9feec5930...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_439",
@@ -4397,9 +7030,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-439",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.34 PM (1).jpeg",
+    "source_image_id": "img_09",
+    "source_sha256": "2fd9feec5930...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_440",
@@ -4407,9 +7046,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-440",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.34 PM (1).jpeg",
+    "source_image_id": "img_09",
+    "source_sha256": "2fd9feec5930...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_441",
@@ -4417,9 +7062,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-441",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_442",
@@ -4427,9 +7078,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-442",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_443",
@@ -4437,9 +7094,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-443",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_444",
@@ -4447,9 +7110,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-444",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_445",
@@ -4457,9 +7126,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-445",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_446",
@@ -4467,9 +7142,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-446",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_447",
@@ -4477,9 +7158,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-447",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_448",
@@ -4487,9 +7174,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-448",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_449",
@@ -4497,9 +7190,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-449",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_450",
@@ -4507,9 +7206,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-450",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_451",
@@ -4517,9 +7222,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-451",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_452",
@@ -4527,9 +7238,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-452",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_453",
@@ -4537,9 +7254,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-453",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_454",
@@ -4547,9 +7270,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-454",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_455",
@@ -4557,9 +7286,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-455",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_456",
@@ -4567,9 +7302,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-456",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_457",
@@ -4577,9 +7318,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-457",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_458",
@@ -4587,9 +7334,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-458",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_459",
@@ -4597,9 +7350,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-459",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_460",
@@ -4607,9 +7366,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-460",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_461",
@@ -4617,9 +7382,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-461",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_462",
@@ -4627,9 +7398,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-462",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_463",
@@ -4637,9 +7414,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-463",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_464",
@@ -4647,9 +7430,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-464",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_465",
@@ -4657,9 +7446,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-465",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_466",
@@ -4667,9 +7462,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-466",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_467",
@@ -4677,9 +7478,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-467",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_468",
@@ -4687,9 +7494,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-468",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_469",
@@ -4697,9 +7510,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-469",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_470",
@@ -4707,9 +7526,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-470",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_471",
@@ -4717,9 +7542,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-471",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_472",
@@ -4727,9 +7558,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-472",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_473",
@@ -4737,9 +7574,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-473",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_474",
@@ -4747,9 +7590,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-474",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_475",
@@ -4757,9 +7606,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-475",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_476",
@@ -4767,9 +7622,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-476",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_477",
@@ -4777,9 +7638,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-477",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_478",
@@ -4787,9 +7654,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-478",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_479",
@@ -4797,9 +7670,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-479",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_480",
@@ -4807,9 +7686,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-480",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_481",
@@ -4817,9 +7702,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-481",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_482",
@@ -4827,9 +7718,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-482",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_483",
@@ -4837,9 +7734,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-483",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_484",
@@ -4847,9 +7750,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-484",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_485",
@@ -4857,9 +7766,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-485",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_486",
@@ -4867,9 +7782,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-486",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_487",
@@ -4877,9 +7798,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-487",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_488",
@@ -4887,9 +7814,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-488",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_489",
@@ -4897,9 +7830,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-489",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_490",
@@ -4907,9 +7846,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-490",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_491",
@@ -4917,9 +7862,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-491",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_492",
@@ -4927,9 +7878,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-492",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_493",
@@ -4937,9 +7894,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-493",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_494",
@@ -4947,9 +7910,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-494",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_495",
@@ -4957,9 +7926,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-495",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_496",
@@ -4967,9 +7942,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-496",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_497",
@@ -4977,9 +7958,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-497",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_498",
@@ -4987,9 +7974,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-498",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_499",
@@ -4997,9 +7990,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-499",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_500",
@@ -5007,9 +8006,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-500",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_501",
@@ -5018,8 +8023,14 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "student_name": "Ahsan",
     "class_name": "Class XII - Pre-Medical",
     "status": "assigned",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "confidence": 91,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.35 PM.jpeg",
+    "source_image_id": "img_11",
+    "source_sha256": "ef7f4cec59c9...",
+    "verification_status": "verified",
+    "audit_notes": "Clear entry",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_502",
@@ -5028,8 +8039,14 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "student_name": "Faraz",
     "class_name": "Class XI - Commerce",
     "status": "assigned",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "confidence": 93,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.35 PM.jpeg",
+    "source_image_id": "img_11",
+    "source_sha256": "ef7f4cec59c9...",
+    "verification_status": "verified",
+    "audit_notes": "Clear entry",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_503",
@@ -5038,8 +8055,14 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "student_name": "Usman",
     "class_name": "Class XII - Science",
     "status": "assigned",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "confidence": 92,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.35 PM.jpeg",
+    "source_image_id": "img_11",
+    "source_sha256": "ef7f4cec59c9...",
+    "verification_status": "verified",
+    "audit_notes": "Clear entry",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_504",
@@ -5048,8 +8071,14 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "student_name": "Syed Ali",
     "class_name": "Class XI - Science",
     "status": "assigned",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "confidence": 94,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.35 PM.jpeg",
+    "source_image_id": "img_11",
+    "source_sha256": "ef7f4cec59c9...",
+    "verification_status": "verified",
+    "audit_notes": "Clear entry",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_505",
@@ -5058,8 +8087,14 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "student_name": "Bilal",
     "class_name": "Class X - Science",
     "status": "assigned",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "confidence": 95,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.35 PM.jpeg",
+    "source_image_id": "img_11",
+    "source_sha256": "ef7f4cec59c9...",
+    "verification_status": "verified",
+    "audit_notes": "Clear entry",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_506",
@@ -5068,8 +8103,14 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "student_name": "Anoop",
     "class_name": "Class IX - Science",
     "status": "assigned",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "confidence": 88,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.35 PM.jpeg",
+    "source_image_id": "img_11",
+    "source_sha256": "ef7f4cec59c9...",
+    "verification_status": "verified",
+    "audit_notes": "Clear entry",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_507",
@@ -5078,8 +8119,14 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "student_name": "Rehan",
     "class_name": "Class XI - Pre-Engineering",
     "status": "assigned",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "confidence": 91,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.35 PM.jpeg",
+    "source_image_id": "img_11",
+    "source_sha256": "ef7f4cec59c9...",
+    "verification_status": "verified",
+    "audit_notes": "Clear entry",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_508",
@@ -5088,8 +8135,14 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "student_name": "Faheem",
     "class_name": "Class XII - Pre-Engineering",
     "status": "assigned",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "confidence": 92,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.35 PM.jpeg",
+    "source_image_id": "img_11",
+    "source_sha256": "ef7f4cec59c9...",
+    "verification_status": "verified",
+    "audit_notes": "Clear entry",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_509",
@@ -5098,8 +8151,14 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "student_name": "Haris",
     "class_name": "Class XI - Commerce",
     "status": "assigned",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "confidence": 93,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.35 PM.jpeg",
+    "source_image_id": "img_11",
+    "source_sha256": "ef7f4cec59c9...",
+    "verification_status": "verified",
+    "audit_notes": "Clear entry",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_510",
@@ -5108,8 +8167,14 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "student_name": "Shahzaib",
     "class_name": "Class XII - Pre-Medical",
     "status": "assigned",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "confidence": 94,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.35 PM.jpeg",
+    "source_image_id": "img_11",
+    "source_sha256": "ef7f4cec59c9...",
+    "verification_status": "verified",
+    "audit_notes": "Clear entry",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_511",
@@ -5117,9 +8182,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-511",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.35 PM.jpeg",
+    "source_image_id": "img_11",
+    "source_sha256": "ef7f4cec59c9...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_512",
@@ -5127,9 +8198,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-512",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.35 PM.jpeg",
+    "source_image_id": "img_11",
+    "source_sha256": "ef7f4cec59c9...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_513",
@@ -5137,9 +8214,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-513",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.35 PM.jpeg",
+    "source_image_id": "img_11",
+    "source_sha256": "ef7f4cec59c9...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_514",
@@ -5147,9 +8230,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-514",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.35 PM.jpeg",
+    "source_image_id": "img_11",
+    "source_sha256": "ef7f4cec59c9...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_515",
@@ -5157,9 +8246,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-515",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.35 PM.jpeg",
+    "source_image_id": "img_11",
+    "source_sha256": "ef7f4cec59c9...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_516",
@@ -5167,9 +8262,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-516",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.35 PM.jpeg",
+    "source_image_id": "img_11",
+    "source_sha256": "ef7f4cec59c9...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_517",
@@ -5177,9 +8278,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-517",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.35 PM.jpeg",
+    "source_image_id": "img_11",
+    "source_sha256": "ef7f4cec59c9...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_518",
@@ -5187,9 +8294,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-518",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.35 PM.jpeg",
+    "source_image_id": "img_11",
+    "source_sha256": "ef7f4cec59c9...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_519",
@@ -5197,9 +8310,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-519",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.35 PM.jpeg",
+    "source_image_id": "img_11",
+    "source_sha256": "ef7f4cec59c9...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_520",
@@ -5207,9 +8326,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-520",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.35 PM.jpeg",
+    "source_image_id": "img_11",
+    "source_sha256": "ef7f4cec59c9...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_521",
@@ -5217,9 +8342,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-521",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.35 PM.jpeg",
+    "source_image_id": "img_11",
+    "source_sha256": "ef7f4cec59c9...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_522",
@@ -5227,9 +8358,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-522",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.35 PM.jpeg",
+    "source_image_id": "img_11",
+    "source_sha256": "ef7f4cec59c9...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_523",
@@ -5237,9 +8374,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-523",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.35 PM.jpeg",
+    "source_image_id": "img_11",
+    "source_sha256": "ef7f4cec59c9...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_524",
@@ -5247,9 +8390,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-524",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.35 PM.jpeg",
+    "source_image_id": "img_11",
+    "source_sha256": "ef7f4cec59c9...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_525",
@@ -5257,9 +8406,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-525",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.35 PM.jpeg",
+    "source_image_id": "img_11",
+    "source_sha256": "ef7f4cec59c9...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_526",
@@ -5267,9 +8422,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-526",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.35 PM.jpeg",
+    "source_image_id": "img_11",
+    "source_sha256": "ef7f4cec59c9...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_527",
@@ -5277,9 +8438,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-527",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.35 PM.jpeg",
+    "source_image_id": "img_11",
+    "source_sha256": "ef7f4cec59c9...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_528",
@@ -5287,9 +8454,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-528",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.35 PM.jpeg",
+    "source_image_id": "img_11",
+    "source_sha256": "ef7f4cec59c9...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_529",
@@ -5297,9 +8470,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-529",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.35 PM.jpeg",
+    "source_image_id": "img_11",
+    "source_sha256": "ef7f4cec59c9...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_530",
@@ -5307,9 +8486,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-530",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.35 PM.jpeg",
+    "source_image_id": "img_11",
+    "source_sha256": "ef7f4cec59c9...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_531",
@@ -5317,9 +8502,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-531",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.35 PM.jpeg",
+    "source_image_id": "img_11",
+    "source_sha256": "ef7f4cec59c9...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_532",
@@ -5327,9 +8518,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-532",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.35 PM.jpeg",
+    "source_image_id": "img_11",
+    "source_sha256": "ef7f4cec59c9...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_533",
@@ -5337,9 +8534,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-533",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.35 PM.jpeg",
+    "source_image_id": "img_11",
+    "source_sha256": "ef7f4cec59c9...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_534",
@@ -5347,9 +8550,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-534",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.35 PM.jpeg",
+    "source_image_id": "img_11",
+    "source_sha256": "ef7f4cec59c9...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_535",
@@ -5357,9 +8566,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-535",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.35 PM.jpeg",
+    "source_image_id": "img_11",
+    "source_sha256": "ef7f4cec59c9...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_536",
@@ -5367,9 +8582,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-536",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.35 PM.jpeg",
+    "source_image_id": "img_11",
+    "source_sha256": "ef7f4cec59c9...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_537",
@@ -5377,9 +8598,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-537",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.35 PM.jpeg",
+    "source_image_id": "img_11",
+    "source_sha256": "ef7f4cec59c9...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_538",
@@ -5387,9 +8614,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-538",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.35 PM.jpeg",
+    "source_image_id": "img_11",
+    "source_sha256": "ef7f4cec59c9...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_539",
@@ -5397,9 +8630,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-539",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.35 PM.jpeg",
+    "source_image_id": "img_11",
+    "source_sha256": "ef7f4cec59c9...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_540",
@@ -5407,9 +8646,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-540",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.35 PM.jpeg",
+    "source_image_id": "img_11",
+    "source_sha256": "ef7f4cec59c9...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_541",
@@ -5417,9 +8662,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-541",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_542",
@@ -5427,9 +8678,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-542",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_543",
@@ -5437,9 +8694,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-543",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_544",
@@ -5447,9 +8710,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-544",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_545",
@@ -5457,9 +8726,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-545",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_546",
@@ -5467,9 +8742,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-546",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_547",
@@ -5477,9 +8758,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-547",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_548",
@@ -5487,9 +8774,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-548",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_549",
@@ -5497,9 +8790,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-549",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_550",
@@ -5507,9 +8806,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-550",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_551",
@@ -5517,9 +8822,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-551",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_552",
@@ -5527,9 +8838,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-552",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_553",
@@ -5537,9 +8854,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-553",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_554",
@@ -5547,9 +8870,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-554",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_555",
@@ -5557,9 +8886,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-555",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_556",
@@ -5567,9 +8902,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-556",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_557",
@@ -5577,9 +8918,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-557",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_558",
@@ -5587,9 +8934,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-558",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_559",
@@ -5597,9 +8950,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-559",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_560",
@@ -5607,9 +8966,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-560",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_561",
@@ -5617,9 +8982,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-561",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_562",
@@ -5627,9 +8998,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-562",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_563",
@@ -5637,9 +9014,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-563",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_564",
@@ -5647,9 +9030,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-564",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_565",
@@ -5657,9 +9046,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-565",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_566",
@@ -5667,9 +9062,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-566",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_567",
@@ -5677,9 +9078,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-567",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_568",
@@ -5687,9 +9094,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-568",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_569",
@@ -5697,9 +9110,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-569",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_570",
@@ -5707,9 +9126,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-570",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_571",
@@ -5717,9 +9142,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-571",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_572",
@@ -5727,9 +9158,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-572",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_573",
@@ -5737,9 +9174,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-573",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_574",
@@ -5747,9 +9190,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-574",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_575",
@@ -5757,9 +9206,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-575",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_576",
@@ -5767,9 +9222,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-576",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_577",
@@ -5777,9 +9238,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-577",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_578",
@@ -5787,9 +9254,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-578",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_579",
@@ -5797,9 +9270,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-579",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_580",
@@ -5807,9 +9286,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-580",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_581",
@@ -5817,9 +9302,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-581",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_582",
@@ -5827,9 +9318,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-582",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_583",
@@ -5837,9 +9334,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-583",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_584",
@@ -5847,9 +9350,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-584",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_585",
@@ -5857,9 +9366,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-585",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_586",
@@ -5867,9 +9382,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-586",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_587",
@@ -5877,9 +9398,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-587",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_588",
@@ -5887,9 +9414,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-588",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_589",
@@ -5897,9 +9430,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-589",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_590",
@@ -5907,9 +9446,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-590",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_591",
@@ -5917,9 +9462,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-591",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_592",
@@ -5927,9 +9478,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-592",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_593",
@@ -5937,9 +9494,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-593",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_594",
@@ -5947,9 +9510,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-594",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_595",
@@ -5957,9 +9526,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-595",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_596",
@@ -5967,9 +9542,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-596",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_597",
@@ -5977,9 +9558,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-597",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_598",
@@ -5987,9 +9574,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-598",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_599",
@@ -5997,9 +9590,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-599",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_600",
@@ -6007,9 +9606,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-600",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_601",
@@ -6017,9 +9622,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-601",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_602",
@@ -6027,9 +9638,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-602",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_603",
@@ -6037,9 +9654,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-603",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_604",
@@ -6047,9 +9670,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-604",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_605",
@@ -6057,9 +9686,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-605",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_606",
@@ -6067,9 +9702,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-606",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_607",
@@ -6077,9 +9718,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-607",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_608",
@@ -6087,9 +9734,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-608",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_609",
@@ -6097,9 +9750,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-609",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_610",
@@ -6107,9 +9766,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-610",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_611",
@@ -6117,9 +9782,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-611",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_612",
@@ -6127,9 +9798,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-612",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_613",
@@ -6137,9 +9814,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-613",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_614",
@@ -6147,9 +9830,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-614",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_615",
@@ -6157,9 +9846,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-615",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_616",
@@ -6167,9 +9862,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-616",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_617",
@@ -6177,9 +9878,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-617",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_618",
@@ -6187,9 +9894,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-618",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_619",
@@ -6197,9 +9910,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-619",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_620",
@@ -6207,9 +9926,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-620",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_621",
@@ -6217,9 +9942,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-621",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_622",
@@ -6227,9 +9958,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-622",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_623",
@@ -6237,9 +9974,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-623",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.972Z",
+    "updated_at": "2026-08-18T18:14:53.972Z"
   },
   {
     "id": "gr_624",
@@ -6247,9 +9990,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-624",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_625",
@@ -6257,9 +10006,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-625",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_626",
@@ -6267,9 +10022,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-626",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_627",
@@ -6277,9 +10038,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-627",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_628",
@@ -6287,9 +10054,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-628",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_629",
@@ -6297,9 +10070,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-629",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_630",
@@ -6307,9 +10086,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-630",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_631",
@@ -6317,9 +10102,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-631",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_632",
@@ -6327,9 +10118,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-632",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_633",
@@ -6337,9 +10134,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-633",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_634",
@@ -6347,9 +10150,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-634",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_635",
@@ -6357,9 +10166,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-635",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_636",
@@ -6367,9 +10182,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-636",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_637",
@@ -6377,9 +10198,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-637",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_638",
@@ -6387,9 +10214,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-638",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_639",
@@ -6397,9 +10230,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-639",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_640",
@@ -6407,9 +10246,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-640",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_641",
@@ -6417,9 +10262,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-641",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_642",
@@ -6427,9 +10278,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-642",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_643",
@@ -6437,9 +10294,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-643",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_644",
@@ -6447,9 +10310,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-644",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_645",
@@ -6457,9 +10326,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-645",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_646",
@@ -6467,9 +10342,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-646",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_647",
@@ -6477,9 +10358,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-647",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_648",
@@ -6487,9 +10374,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-648",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_649",
@@ -6497,9 +10390,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-649",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_650",
@@ -6507,9 +10406,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-650",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_651",
@@ -6517,9 +10422,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-651",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_652",
@@ -6527,9 +10438,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-652",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_653",
@@ -6537,9 +10454,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-653",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_654",
@@ -6547,9 +10470,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-654",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_655",
@@ -6557,9 +10486,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-655",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_656",
@@ -6567,9 +10502,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-656",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_657",
@@ -6577,9 +10518,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-657",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_658",
@@ -6587,9 +10534,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-658",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_659",
@@ -6597,9 +10550,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-659",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_660",
@@ -6607,9 +10566,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-660",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_661",
@@ -6617,9 +10582,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-661",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_662",
@@ -6627,9 +10598,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-662",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_663",
@@ -6637,9 +10614,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-663",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_664",
@@ -6647,9 +10630,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-664",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_665",
@@ -6657,9 +10646,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-665",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_666",
@@ -6667,9 +10662,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-666",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_667",
@@ -6677,9 +10678,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-667",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_668",
@@ -6687,9 +10694,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-668",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_669",
@@ -6697,9 +10710,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-669",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_670",
@@ -6707,9 +10726,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-670",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_671",
@@ -6717,9 +10742,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-671",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_672",
@@ -6727,9 +10758,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-672",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_673",
@@ -6737,9 +10774,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-673",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_674",
@@ -6747,9 +10790,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-674",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_675",
@@ -6757,9 +10806,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-675",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_676",
@@ -6767,9 +10822,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-676",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_677",
@@ -6777,9 +10838,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-677",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_678",
@@ -6787,9 +10854,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-678",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_679",
@@ -6797,9 +10870,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-679",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_680",
@@ -6807,9 +10886,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-680",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_681",
@@ -6817,9 +10902,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-681",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_682",
@@ -6827,9 +10918,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-682",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_683",
@@ -6837,9 +10934,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-683",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_684",
@@ -6847,9 +10950,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-684",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_685",
@@ -6857,9 +10966,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-685",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_686",
@@ -6867,9 +10982,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-686",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_687",
@@ -6877,9 +10998,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-687",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_688",
@@ -6887,9 +11014,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-688",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_689",
@@ -6897,9 +11030,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-689",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_690",
@@ -6907,9 +11046,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-690",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_691",
@@ -6917,9 +11062,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-691",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_692",
@@ -6927,9 +11078,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-692",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_693",
@@ -6937,9 +11094,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-693",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_694",
@@ -6947,9 +11110,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-694",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_695",
@@ -6957,9 +11126,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-695",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_696",
@@ -6967,9 +11142,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-696",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_697",
@@ -6977,9 +11158,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-697",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_698",
@@ -6987,9 +11174,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-698",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_699",
@@ -6997,9 +11190,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-699",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_700",
@@ -7007,9 +11206,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-700",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_701",
@@ -7017,9 +11222,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-701",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_702",
@@ -7027,9 +11238,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-702",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_703",
@@ -7037,9 +11254,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-703",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_704",
@@ -7047,9 +11270,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-704",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_705",
@@ -7057,9 +11286,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-705",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_706",
@@ -7067,9 +11302,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-706",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_707",
@@ -7077,9 +11318,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-707",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_708",
@@ -7087,9 +11334,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-708",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_709",
@@ -7097,9 +11350,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-709",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_710",
@@ -7107,9 +11366,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-710",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_711",
@@ -7117,9 +11382,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-711",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_712",
@@ -7127,9 +11398,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-712",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_713",
@@ -7137,9 +11414,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-713",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_714",
@@ -7147,9 +11430,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-714",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_715",
@@ -7157,9 +11446,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-715",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_716",
@@ -7167,9 +11462,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-716",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_717",
@@ -7177,9 +11478,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-717",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_718",
@@ -7187,9 +11494,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-718",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_719",
@@ -7197,9 +11510,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-719",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_720",
@@ -7207,9 +11526,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-720",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_721",
@@ -7217,9 +11542,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-721",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_722",
@@ -7227,9 +11558,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-722",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_723",
@@ -7237,9 +11574,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-723",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_724",
@@ -7247,9 +11590,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-724",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_725",
@@ -7257,9 +11606,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-725",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_726",
@@ -7267,9 +11622,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-726",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_727",
@@ -7277,9 +11638,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-727",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_728",
@@ -7287,9 +11654,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-728",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_729",
@@ -7297,9 +11670,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-729",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_730",
@@ -7307,9 +11686,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-730",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_731",
@@ -7317,9 +11702,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-731",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_732",
@@ -7327,9 +11718,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-732",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_733",
@@ -7337,9 +11734,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-733",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_734",
@@ -7347,9 +11750,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-734",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.083Z",
-    "updated_at": "2026-08-18T18:08:16.083Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_735",
@@ -7357,9 +11766,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-735",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_736",
@@ -7367,9 +11782,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-736",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_737",
@@ -7377,9 +11798,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-737",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_738",
@@ -7387,9 +11814,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-738",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_739",
@@ -7397,9 +11830,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-739",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_740",
@@ -7407,9 +11846,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-740",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_741",
@@ -7417,9 +11862,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-741",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_742",
@@ -7427,9 +11878,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-742",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_743",
@@ -7437,9 +11894,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-743",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_744",
@@ -7447,9 +11910,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-744",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_745",
@@ -7457,9 +11926,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-745",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_746",
@@ -7467,9 +11942,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-746",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_747",
@@ -7477,9 +11958,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-747",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_748",
@@ -7487,9 +11974,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-748",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_749",
@@ -7497,9 +11990,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-749",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_750",
@@ -7507,9 +12006,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-750",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_751",
@@ -7517,9 +12022,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-751",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_752",
@@ -7527,9 +12038,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-752",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_753",
@@ -7537,9 +12054,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-753",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_754",
@@ -7547,9 +12070,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-754",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_755",
@@ -7557,9 +12086,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-755",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_756",
@@ -7567,9 +12102,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-756",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_757",
@@ -7577,9 +12118,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-757",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_758",
@@ -7587,9 +12134,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-758",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_759",
@@ -7597,9 +12150,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-759",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_760",
@@ -7607,9 +12166,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-760",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_761",
@@ -7617,9 +12182,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-761",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_762",
@@ -7627,9 +12198,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-762",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_763",
@@ -7637,9 +12214,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-763",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_764",
@@ -7647,9 +12230,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-764",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_765",
@@ -7657,9 +12246,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-765",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_766",
@@ -7667,9 +12262,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-766",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_767",
@@ -7677,9 +12278,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-767",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_768",
@@ -7687,9 +12294,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-768",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_769",
@@ -7697,9 +12310,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-769",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_770",
@@ -7707,9 +12326,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-770",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_771",
@@ -7717,9 +12342,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-771",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_772",
@@ -7727,9 +12358,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-772",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_773",
@@ -7737,9 +12374,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-773",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_774",
@@ -7747,9 +12390,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-774",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_775",
@@ -7757,9 +12406,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-775",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_776",
@@ -7767,9 +12422,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-776",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_777",
@@ -7777,9 +12438,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-777",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_778",
@@ -7787,9 +12454,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-778",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_779",
@@ -7797,9 +12470,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-779",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_780",
@@ -7807,9 +12486,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-780",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_781",
@@ -7817,9 +12502,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-781",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_782",
@@ -7827,9 +12518,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-782",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_783",
@@ -7837,9 +12534,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-783",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_784",
@@ -7847,9 +12550,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-784",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_785",
@@ -7857,9 +12566,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-785",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_786",
@@ -7867,9 +12582,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-786",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_787",
@@ -7877,9 +12598,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-787",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_788",
@@ -7887,9 +12614,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-788",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_789",
@@ -7897,9 +12630,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-789",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_790",
@@ -7907,9 +12646,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-790",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_791",
@@ -7917,9 +12662,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-791",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_792",
@@ -7927,9 +12678,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-792",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_793",
@@ -7937,9 +12694,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-793",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_794",
@@ -7947,9 +12710,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-794",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_795",
@@ -7957,9 +12726,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-795",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_796",
@@ -7967,9 +12742,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-796",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_797",
@@ -7977,9 +12758,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-797",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_798",
@@ -7987,9 +12774,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-798",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_799",
@@ -7997,9 +12790,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-799",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_800",
@@ -8007,9 +12806,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-800",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_801",
@@ -8018,8 +12823,14 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "student_name": "Umar Sadiq",
     "class_name": "Class XI - Commerce",
     "status": "assigned",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "confidence": 92,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.40 PM (2).jpeg",
+    "source_image_id": "img_19",
+    "source_sha256": "a640d3d7820d...",
+    "verification_status": "verified",
+    "audit_notes": "Clear entry",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_802",
@@ -8028,8 +12839,14 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "student_name": "Mushtaq",
     "class_name": "Class XI - Commerce",
     "status": "assigned",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "confidence": 94,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.40 PM (2).jpeg",
+    "source_image_id": "img_19",
+    "source_sha256": "a640d3d7820d...",
+    "verification_status": "verified",
+    "audit_notes": "Clear entry",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_803",
@@ -8038,8 +12855,14 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "student_name": "Abdullah Ahmed",
     "class_name": "Class XII - Science",
     "status": "assigned",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "confidence": 91,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.40 PM (2).jpeg",
+    "source_image_id": "img_19",
+    "source_sha256": "a640d3d7820d...",
+    "verification_status": "verified",
+    "audit_notes": "Clear entry",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_804",
@@ -8048,8 +12871,14 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "student_name": "Syed Farhan",
     "class_name": "Class XII - Commerce",
     "status": "assigned",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "confidence": 93,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.40 PM (2).jpeg",
+    "source_image_id": "img_19",
+    "source_sha256": "a640d3d7820d...",
+    "verification_status": "verified",
+    "audit_notes": "Clear entry",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_805",
@@ -8058,8 +12887,14 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "student_name": "M. Qasim",
     "class_name": "B.Com / ADC",
     "status": "assigned",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "confidence": 90,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.40 PM (2).jpeg",
+    "source_image_id": "img_19",
+    "source_sha256": "a640d3d7820d...",
+    "verification_status": "verified",
+    "audit_notes": "Clear entry",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_806",
@@ -8068,8 +12903,14 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "student_name": "Bilal Ali",
     "class_name": "B.Com / ADC",
     "status": "assigned",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "confidence": 91,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.40 PM (2).jpeg",
+    "source_image_id": "img_19",
+    "source_sha256": "a640d3d7820d...",
+    "verification_status": "verified",
+    "audit_notes": "Clear entry",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_807",
@@ -8078,8 +12919,14 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "student_name": "Hamza",
     "class_name": "B.Com / ADC",
     "status": "assigned",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "confidence": 95,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.40 PM (2).jpeg",
+    "source_image_id": "img_19",
+    "source_sha256": "a640d3d7820d...",
+    "verification_status": "verified",
+    "audit_notes": "Clear entry",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_808",
@@ -8088,8 +12935,14 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "student_name": "Adnan",
     "class_name": "Class IX - Science",
     "status": "assigned",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "confidence": 92,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.40 PM (2).jpeg",
+    "source_image_id": "img_19",
+    "source_sha256": "a640d3d7820d...",
+    "verification_status": "verified",
+    "audit_notes": "Clear entry",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_809",
@@ -8098,8 +12951,14 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "student_name": "Areeb",
     "class_name": "Class XI - Science",
     "status": "assigned",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "confidence": 94,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.40 PM (2).jpeg",
+    "source_image_id": "img_19",
+    "source_sha256": "a640d3d7820d...",
+    "verification_status": "verified",
+    "audit_notes": "Clear entry",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_810",
@@ -8108,8 +12967,14 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "student_name": "Rohail",
     "class_name": "Class XII - Pre-Engineering",
     "status": "assigned",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "confidence": 93,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.40 PM (2).jpeg",
+    "source_image_id": "img_19",
+    "source_sha256": "a640d3d7820d...",
+    "verification_status": "verified",
+    "audit_notes": "Clear entry",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_811",
@@ -8117,9 +12982,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-811",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.40 PM (2).jpeg",
+    "source_image_id": "img_19",
+    "source_sha256": "a640d3d7820d...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_812",
@@ -8127,9 +12998,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-812",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.40 PM (2).jpeg",
+    "source_image_id": "img_19",
+    "source_sha256": "a640d3d7820d...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_813",
@@ -8137,9 +13014,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-813",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.40 PM (2).jpeg",
+    "source_image_id": "img_19",
+    "source_sha256": "a640d3d7820d...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_814",
@@ -8147,9 +13030,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-814",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.40 PM (2).jpeg",
+    "source_image_id": "img_19",
+    "source_sha256": "a640d3d7820d...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_815",
@@ -8157,9 +13046,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-815",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.40 PM (2).jpeg",
+    "source_image_id": "img_19",
+    "source_sha256": "a640d3d7820d...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_816",
@@ -8167,9 +13062,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-816",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.40 PM (2).jpeg",
+    "source_image_id": "img_19",
+    "source_sha256": "a640d3d7820d...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_817",
@@ -8177,9 +13078,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-817",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.40 PM (2).jpeg",
+    "source_image_id": "img_19",
+    "source_sha256": "a640d3d7820d...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_818",
@@ -8187,9 +13094,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-818",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.40 PM (2).jpeg",
+    "source_image_id": "img_19",
+    "source_sha256": "a640d3d7820d...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_819",
@@ -8197,9 +13110,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-819",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.40 PM (2).jpeg",
+    "source_image_id": "img_19",
+    "source_sha256": "a640d3d7820d...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_820",
@@ -8207,9 +13126,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-820",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.40 PM (2).jpeg",
+    "source_image_id": "img_19",
+    "source_sha256": "a640d3d7820d...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_821",
@@ -8217,9 +13142,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-821",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.40 PM (2).jpeg",
+    "source_image_id": "img_19",
+    "source_sha256": "a640d3d7820d...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_822",
@@ -8227,9 +13158,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-822",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.40 PM (2).jpeg",
+    "source_image_id": "img_19",
+    "source_sha256": "a640d3d7820d...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_823",
@@ -8237,9 +13174,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-823",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.40 PM (2).jpeg",
+    "source_image_id": "img_19",
+    "source_sha256": "a640d3d7820d...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_824",
@@ -8247,9 +13190,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-824",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.40 PM (2).jpeg",
+    "source_image_id": "img_19",
+    "source_sha256": "a640d3d7820d...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_825",
@@ -8257,9 +13206,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-825",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.40 PM (2).jpeg",
+    "source_image_id": "img_19",
+    "source_sha256": "a640d3d7820d...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_826",
@@ -8267,9 +13222,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-826",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.40 PM (2).jpeg",
+    "source_image_id": "img_19",
+    "source_sha256": "a640d3d7820d...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_827",
@@ -8277,9 +13238,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-827",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.40 PM (2).jpeg",
+    "source_image_id": "img_19",
+    "source_sha256": "a640d3d7820d...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_828",
@@ -8287,9 +13254,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-828",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.40 PM (2).jpeg",
+    "source_image_id": "img_19",
+    "source_sha256": "a640d3d7820d...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_829",
@@ -8297,9 +13270,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-829",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.40 PM (2).jpeg",
+    "source_image_id": "img_19",
+    "source_sha256": "a640d3d7820d...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_830",
@@ -8307,9 +13286,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-830",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.40 PM (2).jpeg",
+    "source_image_id": "img_19",
+    "source_sha256": "a640d3d7820d...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_831",
@@ -8317,9 +13302,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-831",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_832",
@@ -8327,9 +13318,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-832",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_833",
@@ -8337,9 +13334,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-833",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_834",
@@ -8347,9 +13350,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-834",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_835",
@@ -8357,9 +13366,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-835",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_836",
@@ -8367,9 +13382,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-836",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_837",
@@ -8377,9 +13398,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-837",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_838",
@@ -8387,9 +13414,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-838",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_839",
@@ -8397,9 +13430,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-839",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_840",
@@ -8407,9 +13446,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-840",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_841",
@@ -8417,9 +13462,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-841",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_842",
@@ -8427,9 +13478,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-842",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_843",
@@ -8437,9 +13494,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-843",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_844",
@@ -8447,9 +13510,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-844",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_845",
@@ -8457,9 +13526,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-845",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_846",
@@ -8467,9 +13542,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-846",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_847",
@@ -8477,9 +13558,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-847",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_848",
@@ -8487,9 +13574,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-848",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_849",
@@ -8497,9 +13590,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-849",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_850",
@@ -8507,9 +13606,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-850",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_851",
@@ -8517,9 +13622,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-851",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_852",
@@ -8527,9 +13638,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-852",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_853",
@@ -8537,9 +13654,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-853",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_854",
@@ -8547,9 +13670,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-854",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_855",
@@ -8557,9 +13686,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-855",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_856",
@@ -8567,9 +13702,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-856",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_857",
@@ -8577,9 +13718,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-857",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_858",
@@ -8587,9 +13734,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-858",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_859",
@@ -8597,9 +13750,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-859",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_860",
@@ -8607,9 +13766,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-860",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_861",
@@ -8617,9 +13782,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-861",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_862",
@@ -8627,9 +13798,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-862",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_863",
@@ -8637,9 +13814,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-863",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_864",
@@ -8647,9 +13830,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-864",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_865",
@@ -8657,9 +13846,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-865",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_866",
@@ -8667,9 +13862,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-866",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_867",
@@ -8677,9 +13878,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-867",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_868",
@@ -8687,9 +13894,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-868",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_869",
@@ -8697,9 +13910,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-869",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_870",
@@ -8707,9 +13926,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-870",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_871",
@@ -8717,9 +13942,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-871",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_872",
@@ -8727,9 +13958,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-872",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_873",
@@ -8737,9 +13974,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-873",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_874",
@@ -8747,9 +13990,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-874",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_875",
@@ -8757,9 +14006,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-875",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_876",
@@ -8767,9 +14022,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-876",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_877",
@@ -8777,9 +14038,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-877",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_878",
@@ -8787,9 +14054,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-878",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_879",
@@ -8797,9 +14070,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-879",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_880",
@@ -8807,9 +14086,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-880",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_881",
@@ -8817,9 +14102,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-881",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_882",
@@ -8827,9 +14118,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-882",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_883",
@@ -8837,9 +14134,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-883",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_884",
@@ -8847,9 +14150,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-884",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_885",
@@ -8857,9 +14166,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-885",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_886",
@@ -8867,9 +14182,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-886",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_887",
@@ -8877,9 +14198,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-887",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_888",
@@ -8887,9 +14214,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-888",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_889",
@@ -8897,9 +14230,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-889",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_890",
@@ -8907,9 +14246,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-890",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_891",
@@ -8917,9 +14262,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-891",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_892",
@@ -8927,9 +14278,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-892",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_893",
@@ -8937,9 +14294,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-893",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_894",
@@ -8947,9 +14310,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-894",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_895",
@@ -8957,9 +14326,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-895",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_896",
@@ -8967,9 +14342,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-896",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_897",
@@ -8977,9 +14358,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-897",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_898",
@@ -8987,9 +14374,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-898",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_899",
@@ -8997,9 +14390,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-899",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_900",
@@ -9007,9 +14406,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-900",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_901",
@@ -9018,8 +14423,14 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "student_name": "Mohammad Areeq",
     "class_name": "Class XI - Commerce",
     "status": "assigned",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "confidence": 92,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.40 PM.jpeg",
+    "source_image_id": "img_20",
+    "source_sha256": "22e5b0ca1d77...",
+    "verification_status": "verified",
+    "audit_notes": "Clear entry",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_902",
@@ -9028,8 +14439,14 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "student_name": "M. Huzaifa",
     "class_name": "Class XI - Commerce",
     "status": "assigned",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "confidence": 93,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.40 PM.jpeg",
+    "source_image_id": "img_20",
+    "source_sha256": "22e5b0ca1d77...",
+    "verification_status": "verified",
+    "audit_notes": "Clear entry",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_903",
@@ -9038,8 +14455,14 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "student_name": "M. Kashif",
     "class_name": "Class XI - Science",
     "status": "assigned",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "confidence": 91,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.40 PM.jpeg",
+    "source_image_id": "img_20",
+    "source_sha256": "22e5b0ca1d77...",
+    "verification_status": "verified",
+    "audit_notes": "Clear entry",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_904",
@@ -9048,8 +14471,14 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "student_name": "Aqib Ali",
     "class_name": "Class XI - Commerce",
     "status": "assigned",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "confidence": 94,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.40 PM.jpeg",
+    "source_image_id": "img_20",
+    "source_sha256": "22e5b0ca1d77...",
+    "verification_status": "verified",
+    "audit_notes": "Clear entry",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_905",
@@ -9058,8 +14487,14 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "student_name": "Waleed",
     "class_name": "Class XII - Science",
     "status": "assigned",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "confidence": 90,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.40 PM.jpeg",
+    "source_image_id": "img_20",
+    "source_sha256": "22e5b0ca1d77...",
+    "verification_status": "verified",
+    "audit_notes": "Clear entry",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_906",
@@ -9068,8 +14503,14 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "student_name": "Shahmeer",
     "class_name": "Class XII - Pre-Engineering",
     "status": "assigned",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "confidence": 92,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.40 PM.jpeg",
+    "source_image_id": "img_20",
+    "source_sha256": "22e5b0ca1d77...",
+    "verification_status": "verified",
+    "audit_notes": "Clear entry",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_907",
@@ -9078,8 +14519,14 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "student_name": "Tayyaba",
     "class_name": "Class X - Science",
     "status": "assigned",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "confidence": 91,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.40 PM.jpeg",
+    "source_image_id": "img_20",
+    "source_sha256": "22e5b0ca1d77...",
+    "verification_status": "verified",
+    "audit_notes": "Clear entry",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_908",
@@ -9088,8 +14535,14 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "student_name": "Amna",
     "class_name": "Class XI - Pre-Medical",
     "status": "assigned",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "confidence": 93,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.40 PM.jpeg",
+    "source_image_id": "img_20",
+    "source_sha256": "22e5b0ca1d77...",
+    "verification_status": "verified",
+    "audit_notes": "Clear entry",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_909",
@@ -9097,9 +14550,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-909",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.40 PM.jpeg",
+    "source_image_id": "img_20",
+    "source_sha256": "22e5b0ca1d77...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_910",
@@ -9107,9 +14566,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-910",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.40 PM.jpeg",
+    "source_image_id": "img_20",
+    "source_sha256": "22e5b0ca1d77...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_911",
@@ -9117,9 +14582,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-911",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.40 PM.jpeg",
+    "source_image_id": "img_20",
+    "source_sha256": "22e5b0ca1d77...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_912",
@@ -9127,9 +14598,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-912",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.40 PM.jpeg",
+    "source_image_id": "img_20",
+    "source_sha256": "22e5b0ca1d77...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_913",
@@ -9137,9 +14614,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-913",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.40 PM.jpeg",
+    "source_image_id": "img_20",
+    "source_sha256": "22e5b0ca1d77...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_914",
@@ -9147,9 +14630,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-914",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.40 PM.jpeg",
+    "source_image_id": "img_20",
+    "source_sha256": "22e5b0ca1d77...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_915",
@@ -9157,9 +14646,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-915",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.40 PM.jpeg",
+    "source_image_id": "img_20",
+    "source_sha256": "22e5b0ca1d77...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_916",
@@ -9167,9 +14662,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-916",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.40 PM.jpeg",
+    "source_image_id": "img_20",
+    "source_sha256": "22e5b0ca1d77...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_917",
@@ -9177,9 +14678,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-917",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.40 PM.jpeg",
+    "source_image_id": "img_20",
+    "source_sha256": "22e5b0ca1d77...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_918",
@@ -9187,9 +14694,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-918",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.40 PM.jpeg",
+    "source_image_id": "img_20",
+    "source_sha256": "22e5b0ca1d77...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_919",
@@ -9197,9 +14710,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-919",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.40 PM.jpeg",
+    "source_image_id": "img_20",
+    "source_sha256": "22e5b0ca1d77...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_920",
@@ -9207,9 +14726,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-920",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.40 PM.jpeg",
+    "source_image_id": "img_20",
+    "source_sha256": "22e5b0ca1d77...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_921",
@@ -9217,9 +14742,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-921",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.40 PM.jpeg",
+    "source_image_id": "img_20",
+    "source_sha256": "22e5b0ca1d77...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_922",
@@ -9227,9 +14758,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-922",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.40 PM.jpeg",
+    "source_image_id": "img_20",
+    "source_sha256": "22e5b0ca1d77...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_923",
@@ -9237,9 +14774,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-923",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.40 PM.jpeg",
+    "source_image_id": "img_20",
+    "source_sha256": "22e5b0ca1d77...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_924",
@@ -9247,9 +14790,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-924",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.40 PM.jpeg",
+    "source_image_id": "img_20",
+    "source_sha256": "22e5b0ca1d77...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_925",
@@ -9257,9 +14806,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-925",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.40 PM.jpeg",
+    "source_image_id": "img_20",
+    "source_sha256": "22e5b0ca1d77...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_926",
@@ -9267,9 +14822,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-926",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.40 PM.jpeg",
+    "source_image_id": "img_20",
+    "source_sha256": "22e5b0ca1d77...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_927",
@@ -9277,9 +14838,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-927",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.40 PM.jpeg",
+    "source_image_id": "img_20",
+    "source_sha256": "22e5b0ca1d77...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_928",
@@ -9287,9 +14854,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-928",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.40 PM.jpeg",
+    "source_image_id": "img_20",
+    "source_sha256": "22e5b0ca1d77...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_929",
@@ -9297,9 +14870,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-929",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.40 PM.jpeg",
+    "source_image_id": "img_20",
+    "source_sha256": "22e5b0ca1d77...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_930",
@@ -9307,9 +14886,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-930",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.40 PM.jpeg",
+    "source_image_id": "img_20",
+    "source_sha256": "22e5b0ca1d77...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_931",
@@ -9317,9 +14902,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-931",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.40 PM.jpeg",
+    "source_image_id": "img_20",
+    "source_sha256": "22e5b0ca1d77...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_932",
@@ -9327,9 +14918,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-932",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.40 PM.jpeg",
+    "source_image_id": "img_20",
+    "source_sha256": "22e5b0ca1d77...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_933",
@@ -9337,9 +14934,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-933",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.40 PM.jpeg",
+    "source_image_id": "img_20",
+    "source_sha256": "22e5b0ca1d77...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_934",
@@ -9347,9 +14950,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-934",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.40 PM.jpeg",
+    "source_image_id": "img_20",
+    "source_sha256": "22e5b0ca1d77...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_935",
@@ -9357,9 +14966,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-935",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.40 PM.jpeg",
+    "source_image_id": "img_20",
+    "source_sha256": "22e5b0ca1d77...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_936",
@@ -9367,9 +14982,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-936",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.40 PM.jpeg",
+    "source_image_id": "img_20",
+    "source_sha256": "22e5b0ca1d77...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_937",
@@ -9377,9 +14998,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-937",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.40 PM.jpeg",
+    "source_image_id": "img_20",
+    "source_sha256": "22e5b0ca1d77...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_938",
@@ -9387,9 +15014,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-938",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.40 PM.jpeg",
+    "source_image_id": "img_20",
+    "source_sha256": "22e5b0ca1d77...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_939",
@@ -9397,9 +15030,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-939",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.40 PM.jpeg",
+    "source_image_id": "img_20",
+    "source_sha256": "22e5b0ca1d77...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_940",
@@ -9407,9 +15046,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-940",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.40 PM.jpeg",
+    "source_image_id": "img_20",
+    "source_sha256": "22e5b0ca1d77...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_941",
@@ -9417,9 +15062,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-941",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_942",
@@ -9427,9 +15078,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-942",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_943",
@@ -9437,9 +15094,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-943",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_944",
@@ -9447,9 +15110,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-944",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_945",
@@ -9457,9 +15126,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-945",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_946",
@@ -9467,9 +15142,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-946",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_947",
@@ -9477,9 +15158,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-947",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_948",
@@ -9487,9 +15174,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-948",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_949",
@@ -9497,9 +15190,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-949",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_950",
@@ -9507,9 +15206,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-950",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_951",
@@ -9517,9 +15222,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-951",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_952",
@@ -9527,9 +15238,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-952",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_953",
@@ -9537,9 +15254,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-953",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_954",
@@ -9547,9 +15270,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-954",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_955",
@@ -9557,9 +15286,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-955",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_956",
@@ -9567,9 +15302,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-956",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_957",
@@ -9577,9 +15318,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-957",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_958",
@@ -9587,9 +15334,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-958",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_959",
@@ -9597,9 +15350,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-959",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_960",
@@ -9607,9 +15366,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-960",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_961",
@@ -9617,9 +15382,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-961",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_962",
@@ -9627,9 +15398,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-962",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_963",
@@ -9637,9 +15414,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-963",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_964",
@@ -9647,9 +15430,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-964",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_965",
@@ -9657,9 +15446,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-965",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_966",
@@ -9667,9 +15462,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-966",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_967",
@@ -9677,9 +15478,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-967",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_968",
@@ -9687,9 +15494,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-968",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_969",
@@ -9697,9 +15510,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-969",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_970",
@@ -9707,9 +15526,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-970",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_971",
@@ -9717,9 +15542,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-971",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_972",
@@ -9727,9 +15558,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-972",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_973",
@@ -9737,9 +15574,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-973",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_974",
@@ -9747,9 +15590,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-974",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_975",
@@ -9757,9 +15606,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-975",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_976",
@@ -9767,9 +15622,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-976",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_977",
@@ -9777,9 +15638,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-977",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_978",
@@ -9787,9 +15654,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-978",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_979",
@@ -9797,9 +15670,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-979",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_980",
@@ -9807,9 +15686,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-980",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_981",
@@ -9817,9 +15702,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-981",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_982",
@@ -9827,9 +15718,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-982",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_983",
@@ -9837,9 +15734,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-983",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_984",
@@ -9847,9 +15750,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-984",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_985",
@@ -9857,9 +15766,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-985",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.973Z",
+    "updated_at": "2026-08-18T18:14:53.973Z"
   },
   {
     "id": "gr_986",
@@ -9867,9 +15782,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-986",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.974Z",
+    "updated_at": "2026-08-18T18:14:53.974Z"
   },
   {
     "id": "gr_987",
@@ -9877,9 +15798,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-987",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.974Z",
+    "updated_at": "2026-08-18T18:14:53.974Z"
   },
   {
     "id": "gr_988",
@@ -9887,9 +15814,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-988",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.974Z",
+    "updated_at": "2026-08-18T18:14:53.974Z"
   },
   {
     "id": "gr_989",
@@ -9897,9 +15830,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-989",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.974Z",
+    "updated_at": "2026-08-18T18:14:53.974Z"
   },
   {
     "id": "gr_990",
@@ -9907,9 +15846,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-990",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.974Z",
+    "updated_at": "2026-08-18T18:14:53.974Z"
   },
   {
     "id": "gr_991",
@@ -9917,9 +15862,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-991",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.974Z",
+    "updated_at": "2026-08-18T18:14:53.974Z"
   },
   {
     "id": "gr_992",
@@ -9927,9 +15878,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-992",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.974Z",
+    "updated_at": "2026-08-18T18:14:53.974Z"
   },
   {
     "id": "gr_993",
@@ -9937,9 +15894,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-993",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.974Z",
+    "updated_at": "2026-08-18T18:14:53.974Z"
   },
   {
     "id": "gr_994",
@@ -9947,9 +15910,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-994",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.974Z",
+    "updated_at": "2026-08-18T18:14:53.974Z"
   },
   {
     "id": "gr_995",
@@ -9957,9 +15926,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-995",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.974Z",
+    "updated_at": "2026-08-18T18:14:53.974Z"
   },
   {
     "id": "gr_996",
@@ -9967,9 +15942,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-996",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.974Z",
+    "updated_at": "2026-08-18T18:14:53.974Z"
   },
   {
     "id": "gr_997",
@@ -9977,9 +15958,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-997",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.974Z",
+    "updated_at": "2026-08-18T18:14:53.974Z"
   },
   {
     "id": "gr_998",
@@ -9987,9 +15974,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-998",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.974Z",
+    "updated_at": "2026-08-18T18:14:53.974Z"
   },
   {
     "id": "gr_999",
@@ -9997,9 +15990,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-999",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.974Z",
+    "updated_at": "2026-08-18T18:14:53.974Z"
   },
   {
     "id": "gr_1000",
@@ -10007,9 +16006,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1000",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.974Z",
+    "updated_at": "2026-08-18T18:14:53.974Z"
   },
   {
     "id": "gr_1001",
@@ -10017,9 +16022,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1001",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.974Z",
+    "updated_at": "2026-08-18T18:14:53.974Z"
   },
   {
     "id": "gr_1002",
@@ -10027,9 +16038,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1002",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.974Z",
+    "updated_at": "2026-08-18T18:14:53.974Z"
   },
   {
     "id": "gr_1003",
@@ -10037,9 +16054,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1003",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.974Z",
+    "updated_at": "2026-08-18T18:14:53.974Z"
   },
   {
     "id": "gr_1004",
@@ -10047,9 +16070,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1004",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.974Z",
+    "updated_at": "2026-08-18T18:14:53.974Z"
   },
   {
     "id": "gr_1005",
@@ -10057,9 +16086,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1005",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.974Z",
+    "updated_at": "2026-08-18T18:14:53.974Z"
   },
   {
     "id": "gr_1006",
@@ -10067,9 +16102,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1006",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.974Z",
+    "updated_at": "2026-08-18T18:14:53.974Z"
   },
   {
     "id": "gr_1007",
@@ -10077,9 +16118,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1007",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.974Z",
+    "updated_at": "2026-08-18T18:14:53.974Z"
   },
   {
     "id": "gr_1008",
@@ -10087,9 +16134,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1008",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.974Z",
+    "updated_at": "2026-08-18T18:14:53.974Z"
   },
   {
     "id": "gr_1009",
@@ -10097,9 +16150,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1009",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.974Z",
+    "updated_at": "2026-08-18T18:14:53.974Z"
   },
   {
     "id": "gr_1010",
@@ -10107,9 +16166,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1010",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.974Z",
+    "updated_at": "2026-08-18T18:14:53.974Z"
   },
   {
     "id": "gr_1011",
@@ -10117,9 +16182,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1011",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.974Z",
+    "updated_at": "2026-08-18T18:14:53.974Z"
   },
   {
     "id": "gr_1012",
@@ -10127,9 +16198,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1012",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.974Z",
+    "updated_at": "2026-08-18T18:14:53.974Z"
   },
   {
     "id": "gr_1013",
@@ -10137,9 +16214,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1013",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.974Z",
+    "updated_at": "2026-08-18T18:14:53.974Z"
   },
   {
     "id": "gr_1014",
@@ -10147,9 +16230,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1014",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.974Z",
+    "updated_at": "2026-08-18T18:14:53.974Z"
   },
   {
     "id": "gr_1015",
@@ -10157,9 +16246,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1015",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.974Z",
+    "updated_at": "2026-08-18T18:14:53.974Z"
   },
   {
     "id": "gr_1016",
@@ -10167,9 +16262,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1016",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.974Z",
+    "updated_at": "2026-08-18T18:14:53.974Z"
   },
   {
     "id": "gr_1017",
@@ -10177,9 +16278,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1017",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.974Z",
+    "updated_at": "2026-08-18T18:14:53.974Z"
   },
   {
     "id": "gr_1018",
@@ -10187,9 +16294,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1018",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.974Z",
+    "updated_at": "2026-08-18T18:14:53.974Z"
   },
   {
     "id": "gr_1019",
@@ -10197,9 +16310,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1019",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.974Z",
+    "updated_at": "2026-08-18T18:14:53.974Z"
   },
   {
     "id": "gr_1020",
@@ -10207,9 +16326,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1020",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.974Z",
+    "updated_at": "2026-08-18T18:14:53.974Z"
   },
   {
     "id": "gr_1021",
@@ -10217,9 +16342,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1021",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.974Z",
+    "updated_at": "2026-08-18T18:14:53.974Z"
   },
   {
     "id": "gr_1022",
@@ -10227,9 +16358,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1022",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.974Z",
+    "updated_at": "2026-08-18T18:14:53.974Z"
   },
   {
     "id": "gr_1023",
@@ -10237,9 +16374,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1023",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.974Z",
+    "updated_at": "2026-08-18T18:14:53.974Z"
   },
   {
     "id": "gr_1024",
@@ -10247,9 +16390,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1024",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.974Z",
+    "updated_at": "2026-08-18T18:14:53.974Z"
   },
   {
     "id": "gr_1025",
@@ -10257,9 +16406,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1025",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.974Z",
+    "updated_at": "2026-08-18T18:14:53.974Z"
   },
   {
     "id": "gr_1026",
@@ -10267,9 +16422,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1026",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.974Z",
+    "updated_at": "2026-08-18T18:14:53.974Z"
   },
   {
     "id": "gr_1027",
@@ -10277,9 +16438,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1027",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.974Z",
+    "updated_at": "2026-08-18T18:14:53.974Z"
   },
   {
     "id": "gr_1028",
@@ -10287,9 +16454,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1028",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.974Z",
+    "updated_at": "2026-08-18T18:14:53.974Z"
   },
   {
     "id": "gr_1029",
@@ -10297,9 +16470,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1029",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.974Z",
+    "updated_at": "2026-08-18T18:14:53.974Z"
   },
   {
     "id": "gr_1030",
@@ -10307,9 +16486,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1030",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.974Z",
+    "updated_at": "2026-08-18T18:14:53.974Z"
   },
   {
     "id": "gr_1031",
@@ -10318,8 +16503,14 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "student_name": "Ayesha Ali",
     "class_name": "Class IX - Science",
     "status": "assigned",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "confidence": 93,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.43 PM (1).jpeg",
+    "source_image_id": "img_23",
+    "source_sha256": "86f3979c3ab4...",
+    "verification_status": "verified",
+    "audit_notes": "Clear entry",
+    "created_at": "2026-08-18T18:14:53.974Z",
+    "updated_at": "2026-08-18T18:14:53.974Z"
   },
   {
     "id": "gr_1032",
@@ -10328,8 +16519,14 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "student_name": "Umer Ali",
     "class_name": "Class XI - Science",
     "status": "assigned",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "confidence": 94,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.43 PM (1).jpeg",
+    "source_image_id": "img_23",
+    "source_sha256": "86f3979c3ab4...",
+    "verification_status": "verified",
+    "audit_notes": "Clear entry",
+    "created_at": "2026-08-18T18:14:53.974Z",
+    "updated_at": "2026-08-18T18:14:53.974Z"
   },
   {
     "id": "gr_1033",
@@ -10338,8 +16535,14 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "student_name": "Abdul Rafay",
     "class_name": "Class XI - Pre-Engineering",
     "status": "assigned",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "confidence": 91,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.43 PM (1).jpeg",
+    "source_image_id": "img_23",
+    "source_sha256": "86f3979c3ab4...",
+    "verification_status": "verified",
+    "audit_notes": "Clear entry",
+    "created_at": "2026-08-18T18:14:53.974Z",
+    "updated_at": "2026-08-18T18:14:53.974Z"
   },
   {
     "id": "gr_1034",
@@ -10348,8 +16551,14 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "student_name": "Aneeq Anjum",
     "class_name": "Class XI - Commerce",
     "status": "assigned",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "confidence": 92,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.43 PM (1).jpeg",
+    "source_image_id": "img_23",
+    "source_sha256": "86f3979c3ab4...",
+    "verification_status": "verified",
+    "audit_notes": "Clear entry",
+    "created_at": "2026-08-18T18:14:53.974Z",
+    "updated_at": "2026-08-18T18:14:53.974Z"
   },
   {
     "id": "gr_1035",
@@ -10358,8 +16567,14 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "student_name": "Amna Mumtaz",
     "class_name": "Class XI - Pre-Medical",
     "status": "assigned",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "confidence": 95,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.43 PM (1).jpeg",
+    "source_image_id": "img_23",
+    "source_sha256": "86f3979c3ab4...",
+    "verification_status": "verified",
+    "audit_notes": "Clear entry",
+    "created_at": "2026-08-18T18:14:53.974Z",
+    "updated_at": "2026-08-18T18:14:53.974Z"
   },
   {
     "id": "gr_1036",
@@ -10368,8 +16583,14 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "student_name": "Areeb",
     "class_name": "Class XII - Pre-Engineering",
     "status": "assigned",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "confidence": 93,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.43 PM (1).jpeg",
+    "source_image_id": "img_23",
+    "source_sha256": "86f3979c3ab4...",
+    "verification_status": "verified",
+    "audit_notes": "Clear entry",
+    "created_at": "2026-08-18T18:14:53.974Z",
+    "updated_at": "2026-08-18T18:14:53.974Z"
   },
   {
     "id": "gr_1037",
@@ -10378,8 +16599,14 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "student_name": "Maryam Asad",
     "class_name": "Class X - Science",
     "status": "assigned",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "confidence": 90,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.43 PM (1).jpeg",
+    "source_image_id": "img_23",
+    "source_sha256": "86f3979c3ab4...",
+    "verification_status": "verified",
+    "audit_notes": "Clear entry",
+    "created_at": "2026-08-18T18:14:53.974Z",
+    "updated_at": "2026-08-18T18:14:53.974Z"
   },
   {
     "id": "gr_1038",
@@ -10388,8 +16615,14 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "student_name": "Rounak-Ul-Ain Abid",
     "class_name": "Class X - Science",
     "status": "assigned",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "confidence": 88,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.43 PM (1).jpeg",
+    "source_image_id": "img_23",
+    "source_sha256": "86f3979c3ab4...",
+    "verification_status": "verified",
+    "audit_notes": "Clear entry",
+    "created_at": "2026-08-18T18:14:53.974Z",
+    "updated_at": "2026-08-18T18:14:53.974Z"
   },
   {
     "id": "gr_1039",
@@ -10398,8 +16631,14 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "student_name": "Sehar",
     "class_name": "Class XI - Pre-Medical",
     "status": "assigned",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "confidence": 92,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.43 PM (1).jpeg",
+    "source_image_id": "img_23",
+    "source_sha256": "86f3979c3ab4...",
+    "verification_status": "verified",
+    "audit_notes": "Clear entry",
+    "created_at": "2026-08-18T18:14:53.974Z",
+    "updated_at": "2026-08-18T18:14:53.974Z"
   },
   {
     "id": "gr_1040",
@@ -10408,8 +16647,14 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "student_name": "Ayesha Abeed",
     "class_name": "Class XI - Science",
     "status": "assigned",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "confidence": 91,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.43 PM (1).jpeg",
+    "source_image_id": "img_23",
+    "source_sha256": "86f3979c3ab4...",
+    "verification_status": "verified",
+    "audit_notes": "Clear entry",
+    "created_at": "2026-08-18T18:14:53.974Z",
+    "updated_at": "2026-08-18T18:14:53.974Z"
   },
   {
     "id": "gr_1041",
@@ -10418,8 +16663,14 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "student_name": "Marium",
     "class_name": "Class XI - Pre-Medical",
     "status": "assigned",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "confidence": 94,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.43 PM (1).jpeg",
+    "source_image_id": "img_23",
+    "source_sha256": "86f3979c3ab4...",
+    "verification_status": "verified",
+    "audit_notes": "Clear entry",
+    "created_at": "2026-08-18T18:14:53.974Z",
+    "updated_at": "2026-08-18T18:14:53.974Z"
   },
   {
     "id": "gr_1042",
@@ -10428,8 +16679,14 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "student_name": "M. Hammad",
     "class_name": "B.Com / ADC",
     "status": "assigned",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "confidence": 90,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.43 PM (1).jpeg",
+    "source_image_id": "img_23",
+    "source_sha256": "86f3979c3ab4...",
+    "verification_status": "verified",
+    "audit_notes": "Clear entry",
+    "created_at": "2026-08-18T18:14:53.974Z",
+    "updated_at": "2026-08-18T18:14:53.974Z"
   },
   {
     "id": "gr_1043",
@@ -10438,8 +16695,14 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "student_name": "Anamta",
     "class_name": "Class XI - Science",
     "status": "assigned",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "confidence": 91,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.43 PM (1).jpeg",
+    "source_image_id": "img_23",
+    "source_sha256": "86f3979c3ab4...",
+    "verification_status": "verified",
+    "audit_notes": "Clear entry",
+    "created_at": "2026-08-18T18:14:53.974Z",
+    "updated_at": "2026-08-18T18:14:53.974Z"
   },
   {
     "id": "gr_1044",
@@ -10448,8 +16711,14 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "student_name": "Daniyal Farooq",
     "class_name": "Class XII - Science",
     "status": "assigned",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "confidence": 93,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.43 PM (1).jpeg",
+    "source_image_id": "img_23",
+    "source_sha256": "86f3979c3ab4...",
+    "verification_status": "verified",
+    "audit_notes": "Clear entry",
+    "created_at": "2026-08-18T18:14:53.974Z",
+    "updated_at": "2026-08-18T18:14:53.974Z"
   },
   {
     "id": "gr_1045",
@@ -10457,9 +16726,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1045",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.43 PM (1).jpeg",
+    "source_image_id": "img_23",
+    "source_sha256": "86f3979c3ab4...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.974Z",
+    "updated_at": "2026-08-18T18:14:53.974Z"
   },
   {
     "id": "gr_1046",
@@ -10467,9 +16742,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1046",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.43 PM (1).jpeg",
+    "source_image_id": "img_23",
+    "source_sha256": "86f3979c3ab4...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.974Z",
+    "updated_at": "2026-08-18T18:14:53.974Z"
   },
   {
     "id": "gr_1047",
@@ -10477,9 +16758,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1047",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.43 PM (1).jpeg",
+    "source_image_id": "img_23",
+    "source_sha256": "86f3979c3ab4...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.974Z",
+    "updated_at": "2026-08-18T18:14:53.974Z"
   },
   {
     "id": "gr_1048",
@@ -10487,9 +16774,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1048",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.43 PM (1).jpeg",
+    "source_image_id": "img_23",
+    "source_sha256": "86f3979c3ab4...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.974Z",
+    "updated_at": "2026-08-18T18:14:53.974Z"
   },
   {
     "id": "gr_1049",
@@ -10497,9 +16790,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1049",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.43 PM (1).jpeg",
+    "source_image_id": "img_23",
+    "source_sha256": "86f3979c3ab4...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.974Z",
+    "updated_at": "2026-08-18T18:14:53.974Z"
   },
   {
     "id": "gr_1050",
@@ -10507,9 +16806,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1050",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.43 PM (1).jpeg",
+    "source_image_id": "img_23",
+    "source_sha256": "86f3979c3ab4...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.974Z",
+    "updated_at": "2026-08-18T18:14:53.974Z"
   },
   {
     "id": "gr_1051",
@@ -10517,9 +16822,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1051",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.974Z",
+    "updated_at": "2026-08-18T18:14:53.974Z"
   },
   {
     "id": "gr_1052",
@@ -10527,9 +16838,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1052",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.974Z",
+    "updated_at": "2026-08-18T18:14:53.974Z"
   },
   {
     "id": "gr_1053",
@@ -10537,9 +16854,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1053",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.974Z",
+    "updated_at": "2026-08-18T18:14:53.974Z"
   },
   {
     "id": "gr_1054",
@@ -10547,9 +16870,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1054",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.974Z",
+    "updated_at": "2026-08-18T18:14:53.974Z"
   },
   {
     "id": "gr_1055",
@@ -10557,9 +16886,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1055",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.974Z",
+    "updated_at": "2026-08-18T18:14:53.974Z"
   },
   {
     "id": "gr_1056",
@@ -10567,9 +16902,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1056",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.974Z",
+    "updated_at": "2026-08-18T18:14:53.974Z"
   },
   {
     "id": "gr_1057",
@@ -10577,9 +16918,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1057",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.974Z",
+    "updated_at": "2026-08-18T18:14:53.974Z"
   },
   {
     "id": "gr_1058",
@@ -10587,9 +16934,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1058",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.974Z",
+    "updated_at": "2026-08-18T18:14:53.974Z"
   },
   {
     "id": "gr_1059",
@@ -10597,9 +16950,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1059",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.974Z",
+    "updated_at": "2026-08-18T18:14:53.974Z"
   },
   {
     "id": "gr_1060",
@@ -10607,9 +16966,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1060",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.974Z",
+    "updated_at": "2026-08-18T18:14:53.974Z"
   },
   {
     "id": "gr_1061",
@@ -10617,9 +16982,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1061",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.974Z",
+    "updated_at": "2026-08-18T18:14:53.974Z"
   },
   {
     "id": "gr_1062",
@@ -10627,9 +16998,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1062",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.974Z",
+    "updated_at": "2026-08-18T18:14:53.974Z"
   },
   {
     "id": "gr_1063",
@@ -10637,9 +17014,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1063",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.974Z",
+    "updated_at": "2026-08-18T18:14:53.974Z"
   },
   {
     "id": "gr_1064",
@@ -10647,9 +17030,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1064",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.974Z",
+    "updated_at": "2026-08-18T18:14:53.974Z"
   },
   {
     "id": "gr_1065",
@@ -10657,9 +17046,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1065",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.974Z",
+    "updated_at": "2026-08-18T18:14:53.974Z"
   },
   {
     "id": "gr_1066",
@@ -10667,9 +17062,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1066",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.974Z",
+    "updated_at": "2026-08-18T18:14:53.974Z"
   },
   {
     "id": "gr_1067",
@@ -10677,9 +17078,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1067",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.974Z",
+    "updated_at": "2026-08-18T18:14:53.974Z"
   },
   {
     "id": "gr_1068",
@@ -10687,9 +17094,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1068",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.974Z",
+    "updated_at": "2026-08-18T18:14:53.974Z"
   },
   {
     "id": "gr_1069",
@@ -10697,9 +17110,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1069",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.974Z",
+    "updated_at": "2026-08-18T18:14:53.974Z"
   },
   {
     "id": "gr_1070",
@@ -10707,9 +17126,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1070",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.974Z",
+    "updated_at": "2026-08-18T18:14:53.974Z"
   },
   {
     "id": "gr_1071",
@@ -10717,9 +17142,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1071",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.974Z",
+    "updated_at": "2026-08-18T18:14:53.974Z"
   },
   {
     "id": "gr_1072",
@@ -10727,9 +17158,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1072",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.974Z",
+    "updated_at": "2026-08-18T18:14:53.974Z"
   },
   {
     "id": "gr_1073",
@@ -10737,9 +17174,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1073",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.974Z",
+    "updated_at": "2026-08-18T18:14:53.974Z"
   },
   {
     "id": "gr_1074",
@@ -10747,9 +17190,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1074",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.974Z",
+    "updated_at": "2026-08-18T18:14:53.974Z"
   },
   {
     "id": "gr_1075",
@@ -10757,9 +17206,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1075",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.974Z",
+    "updated_at": "2026-08-18T18:14:53.974Z"
   },
   {
     "id": "gr_1076",
@@ -10767,9 +17222,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1076",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.974Z",
+    "updated_at": "2026-08-18T18:14:53.974Z"
   },
   {
     "id": "gr_1077",
@@ -10777,9 +17238,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1077",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.974Z",
+    "updated_at": "2026-08-18T18:14:53.974Z"
   },
   {
     "id": "gr_1078",
@@ -10787,9 +17254,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1078",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.974Z",
+    "updated_at": "2026-08-18T18:14:53.974Z"
   },
   {
     "id": "gr_1079",
@@ -10797,9 +17270,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1079",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.974Z",
+    "updated_at": "2026-08-18T18:14:53.974Z"
   },
   {
     "id": "gr_1080",
@@ -10807,9 +17286,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1080",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.974Z",
+    "updated_at": "2026-08-18T18:14:53.974Z"
   },
   {
     "id": "gr_1081",
@@ -10817,9 +17302,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1081",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.974Z",
+    "updated_at": "2026-08-18T18:14:53.974Z"
   },
   {
     "id": "gr_1082",
@@ -10827,9 +17318,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1082",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.974Z",
+    "updated_at": "2026-08-18T18:14:53.974Z"
   },
   {
     "id": "gr_1083",
@@ -10837,9 +17334,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1083",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.974Z",
+    "updated_at": "2026-08-18T18:14:53.974Z"
   },
   {
     "id": "gr_1084",
@@ -10847,9 +17350,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1084",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.974Z",
+    "updated_at": "2026-08-18T18:14:53.974Z"
   },
   {
     "id": "gr_1085",
@@ -10857,9 +17366,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1085",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.974Z",
+    "updated_at": "2026-08-18T18:14:53.974Z"
   },
   {
     "id": "gr_1086",
@@ -10867,9 +17382,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1086",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.974Z",
+    "updated_at": "2026-08-18T18:14:53.974Z"
   },
   {
     "id": "gr_1087",
@@ -10877,9 +17398,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1087",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.974Z",
+    "updated_at": "2026-08-18T18:14:53.974Z"
   },
   {
     "id": "gr_1088",
@@ -10887,9 +17414,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1088",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.974Z",
+    "updated_at": "2026-08-18T18:14:53.974Z"
   },
   {
     "id": "gr_1089",
@@ -10897,9 +17430,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1089",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.974Z",
+    "updated_at": "2026-08-18T18:14:53.974Z"
   },
   {
     "id": "gr_1090",
@@ -10907,9 +17446,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1090",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.974Z",
+    "updated_at": "2026-08-18T18:14:53.974Z"
   },
   {
     "id": "gr_1091",
@@ -10917,9 +17462,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1091",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.974Z",
+    "updated_at": "2026-08-18T18:14:53.974Z"
   },
   {
     "id": "gr_1092",
@@ -10927,9 +17478,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1092",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.974Z",
+    "updated_at": "2026-08-18T18:14:53.974Z"
   },
   {
     "id": "gr_1093",
@@ -10937,9 +17494,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1093",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.974Z",
+    "updated_at": "2026-08-18T18:14:53.974Z"
   },
   {
     "id": "gr_1094",
@@ -10947,9 +17510,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1094",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.974Z",
+    "updated_at": "2026-08-18T18:14:53.974Z"
   },
   {
     "id": "gr_1095",
@@ -10957,9 +17526,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1095",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.974Z",
+    "updated_at": "2026-08-18T18:14:53.974Z"
   },
   {
     "id": "gr_1096",
@@ -10968,8 +17543,14 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "student_name": "Fatima",
     "class_name": "Class XI - Pre-Medical",
     "status": "assigned",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "confidence": 92,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.42 PM.jpeg",
+    "source_image_id": "img_22",
+    "source_sha256": "45bad5e65aa7...",
+    "verification_status": "verified",
+    "audit_notes": "Clear entry",
+    "created_at": "2026-08-18T18:14:53.974Z",
+    "updated_at": "2026-08-18T18:14:53.974Z"
   },
   {
     "id": "gr_1097",
@@ -10978,8 +17559,14 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "student_name": "Momal Sheikh",
     "class_name": "Class XI - Pre-Medical",
     "status": "assigned",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "confidence": 93,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.42 PM.jpeg",
+    "source_image_id": "img_22",
+    "source_sha256": "45bad5e65aa7...",
+    "verification_status": "verified",
+    "audit_notes": "Clear entry",
+    "created_at": "2026-08-18T18:14:53.974Z",
+    "updated_at": "2026-08-18T18:14:53.974Z"
   },
   {
     "id": "gr_1098",
@@ -10988,8 +17575,14 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "student_name": "Tauseef",
     "class_name": "Class XI - Pre-Engineering",
     "status": "assigned",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "confidence": 90,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.42 PM.jpeg",
+    "source_image_id": "img_22",
+    "source_sha256": "45bad5e65aa7...",
+    "verification_status": "verified",
+    "audit_notes": "Clear entry",
+    "created_at": "2026-08-18T18:14:53.974Z",
+    "updated_at": "2026-08-18T18:14:53.974Z"
   },
   {
     "id": "gr_1099",
@@ -10998,8 +17591,14 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "student_name": "Abdul Hadi",
     "class_name": "Class XII - Science",
     "status": "assigned",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "confidence": 91,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.42 PM.jpeg",
+    "source_image_id": "img_22",
+    "source_sha256": "45bad5e65aa7...",
+    "verification_status": "verified",
+    "audit_notes": "Clear entry",
+    "created_at": "2026-08-18T18:14:53.974Z",
+    "updated_at": "2026-08-18T18:14:53.974Z"
   },
   {
     "id": "gr_1100",
@@ -11008,8 +17607,14 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "student_name": "Syed Hussain",
     "class_name": "Class XI - Commerce",
     "status": "assigned",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "confidence": 94,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.42 PM.jpeg",
+    "source_image_id": "img_22",
+    "source_sha256": "45bad5e65aa7...",
+    "verification_status": "verified",
+    "audit_notes": "Clear entry",
+    "created_at": "2026-08-18T18:14:53.974Z",
+    "updated_at": "2026-08-18T18:14:53.974Z"
   },
   {
     "id": "gr_1101",
@@ -11018,8 +17623,14 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "student_name": "Zoya Khan",
     "class_name": "Class X - Science",
     "status": "assigned",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "confidence": 92,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.42 PM.jpeg",
+    "source_image_id": "img_22",
+    "source_sha256": "45bad5e65aa7...",
+    "verification_status": "verified",
+    "audit_notes": "Clear entry",
+    "created_at": "2026-08-18T18:14:53.974Z",
+    "updated_at": "2026-08-18T18:14:53.974Z"
   },
   {
     "id": "gr_1102",
@@ -11028,8 +17639,14 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "student_name": "Waqar Sheikh",
     "class_name": "Class XI - Science",
     "status": "assigned",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "confidence": 90,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.42 PM.jpeg",
+    "source_image_id": "img_22",
+    "source_sha256": "45bad5e65aa7...",
+    "verification_status": "verified",
+    "audit_notes": "Clear entry",
+    "created_at": "2026-08-18T18:14:53.974Z",
+    "updated_at": "2026-08-18T18:14:53.974Z"
   },
   {
     "id": "gr_1103",
@@ -11038,8 +17655,14 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "student_name": "Syed Ata-Ur-Rehman",
     "class_name": "Class XII - Pre-Engineering",
     "status": "assigned",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "confidence": 89,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.42 PM.jpeg",
+    "source_image_id": "img_22",
+    "source_sha256": "45bad5e65aa7...",
+    "verification_status": "verified",
+    "audit_notes": "Clear entry",
+    "created_at": "2026-08-18T18:14:53.974Z",
+    "updated_at": "2026-08-18T18:14:53.974Z"
   },
   {
     "id": "gr_1104",
@@ -11048,8 +17671,14 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "student_name": "Qurat-Ul-Ain Sadiq",
     "class_name": "Class XI - Pre-Medical",
     "status": "assigned",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "confidence": 91,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.42 PM.jpeg",
+    "source_image_id": "img_22",
+    "source_sha256": "45bad5e65aa7...",
+    "verification_status": "verified",
+    "audit_notes": "Clear entry",
+    "created_at": "2026-08-18T18:14:53.974Z",
+    "updated_at": "2026-08-18T18:14:53.974Z"
   },
   {
     "id": "gr_1105",
@@ -11057,9 +17686,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1105",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.42 PM.jpeg",
+    "source_image_id": "img_22",
+    "source_sha256": "45bad5e65aa7...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.974Z",
+    "updated_at": "2026-08-18T18:14:53.974Z"
   },
   {
     "id": "gr_1106",
@@ -11067,9 +17702,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1106",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.42 PM.jpeg",
+    "source_image_id": "img_22",
+    "source_sha256": "45bad5e65aa7...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.974Z",
+    "updated_at": "2026-08-18T18:14:53.974Z"
   },
   {
     "id": "gr_1107",
@@ -11077,9 +17718,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1107",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.42 PM.jpeg",
+    "source_image_id": "img_22",
+    "source_sha256": "45bad5e65aa7...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.974Z",
+    "updated_at": "2026-08-18T18:14:53.974Z"
   },
   {
     "id": "gr_1108",
@@ -11087,9 +17734,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1108",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.42 PM.jpeg",
+    "source_image_id": "img_22",
+    "source_sha256": "45bad5e65aa7...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.974Z",
+    "updated_at": "2026-08-18T18:14:53.974Z"
   },
   {
     "id": "gr_1109",
@@ -11097,9 +17750,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1109",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.42 PM.jpeg",
+    "source_image_id": "img_22",
+    "source_sha256": "45bad5e65aa7...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.974Z",
+    "updated_at": "2026-08-18T18:14:53.974Z"
   },
   {
     "id": "gr_1110",
@@ -11107,9 +17766,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1110",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.42 PM.jpeg",
+    "source_image_id": "img_22",
+    "source_sha256": "45bad5e65aa7...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.974Z",
+    "updated_at": "2026-08-18T18:14:53.974Z"
   },
   {
     "id": "gr_1111",
@@ -11117,9 +17782,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1111",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.974Z",
+    "updated_at": "2026-08-18T18:14:53.974Z"
   },
   {
     "id": "gr_1112",
@@ -11127,9 +17798,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1112",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.974Z",
+    "updated_at": "2026-08-18T18:14:53.974Z"
   },
   {
     "id": "gr_1113",
@@ -11137,9 +17814,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1113",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.974Z",
+    "updated_at": "2026-08-18T18:14:53.974Z"
   },
   {
     "id": "gr_1114",
@@ -11147,9 +17830,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1114",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.974Z",
+    "updated_at": "2026-08-18T18:14:53.974Z"
   },
   {
     "id": "gr_1115",
@@ -11157,9 +17846,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1115",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.974Z",
+    "updated_at": "2026-08-18T18:14:53.974Z"
   },
   {
     "id": "gr_1116",
@@ -11167,9 +17862,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1116",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.974Z",
+    "updated_at": "2026-08-18T18:14:53.974Z"
   },
   {
     "id": "gr_1117",
@@ -11177,9 +17878,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1117",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.974Z",
+    "updated_at": "2026-08-18T18:14:53.974Z"
   },
   {
     "id": "gr_1118",
@@ -11187,9 +17894,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1118",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.974Z",
+    "updated_at": "2026-08-18T18:14:53.974Z"
   },
   {
     "id": "gr_1119",
@@ -11197,9 +17910,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1119",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.974Z",
+    "updated_at": "2026-08-18T18:14:53.974Z"
   },
   {
     "id": "gr_1120",
@@ -11207,9 +17926,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1120",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.084Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.974Z",
+    "updated_at": "2026-08-18T18:14:53.974Z"
   },
   {
     "id": "gr_1121",
@@ -11217,9 +17942,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1121",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.084Z",
-    "updated_at": "2026-08-18T18:08:16.085Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.974Z",
+    "updated_at": "2026-08-18T18:14:53.974Z"
   },
   {
     "id": "gr_1122",
@@ -11227,9 +17958,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1122",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.085Z",
-    "updated_at": "2026-08-18T18:08:16.085Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.974Z",
+    "updated_at": "2026-08-18T18:14:53.974Z"
   },
   {
     "id": "gr_1123",
@@ -11237,9 +17974,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1123",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.085Z",
-    "updated_at": "2026-08-18T18:08:16.085Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.974Z",
+    "updated_at": "2026-08-18T18:14:53.974Z"
   },
   {
     "id": "gr_1124",
@@ -11247,9 +17990,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1124",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.085Z",
-    "updated_at": "2026-08-18T18:08:16.085Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.974Z",
+    "updated_at": "2026-08-18T18:14:53.974Z"
   },
   {
     "id": "gr_1125",
@@ -11257,9 +18006,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1125",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.085Z",
-    "updated_at": "2026-08-18T18:08:16.085Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.974Z",
+    "updated_at": "2026-08-18T18:14:53.974Z"
   },
   {
     "id": "gr_1126",
@@ -11267,9 +18022,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1126",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.085Z",
-    "updated_at": "2026-08-18T18:08:16.085Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.974Z",
+    "updated_at": "2026-08-18T18:14:53.974Z"
   },
   {
     "id": "gr_1127",
@@ -11277,9 +18038,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1127",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.085Z",
-    "updated_at": "2026-08-18T18:08:16.085Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.974Z",
+    "updated_at": "2026-08-18T18:14:53.974Z"
   },
   {
     "id": "gr_1128",
@@ -11287,9 +18054,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1128",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.085Z",
-    "updated_at": "2026-08-18T18:08:16.085Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.974Z",
+    "updated_at": "2026-08-18T18:14:53.974Z"
   },
   {
     "id": "gr_1129",
@@ -11297,9 +18070,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1129",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.085Z",
-    "updated_at": "2026-08-18T18:08:16.085Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.974Z",
+    "updated_at": "2026-08-18T18:14:53.974Z"
   },
   {
     "id": "gr_1130",
@@ -11307,9 +18086,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1130",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.085Z",
-    "updated_at": "2026-08-18T18:08:16.085Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.974Z",
+    "updated_at": "2026-08-18T18:14:53.974Z"
   },
   {
     "id": "gr_1131",
@@ -11317,9 +18102,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1131",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.085Z",
-    "updated_at": "2026-08-18T18:08:16.085Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.974Z",
+    "updated_at": "2026-08-18T18:14:53.974Z"
   },
   {
     "id": "gr_1132",
@@ -11327,9 +18118,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1132",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.085Z",
-    "updated_at": "2026-08-18T18:08:16.085Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.974Z",
+    "updated_at": "2026-08-18T18:14:53.974Z"
   },
   {
     "id": "gr_1133",
@@ -11337,9 +18134,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1133",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.085Z",
-    "updated_at": "2026-08-18T18:08:16.085Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.974Z",
+    "updated_at": "2026-08-18T18:14:53.974Z"
   },
   {
     "id": "gr_1134",
@@ -11347,9 +18150,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1134",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.085Z",
-    "updated_at": "2026-08-18T18:08:16.085Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.974Z",
+    "updated_at": "2026-08-18T18:14:53.974Z"
   },
   {
     "id": "gr_1135",
@@ -11357,9 +18166,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1135",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.085Z",
-    "updated_at": "2026-08-18T18:08:16.085Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.974Z",
+    "updated_at": "2026-08-18T18:14:53.974Z"
   },
   {
     "id": "gr_1136",
@@ -11367,9 +18182,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1136",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.085Z",
-    "updated_at": "2026-08-18T18:08:16.085Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.974Z",
+    "updated_at": "2026-08-18T18:14:53.974Z"
   },
   {
     "id": "gr_1137",
@@ -11377,9 +18198,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1137",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.085Z",
-    "updated_at": "2026-08-18T18:08:16.085Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.974Z",
+    "updated_at": "2026-08-18T18:14:53.974Z"
   },
   {
     "id": "gr_1138",
@@ -11387,9 +18214,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1138",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.085Z",
-    "updated_at": "2026-08-18T18:08:16.085Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.974Z",
+    "updated_at": "2026-08-18T18:14:53.974Z"
   },
   {
     "id": "gr_1139",
@@ -11397,9 +18230,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1139",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.085Z",
-    "updated_at": "2026-08-18T18:08:16.085Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.974Z",
+    "updated_at": "2026-08-18T18:14:53.974Z"
   },
   {
     "id": "gr_1140",
@@ -11407,9 +18246,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1140",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.085Z",
-    "updated_at": "2026-08-18T18:08:16.085Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.974Z",
+    "updated_at": "2026-08-18T18:14:53.974Z"
   },
   {
     "id": "gr_1141",
@@ -11417,9 +18262,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1141",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.085Z",
-    "updated_at": "2026-08-18T18:08:16.085Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.974Z",
+    "updated_at": "2026-08-18T18:14:53.974Z"
   },
   {
     "id": "gr_1142",
@@ -11427,9 +18278,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1142",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.085Z",
-    "updated_at": "2026-08-18T18:08:16.085Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.974Z",
+    "updated_at": "2026-08-18T18:14:53.974Z"
   },
   {
     "id": "gr_1143",
@@ -11437,9 +18294,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1143",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.085Z",
-    "updated_at": "2026-08-18T18:08:16.085Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.974Z",
+    "updated_at": "2026-08-18T18:14:53.974Z"
   },
   {
     "id": "gr_1144",
@@ -11447,9 +18310,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1144",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.085Z",
-    "updated_at": "2026-08-18T18:08:16.085Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.974Z",
+    "updated_at": "2026-08-18T18:14:53.974Z"
   },
   {
     "id": "gr_1145",
@@ -11457,9 +18326,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1145",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.085Z",
-    "updated_at": "2026-08-18T18:08:16.085Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.974Z",
+    "updated_at": "2026-08-18T18:14:53.974Z"
   },
   {
     "id": "gr_1146",
@@ -11467,9 +18342,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1146",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.085Z",
-    "updated_at": "2026-08-18T18:08:16.085Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.974Z",
+    "updated_at": "2026-08-18T18:14:53.974Z"
   },
   {
     "id": "gr_1147",
@@ -11477,9 +18358,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1147",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.085Z",
-    "updated_at": "2026-08-18T18:08:16.085Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.974Z",
+    "updated_at": "2026-08-18T18:14:53.974Z"
   },
   {
     "id": "gr_1148",
@@ -11487,9 +18374,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1148",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.085Z",
-    "updated_at": "2026-08-18T18:08:16.085Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.974Z",
+    "updated_at": "2026-08-18T18:14:53.974Z"
   },
   {
     "id": "gr_1149",
@@ -11497,9 +18390,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1149",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.085Z",
-    "updated_at": "2026-08-18T18:08:16.085Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.974Z",
+    "updated_at": "2026-08-18T18:14:53.974Z"
   },
   {
     "id": "gr_1150",
@@ -11507,9 +18406,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1150",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.085Z",
-    "updated_at": "2026-08-18T18:08:16.085Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.974Z",
+    "updated_at": "2026-08-18T18:14:53.974Z"
   },
   {
     "id": "gr_1151",
@@ -11517,9 +18422,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1151",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.085Z",
-    "updated_at": "2026-08-18T18:08:16.085Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.974Z",
+    "updated_at": "2026-08-18T18:14:53.974Z"
   },
   {
     "id": "gr_1152",
@@ -11527,9 +18438,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1152",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.085Z",
-    "updated_at": "2026-08-18T18:08:16.085Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.974Z",
+    "updated_at": "2026-08-18T18:14:53.974Z"
   },
   {
     "id": "gr_1153",
@@ -11537,9 +18454,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1153",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.085Z",
-    "updated_at": "2026-08-18T18:08:16.085Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.974Z",
+    "updated_at": "2026-08-18T18:14:53.974Z"
   },
   {
     "id": "gr_1154",
@@ -11547,9 +18470,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1154",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.085Z",
-    "updated_at": "2026-08-18T18:08:16.085Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.974Z",
+    "updated_at": "2026-08-18T18:14:53.974Z"
   },
   {
     "id": "gr_1155",
@@ -11557,9 +18486,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1155",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.085Z",
-    "updated_at": "2026-08-18T18:08:16.085Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.974Z",
+    "updated_at": "2026-08-18T18:14:53.974Z"
   },
   {
     "id": "gr_1156",
@@ -11567,9 +18502,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1156",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.085Z",
-    "updated_at": "2026-08-18T18:08:16.085Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.974Z",
+    "updated_at": "2026-08-18T18:14:53.974Z"
   },
   {
     "id": "gr_1157",
@@ -11577,9 +18518,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1157",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.085Z",
-    "updated_at": "2026-08-18T18:08:16.085Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.974Z",
+    "updated_at": "2026-08-18T18:14:53.974Z"
   },
   {
     "id": "gr_1158",
@@ -11587,9 +18534,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1158",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.085Z",
-    "updated_at": "2026-08-18T18:08:16.085Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.974Z",
+    "updated_at": "2026-08-18T18:14:53.974Z"
   },
   {
     "id": "gr_1159",
@@ -11597,9 +18550,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1159",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.085Z",
-    "updated_at": "2026-08-18T18:08:16.085Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.974Z",
+    "updated_at": "2026-08-18T18:14:53.974Z"
   },
   {
     "id": "gr_1160",
@@ -11607,9 +18566,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1160",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.085Z",
-    "updated_at": "2026-08-18T18:08:16.085Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.974Z",
+    "updated_at": "2026-08-18T18:14:53.974Z"
   },
   {
     "id": "gr_1161",
@@ -11617,9 +18582,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1161",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.085Z",
-    "updated_at": "2026-08-18T18:08:16.085Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.974Z",
+    "updated_at": "2026-08-18T18:14:53.974Z"
   },
   {
     "id": "gr_1162",
@@ -11627,9 +18598,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1162",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.085Z",
-    "updated_at": "2026-08-18T18:08:16.085Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.974Z",
+    "updated_at": "2026-08-18T18:14:53.974Z"
   },
   {
     "id": "gr_1163",
@@ -11637,9 +18614,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1163",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.085Z",
-    "updated_at": "2026-08-18T18:08:16.085Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.974Z",
+    "updated_at": "2026-08-18T18:14:53.974Z"
   },
   {
     "id": "gr_1164",
@@ -11647,9 +18630,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1164",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.085Z",
-    "updated_at": "2026-08-18T18:08:16.085Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.974Z",
+    "updated_at": "2026-08-18T18:14:53.974Z"
   },
   {
     "id": "gr_1165",
@@ -11657,9 +18646,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1165",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.085Z",
-    "updated_at": "2026-08-18T18:08:16.085Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.974Z",
+    "updated_at": "2026-08-18T18:14:53.974Z"
   },
   {
     "id": "gr_1166",
@@ -11667,9 +18662,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1166",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.085Z",
-    "updated_at": "2026-08-18T18:08:16.085Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.974Z",
+    "updated_at": "2026-08-18T18:14:53.974Z"
   },
   {
     "id": "gr_1167",
@@ -11677,9 +18678,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1167",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.085Z",
-    "updated_at": "2026-08-18T18:08:16.085Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.974Z",
+    "updated_at": "2026-08-18T18:14:53.974Z"
   },
   {
     "id": "gr_1168",
@@ -11687,9 +18694,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1168",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.085Z",
-    "updated_at": "2026-08-18T18:08:16.085Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.974Z",
+    "updated_at": "2026-08-18T18:14:53.974Z"
   },
   {
     "id": "gr_1169",
@@ -11697,9 +18710,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1169",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.085Z",
-    "updated_at": "2026-08-18T18:08:16.085Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.974Z",
+    "updated_at": "2026-08-18T18:14:53.974Z"
   },
   {
     "id": "gr_1170",
@@ -11707,9 +18726,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1170",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.085Z",
-    "updated_at": "2026-08-18T18:08:16.085Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.974Z",
+    "updated_at": "2026-08-18T18:14:53.974Z"
   },
   {
     "id": "gr_1171",
@@ -11717,9 +18742,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1171",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.085Z",
-    "updated_at": "2026-08-18T18:08:16.085Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.974Z",
+    "updated_at": "2026-08-18T18:14:53.974Z"
   },
   {
     "id": "gr_1172",
@@ -11727,9 +18758,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1172",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.085Z",
-    "updated_at": "2026-08-18T18:08:16.085Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.974Z",
+    "updated_at": "2026-08-18T18:14:53.974Z"
   },
   {
     "id": "gr_1173",
@@ -11737,9 +18774,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1173",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.085Z",
-    "updated_at": "2026-08-18T18:08:16.085Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.974Z",
+    "updated_at": "2026-08-18T18:14:53.974Z"
   },
   {
     "id": "gr_1174",
@@ -11747,9 +18790,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1174",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.085Z",
-    "updated_at": "2026-08-18T18:08:16.085Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.974Z",
+    "updated_at": "2026-08-18T18:14:53.974Z"
   },
   {
     "id": "gr_1175",
@@ -11757,9 +18806,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1175",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.085Z",
-    "updated_at": "2026-08-18T18:08:16.085Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.974Z",
+    "updated_at": "2026-08-18T18:14:53.974Z"
   },
   {
     "id": "gr_1176",
@@ -11767,9 +18822,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1176",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.085Z",
-    "updated_at": "2026-08-18T18:08:16.085Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.974Z",
+    "updated_at": "2026-08-18T18:14:53.974Z"
   },
   {
     "id": "gr_1177",
@@ -11777,9 +18838,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1177",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.085Z",
-    "updated_at": "2026-08-18T18:08:16.085Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.974Z",
+    "updated_at": "2026-08-18T18:14:53.974Z"
   },
   {
     "id": "gr_1178",
@@ -11787,9 +18854,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1178",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.085Z",
-    "updated_at": "2026-08-18T18:08:16.085Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.974Z",
+    "updated_at": "2026-08-18T18:14:53.974Z"
   },
   {
     "id": "gr_1179",
@@ -11797,9 +18870,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1179",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.085Z",
-    "updated_at": "2026-08-18T18:08:16.085Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.974Z",
+    "updated_at": "2026-08-18T18:14:53.974Z"
   },
   {
     "id": "gr_1180",
@@ -11807,9 +18886,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1180",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.085Z",
-    "updated_at": "2026-08-18T18:08:16.085Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.974Z",
+    "updated_at": "2026-08-18T18:14:53.974Z"
   },
   {
     "id": "gr_1181",
@@ -11817,9 +18902,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1181",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.085Z",
-    "updated_at": "2026-08-18T18:08:16.085Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.974Z",
+    "updated_at": "2026-08-18T18:14:53.974Z"
   },
   {
     "id": "gr_1182",
@@ -11827,9 +18918,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1182",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.085Z",
-    "updated_at": "2026-08-18T18:08:16.085Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.974Z",
+    "updated_at": "2026-08-18T18:14:53.974Z"
   },
   {
     "id": "gr_1183",
@@ -11837,9 +18934,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1183",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.085Z",
-    "updated_at": "2026-08-18T18:08:16.085Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.974Z",
+    "updated_at": "2026-08-18T18:14:53.974Z"
   },
   {
     "id": "gr_1184",
@@ -11847,9 +18950,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1184",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.085Z",
-    "updated_at": "2026-08-18T18:08:16.085Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.974Z",
+    "updated_at": "2026-08-18T18:14:53.974Z"
   },
   {
     "id": "gr_1185",
@@ -11857,9 +18966,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1185",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.085Z",
-    "updated_at": "2026-08-18T18:08:16.085Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.974Z",
+    "updated_at": "2026-08-18T18:14:53.974Z"
   },
   {
     "id": "gr_1186",
@@ -11867,9 +18982,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1186",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.085Z",
-    "updated_at": "2026-08-18T18:08:16.085Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.974Z",
+    "updated_at": "2026-08-18T18:14:53.974Z"
   },
   {
     "id": "gr_1187",
@@ -11877,9 +18998,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1187",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.085Z",
-    "updated_at": "2026-08-18T18:08:16.085Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.974Z",
+    "updated_at": "2026-08-18T18:14:53.974Z"
   },
   {
     "id": "gr_1188",
@@ -11887,9 +19014,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1188",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.085Z",
-    "updated_at": "2026-08-18T18:08:16.085Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.974Z",
+    "updated_at": "2026-08-18T18:14:53.974Z"
   },
   {
     "id": "gr_1189",
@@ -11897,9 +19030,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1189",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.085Z",
-    "updated_at": "2026-08-18T18:08:16.085Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.974Z",
+    "updated_at": "2026-08-18T18:14:53.974Z"
   },
   {
     "id": "gr_1190",
@@ -11907,9 +19046,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1190",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.085Z",
-    "updated_at": "2026-08-18T18:08:16.085Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.974Z",
+    "updated_at": "2026-08-18T18:14:53.974Z"
   },
   {
     "id": "gr_1191",
@@ -11917,9 +19062,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1191",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.085Z",
-    "updated_at": "2026-08-18T18:08:16.085Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.974Z",
+    "updated_at": "2026-08-18T18:14:53.974Z"
   },
   {
     "id": "gr_1192",
@@ -11927,9 +19078,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1192",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.085Z",
-    "updated_at": "2026-08-18T18:08:16.085Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.974Z",
+    "updated_at": "2026-08-18T18:14:53.974Z"
   },
   {
     "id": "gr_1193",
@@ -11937,9 +19094,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1193",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.085Z",
-    "updated_at": "2026-08-18T18:08:16.085Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.974Z",
+    "updated_at": "2026-08-18T18:14:53.974Z"
   },
   {
     "id": "gr_1194",
@@ -11947,9 +19110,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1194",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.085Z",
-    "updated_at": "2026-08-18T18:08:16.085Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.974Z",
+    "updated_at": "2026-08-18T18:14:53.974Z"
   },
   {
     "id": "gr_1195",
@@ -11957,9 +19126,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1195",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.085Z",
-    "updated_at": "2026-08-18T18:08:16.085Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.975Z",
+    "updated_at": "2026-08-18T18:14:53.975Z"
   },
   {
     "id": "gr_1196",
@@ -11967,9 +19142,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1196",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.085Z",
-    "updated_at": "2026-08-18T18:08:16.085Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.975Z",
+    "updated_at": "2026-08-18T18:14:53.975Z"
   },
   {
     "id": "gr_1197",
@@ -11977,9 +19158,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1197",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.085Z",
-    "updated_at": "2026-08-18T18:08:16.085Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.975Z",
+    "updated_at": "2026-08-18T18:14:53.975Z"
   },
   {
     "id": "gr_1198",
@@ -11987,9 +19174,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1198",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.085Z",
-    "updated_at": "2026-08-18T18:08:16.085Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.975Z",
+    "updated_at": "2026-08-18T18:14:53.975Z"
   },
   {
     "id": "gr_1199",
@@ -11997,9 +19190,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1199",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.085Z",
-    "updated_at": "2026-08-18T18:08:16.085Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.975Z",
+    "updated_at": "2026-08-18T18:14:53.975Z"
   },
   {
     "id": "gr_1200",
@@ -12007,9 +19206,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1200",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.085Z",
-    "updated_at": "2026-08-18T18:08:16.085Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.975Z",
+    "updated_at": "2026-08-18T18:14:53.975Z"
   },
   {
     "id": "gr_1201",
@@ -12017,9 +19222,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1201",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.085Z",
-    "updated_at": "2026-08-18T18:08:16.085Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.975Z",
+    "updated_at": "2026-08-18T18:14:53.975Z"
   },
   {
     "id": "gr_1202",
@@ -12027,9 +19238,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1202",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.085Z",
-    "updated_at": "2026-08-18T18:08:16.085Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.975Z",
+    "updated_at": "2026-08-18T18:14:53.975Z"
   },
   {
     "id": "gr_1203",
@@ -12037,9 +19254,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1203",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.085Z",
-    "updated_at": "2026-08-18T18:08:16.085Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.975Z",
+    "updated_at": "2026-08-18T18:14:53.975Z"
   },
   {
     "id": "gr_1204",
@@ -12047,9 +19270,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1204",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.085Z",
-    "updated_at": "2026-08-18T18:08:16.085Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.975Z",
+    "updated_at": "2026-08-18T18:14:53.975Z"
   },
   {
     "id": "gr_1205",
@@ -12057,9 +19286,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1205",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.085Z",
-    "updated_at": "2026-08-18T18:08:16.085Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.975Z",
+    "updated_at": "2026-08-18T18:14:53.975Z"
   },
   {
     "id": "gr_1206",
@@ -12067,9 +19302,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1206",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.085Z",
-    "updated_at": "2026-08-18T18:08:16.085Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.975Z",
+    "updated_at": "2026-08-18T18:14:53.975Z"
   },
   {
     "id": "gr_1207",
@@ -12077,9 +19318,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1207",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.085Z",
-    "updated_at": "2026-08-18T18:08:16.085Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.975Z",
+    "updated_at": "2026-08-18T18:14:53.975Z"
   },
   {
     "id": "gr_1208",
@@ -12087,9 +19334,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1208",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.085Z",
-    "updated_at": "2026-08-18T18:08:16.085Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.975Z",
+    "updated_at": "2026-08-18T18:14:53.975Z"
   },
   {
     "id": "gr_1209",
@@ -12097,9 +19350,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1209",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.085Z",
-    "updated_at": "2026-08-18T18:08:16.085Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.975Z",
+    "updated_at": "2026-08-18T18:14:53.975Z"
   },
   {
     "id": "gr_1210",
@@ -12107,9 +19366,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1210",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.085Z",
-    "updated_at": "2026-08-18T18:08:16.085Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.975Z",
+    "updated_at": "2026-08-18T18:14:53.975Z"
   },
   {
     "id": "gr_1211",
@@ -12117,9 +19382,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1211",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.085Z",
-    "updated_at": "2026-08-18T18:08:16.085Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.975Z",
+    "updated_at": "2026-08-18T18:14:53.975Z"
   },
   {
     "id": "gr_1212",
@@ -12127,9 +19398,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1212",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.085Z",
-    "updated_at": "2026-08-18T18:08:16.085Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.975Z",
+    "updated_at": "2026-08-18T18:14:53.975Z"
   },
   {
     "id": "gr_1213",
@@ -12137,9 +19414,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1213",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.085Z",
-    "updated_at": "2026-08-18T18:08:16.085Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.975Z",
+    "updated_at": "2026-08-18T18:14:53.975Z"
   },
   {
     "id": "gr_1214",
@@ -12147,9 +19430,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1214",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.085Z",
-    "updated_at": "2026-08-18T18:08:16.085Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.975Z",
+    "updated_at": "2026-08-18T18:14:53.975Z"
   },
   {
     "id": "gr_1215",
@@ -12157,9 +19446,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1215",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.085Z",
-    "updated_at": "2026-08-18T18:08:16.085Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.975Z",
+    "updated_at": "2026-08-18T18:14:53.975Z"
   },
   {
     "id": "gr_1216",
@@ -12167,9 +19462,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1216",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.085Z",
-    "updated_at": "2026-08-18T18:08:16.085Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.975Z",
+    "updated_at": "2026-08-18T18:14:53.975Z"
   },
   {
     "id": "gr_1217",
@@ -12177,9 +19478,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1217",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.085Z",
-    "updated_at": "2026-08-18T18:08:16.085Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.975Z",
+    "updated_at": "2026-08-18T18:14:53.975Z"
   },
   {
     "id": "gr_1218",
@@ -12187,9 +19494,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1218",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.085Z",
-    "updated_at": "2026-08-18T18:08:16.085Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.975Z",
+    "updated_at": "2026-08-18T18:14:53.975Z"
   },
   {
     "id": "gr_1219",
@@ -12197,9 +19510,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1219",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.085Z",
-    "updated_at": "2026-08-18T18:08:16.085Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.975Z",
+    "updated_at": "2026-08-18T18:14:53.975Z"
   },
   {
     "id": "gr_1220",
@@ -12207,9 +19526,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1220",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.085Z",
-    "updated_at": "2026-08-18T18:08:16.085Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.975Z",
+    "updated_at": "2026-08-18T18:14:53.975Z"
   },
   {
     "id": "gr_1221",
@@ -12217,9 +19542,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1221",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.085Z",
-    "updated_at": "2026-08-18T18:08:16.085Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.975Z",
+    "updated_at": "2026-08-18T18:14:53.975Z"
   },
   {
     "id": "gr_1222",
@@ -12227,9 +19558,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1222",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.085Z",
-    "updated_at": "2026-08-18T18:08:16.085Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.975Z",
+    "updated_at": "2026-08-18T18:14:53.975Z"
   },
   {
     "id": "gr_1223",
@@ -12237,9 +19574,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1223",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.085Z",
-    "updated_at": "2026-08-18T18:08:16.085Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.975Z",
+    "updated_at": "2026-08-18T18:14:53.975Z"
   },
   {
     "id": "gr_1224",
@@ -12248,8 +19591,14 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "student_name": "Maryam",
     "class_name": "Class XI - Pre-Medical",
     "status": "assigned",
-    "created_at": "2026-08-18T18:08:16.085Z",
-    "updated_at": "2026-08-18T18:08:16.085Z"
+    "confidence": 92,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.44 PM (1).jpeg",
+    "source_image_id": "img_25",
+    "source_sha256": "e02fdc791fe2...",
+    "verification_status": "verified",
+    "audit_notes": "Clear entry",
+    "created_at": "2026-08-18T18:14:53.975Z",
+    "updated_at": "2026-08-18T18:14:53.975Z"
   },
   {
     "id": "gr_1225",
@@ -12258,8 +19607,14 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "student_name": "Fatima Zehra",
     "class_name": "Class XI - Pre-Medical",
     "status": "assigned",
-    "created_at": "2026-08-18T18:08:16.085Z",
-    "updated_at": "2026-08-18T18:08:16.085Z"
+    "confidence": 94,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.44 PM (1).jpeg",
+    "source_image_id": "img_25",
+    "source_sha256": "e02fdc791fe2...",
+    "verification_status": "verified",
+    "audit_notes": "Clear entry",
+    "created_at": "2026-08-18T18:14:53.975Z",
+    "updated_at": "2026-08-18T18:14:53.975Z"
   },
   {
     "id": "gr_1226",
@@ -12268,8 +19623,14 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "student_name": "Huzaifa Tariq",
     "class_name": "Class XI - Science",
     "status": "assigned",
-    "created_at": "2026-08-18T18:08:16.085Z",
-    "updated_at": "2026-08-18T18:08:16.085Z"
+    "confidence": 91,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.44 PM (1).jpeg",
+    "source_image_id": "img_25",
+    "source_sha256": "e02fdc791fe2...",
+    "verification_status": "verified",
+    "audit_notes": "Clear entry",
+    "created_at": "2026-08-18T18:14:53.975Z",
+    "updated_at": "2026-08-18T18:14:53.975Z"
   },
   {
     "id": "gr_1227",
@@ -12278,8 +19639,14 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "student_name": "Dua Suleman",
     "class_name": "Class IX - Science",
     "status": "assigned",
-    "created_at": "2026-08-18T18:08:16.085Z",
-    "updated_at": "2026-08-18T18:08:16.085Z"
+    "confidence": 90,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.44 PM (1).jpeg",
+    "source_image_id": "img_25",
+    "source_sha256": "e02fdc791fe2...",
+    "verification_status": "verified",
+    "audit_notes": "Clear entry",
+    "created_at": "2026-08-18T18:14:53.975Z",
+    "updated_at": "2026-08-18T18:14:53.975Z"
   },
   {
     "id": "gr_1228",
@@ -12288,8 +19655,14 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "student_name": "Ahron Riaz",
     "class_name": "Class XI - Pre-Engineering",
     "status": "assigned",
-    "created_at": "2026-08-18T18:08:16.085Z",
-    "updated_at": "2026-08-18T18:08:16.085Z"
+    "confidence": 89,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.44 PM (1).jpeg",
+    "source_image_id": "img_25",
+    "source_sha256": "e02fdc791fe2...",
+    "verification_status": "verified",
+    "audit_notes": "Clear entry",
+    "created_at": "2026-08-18T18:14:53.975Z",
+    "updated_at": "2026-08-18T18:14:53.975Z"
   },
   {
     "id": "gr_1229",
@@ -12298,8 +19671,14 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "student_name": "M. Ebad Khan",
     "class_name": "Class XI - Science",
     "status": "assigned",
-    "created_at": "2026-08-18T18:08:16.085Z",
-    "updated_at": "2026-08-18T18:08:16.085Z"
+    "confidence": 95,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.44 PM (1).jpeg",
+    "source_image_id": "img_25",
+    "source_sha256": "e02fdc791fe2...",
+    "verification_status": "verified",
+    "audit_notes": "Clear entry",
+    "created_at": "2026-08-18T18:14:53.975Z",
+    "updated_at": "2026-08-18T18:14:53.975Z"
   },
   {
     "id": "gr_1230",
@@ -12308,8 +19687,14 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "student_name": "Sara",
     "class_name": "Class X - Science",
     "status": "assigned",
-    "created_at": "2026-08-18T18:08:16.085Z",
-    "updated_at": "2026-08-18T18:08:16.085Z"
+    "confidence": 93,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.44 PM (1).jpeg",
+    "source_image_id": "img_25",
+    "source_sha256": "e02fdc791fe2...",
+    "verification_status": "verified",
+    "audit_notes": "Clear entry",
+    "created_at": "2026-08-18T18:14:53.975Z",
+    "updated_at": "2026-08-18T18:14:53.975Z"
   },
   {
     "id": "gr_1231",
@@ -12318,8 +19703,14 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "student_name": "Hashir",
     "class_name": "Class XI - Science",
     "status": "assigned",
-    "created_at": "2026-08-18T18:08:16.085Z",
-    "updated_at": "2026-08-18T18:08:16.085Z"
+    "confidence": 91,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.44 PM (1).jpeg",
+    "source_image_id": "img_25",
+    "source_sha256": "e02fdc791fe2...",
+    "verification_status": "verified",
+    "audit_notes": "Clear entry",
+    "created_at": "2026-08-18T18:14:53.975Z",
+    "updated_at": "2026-08-18T18:14:53.975Z"
   },
   {
     "id": "gr_1232",
@@ -12328,8 +19719,14 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "student_name": "Maryam Bint Samreen",
     "class_name": "Class XI - Pre-Medical",
     "status": "assigned",
-    "created_at": "2026-08-18T18:08:16.085Z",
-    "updated_at": "2026-08-18T18:08:16.085Z"
+    "confidence": 90,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.44 PM (1).jpeg",
+    "source_image_id": "img_25",
+    "source_sha256": "e02fdc791fe2...",
+    "verification_status": "verified",
+    "audit_notes": "Clear entry",
+    "created_at": "2026-08-18T18:14:53.975Z",
+    "updated_at": "2026-08-18T18:14:53.975Z"
   },
   {
     "id": "gr_1233",
@@ -12338,8 +19735,14 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "student_name": "Najeeb Ullah",
     "class_name": "Class XII - Pre-Engineering",
     "status": "assigned",
-    "created_at": "2026-08-18T18:08:16.085Z",
-    "updated_at": "2026-08-18T18:08:16.085Z"
+    "confidence": 92,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.44 PM (1).jpeg",
+    "source_image_id": "img_25",
+    "source_sha256": "e02fdc791fe2...",
+    "verification_status": "verified",
+    "audit_notes": "Clear entry",
+    "created_at": "2026-08-18T18:14:53.975Z",
+    "updated_at": "2026-08-18T18:14:53.975Z"
   },
   {
     "id": "gr_1234",
@@ -12348,8 +19751,14 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "student_name": "Mohammad Asif",
     "class_name": "Class XI - Science",
     "status": "assigned",
-    "created_at": "2026-08-18T18:08:16.085Z",
-    "updated_at": "2026-08-18T18:08:16.085Z"
+    "confidence": 94,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.44 PM (1).jpeg",
+    "source_image_id": "img_25",
+    "source_sha256": "e02fdc791fe2...",
+    "verification_status": "verified",
+    "audit_notes": "Clear entry",
+    "created_at": "2026-08-18T18:14:53.975Z",
+    "updated_at": "2026-08-18T18:14:53.975Z"
   },
   {
     "id": "gr_1235",
@@ -12357,9 +19766,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1235",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.085Z",
-    "updated_at": "2026-08-18T18:08:16.085Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.44 PM (1).jpeg",
+    "source_image_id": "img_25",
+    "source_sha256": "e02fdc791fe2...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.975Z",
+    "updated_at": "2026-08-18T18:14:53.975Z"
   },
   {
     "id": "gr_1236",
@@ -12368,8 +19783,14 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "student_name": "Muhammad Umar",
     "class_name": "Class XI - Science",
     "status": "assigned",
-    "created_at": "2026-08-18T18:08:16.085Z",
-    "updated_at": "2026-08-18T18:08:16.085Z"
+    "confidence": 93,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.44 PM (1).jpeg",
+    "source_image_id": "img_25",
+    "source_sha256": "e02fdc791fe2...",
+    "verification_status": "verified",
+    "audit_notes": "Clear entry",
+    "created_at": "2026-08-18T18:14:53.975Z",
+    "updated_at": "2026-08-18T18:14:53.975Z"
   },
   {
     "id": "gr_1237",
@@ -12378,8 +19799,14 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "student_name": "Sardar Ahmed",
     "class_name": "Class XI - Commerce",
     "status": "assigned",
-    "created_at": "2026-08-18T18:08:16.085Z",
-    "updated_at": "2026-08-18T18:08:16.085Z"
+    "confidence": 91,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.44 PM (1).jpeg",
+    "source_image_id": "img_25",
+    "source_sha256": "e02fdc791fe2...",
+    "verification_status": "verified",
+    "audit_notes": "Clear entry",
+    "created_at": "2026-08-18T18:14:53.975Z",
+    "updated_at": "2026-08-18T18:14:53.975Z"
   },
   {
     "id": "gr_1238",
@@ -12388,8 +19815,14 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "student_name": "Amna",
     "class_name": "Class XI - Pre-Medical",
     "status": "assigned",
-    "created_at": "2026-08-18T18:08:16.085Z",
-    "updated_at": "2026-08-18T18:08:16.085Z"
+    "confidence": 94,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.44 PM (1).jpeg",
+    "source_image_id": "img_25",
+    "source_sha256": "e02fdc791fe2...",
+    "verification_status": "verified",
+    "audit_notes": "Clear entry",
+    "created_at": "2026-08-18T18:14:53.975Z",
+    "updated_at": "2026-08-18T18:14:53.975Z"
   },
   {
     "id": "gr_1239",
@@ -12398,8 +19831,14 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "student_name": "Tahreem Fatima",
     "class_name": "Class XI - Pre-Medical",
     "status": "assigned",
-    "created_at": "2026-08-18T18:08:16.085Z",
-    "updated_at": "2026-08-18T18:08:16.085Z"
+    "confidence": 92,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.44 PM (1).jpeg",
+    "source_image_id": "img_25",
+    "source_sha256": "e02fdc791fe2...",
+    "verification_status": "verified",
+    "audit_notes": "Clear entry",
+    "created_at": "2026-08-18T18:14:53.975Z",
+    "updated_at": "2026-08-18T18:14:53.975Z"
   },
   {
     "id": "gr_1240",
@@ -12408,8 +19847,14 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "student_name": "Muhammad Ali",
     "class_name": "Class XII - Pre-Engineering",
     "status": "assigned",
-    "created_at": "2026-08-18T18:08:16.085Z",
-    "updated_at": "2026-08-18T18:08:16.085Z"
+    "confidence": 95,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.44 PM (1).jpeg",
+    "source_image_id": "img_25",
+    "source_sha256": "e02fdc791fe2...",
+    "verification_status": "verified",
+    "audit_notes": "Clear entry",
+    "created_at": "2026-08-18T18:14:53.975Z",
+    "updated_at": "2026-08-18T18:14:53.975Z"
   },
   {
     "id": "gr_1241",
@@ -12417,9 +19862,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1241",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.085Z",
-    "updated_at": "2026-08-18T18:08:16.085Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.44 PM (1).jpeg",
+    "source_image_id": "img_25",
+    "source_sha256": "e02fdc791fe2...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.975Z",
+    "updated_at": "2026-08-18T18:14:53.975Z"
   },
   {
     "id": "gr_1242",
@@ -12427,9 +19878,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1242",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.085Z",
-    "updated_at": "2026-08-18T18:08:16.085Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.44 PM (1).jpeg",
+    "source_image_id": "img_25",
+    "source_sha256": "e02fdc791fe2...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.975Z",
+    "updated_at": "2026-08-18T18:14:53.975Z"
   },
   {
     "id": "gr_1243",
@@ -12437,9 +19894,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1243",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.085Z",
-    "updated_at": "2026-08-18T18:08:16.085Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.44 PM (1).jpeg",
+    "source_image_id": "img_25",
+    "source_sha256": "e02fdc791fe2...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.975Z",
+    "updated_at": "2026-08-18T18:14:53.975Z"
   },
   {
     "id": "gr_1244",
@@ -12447,9 +19910,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1244",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.085Z",
-    "updated_at": "2026-08-18T18:08:16.085Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.44 PM (1).jpeg",
+    "source_image_id": "img_25",
+    "source_sha256": "e02fdc791fe2...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.975Z",
+    "updated_at": "2026-08-18T18:14:53.975Z"
   },
   {
     "id": "gr_1245",
@@ -12457,9 +19926,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1245",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.085Z",
-    "updated_at": "2026-08-18T18:08:16.085Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.44 PM (1).jpeg",
+    "source_image_id": "img_25",
+    "source_sha256": "e02fdc791fe2...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.975Z",
+    "updated_at": "2026-08-18T18:14:53.975Z"
   },
   {
     "id": "gr_1246",
@@ -12467,9 +19942,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1246",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.085Z",
-    "updated_at": "2026-08-18T18:08:16.085Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.44 PM (1).jpeg",
+    "source_image_id": "img_25",
+    "source_sha256": "e02fdc791fe2...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.975Z",
+    "updated_at": "2026-08-18T18:14:53.975Z"
   },
   {
     "id": "gr_1247",
@@ -12477,9 +19958,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1247",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.085Z",
-    "updated_at": "2026-08-18T18:08:16.085Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.44 PM (1).jpeg",
+    "source_image_id": "img_25",
+    "source_sha256": "e02fdc791fe2...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.975Z",
+    "updated_at": "2026-08-18T18:14:53.975Z"
   },
   {
     "id": "gr_1248",
@@ -12487,9 +19974,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1248",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.085Z",
-    "updated_at": "2026-08-18T18:08:16.085Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.44 PM (1).jpeg",
+    "source_image_id": "img_25",
+    "source_sha256": "e02fdc791fe2...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.975Z",
+    "updated_at": "2026-08-18T18:14:53.975Z"
   },
   {
     "id": "gr_1249",
@@ -12497,9 +19990,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1249",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.085Z",
-    "updated_at": "2026-08-18T18:08:16.085Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.44 PM (1).jpeg",
+    "source_image_id": "img_25",
+    "source_sha256": "e02fdc791fe2...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.975Z",
+    "updated_at": "2026-08-18T18:14:53.975Z"
   },
   {
     "id": "gr_1250",
@@ -12507,9 +20006,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1250",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.085Z",
-    "updated_at": "2026-08-18T18:08:16.085Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.44 PM (1).jpeg",
+    "source_image_id": "img_25",
+    "source_sha256": "e02fdc791fe2...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.975Z",
+    "updated_at": "2026-08-18T18:14:53.975Z"
   },
   {
     "id": "gr_1251",
@@ -12517,9 +20022,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1251",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.085Z",
-    "updated_at": "2026-08-18T18:08:16.085Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.44 PM (1).jpeg",
+    "source_image_id": "img_25",
+    "source_sha256": "e02fdc791fe2...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.975Z",
+    "updated_at": "2026-08-18T18:14:53.975Z"
   },
   {
     "id": "gr_1252",
@@ -12527,9 +20038,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1252",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.085Z",
-    "updated_at": "2026-08-18T18:08:16.085Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.44 PM (1).jpeg",
+    "source_image_id": "img_25",
+    "source_sha256": "e02fdc791fe2...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.975Z",
+    "updated_at": "2026-08-18T18:14:53.975Z"
   },
   {
     "id": "gr_1253",
@@ -12537,9 +20054,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1253",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.085Z",
-    "updated_at": "2026-08-18T18:08:16.085Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.44 PM (1).jpeg",
+    "source_image_id": "img_25",
+    "source_sha256": "e02fdc791fe2...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.975Z",
+    "updated_at": "2026-08-18T18:14:53.975Z"
   },
   {
     "id": "gr_1254",
@@ -12547,9 +20070,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1254",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.085Z",
-    "updated_at": "2026-08-18T18:08:16.085Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.44 PM (1).jpeg",
+    "source_image_id": "img_25",
+    "source_sha256": "e02fdc791fe2...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.975Z",
+    "updated_at": "2026-08-18T18:14:53.975Z"
   },
   {
     "id": "gr_1255",
@@ -12557,9 +20086,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1255",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.085Z",
-    "updated_at": "2026-08-18T18:08:16.085Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.44 PM (1).jpeg",
+    "source_image_id": "img_25",
+    "source_sha256": "e02fdc791fe2...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.975Z",
+    "updated_at": "2026-08-18T18:14:53.975Z"
   },
   {
     "id": "gr_1256",
@@ -12567,9 +20102,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1256",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.085Z",
-    "updated_at": "2026-08-18T18:08:16.085Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.44 PM (1).jpeg",
+    "source_image_id": "img_25",
+    "source_sha256": "e02fdc791fe2...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.975Z",
+    "updated_at": "2026-08-18T18:14:53.975Z"
   },
   {
     "id": "gr_1257",
@@ -12577,9 +20118,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1257",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.085Z",
-    "updated_at": "2026-08-18T18:08:16.085Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.44 PM (1).jpeg",
+    "source_image_id": "img_25",
+    "source_sha256": "e02fdc791fe2...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.975Z",
+    "updated_at": "2026-08-18T18:14:53.975Z"
   },
   {
     "id": "gr_1258",
@@ -12587,9 +20134,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1258",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.085Z",
-    "updated_at": "2026-08-18T18:08:16.085Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.44 PM (1).jpeg",
+    "source_image_id": "img_25",
+    "source_sha256": "e02fdc791fe2...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.975Z",
+    "updated_at": "2026-08-18T18:14:53.975Z"
   },
   {
     "id": "gr_1259",
@@ -12597,9 +20150,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1259",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.085Z",
-    "updated_at": "2026-08-18T18:08:16.085Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.44 PM (1).jpeg",
+    "source_image_id": "img_25",
+    "source_sha256": "e02fdc791fe2...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.975Z",
+    "updated_at": "2026-08-18T18:14:53.975Z"
   },
   {
     "id": "gr_1260",
@@ -12607,9 +20166,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1260",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.085Z",
-    "updated_at": "2026-08-18T18:08:16.085Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.44 PM (1).jpeg",
+    "source_image_id": "img_25",
+    "source_sha256": "e02fdc791fe2...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.975Z",
+    "updated_at": "2026-08-18T18:14:53.975Z"
   },
   {
     "id": "gr_1261",
@@ -12617,9 +20182,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1261",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.085Z",
-    "updated_at": "2026-08-18T18:08:16.085Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.975Z",
+    "updated_at": "2026-08-18T18:14:53.975Z"
   },
   {
     "id": "gr_1262",
@@ -12627,9 +20198,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1262",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.085Z",
-    "updated_at": "2026-08-18T18:08:16.085Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.975Z",
+    "updated_at": "2026-08-18T18:14:53.975Z"
   },
   {
     "id": "gr_1263",
@@ -12637,9 +20214,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1263",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.085Z",
-    "updated_at": "2026-08-18T18:08:16.085Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.975Z",
+    "updated_at": "2026-08-18T18:14:53.975Z"
   },
   {
     "id": "gr_1264",
@@ -12647,9 +20230,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1264",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.085Z",
-    "updated_at": "2026-08-18T18:08:16.085Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.975Z",
+    "updated_at": "2026-08-18T18:14:53.975Z"
   },
   {
     "id": "gr_1265",
@@ -12657,9 +20246,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1265",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.085Z",
-    "updated_at": "2026-08-18T18:08:16.085Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.975Z",
+    "updated_at": "2026-08-18T18:14:53.975Z"
   },
   {
     "id": "gr_1266",
@@ -12667,9 +20262,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1266",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.085Z",
-    "updated_at": "2026-08-18T18:08:16.085Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.975Z",
+    "updated_at": "2026-08-18T18:14:53.975Z"
   },
   {
     "id": "gr_1267",
@@ -12677,9 +20278,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1267",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.085Z",
-    "updated_at": "2026-08-18T18:08:16.085Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.975Z",
+    "updated_at": "2026-08-18T18:14:53.975Z"
   },
   {
     "id": "gr_1268",
@@ -12687,9 +20294,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1268",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.085Z",
-    "updated_at": "2026-08-18T18:08:16.085Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.975Z",
+    "updated_at": "2026-08-18T18:14:53.975Z"
   },
   {
     "id": "gr_1269",
@@ -12697,9 +20310,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1269",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.085Z",
-    "updated_at": "2026-08-18T18:08:16.085Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.975Z",
+    "updated_at": "2026-08-18T18:14:53.975Z"
   },
   {
     "id": "gr_1270",
@@ -12707,9 +20326,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1270",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.085Z",
-    "updated_at": "2026-08-18T18:08:16.085Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.975Z",
+    "updated_at": "2026-08-18T18:14:53.975Z"
   },
   {
     "id": "gr_1271",
@@ -12717,9 +20342,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1271",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.085Z",
-    "updated_at": "2026-08-18T18:08:16.085Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.975Z",
+    "updated_at": "2026-08-18T18:14:53.975Z"
   },
   {
     "id": "gr_1272",
@@ -12727,9 +20358,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1272",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.085Z",
-    "updated_at": "2026-08-18T18:08:16.085Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.975Z",
+    "updated_at": "2026-08-18T18:14:53.975Z"
   },
   {
     "id": "gr_1273",
@@ -12737,9 +20374,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1273",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.085Z",
-    "updated_at": "2026-08-18T18:08:16.085Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.975Z",
+    "updated_at": "2026-08-18T18:14:53.975Z"
   },
   {
     "id": "gr_1274",
@@ -12747,9 +20390,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1274",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.085Z",
-    "updated_at": "2026-08-18T18:08:16.085Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.975Z",
+    "updated_at": "2026-08-18T18:14:53.975Z"
   },
   {
     "id": "gr_1275",
@@ -12757,9 +20406,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1275",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.085Z",
-    "updated_at": "2026-08-18T18:08:16.085Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.975Z",
+    "updated_at": "2026-08-18T18:14:53.975Z"
   },
   {
     "id": "gr_1276",
@@ -12767,9 +20422,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1276",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.085Z",
-    "updated_at": "2026-08-18T18:08:16.085Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.975Z",
+    "updated_at": "2026-08-18T18:14:53.975Z"
   },
   {
     "id": "gr_1277",
@@ -12777,9 +20438,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1277",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.085Z",
-    "updated_at": "2026-08-18T18:08:16.085Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.975Z",
+    "updated_at": "2026-08-18T18:14:53.975Z"
   },
   {
     "id": "gr_1278",
@@ -12787,9 +20454,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1278",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.085Z",
-    "updated_at": "2026-08-18T18:08:16.085Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.975Z",
+    "updated_at": "2026-08-18T18:14:53.975Z"
   },
   {
     "id": "gr_1279",
@@ -12797,9 +20470,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1279",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.085Z",
-    "updated_at": "2026-08-18T18:08:16.085Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.975Z",
+    "updated_at": "2026-08-18T18:14:53.975Z"
   },
   {
     "id": "gr_1280",
@@ -12807,9 +20486,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1280",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.085Z",
-    "updated_at": "2026-08-18T18:08:16.085Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.975Z",
+    "updated_at": "2026-08-18T18:14:53.975Z"
   },
   {
     "id": "gr_1281",
@@ -12817,9 +20502,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1281",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.085Z",
-    "updated_at": "2026-08-18T18:08:16.085Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.975Z",
+    "updated_at": "2026-08-18T18:14:53.975Z"
   },
   {
     "id": "gr_1282",
@@ -12827,9 +20518,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1282",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.085Z",
-    "updated_at": "2026-08-18T18:08:16.085Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.975Z",
+    "updated_at": "2026-08-18T18:14:53.975Z"
   },
   {
     "id": "gr_1283",
@@ -12837,9 +20534,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1283",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.085Z",
-    "updated_at": "2026-08-18T18:08:16.085Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.30 PM (1).jpeg",
+    "source_image_id": "img_01",
+    "source_sha256": "7f7dddf72210...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.975Z",
+    "updated_at": "2026-08-18T18:14:53.975Z"
   },
   {
     "id": "gr_1284",
@@ -12848,8 +20551,14 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "student_name": "Maryam Bint Samreen",
     "class_name": "Class XI - Pre-Medical",
     "status": "assigned",
-    "created_at": "2026-08-18T18:08:16.085Z",
-    "updated_at": "2026-08-18T18:08:16.085Z"
+    "confidence": 89,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.44 PM (2).jpeg",
+    "source_image_id": "img_26",
+    "source_sha256": "101e92ac2a35...",
+    "verification_status": "verified",
+    "audit_notes": "Clear entry",
+    "created_at": "2026-08-18T18:14:53.975Z",
+    "updated_at": "2026-08-18T18:14:53.975Z"
   },
   {
     "id": "gr_1285",
@@ -12858,8 +20567,14 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "student_name": "Najeeb Ullah",
     "class_name": "Class XII - Pre-Engineering",
     "status": "assigned",
-    "created_at": "2026-08-18T18:08:16.085Z",
-    "updated_at": "2026-08-18T18:08:16.085Z"
+    "confidence": 91,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.44 PM (2).jpeg",
+    "source_image_id": "img_26",
+    "source_sha256": "101e92ac2a35...",
+    "verification_status": "verified",
+    "audit_notes": "Clear entry",
+    "created_at": "2026-08-18T18:14:53.975Z",
+    "updated_at": "2026-08-18T18:14:53.975Z"
   },
   {
     "id": "gr_1286",
@@ -12868,8 +20583,14 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "student_name": "Mohammad Asif",
     "class_name": "Class XI - Science",
     "status": "assigned",
-    "created_at": "2026-08-18T18:08:16.085Z",
-    "updated_at": "2026-08-18T18:08:16.085Z"
+    "confidence": 93,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.44 PM (2).jpeg",
+    "source_image_id": "img_26",
+    "source_sha256": "101e92ac2a35...",
+    "verification_status": "verified",
+    "audit_notes": "Clear entry",
+    "created_at": "2026-08-18T18:14:53.975Z",
+    "updated_at": "2026-08-18T18:14:53.975Z"
   },
   {
     "id": "gr_1287",
@@ -12877,9 +20598,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1287",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.085Z",
-    "updated_at": "2026-08-18T18:08:16.085Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.44 PM (2).jpeg",
+    "source_image_id": "img_26",
+    "source_sha256": "101e92ac2a35...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.975Z",
+    "updated_at": "2026-08-18T18:14:53.975Z"
   },
   {
     "id": "gr_1288",
@@ -12887,9 +20614,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1288",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.085Z",
-    "updated_at": "2026-08-18T18:08:16.085Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.44 PM (2).jpeg",
+    "source_image_id": "img_26",
+    "source_sha256": "101e92ac2a35...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.975Z",
+    "updated_at": "2026-08-18T18:14:53.975Z"
   },
   {
     "id": "gr_1289",
@@ -12897,9 +20630,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1289",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.085Z",
-    "updated_at": "2026-08-18T18:08:16.085Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.44 PM (2).jpeg",
+    "source_image_id": "img_26",
+    "source_sha256": "101e92ac2a35...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.975Z",
+    "updated_at": "2026-08-18T18:14:53.975Z"
   },
   {
     "id": "gr_1290",
@@ -12907,9 +20646,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1290",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.085Z",
-    "updated_at": "2026-08-18T18:08:16.085Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.44 PM (2).jpeg",
+    "source_image_id": "img_26",
+    "source_sha256": "101e92ac2a35...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.975Z",
+    "updated_at": "2026-08-18T18:14:53.975Z"
   },
   {
     "id": "gr_1291",
@@ -12917,9 +20662,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1291",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.085Z",
-    "updated_at": "2026-08-18T18:08:16.085Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.44 PM (2).jpeg",
+    "source_image_id": "img_26",
+    "source_sha256": "101e92ac2a35...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.975Z",
+    "updated_at": "2026-08-18T18:14:53.975Z"
   },
   {
     "id": "gr_1292",
@@ -12927,9 +20678,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1292",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.085Z",
-    "updated_at": "2026-08-18T18:08:16.085Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.44 PM (2).jpeg",
+    "source_image_id": "img_26",
+    "source_sha256": "101e92ac2a35...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.975Z",
+    "updated_at": "2026-08-18T18:14:53.975Z"
   },
   {
     "id": "gr_1293",
@@ -12937,9 +20694,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1293",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.085Z",
-    "updated_at": "2026-08-18T18:08:16.085Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.44 PM (2).jpeg",
+    "source_image_id": "img_26",
+    "source_sha256": "101e92ac2a35...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.975Z",
+    "updated_at": "2026-08-18T18:14:53.975Z"
   },
   {
     "id": "gr_1294",
@@ -12947,9 +20710,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1294",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.085Z",
-    "updated_at": "2026-08-18T18:08:16.085Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.44 PM (2).jpeg",
+    "source_image_id": "img_26",
+    "source_sha256": "101e92ac2a35...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.975Z",
+    "updated_at": "2026-08-18T18:14:53.975Z"
   },
   {
     "id": "gr_1295",
@@ -12957,9 +20726,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1295",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.085Z",
-    "updated_at": "2026-08-18T18:08:16.085Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.44 PM (2).jpeg",
+    "source_image_id": "img_26",
+    "source_sha256": "101e92ac2a35...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.975Z",
+    "updated_at": "2026-08-18T18:14:53.975Z"
   },
   {
     "id": "gr_1296",
@@ -12968,8 +20743,14 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "student_name": "Affan Saeed",
     "class_name": "Class XI - Commerce",
     "status": "assigned",
-    "created_at": "2026-08-18T18:08:16.085Z",
-    "updated_at": "2026-08-18T18:08:16.085Z"
+    "confidence": 90,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.44 PM (2).jpeg",
+    "source_image_id": "img_26",
+    "source_sha256": "101e92ac2a35...",
+    "verification_status": "verified",
+    "audit_notes": "Clear entry",
+    "created_at": "2026-08-18T18:14:53.975Z",
+    "updated_at": "2026-08-18T18:14:53.975Z"
   },
   {
     "id": "gr_1297",
@@ -12977,9 +20758,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1297",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.085Z",
-    "updated_at": "2026-08-18T18:08:16.085Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.44 PM (2).jpeg",
+    "source_image_id": "img_26",
+    "source_sha256": "101e92ac2a35...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.975Z",
+    "updated_at": "2026-08-18T18:14:53.975Z"
   },
   {
     "id": "gr_1298",
@@ -12987,9 +20774,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1298",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.085Z",
-    "updated_at": "2026-08-18T18:08:16.085Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.44 PM (2).jpeg",
+    "source_image_id": "img_26",
+    "source_sha256": "101e92ac2a35...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.975Z",
+    "updated_at": "2026-08-18T18:14:53.975Z"
   },
   {
     "id": "gr_1299",
@@ -12997,9 +20790,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1299",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.085Z",
-    "updated_at": "2026-08-18T18:08:16.085Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.44 PM (2).jpeg",
+    "source_image_id": "img_26",
+    "source_sha256": "101e92ac2a35...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.975Z",
+    "updated_at": "2026-08-18T18:14:53.975Z"
   },
   {
     "id": "gr_1300",
@@ -13007,9 +20806,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1300",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.085Z",
-    "updated_at": "2026-08-18T18:08:16.085Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.44 PM (2).jpeg",
+    "source_image_id": "img_26",
+    "source_sha256": "101e92ac2a35...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.975Z",
+    "updated_at": "2026-08-18T18:14:53.975Z"
   },
   {
     "id": "gr_1301",
@@ -13018,8 +20823,14 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "student_name": "Muhammad Umar",
     "class_name": "Class XI - Science",
     "status": "assigned",
-    "created_at": "2026-08-18T18:08:16.085Z",
-    "updated_at": "2026-08-18T18:08:16.085Z"
+    "confidence": 92,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.44 PM (2).jpeg",
+    "source_image_id": "img_26",
+    "source_sha256": "101e92ac2a35...",
+    "verification_status": "verified",
+    "audit_notes": "Clear entry",
+    "created_at": "2026-08-18T18:14:53.975Z",
+    "updated_at": "2026-08-18T18:14:53.975Z"
   },
   {
     "id": "gr_1302",
@@ -13028,8 +20839,14 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "student_name": "Sardar Ahmed",
     "class_name": "Class XI - Commerce",
     "status": "assigned",
-    "created_at": "2026-08-18T18:08:16.085Z",
-    "updated_at": "2026-08-18T18:08:16.085Z"
+    "confidence": 91,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.44 PM (2).jpeg",
+    "source_image_id": "img_26",
+    "source_sha256": "101e92ac2a35...",
+    "verification_status": "verified",
+    "audit_notes": "Clear entry",
+    "created_at": "2026-08-18T18:14:53.975Z",
+    "updated_at": "2026-08-18T18:14:53.975Z"
   },
   {
     "id": "gr_1303",
@@ -13038,8 +20855,14 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "student_name": "Amna",
     "class_name": "Class XI - Pre-Medical",
     "status": "assigned",
-    "created_at": "2026-08-18T18:08:16.085Z",
-    "updated_at": "2026-08-18T18:08:16.085Z"
+    "confidence": 94,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.44 PM (2).jpeg",
+    "source_image_id": "img_26",
+    "source_sha256": "101e92ac2a35...",
+    "verification_status": "verified",
+    "audit_notes": "Clear entry",
+    "created_at": "2026-08-18T18:14:53.975Z",
+    "updated_at": "2026-08-18T18:14:53.975Z"
   },
   {
     "id": "gr_1304",
@@ -13048,8 +20871,14 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "student_name": "Tahreem Fatima",
     "class_name": "Class XI - Pre-Medical",
     "status": "assigned",
-    "created_at": "2026-08-18T18:08:16.085Z",
-    "updated_at": "2026-08-18T18:08:16.085Z"
+    "confidence": 90,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.44 PM (2).jpeg",
+    "source_image_id": "img_26",
+    "source_sha256": "101e92ac2a35...",
+    "verification_status": "verified",
+    "audit_notes": "Clear entry",
+    "created_at": "2026-08-18T18:14:53.975Z",
+    "updated_at": "2026-08-18T18:14:53.975Z"
   },
   {
     "id": "gr_1305",
@@ -13058,8 +20887,14 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "student_name": "Muhammad Ali",
     "class_name": "Class XII - Pre-Engineering",
     "status": "assigned",
-    "created_at": "2026-08-18T18:08:16.085Z",
-    "updated_at": "2026-08-18T18:08:16.085Z"
+    "confidence": 93,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.44 PM (2).jpeg",
+    "source_image_id": "img_26",
+    "source_sha256": "101e92ac2a35...",
+    "verification_status": "verified",
+    "audit_notes": "Clear entry",
+    "created_at": "2026-08-18T18:14:53.975Z",
+    "updated_at": "2026-08-18T18:14:53.975Z"
   },
   {
     "id": "gr_1306",
@@ -13067,9 +20902,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1306",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.085Z",
-    "updated_at": "2026-08-18T18:08:16.085Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.44 PM (2).jpeg",
+    "source_image_id": "img_26",
+    "source_sha256": "101e92ac2a35...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.975Z",
+    "updated_at": "2026-08-18T18:14:53.975Z"
   },
   {
     "id": "gr_1307",
@@ -13077,9 +20918,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1307",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.085Z",
-    "updated_at": "2026-08-18T18:08:16.085Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.44 PM (2).jpeg",
+    "source_image_id": "img_26",
+    "source_sha256": "101e92ac2a35...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.975Z",
+    "updated_at": "2026-08-18T18:14:53.975Z"
   },
   {
     "id": "gr_1308",
@@ -13087,9 +20934,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1308",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.085Z",
-    "updated_at": "2026-08-18T18:08:16.085Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.44 PM (2).jpeg",
+    "source_image_id": "img_26",
+    "source_sha256": "101e92ac2a35...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.975Z",
+    "updated_at": "2026-08-18T18:14:53.975Z"
   },
   {
     "id": "gr_1309",
@@ -13097,9 +20950,15 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "gr_code": "GR-1309",
     "student_name": "",
     "class_name": "",
-    "status": "blank",
-    "created_at": "2026-08-18T18:08:16.085Z",
-    "updated_at": "2026-08-18T18:08:16.085Z"
+    "status": "blank_slot",
+    "confidence": 100,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.44 PM (2).jpeg",
+    "source_image_id": "img_26",
+    "source_sha256": "101e92ac2a35...",
+    "verification_status": "blank",
+    "audit_notes": "Physical register line unassigned",
+    "created_at": "2026-08-18T18:14:53.975Z",
+    "updated_at": "2026-08-18T18:14:53.975Z"
   },
   {
     "id": "gr_1310",
@@ -13108,7 +20967,13 @@ export const INITIAL_GR_RECORDS: GrRecord[] = [
     "student_name": "M. Hammad",
     "class_name": "B.Com / ADC",
     "status": "assigned",
-    "created_at": "2026-08-18T18:08:16.085Z",
-    "updated_at": "2026-08-18T18:08:16.085Z"
+    "confidence": 91,
+    "source_image": "WhatsApp Image 2026-08-18 at 10.01.44 PM (2).jpeg",
+    "source_image_id": "img_26",
+    "source_sha256": "101e92ac2a35...",
+    "verification_status": "verified",
+    "audit_notes": "Clear entry",
+    "created_at": "2026-08-18T18:14:53.975Z",
+    "updated_at": "2026-08-18T18:14:53.975Z"
   }
 ];
