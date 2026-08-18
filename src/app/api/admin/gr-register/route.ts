@@ -19,13 +19,11 @@ function getGrRecords(): GrRecord[] {
     }
   } catch {}
 
-  // Ensure data directory exists
   const dir = path.dirname(STORE_PATH);
   if (!fs.existsSync(dir)) {
     fs.mkdirSync(dir, { recursive: true });
   }
 
-  // Initialize with the 27 records
   fs.writeFileSync(STORE_PATH, JSON.stringify(INITIAL_GR_RECORDS, null, 2), 'utf-8');
   return INITIAL_GR_RECORDS;
 }
@@ -57,9 +55,7 @@ export async function GET(req: NextRequest) {
         r.gr_code.toLowerCase().includes(search) ||
         String(r.gr_number).includes(search) ||
         r.student_name.toLowerCase().includes(search) ||
-        r.father_name.toLowerCase().includes(search) ||
-        r.class_name.toLowerCase().includes(search) ||
-        (r.phone && r.phone.includes(search))
+        r.class_name.toLowerCase().includes(search)
       );
     }
 
@@ -71,7 +67,6 @@ export async function GET(req: NextRequest) {
       records = records.filter(r => r.class_name.toLowerCase().includes(className.toLowerCase()));
     }
 
-    // Sort by GR Number ascending
     records.sort((a, b) => a.gr_number - b.gr_number);
 
     return NextResponse.json({
@@ -84,7 +79,7 @@ export async function GET(req: NextRequest) {
   }
 }
 
-// POST /api/admin/gr-register - Create or assign new GR
+// POST /api/admin/gr-register - Create / Assign new GR
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
@@ -92,25 +87,16 @@ export async function POST(req: NextRequest) {
 
     const maxGr = records.reduce((max, r) => Math.max(max, r.gr_number), 0);
     const nextGr = body.gr_number ? Number(body.gr_number) : maxGr + 1;
-    const formattedCode = `GR-${String(nextGr).padStart(3, '0')}`;
+    const formattedCode = `GR-${nextGr}`;
 
     const newRecord: GrRecord = {
-      id: `gr_${Date.now()}`,
+      id: `gr_${Date.now()}_${nextGr}`,
       gr_number: nextGr,
       gr_code: body.gr_code || formattedCode,
       student_name: body.student_name || '',
-      father_name: body.father_name || '',
       class_name: body.class_name || '',
-      admission_date: body.admission_date || new Date().toISOString().split('T')[0],
-      dob: body.dob || '',
-      phone: body.phone || '',
-      cnic_bform: body.cnic_bform || '',
-      address: body.address || '',
-      previous_school: body.previous_school || '',
       status: body.student_name ? 'assigned' : 'blank',
-      image_path: body.image_path || '/gr/WhatsApp%20Image%202026-08-18%20at%2010.01.30%20PM%20(1).jpeg',
-      image_name: body.image_name || 'Register Page Scan',
-      remarks: body.remarks || '',
+      page_scan_ref: body.page_scan_ref || '',
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString()
     };
@@ -142,7 +128,7 @@ export async function PUT(req: NextRequest) {
     const updated: GrRecord = {
       ...records[idx],
       ...body,
-      status: body.student_name ? (body.status || 'assigned') : (body.status || 'blank'),
+      status: body.student_name ? (body.status || 'assigned') : 'blank',
       updated_at: new Date().toISOString()
     };
 

@@ -3,11 +3,9 @@ export const dynamic = 'force-dynamic';
 
 import { useState, useEffect, useMemo } from 'react';
 import { 
-  BookOpen, Search, Filter, Plus, Printer, Download, Eye, 
-  RotateCw, ZoomIn, ZoomOut, Maximize2, Save, Trash2, CheckCircle2, 
-  AlertCircle, Sparkles, X, ChevronRight, User, Phone, Calendar, 
-  School, FileText, Check, LayoutGrid, Table, ArrowRight, ShieldCheck,
-  RefreshCw, Edit3, Image as ImageIcon
+  BookOpen, Search, Plus, Printer, Download, Save, Trash2, 
+  CheckCircle2, X, Edit3, RefreshCw, LayoutGrid, Table, Check, 
+  UserCheck, AlertCircle, ArrowUpDown, Sparkles
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { GrRecord, INITIAL_GR_RECORDS } from '@/lib/data/grRegisterData';
@@ -20,21 +18,22 @@ export default function GrRegisterPage() {
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState<'all' | 'assigned' | 'blank'>('all');
   const [classFilter, setClassFilter] = useState('all');
-  const [viewMode, setViewMode] = useState<'grid' | 'table'>('grid');
+  const [viewMode, setViewMode] = useState<'table' | 'grid'>('table');
 
-  // Inspection / Editor Modal State
-  const [selectedRecord, setSelectedRecord] = useState<GrRecord | null>(null);
-  const [editFormData, setEditFormData] = useState<Partial<GrRecord>>({});
+  // Edit / Assign Modal State
+  const [editingRecord, setEditingRecord] = useState<GrRecord | null>(null);
+  const [editFormData, setEditFormData] = useState<{ student_name: string; class_name: string; gr_number?: number }>({
+    student_name: '',
+    class_name: ''
+  });
   const [isSaving, setIsSaving] = useState(false);
-  const [imgZoom, setImgZoom] = useState(1);
-  const [imgRotate, setImgRotate] = useState(0);
 
-  // New Record Modal State
+  // New GR Modal State
   const [newModalOpen, setNewModalOpen] = useState(false);
-  const [newFormData, setNewFormData] = useState<Partial<GrRecord>>({
-    class_name: 'Class XI - Pre-Medical',
-    status: 'assigned',
-    admission_date: new Date().toISOString().split('T')[0]
+  const [newFormData, setNewFormData] = useState({
+    gr_number: '',
+    student_name: '',
+    class_name: 'Class XI - Pre-Medical'
   });
 
   const fetchRecords = async () => {
@@ -56,7 +55,7 @@ export default function GrRegisterPage() {
     fetchRecords();
   }, []);
 
-  // Filtered Records
+  // Filtered & Sorted Records
   const filteredRecords = useMemo(() => {
     return records.filter(r => {
       const q = search.toLowerCase().trim();
@@ -65,52 +64,53 @@ export default function GrRegisterPage() {
         r.gr_code.toLowerCase().includes(q) ||
         String(r.gr_number).includes(q) ||
         r.student_name.toLowerCase().includes(q) ||
-        r.father_name.toLowerCase().includes(q) ||
-        r.class_name.toLowerCase().includes(q) ||
-        (r.phone && r.phone.includes(q)) ||
-        (r.remarks && r.remarks.toLowerCase().includes(q));
+        r.class_name.toLowerCase().includes(q);
 
       if (!matchesSearch) return false;
       if (statusFilter !== 'all' && r.status !== statusFilter) return false;
       if (classFilter !== 'all' && !r.class_name.toLowerCase().includes(classFilter.toLowerCase())) return false;
 
       return true;
-    });
+    }).sort((a, b) => a.gr_number - b.gr_number);
   }, [records, search, statusFilter, classFilter]);
 
   // Statistics
   const stats = useMemo(() => {
     const total = records.length;
-    const assigned = records.filter(r => r.status === 'assigned').length;
-    const blank = records.filter(r => r.status === 'blank').length;
+    const assigned = records.filter(r => r.status === 'assigned' && r.student_name.trim().length > 0).length;
+    const blank = total - assigned;
     const classesCount = new Set(records.map(r => r.class_name).filter(Boolean)).size;
     return { total, assigned, blank, classesCount };
   }, [records]);
 
-  const handleOpenInspect = (record: GrRecord) => {
-    setSelectedRecord(record);
-    setEditFormData({ ...record });
-    setImgZoom(1);
-    setImgRotate(0);
+  const handleOpenEdit = (record: GrRecord) => {
+    setEditingRecord(record);
+    setEditFormData({
+      student_name: record.student_name,
+      class_name: record.class_name,
+      gr_number: record.gr_number
+    });
   };
 
   const handleSaveEdit = async () => {
-    if (!selectedRecord) return;
+    if (!editingRecord) return;
     try {
       setIsSaving(true);
       const res = await fetch('/api/admin/gr-register', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          id: selectedRecord.id,
-          ...editFormData
+          id: editingRecord.id,
+          student_name: editFormData.student_name.trim(),
+          class_name: editFormData.class_name.trim(),
+          status: editFormData.student_name.trim() ? 'assigned' : 'blank'
         })
       });
       const data = await res.json();
       if (data.success) {
-        toast.success(`GR Record ${data.record.gr_code} updated successfully!`);
+        toast.success(`GR ${data.record.gr_code} updated successfully!`);
         setRecords(prev => prev.map(r => r.id === data.record.id ? data.record : r));
-        setSelectedRecord(data.record);
+        setEditingRecord(null);
       } else {
         toast.error(data.error || 'Failed to update record');
       }
@@ -127,13 +127,18 @@ export default function GrRegisterPage() {
       const res = await fetch('/api/admin/gr-register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(newFormData)
+        body: JSON.stringify({
+          gr_number: newFormData.gr_number ? Number(newFormData.gr_number) : undefined,
+          student_name: newFormData.student_name.trim(),
+          class_name: newFormData.class_name.trim()
+        })
       });
       const data = await res.json();
       if (data.success) {
-        toast.success(`New General Register record ${data.record.gr_code} created!`);
+        toast.success(`New General Register record ${data.record.gr_code} assigned!`);
         setRecords(prev => [...prev, data.record]);
         setNewModalOpen(false);
+        setNewFormData({ gr_number: '', student_name: '', class_name: 'Class XI - Pre-Medical' });
       } else {
         toast.error(data.error || 'Failed to create record');
       }
@@ -144,27 +149,37 @@ export default function GrRegisterPage() {
     }
   };
 
+  const handleDelete = async (id: string, grCode: string) => {
+    if (!confirm(`Are you sure you want to remove ${grCode}?`)) return;
+    try {
+      const res = await fetch(`/api/admin/gr-register?id=${id}`, { method: 'DELETE' });
+      const data = await res.json();
+      if (data.success) {
+        toast.success(`Record ${grCode} removed`);
+        setRecords(prev => prev.filter(r => r.id !== id));
+      } else {
+        toast.error(data.error || 'Failed to delete');
+      }
+    } catch (e: any) {
+      toast.error('Delete error: ' + e.message);
+    }
+  };
+
   const handleExportCsv = () => {
-    const headers = ['GR No', 'GR Code', 'Student Name', 'Father Name', 'Class Program', 'Admission Date', 'DOB', 'Phone', 'CNIC/B-Form', 'Status', 'Image Filename'];
+    const headers = ['GR No', 'GR Code', 'Student Name', 'Class / Program', 'Status'];
     const rows = records.map(r => [
       r.gr_number,
       `"${r.gr_code}"`,
       `"${r.student_name || 'BLANK'}"`,
-      `"${r.father_name || ''}"`,
-      `"${r.class_name || ''}"`,
-      `"${r.admission_date || ''}"`,
-      `"${r.dob || ''}"`,
-      `"${r.phone || ''}"`,
-      `"${r.cnic_bform || ''}"`,
-      `"${r.status.toUpperCase()}"`,
-      `"${r.image_name}"`
+      `"${r.class_name || 'Unassigned'}"`,
+      `"${r.status.toUpperCase()}"`
     ]);
 
     const csvContent = 'data:text/csv;charset=utf-8,' + [headers.join(','), ...rows.map(e => e.join(','))].join('\n');
     const encodedUri = encodeURI(csvContent);
     const link = document.createElement('a');
     link.setAttribute('href', encodedUri);
-    link.setAttribute('download', `TFC_General_Register_${Date.now()}.csv`);
+    link.setAttribute('download', `TFC_GR_Register_${Date.now()}.csv`);
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -174,7 +189,7 @@ export default function GrRegisterPage() {
   return (
     <div className="space-y-6 pb-12 font-sans">
       
-      {/* Top Header & Navigation Tabs */}
+      {/* Top Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-6 rounded-3xl border border-slate-200 shadow-sm">
         <div className="space-y-1">
           <div className="flex items-center gap-2">
@@ -183,11 +198,11 @@ export default function GrRegisterPage() {
             </span>
             <div>
               <h1 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight flex items-center gap-2">
-                Official G.R. General Register
-                <span className="px-2.5 py-0.5 rounded-full bg-blue-100 text-blue-800 text-xs font-black">Ledger Archive</span>
+                Official G.R. Register
+                <span className="px-2.5 py-0.5 rounded-full bg-blue-100 text-blue-800 text-xs font-black">Sequential Ledger</span>
               </h1>
               <p className="text-xs text-slate-500 font-medium">
-                Official General Register (GR-001, GR-002, ...) with digital archival scans, paper ledger photos &amp; student profiling
+                Official General Register numbers, assigned student names &amp; academic classes digitized from paper ledgers
               </p>
             </div>
           </div>
@@ -212,7 +227,7 @@ export default function GrRegisterPage() {
             onClick={() => setNewModalOpen(true)}
             className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-xs font-black rounded-xl flex items-center gap-1.5 shadow-sm transition-colors cursor-pointer"
           >
-            <Plus size={14} /> Assign New G.R.
+            <Plus size={14} /> Add / Assign G.R.
           </button>
         </div>
       </div>
@@ -229,7 +244,7 @@ export default function GrRegisterPage() {
           href="/admin/dashboard/students/gr-register" 
           className="px-4 py-2 text-blue-600 border-b-2 border-blue-600 font-black whitespace-nowrap flex items-center gap-1.5"
         >
-          <BookOpen size={14} /> G.R. Register Ledger ({stats.total})
+          <BookOpen size={14} /> G.R. Register ({stats.total})
         </Link>
         <Link 
           href="/admin/dashboard/students/scanner" 
@@ -248,27 +263,27 @@ export default function GrRegisterPage() {
       {/* Stat Metric Cards */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3.5">
         <div className="p-4 bg-white rounded-2xl border border-slate-200 shadow-2xs space-y-1">
-          <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Total G.R. Pages</p>
+          <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Total G.R. Numbers</p>
           <p className="text-2xl font-black text-slate-900">{stats.total}</p>
-          <p className="text-[10px] text-slate-500 font-medium">Scanned paper pages indexed</p>
+          <p className="text-[10px] text-slate-500 font-medium">Sequential ledger entries</p>
         </div>
 
         <div className="p-4 bg-white rounded-2xl border border-emerald-200 shadow-2xs space-y-1">
           <p className="text-[11px] font-bold text-emerald-700 uppercase tracking-wider">Assigned Students</p>
           <p className="text-2xl font-black text-emerald-600">{stats.assigned}</p>
-          <p className="text-[10px] text-emerald-600/80 font-medium">Verified enrollment records</p>
+          <p className="text-[10px] text-emerald-600/80 font-medium">Verified active students</p>
         </div>
 
         <div className="p-4 bg-white rounded-2xl border border-amber-200 shadow-2xs space-y-1">
-          <p className="text-[11px] font-bold text-amber-700 uppercase tracking-wider">Blank / Unassigned</p>
+          <p className="text-[11px] font-bold text-amber-700 uppercase tracking-wider">Blank / Available</p>
           <p className="text-2xl font-black text-amber-600">{stats.blank}</p>
-          <p className="text-[10px] text-amber-600/80 font-medium">Available register slots</p>
+          <p className="text-[10px] text-amber-600/80 font-medium">Available G.R. slots</p>
         </div>
 
         <div className="p-4 bg-white rounded-2xl border border-slate-200 shadow-2xs space-y-1">
-          <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Active Programs</p>
+          <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Active Classes</p>
           <p className="text-2xl font-black text-indigo-600">{stats.classesCount}</p>
-          <p className="text-[10px] text-slate-500 font-medium">Class streams ledgered</p>
+          <p className="text-[10px] text-slate-500 font-medium">Class streams registered</p>
         </div>
       </div>
 
@@ -280,7 +295,7 @@ export default function GrRegisterPage() {
             type="text"
             value={search}
             onChange={e => setSearch(e.target.value)}
-            placeholder="Search GR No (e.g. 1, GR-005), student name, father name..."
+            placeholder="Search GR No (e.g. 116, 139, 301), Student Name, Class..."
             className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-2xl text-xs font-semibold text-slate-900 outline-none focus:ring-2 focus:ring-blue-500"
           />
           {search && (
@@ -323,18 +338,18 @@ export default function GrRegisterPage() {
           {/* View Mode Toggle */}
           <div className="flex items-center gap-1 bg-slate-100 p-1 rounded-xl">
             <button
-              onClick={() => setViewMode('grid')}
-              className={`p-1.5 rounded-lg transition-colors cursor-pointer ${viewMode === 'grid' ? 'bg-white text-blue-600 shadow-2xs' : 'text-slate-500'}`}
-              title="Visual Register Gallery"
-            >
-              <LayoutGrid size={15} />
-            </button>
-            <button
               onClick={() => setViewMode('table')}
               className={`p-1.5 rounded-lg transition-colors cursor-pointer ${viewMode === 'table' ? 'bg-white text-blue-600 shadow-2xs' : 'text-slate-500'}`}
-              title="Ledger Data Table"
+              title="Official Ledger Table"
             >
               <Table size={15} />
+            </button>
+            <button
+              onClick={() => setViewMode('grid')}
+              className={`p-1.5 rounded-lg transition-colors cursor-pointer ${viewMode === 'grid' ? 'bg-white text-blue-600 shadow-2xs' : 'text-slate-500'}`}
+              title="Ledger Cards Grid"
+            >
+              <LayoutGrid size={15} />
             </button>
           </div>
         </div>
@@ -342,114 +357,29 @@ export default function GrRegisterPage() {
 
       {/* Main Content Area */}
       {loading ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-          {[...Array(8)].map((_, i) => (
-            <div key={i} className="h-64 bg-slate-100 rounded-3xl animate-pulse" />
+        <div className="space-y-3">
+          {[...Array(6)].map((_, i) => (
+            <div key={i} className="h-12 bg-slate-100 rounded-2xl animate-pulse" />
           ))}
         </div>
       ) : filteredRecords.length === 0 ? (
         <div className="p-12 text-center bg-white rounded-3xl border border-slate-200 shadow-sm space-y-3">
           <BookOpen size={40} className="mx-auto text-slate-300" />
-          <h3 className="font-bold text-slate-700 text-base">No General Register records matched</h3>
-          <p className="text-xs text-slate-400 max-w-sm mx-auto">Try clearing search filters or assign a new G.R. number.</p>
+          <h3 className="font-bold text-slate-700 text-base">No G.R. records matched</h3>
+          <p className="text-xs text-slate-400 max-w-sm mx-auto">Try clearing search filters or add a new G.R. number.</p>
         </div>
-      ) : viewMode === 'grid' ? (
-        /* Visual Register Cards Grid */
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-          {filteredRecords.map(rec => {
-            const isBlank = rec.status === 'blank' || !rec.student_name;
-
-            return (
-              <div
-                key={rec.id}
-                className={`group bg-white rounded-3xl border transition-all duration-200 overflow-hidden flex flex-col hover:shadow-md ${
-                  isBlank ? 'border-amber-200 bg-amber-50/20' : 'border-slate-200'
-                }`}
-              >
-                {/* Image Thumbnail Container */}
-                <div 
-                  onClick={() => handleOpenInspect(rec)}
-                  className="relative h-48 bg-slate-900 cursor-pointer overflow-hidden flex items-center justify-center"
-                >
-                  <img
-                    src={rec.image_path}
-                    alt={rec.gr_code}
-                    className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-300 opacity-90 group-hover:opacity-100"
-                  />
-                  
-                  {/* Floating GR Badge */}
-                  <div className="absolute top-3 left-3 px-3 py-1 rounded-xl bg-slate-950/80 backdrop-blur-md text-white font-mono font-black text-xs border border-white/20 flex items-center gap-1.5 shadow-md">
-                    <span>{rec.gr_code}</span>
-                  </div>
-
-                  {/* Status Pill */}
-                  <div className="absolute top-3 right-3">
-                    {isBlank ? (
-                      <span className="px-2.5 py-1 rounded-xl bg-amber-500 text-white font-bold text-[10px] shadow-sm">
-                        Blank Page
-                      </span>
-                    ) : (
-                      <span className="px-2.5 py-1 rounded-xl bg-emerald-600 text-white font-bold text-[10px] shadow-sm flex items-center gap-1">
-                        <CheckCircle2 size={11} /> Assigned
-                      </span>
-                    )}
-                  </div>
-
-                  {/* Hover Inspect Overlay */}
-                  <div className="absolute inset-0 bg-blue-900/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-white font-bold text-xs gap-1.5 backdrop-blur-2xs">
-                    <Eye size={16} /> Click to Inspect &amp; Edit
-                  </div>
-                </div>
-
-                {/* Card Details */}
-                <div className="p-4 flex-1 flex flex-col justify-between space-y-3">
-                  <div>
-                    {isBlank ? (
-                      <div className="space-y-1">
-                        <h4 className="font-bold text-amber-800 text-sm">Unassigned Register Page</h4>
-                        <p className="text-[11px] text-amber-600">This register page has not yet been linked to an enrolled student.</p>
-                      </div>
-                    ) : (
-                      <div className="space-y-1">
-                        <h4 className="font-bold text-slate-900 text-sm truncate">{rec.student_name}</h4>
-                        <p className="text-xs text-slate-500 truncate">S/O {rec.father_name || 'N/A'}</p>
-                        <p className="text-[11px] font-semibold text-blue-600 truncate">{rec.class_name || 'General Program'}</p>
-                      </div>
-                    )}
-                  </div>
-
-                  <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-xs">
-                    <span className="text-[10px] text-slate-400 font-mono">
-                      {rec.admission_date ? `Adm: ${rec.admission_date}` : 'No date'}
-                    </span>
-
-                    <button
-                      onClick={() => handleOpenInspect(rec)}
-                      className="px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-blue-50 text-slate-700 hover:text-blue-600 text-xs font-bold flex items-center gap-1 transition-colors cursor-pointer"
-                    >
-                      <Edit3 size={13} /> {isBlank ? 'Assign' : 'Edit'}
-                    </button>
-                  </div>
-                </div>
-              </div>
-            );
-          })}
-        </div>
-      ) : (
-        /* Official Data Table View */
+      ) : viewMode === 'table' ? (
+        /* Official Data Table */
         <div className="bg-white rounded-3xl border border-slate-200 overflow-hidden shadow-sm">
           <div className="overflow-x-auto">
             <table className="w-full text-xs text-left border-collapse">
               <thead>
                 <tr className="bg-slate-900 text-white font-black uppercase text-[11px]">
-                  <th className="py-3.5 px-4">G.R. No</th>
-                  <th className="py-3.5 px-4">Register Scan</th>
-                  <th className="py-3.5 px-4">Student Name</th>
-                  <th className="py-3.5 px-4">Father Name</th>
-                  <th className="py-3.5 px-4">Class Program</th>
-                  <th className="py-3.5 px-4">Date of Adm</th>
-                  <th className="py-3.5 px-4 text-center">Status</th>
-                  <th className="py-3.5 px-4 text-right">Actions</th>
+                  <th className="py-3.5 px-4 w-28">G.R. No</th>
+                  <th className="py-3.5 px-4">Student Full Name</th>
+                  <th className="py-3.5 px-4">Class / Academic Program</th>
+                  <th className="py-3.5 px-4 text-center w-32">Status</th>
+                  <th className="py-3.5 px-4 text-right w-44">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
@@ -461,28 +391,21 @@ export default function GrRegisterPage() {
                       <td className="py-3.5 px-4 font-mono font-black text-blue-900 text-sm">
                         {rec.gr_code}
                       </td>
-                      <td className="py-3.5 px-4">
-                        <div 
-                          onClick={() => handleOpenInspect(rec)}
-                          className="w-12 h-12 rounded-xl bg-slate-100 overflow-hidden cursor-pointer border border-slate-200 shrink-0 hover:opacity-80 transition-opacity relative group"
-                        >
-                          <img src={rec.image_path} alt={rec.gr_code} className="w-full h-full object-cover" />
-                          <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center text-white">
-                            <Eye size={12} />
-                          </div>
-                        </div>
-                      </td>
                       <td className="py-3.5 px-4 font-bold text-slate-900">
-                        {isBlank ? <span className="text-amber-600 italic">-- Blank Page --</span> : rec.student_name}
+                        {isBlank ? (
+                          <span className="text-amber-600 font-medium italic">-- Blank / Unassigned Slot --</span>
+                        ) : (
+                          rec.student_name
+                        )}
                       </td>
-                      <td className="py-3.5 px-4 text-slate-600">
-                        {rec.father_name || '--'}
-                      </td>
-                      <td className="py-3.5 px-4 text-blue-600 font-semibold">
-                        {rec.class_name || '--'}
-                      </td>
-                      <td className="py-3.5 px-4 font-mono text-slate-500">
-                        {rec.admission_date || '--'}
+                      <td className="py-3.5 px-4">
+                        {rec.class_name ? (
+                          <span className="px-2.5 py-1 rounded-lg bg-blue-50 text-blue-700 font-bold text-xs border border-blue-100">
+                            {rec.class_name}
+                          </span>
+                        ) : (
+                          <span className="text-slate-400">--</span>
+                        )}
                       </td>
                       <td className="py-3.5 px-4 text-center">
                         {isBlank ? (
@@ -496,12 +419,21 @@ export default function GrRegisterPage() {
                         )}
                       </td>
                       <td className="py-3.5 px-4 text-right">
-                        <button
-                          onClick={() => handleOpenInspect(rec)}
-                          className="px-3 py-1.5 bg-blue-50 text-blue-700 hover:bg-blue-600 hover:text-white rounded-xl font-bold text-xs transition-colors cursor-pointer"
-                        >
-                          {isBlank ? 'Assign Student' : 'Inspect & Edit'}
-                        </button>
+                        <div className="flex items-center justify-end gap-1.5">
+                          <button
+                            onClick={() => handleOpenEdit(rec)}
+                            className="px-3 py-1.5 bg-blue-50 hover:bg-blue-600 text-blue-700 hover:text-white rounded-xl font-bold text-xs transition-colors cursor-pointer flex items-center gap-1"
+                          >
+                            <Edit3 size={13} /> {isBlank ? 'Assign' : 'Edit'}
+                          </button>
+                          <button
+                            onClick={() => handleDelete(rec.id, rec.gr_code)}
+                            className="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-xl transition-colors cursor-pointer"
+                            title="Delete"
+                          >
+                            <Trash2 size={14} />
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   );
@@ -510,252 +442,128 @@ export default function GrRegisterPage() {
             </table>
           </div>
         </div>
-      )}
+      ) : (
+        /* Visual Grid Cards */
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+          {filteredRecords.map(rec => {
+            const isBlank = rec.status === 'blank' || !rec.student_name;
 
-      {/* Interactive Scanned Register Image Lightbox & Side-by-Side Editor Modal */}
-      {selectedRecord && (
-        <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-2 sm:p-4 overflow-y-auto">
-          <div className="bg-white rounded-3xl max-w-6xl w-full max-h-[92vh] flex flex-col shadow-2xl border border-slate-200 overflow-hidden">
-            
-            {/* Modal Header */}
-            <div className="p-4 sm:p-5 bg-slate-900 text-white flex items-center justify-between gap-3 shrink-0">
-              <div className="flex items-center gap-3">
-                <div className="px-3 py-1.5 rounded-xl bg-blue-600 text-white font-mono font-black text-sm">
-                  {selectedRecord.gr_code}
+            return (
+              <div
+                key={rec.id}
+                className={`p-5 bg-white rounded-3xl border transition-all duration-200 flex flex-col justify-between space-y-3 hover:shadow-md ${
+                  isBlank ? 'border-amber-200 bg-amber-50/20' : 'border-slate-200'
+                }`}
+              >
+                <div className="flex items-center justify-between">
+                  <span className="px-3 py-1 rounded-xl bg-slate-900 text-white font-mono font-black text-xs">
+                    {rec.gr_code}
+                  </span>
+
+                  {isBlank ? (
+                    <span className="px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-800 text-[10px] font-black uppercase">
+                      Blank Slot
+                    </span>
+                  ) : (
+                    <span className="px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 text-[10px] font-black uppercase flex items-center gap-1">
+                      <CheckCircle2 size={10} /> Assigned
+                    </span>
+                  )}
                 </div>
+
                 <div>
-                  <h3 className="font-bold text-base text-white">General Register Scanned Record</h3>
-                  <p className="text-xs text-slate-400">Archival verification and official ledger registration</p>
+                  {isBlank ? (
+                    <p className="font-bold text-amber-700 text-sm">Unassigned Slot</p>
+                  ) : (
+                    <h4 className="font-bold text-slate-900 text-sm truncate">{rec.student_name}</h4>
+                  )}
+                  <p className="text-xs text-blue-600 font-semibold truncate mt-1">
+                    {rec.class_name || 'No Class Assigned'}
+                  </p>
+                </div>
+
+                <div className="pt-2 border-t border-slate-100 flex items-center justify-between">
+                  <span className="text-[10px] text-slate-400 font-mono">GR #{rec.gr_number}</span>
+                  <button
+                    onClick={() => handleOpenEdit(rec)}
+                    className="px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-blue-50 text-slate-700 hover:text-blue-600 text-xs font-bold flex items-center gap-1 transition-colors cursor-pointer"
+                  >
+                    <Edit3 size={12} /> {isBlank ? 'Assign' : 'Edit'}
+                  </button>
                 </div>
               </div>
+            );
+          })}
+        </div>
+      )}
 
+      {/* Edit / Assign Modal */}
+      {editingRecord && (
+        <div className="fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-white rounded-3xl max-w-md w-full p-6 space-y-4 shadow-2xl border border-slate-200">
+            <div className="flex items-center justify-between border-b border-slate-100 pb-3">
               <div className="flex items-center gap-2">
-                <a
-                  href={selectedRecord.image_path}
-                  download={selectedRecord.image_name}
-                  className="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition-colors"
-                  title="Download Scanned Image"
-                >
-                  <Download size={16} />
-                </a>
+                <span className="px-2.5 py-1 rounded-xl bg-blue-600 text-white font-mono font-black text-xs">
+                  {editingRecord.gr_code}
+                </span>
+                <h3 className="font-bold text-slate-900 text-base">Edit G.R. Entry</h3>
+              </div>
+              <button onClick={() => setEditingRecord(null)} className="text-slate-400 hover:text-slate-600 cursor-pointer">
+                <X size={18} />
+              </button>
+            </div>
 
-                <button
-                  onClick={() => setSelectedRecord(null)}
-                  className="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition-colors cursor-pointer"
+            <div className="space-y-3 text-xs">
+              <div>
+                <label className="block font-bold text-slate-700 mb-1">Student Full Name</label>
+                <input
+                  type="text"
+                  value={editFormData.student_name}
+                  onChange={e => setEditFormData({ ...editFormData, student_name: e.target.value })}
+                  placeholder="Leave empty for blank slot"
+                  className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl font-bold text-slate-900 outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white"
+                />
+              </div>
+
+              <div>
+                <label className="block font-bold text-slate-700 mb-1">Class / Academic Program</label>
+                <select
+                  value={editFormData.class_name}
+                  onChange={e => setEditFormData({ ...editFormData, class_name: e.target.value })}
+                  className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl font-bold text-slate-900 outline-none text-xs"
                 >
-                  <X size={18} />
-                </button>
+                  <option value="">-- No Class / Blank --</option>
+                  {OFFICIAL_CLASSES.map(c => (
+                    <option key={c.key} value={c.name}>{c.name}</option>
+                  ))}
+                </select>
               </div>
             </div>
 
-            {/* Modal Body: 2-Panel Side-by-Side Layout */}
-            <div className="flex-1 flex flex-col lg:flex-row overflow-hidden divide-y lg:divide-y-0 lg:divide-x divide-slate-200">
-              
-              {/* Left Panel: High-Resolution Scanned Photo Inspector */}
-              <div className="flex-1 bg-slate-950 p-4 flex flex-col items-center justify-center relative overflow-hidden min-h-[360px] lg:min-h-0">
-                {/* Image Toolbar */}
-                <div className="absolute top-4 left-4 z-10 flex items-center gap-1.5 bg-slate-900/90 backdrop-blur-md p-1.5 rounded-2xl border border-slate-700/60 shadow-lg">
-                  <button
-                    onClick={() => setImgZoom(prev => Math.min(prev + 0.25, 3))}
-                    className="p-1.5 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800"
-                    title="Zoom In"
-                  >
-                    <ZoomIn size={16} />
-                  </button>
-                  <button
-                    onClick={() => setImgZoom(prev => Math.max(prev - 0.25, 0.5))}
-                    className="p-1.5 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800"
-                    title="Zoom Out"
-                  >
-                    <ZoomOut size={16} />
-                  </button>
-                  <button
-                    onClick={() => setImgRotate(prev => (prev + 90) % 360)}
-                    className="p-1.5 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800"
-                    title="Rotate 90°"
-                  >
-                    <RotateCw size={16} />
-                  </button>
-                  <button
-                    onClick={() => { setImgZoom(1); setImgRotate(0); }}
-                    className="px-2 py-1 rounded-lg text-[11px] font-bold text-slate-300 hover:text-white hover:bg-slate-800"
-                  >
-                    Reset
-                  </button>
-                </div>
-
-                <div className="w-full h-full flex items-center justify-center overflow-auto p-4">
-                  <img
-                    src={selectedRecord.image_path}
-                    alt={selectedRecord.gr_code}
-                    style={{
-                      transform: `scale(${imgZoom}) rotate(${imgRotate}deg)`,
-                      transition: 'transform 0.2s ease-out'
-                    }}
-                    className="max-h-[70vh] object-contain rounded-xl shadow-2xl"
-                  />
-                </div>
-              </div>
-
-              {/* Right Panel: Official Student Fields Editor */}
-              <div className="w-full lg:w-[440px] bg-white p-6 flex flex-col justify-between overflow-y-auto space-y-4">
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between">
-                    <h4 className="font-bold text-slate-900 text-sm flex items-center gap-1.5">
-                      <Edit3 size={15} className="text-blue-600" /> Student Profile Details
-                    </h4>
-                    <span className="text-[11px] font-mono text-slate-400">{selectedRecord.image_name}</span>
-                  </div>
-
-                  <div className="space-y-3 text-xs">
-                    <div>
-                      <label className="block font-bold text-slate-700 mb-1">Student Full Name *</label>
-                      <input
-                        type="text"
-                        value={editFormData.student_name || ''}
-                        onChange={e => setEditFormData({ ...editFormData, student_name: e.target.value })}
-                        placeholder="Leave blank if unassigned page"
-                        className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl font-bold text-slate-900 focus:bg-white focus:ring-2 focus:ring-blue-500 outline-none"
-                      />
-                    </div>
-
-                    <div>
-                      <label className="block font-bold text-slate-700 mb-1">Father Name</label>
-                      <input
-                        type="text"
-                        value={editFormData.father_name || ''}
-                        onChange={e => setEditFormData({ ...editFormData, father_name: e.target.value })}
-                        placeholder="Father's full name"
-                        className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl font-semibold text-slate-900 focus:bg-white focus:ring-2 focus:ring-blue-500 outline-none"
-                      />
-                    </div>
-
-                    <div className="grid grid-cols-2 gap-2">
-                      <div>
-                        <label className="block font-bold text-slate-700 mb-1">Class Program</label>
-                        <select
-                          value={editFormData.class_name || ''}
-                          onChange={e => setEditFormData({ ...editFormData, class_name: e.target.value })}
-                          className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl font-bold text-slate-900 outline-none text-xs"
-                        >
-                          <option value="">-- Select Class --</option>
-                          {OFFICIAL_CLASSES.map(c => (
-                            <option key={c.key} value={c.name}>{c.name}</option>
-                          ))}
-                        </select>
-                      </div>
-
-                      <div>
-                        <label className="block font-bold text-slate-700 mb-1">Admission Date</label>
-                        <input
-                          type="date"
-                          value={editFormData.admission_date || ''}
-                          onChange={e => setEditFormData({ ...editFormData, admission_date: e.target.value })}
-                          className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl font-semibold text-slate-900 outline-none"
-                        />
-                      </div>
-                    </div>
-
-                    <div className="grid grid-cols-2 gap-2">
-                      <div>
-                        <label className="block font-bold text-slate-700 mb-1">Date of Birth</label>
-                        <input
-                          type="date"
-                          value={editFormData.dob || ''}
-                          onChange={e => setEditFormData({ ...editFormData, dob: e.target.value })}
-                          className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl font-semibold text-slate-900 outline-none"
-                        />
-                      </div>
-
-                      <div>
-                        <label className="block font-bold text-slate-700 mb-1">Contact Phone</label>
-                        <input
-                          type="text"
-                          value={editFormData.phone || ''}
-                          onChange={e => setEditFormData({ ...editFormData, phone: e.target.value })}
-                          placeholder="03XX-XXXXXXX"
-                          className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl font-mono text-slate-900 outline-none"
-                        />
-                      </div>
-                    </div>
-
-                    <div>
-                      <label className="block font-bold text-slate-700 mb-1">B-Form / CNIC No</label>
-                      <input
-                        type="text"
-                        value={editFormData.cnic_bform || ''}
-                        onChange={e => setEditFormData({ ...editFormData, cnic_bform: e.target.value })}
-                        placeholder="42101-XXXXXXX-X"
-                        className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl font-mono text-slate-900 outline-none"
-                      />
-                    </div>
-
-                    <div>
-                      <label className="block font-bold text-slate-700 mb-1">Previous School / College</label>
-                      <input
-                        type="text"
-                        value={editFormData.previous_school || ''}
-                        onChange={e => setEditFormData({ ...editFormData, previous_school: e.target.value })}
-                        placeholder="School name attended previously"
-                        className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 outline-none"
-                      />
-                    </div>
-
-                    <div>
-                      <label className="block font-bold text-slate-700 mb-1">Ledger Remarks / Notes</label>
-                      <textarea
-                        rows={2}
-                        value={editFormData.remarks || ''}
-                        onChange={e => setEditFormData({ ...editFormData, remarks: e.target.value })}
-                        placeholder="Archival notes, verified document list, etc."
-                        className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 outline-none"
-                      />
-                    </div>
-
-                    <div>
-                      <label className="block font-bold text-slate-700 mb-1">Record Status</label>
-                      <select
-                        value={editFormData.status || (editFormData.student_name ? 'assigned' : 'blank')}
-                        onChange={e => setEditFormData({ ...editFormData, status: e.target.value as any })}
-                        className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl font-bold text-slate-900 outline-none text-xs"
-                      >
-                        <option value="assigned">Assigned / Active Student</option>
-                        <option value="blank">Blank / Unassigned Page</option>
-                        <option value="reserved">Reserved Slot</option>
-                        <option value="archived">Archived Record</option>
-                      </select>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="pt-3 border-t border-slate-200 flex items-center justify-between gap-2">
-                  <button
-                    onClick={() => setSelectedRecord(null)}
-                    className="px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl text-xs transition-colors cursor-pointer"
-                  >
-                    Cancel
-                  </button>
-
-                  <button
-                    onClick={handleSaveEdit}
-                    disabled={isSaving}
-                    className="px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl text-xs flex items-center gap-1.5 shadow-sm transition-colors cursor-pointer disabled:opacity-50"
-                  >
-                    {isSaving ? <RefreshCw size={14} className="animate-spin" /> : <Save size={14} />}
-                    Save G.R. Record
-                  </button>
-                </div>
-              </div>
-
+            <div className="flex items-center justify-end gap-2 pt-3 border-t border-slate-100">
+              <button
+                onClick={() => setEditingRecord(null)}
+                className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl text-xs transition-colors cursor-pointer"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleSaveEdit}
+                disabled={isSaving}
+                className="px-5 py-2 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl text-xs flex items-center gap-1.5 transition-colors cursor-pointer disabled:opacity-50"
+              >
+                {isSaving ? <RefreshCw size={14} className="animate-spin" /> : <Save size={14} />}
+                Save G.R. Entry
+              </button>
             </div>
           </div>
         </div>
       )}
 
-      {/* Assign New G.R. Record Modal */}
+      {/* Add New G.R. Modal */}
       {newModalOpen && (
         <div className="fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-white rounded-3xl max-w-lg w-full p-6 space-y-4 shadow-2xl border border-slate-200">
+          <div className="bg-white rounded-3xl max-w-md w-full p-6 space-y-4 shadow-2xl border border-slate-200">
             <div className="flex items-center justify-between border-b border-slate-100 pb-3">
               <div className="flex items-center gap-2">
                 <div className="w-8 h-8 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center font-bold">
@@ -770,72 +578,39 @@ export default function GrRegisterPage() {
 
             <div className="space-y-3 text-xs">
               <div>
-                <label className="block font-bold text-slate-700 mb-1">Student Full Name *</label>
+                <label className="block font-bold text-slate-700 mb-1">G.R. Number (e.g. 162, 163...)</label>
+                <input
+                  type="number"
+                  value={newFormData.gr_number}
+                  onChange={e => setNewFormData({ ...newFormData, gr_number: e.target.value })}
+                  placeholder="Auto-assigned if left blank"
+                  className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl font-mono font-bold text-slate-900 outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+
+              <div>
+                <label className="block font-bold text-slate-700 mb-1">Student Full Name</label>
                 <input
                   type="text"
-                  value={newFormData.student_name || ''}
+                  value={newFormData.student_name}
                   onChange={e => setNewFormData({ ...newFormData, student_name: e.target.value })}
-                  placeholder="Enter student name (or leave empty for blank page)"
-                  className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl font-bold text-slate-900 outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder="Enter student name (or leave empty for blank slot)"
+                  className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl font-bold text-slate-900 outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white"
                 />
               </div>
 
               <div>
-                <label className="block font-bold text-slate-700 mb-1">Father's Name</label>
-                <input
-                  type="text"
-                  value={newFormData.father_name || ''}
-                  onChange={e => setNewFormData({ ...newFormData, father_name: e.target.value })}
-                  placeholder="Father full name"
-                  className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl font-semibold text-slate-900 outline-none"
-                />
-              </div>
-
-              <div className="grid grid-cols-2 gap-2">
-                <div>
-                  <label className="block font-bold text-slate-700 mb-1">Class Program</label>
-                  <select
-                    value={newFormData.class_name || 'Class XI - Pre-Medical'}
-                    onChange={e => setNewFormData({ ...newFormData, class_name: e.target.value })}
-                    className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl font-bold text-slate-900 outline-none text-xs"
-                  >
-                    {OFFICIAL_CLASSES.map(c => (
-                      <option key={c.key} value={c.name}>{c.name}</option>
-                    ))}
-                  </select>
-                </div>
-
-                <div>
-                  <label className="block font-bold text-slate-700 mb-1">Admission Date</label>
-                  <input
-                    type="date"
-                    value={newFormData.admission_date || ''}
-                    onChange={e => setNewFormData({ ...newFormData, admission_date: e.target.value })}
-                    className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl font-semibold text-slate-900 outline-none"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label className="block font-bold text-slate-700 mb-1">Phone Number</label>
-                <input
-                  type="text"
-                  value={newFormData.phone || ''}
-                  onChange={e => setNewFormData({ ...newFormData, phone: e.target.value })}
-                  placeholder="03XX-XXXXXXX"
-                  className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl font-mono text-slate-900 outline-none"
-                />
-              </div>
-
-              <div>
-                <label className="block font-bold text-slate-700 mb-1">Remarks</label>
-                <textarea
-                  rows={2}
-                  value={newFormData.remarks || ''}
-                  onChange={e => setNewFormData({ ...newFormData, remarks: e.target.value })}
-                  placeholder="Ledger verification remarks"
-                  className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 outline-none"
-                />
+                <label className="block font-bold text-slate-700 mb-1">Class / Academic Program</label>
+                <select
+                  value={newFormData.class_name}
+                  onChange={e => setNewFormData({ ...newFormData, class_name: e.target.value })}
+                  className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl font-bold text-slate-900 outline-none text-xs"
+                >
+                  <option value="">-- No Class / Blank --</option>
+                  {OFFICIAL_CLASSES.map(c => (
+                    <option key={c.key} value={c.name}>{c.name}</option>
+                  ))}
+                </select>
               </div>
             </div>
 
