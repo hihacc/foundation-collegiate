@@ -80,8 +80,15 @@ Return ONLY valid JSON array format:
 
           const orJson = await orRes.json();
           const orContent = orJson.choices?.[0]?.message?.content || '';
-          const cleanJson = orContent.replace(/```(?:json)?/gi, '').replace(/```/g, '').trim();
-          const parsed = JSON.parse(cleanJson);
+          
+          let parsed: any = null;
+          const arrayMatch = orContent.match(/\[[\s\S]*\]/);
+          if (arrayMatch) {
+            try { parsed = JSON.parse(arrayMatch[0]); } catch {}
+          }
+          if (!parsed) {
+            try { parsed = JSON.parse(orContent.replace(/```(?:json)?/gi, '').replace(/```/g, '').trim()); } catch {}
+          }
 
           if (Array.isArray(parsed) && parsed.length > 0) {
             openRouterCandidates = parsed.map((item: any, idx: number) => {
@@ -140,8 +147,15 @@ Return ONLY valid JSON array format:
           if (hfRes.status === 200) {
             const hfJson = await hfRes.json();
             const hfContent = hfJson.choices?.[0]?.message?.content || '';
-            const cleanJson = hfContent.replace(/```(?:json)?/gi, '').replace(/```/g, '').trim();
-            const parsed = JSON.parse(cleanJson);
+            
+            let parsed: any = null;
+            const arrayMatch = hfContent.match(/\[[\s\S]*\]/);
+            if (arrayMatch) {
+              try { parsed = JSON.parse(arrayMatch[0]); } catch {}
+            }
+            if (!parsed) {
+              try { parsed = JSON.parse(hfContent.replace(/```(?:json)?/gi, '').replace(/```/g, '').trim()); } catch {}
+            }
 
             if (Array.isArray(parsed) && parsed.length > 0) {
               huggingFaceCandidates = parsed.map((item: any, idx: number) => {

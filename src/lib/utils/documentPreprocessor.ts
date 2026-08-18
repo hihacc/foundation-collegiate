@@ -165,7 +165,9 @@ export function preprocessDocumentCanvas(
       }
     };
 
-    img.onerror = (e) => reject(new Error('Image processing error: ' + e));
+    img.onerror = () => {
+      resolve(typeof imageSource === 'string' ? imageSource : imageSource.src);
+    };
     img.src = typeof imageSource === 'string' ? imageSource : imageSource.src;
   });
 }
