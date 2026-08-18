@@ -114,7 +114,23 @@ export async function matchContactFromDatabase(normalizedPhone: string): Promise
   relationship: WhatsAppContactRecord['relationship'];
   studentId?: string;
 }> {
+  if (!normalizedPhone || typeof normalizedPhone !== 'string') {
+    return {
+      contactName: 'Unknown Contact',
+      role: 'Unknown',
+      relationship: 'Inquiry'
+    };
+  }
+
   const normDigits = normalizedPhone.replace(/\D/g, '');
+  if (normDigits.length < 7) {
+    return {
+      contactName: 'Unknown Contact',
+      role: 'Unknown',
+      relationship: 'Inquiry'
+    };
+  }
+
   const local11 = normDigits.startsWith('92') ? '0' + normDigits.slice(2) : normDigits;
   const last7 = normDigits.slice(-7);
 
@@ -128,7 +144,7 @@ export async function matchContactFromDatabase(normalizedPhone: string): Promise
         const secPhone = normalizePhone(s.secondary_phone || s.emergency_contact);
 
         // Matched Student Direct
-        if (sPhone && (sPhone === normDigits || sPhone.endsWith(last7))) {
+        if (sPhone && sPhone.length >= 7 && (sPhone === normDigits || sPhone.endsWith(last7))) {
           return {
             contactName: s.name,
             studentName: s.name,
@@ -141,7 +157,7 @@ export async function matchContactFromDatabase(normalizedPhone: string): Promise
         }
 
         // Matched Parent Phone
-        if (pPhone && (pPhone === normDigits || pPhone.endsWith(last7))) {
+        if (pPhone && pPhone.length >= 7 && (pPhone === normDigits || pPhone.endsWith(last7))) {
           return {
             contactName: s.father_name ? `Father of ${s.name} (${s.father_name})` : `Parent of ${s.name}`,
             studentName: s.name,
@@ -154,7 +170,7 @@ export async function matchContactFromDatabase(normalizedPhone: string): Promise
         }
 
         // Matched Alternate Phone
-        if (secPhone && (secPhone === normDigits || secPhone.endsWith(last7))) {
+        if (secPhone && secPhone.length >= 7 && (secPhone === normDigits || secPhone.endsWith(last7))) {
           return {
             contactName: `Guardian of ${s.name}`,
             studentName: s.name,

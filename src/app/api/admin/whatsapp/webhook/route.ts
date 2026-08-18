@@ -38,8 +38,8 @@ export async function POST(req: NextRequest) {
       payload.body
     ) {
       const senderPhone = payload.from || payload.sender || payload.remoteJid || payload.phone;
-      if (!senderPhone) {
-        return NextResponse.json({ success: false, error: 'Missing sender phone number' }, { status: 400 });
+      if (!senderPhone || String(senderPhone).replace(/\D/g, '').length < 7) {
+        return NextResponse.json({ success: true, ignored: true, reason: 'Invalid or empty sender phone' });
       }
 
       // Ignore status broadcasts or group messages unless specifically configured
