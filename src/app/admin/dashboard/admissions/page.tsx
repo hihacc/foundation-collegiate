@@ -4,7 +4,7 @@ export const dynamic = 'force-dynamic';
 import { useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabase/client';
 import { toast } from 'sonner';
-import { Check, X, Eye, Search, ClipboardList, Download, Printer, Save } from 'lucide-react';
+import { Check, X, Eye, Search, ClipboardList, Download, Printer, Save, MessageCircle } from 'lucide-react';
 import { getStoredData, setStoredData } from '@/lib/utils/storage';
 import { Student } from '@/lib/types';
 import Button from '@/components/ui/Button';
@@ -106,12 +106,65 @@ export default function AdminAdmissionsPage() {
               })
             }).catch(() => {});
           }
-          toast.success(`Approved! Student "${target.student_name}" enrolled and Welcome Email sent.`);
+
+          if (target.parent_phone) {
+            const welcomeMsg = `🎓 *CONGRATULATIONS! ADMISSION CONFIRMED*\n*THE FOUNDATION COLLEGIATE (TFC)*\n\nDear Parent of *${target.student_name}*,\nWe are pleased to inform you that the admission application for *${target.student_name}* has been *APPROVED* for *${target.class_applied || 'Selected Program'}*.\n\n🆔 *Assigned Roll Number:* ${generatedRoll}\n📅 *Session:* 2026–2027\n\nPlease visit the college administration desk with original educational documents to complete final enrollment formalities.\n\n👉 Student Portal: https://foundation-collegiate.vercel.app\n\n*Principal & Admissions Committee*\n*The Foundation Collegiate*`;
+
+            fetch('/api/admin/whatsapp/proxy', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                action: 'SEND_MESSAGE',
+                payload: {
+                  accountId: 'tfc-default-sender',
+                  recipient: target.parent_phone,
+                  messageBody: welcomeMsg,
+                  metadata: { type: 'ADMISSION_APPROVED', roll: generatedRoll, name: target.student_name }
+                }
+              })
+            }).catch(() => {});
+          }
+
+          toast.success(`Approved! Student "${target.student_name}" enrolled and WhatsApp & Email alerts sent.`);
           return;
         }
       }
     }
     toast.success(`Application status updated to ${status}`);
+  };
+
+  const handleSendWhatsAppOffer = async (app: any) => {
+    const targetPhone = app.parent_phone;
+    if (!targetPhone) return toast.error('No parent phone number provided');
+
+    const offerMsg = `🎓 *ADMISSION OFFER LETTER — THE FOUNDATION COLLEGIATE*\n\nDear Parent of *${app.student_name}*,\nWe are reviewing your admission application for *${app.class_applied || 'TFC Academic Program'}*.\n\nStatus: *${(app.status || 'Under Review').toUpperCase()}*\nPrevious School: *${app.previous_school || 'N/A'}*\n\nPlease visit our campus Monday to Thursday 8:30 AM to 2:00 PM for interview and document verification.\n\n*Admissions Desk, The Foundation Collegiate*`;
+
+    try {
+      const res = await fetch('/api/admin/whatsapp/proxy', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'SEND_MESSAGE',
+          payload: {
+            accountId: 'tfc-default-sender',
+            recipient: targetPhone,
+            messageBody: offerMsg,
+            metadata: { type: 'ADMISSION_OFFER', applicationId: app.id, name: app.student_name }
+          }
+        })
+      });
+      const data = await res.json();
+      if (data.success) {
+        toast.success(`Admission offer sent via WhatsApp to ${app.student_name}'s parent!`);
+      } else {
+        const clean = targetPhone.replace(/\D/g, '');
+        window.open(`https://wa.me/${clean}?text=${encodeURIComponent(offerMsg)}`, '_blank');
+        toast.info('Opened direct WhatsApp chat');
+      }
+    } catch {
+      const clean = targetPhone.replace(/\D/g, '');
+      window.open(`https://wa.me/${clean}?text=${encodeURIComponent(offerMsg)}`, '_blank');
+    }
   };
 
   const saveOfficialData = async () => {
@@ -229,6 +282,9 @@ export default function AdminAdmissionsPage() {
                   </td>
                   <td className="py-4 px-4">
                     <div className="flex justify-end gap-2">
+                      <button onClick={() => handleSendWhatsAppOffer(a)} title="Send WhatsApp Admission Offer / Invitation to Parent" className="w-8 h-8 bg-emerald-50 hover:bg-emerald-600 text-emerald-600 hover:text-white rounded-lg flex items-center justify-center transition-colors">
+                        <MessageCircle size={16} />
+                      </button>
                       <button onClick={() => updateStatus(a.id, 'approved')} title="Approve & Send to Student Directory" className="w-8 h-8 bg-emerald-50 hover:bg-emerald-600 text-emerald-600 hover:text-white rounded-lg flex items-center justify-center transition-colors">
                         <Check size={16} />
                       </button>
