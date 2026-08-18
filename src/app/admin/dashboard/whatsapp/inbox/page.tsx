@@ -102,13 +102,15 @@ export default function WhatsAppInboxPage() {
   }, []);
 
   // 2. Fetch Messages for Selected Conversation
-  const fetchMessages = useCallback(async (convId: string) => {
+  const loadConversationMessages = useCallback(async (convId: string) => {
     setMessagesLoading(true);
     try {
       const res = await fetch(`/api/admin/whatsapp/messages?conversationId=${convId}`);
       const data = await res.json();
       if (data.success && Array.isArray(data.data)) {
         setMessages(data.data);
+      } else {
+        setMessages([]);
       }
     } catch {
       setMessages([]);
@@ -134,10 +136,23 @@ export default function WhatsAppInboxPage() {
     fetch('/api/admin/whatsapp/sync', { method: 'POST' })
       .then(() => fetchConversations(true))
       .catch(() => {});
+  }, [fetchConversations]);
 
-    // Realtime Polling Interval every 5 seconds
+  // Background Polling every 5 seconds without resetting loading spinner
+  useEffect(() => {
     const interval = setInterval(() => {
-      fetchConversations(false);
+      fetch('/api/admin/whatsapp/conversations')
+        .then(r => r.json())
+        .then(d => {
+          if (d.success && Array.isArray(d.data)) {
+            setConversations(d.data);
+            if (!selectedConvId && d.data.length > 0) {
+              setSelectedConvId(d.data[0].id);
+            }
+          }
+        })
+        .catch(() => {});
+
       if (selectedConvId) {
         fetch(`/api/admin/whatsapp/messages?conversationId=${selectedConvId}`)
           .then(r => r.json())
@@ -151,7 +166,7 @@ export default function WhatsAppInboxPage() {
     }, 5000);
 
     return () => clearInterval(interval);
-  }, [fetchConversations, selectedConvId]);
+  }, [selectedConvId]);
 
   // Selected Conversation Object
   const currentConv = useMemo(() => {
@@ -162,12 +177,10 @@ export default function WhatsAppInboxPage() {
   // When selectedConvId changes, fetch its messages
   useEffect(() => {
     if (selectedConvId) {
-      fetchMessages(selectedConvId);
+      loadConversationMessages(selectedConvId);
       setMobileView('chat');
-    } else if (conversations.length > 0) {
-      setSelectedConvId(conversations[0].id);
     }
-  }, [selectedConvId, fetchMessages, conversations]);
+  }, [selectedConvId, loadConversationMessages]);
 
   // 3. Fetch Context ERP Data for Right Drawer
   useEffect(() => {
@@ -275,7 +288,7 @@ export default function WhatsAppInboxPage() {
       if (data.success) {
         toast.success(`Synced with WhatsApp service!`);
         await fetchConversations(true);
-        if (selectedConvId) fetchMessages(selectedConvId);
+        if (selectedConvId) loadConversationMessages(selectedConvId);
       } else {
         toast.error('Sync notice: ' + (data.error || 'Sync service responded'));
       }
