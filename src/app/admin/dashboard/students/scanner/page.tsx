@@ -388,11 +388,22 @@ export default function HuggingFaceAdmissionScannerPage() {
         created_at: new Date().toISOString()
       };
 
-      // 1. Insert into Supabase students table
+      // 1. Post to Server Database API (Default persistence)
+      try {
+        await fetch('/api/students', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(newStudent)
+        });
+      } catch (apiErr) {
+        console.warn('API student insert notice:', apiErr);
+      }
+
+      // 2. Insert into Supabase students table
       const { error: stuError } = await supabase.from('students').insert([newStudent]);
       if (stuError) console.warn('Supabase student insert notice:', stuError.message);
 
-      // 2. Also log into admissions table
+      // 3. Also log into admissions table
       try {
         await supabase.from('admissions').insert([{
           id: crypto.randomUUID(),
@@ -414,11 +425,11 @@ export default function HuggingFaceAdmissionScannerPage() {
         }]);
       } catch {}
 
-      // 3. Update local cache
+      // 4. Update local cache
       const existing = getStoredData<Student[]>('students', []);
       setStoredData('students', [newStudent, ...existing]);
 
-      // 4. Mark document as enrolled
+      // 5. Mark document as enrolled
       setDocuments(prev => prev.map((d, i) => i === currentIndex ? { 
         ...d, 
         status: 'enrolled',

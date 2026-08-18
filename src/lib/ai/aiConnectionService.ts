@@ -6,17 +6,45 @@ import path from 'path';
 
 const LOCAL_AI_CONFIG_FILE = path.join(process.cwd(), '.system_ai_connections.json');
 
-// Default initial config
+// Default initial config with Cloud Neural AI prioritized
 const DEFAULT_CONNECTIONS: AiConnectionConfig[] = [
   {
-    id: 'default-local-engine',
-    name: 'Unlimited Local Engine (100% Free)',
-    provider: 'local',
+    id: 'default-cloud-vision',
+    name: 'OpenRouter Universal Vision (Default Cloud AI)',
+    provider: 'openrouter',
     encrypted_key: '',
-    masked_key: 'No API Key Required',
-    model_id: 'local-wasm-tesseract',
+    masked_key: 'Auto-configured Cloud Key',
+    model_id: 'openrouter/free',
     is_active: true,
     is_default: true,
+    status: 'working',
+    latency_ms: 120,
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString()
+  },
+  {
+    id: 'default-hf-vision',
+    name: 'Hugging Face Vision Engine',
+    provider: 'huggingface',
+    encrypted_key: '',
+    masked_key: 'Auto-configured HF Key',
+    model_id: 'Qwen/Qwen2.5-VL-72B-Instruct',
+    is_active: true,
+    is_default: false,
+    status: 'working',
+    latency_ms: 180,
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString()
+  },
+  {
+    id: 'default-local-engine',
+    name: 'Neural WASM Tesseract Preprocessor',
+    provider: 'local',
+    encrypted_key: '',
+    masked_key: 'Local Neural Fallback',
+    model_id: 'local-wasm-tesseract',
+    is_active: true,
+    is_default: false,
     status: 'working',
     latency_ms: 250,
     created_at: new Date().toISOString(),
@@ -94,7 +122,17 @@ export async function getActiveAiConnection(): Promise<{ connection: AiConnectio
   if (!active) active = connections.find(c => c.is_active);
   if (!active) active = connections[0] || DEFAULT_CONNECTIONS[0];
 
-  const decryptedKey = decryptApiKey(active.encrypted_key);
+  let decryptedKey = decryptApiKey(active.encrypted_key);
+
+  // Fallback to process.env if available
+  if (!decryptedKey) {
+    if (active.provider === 'openrouter' && process.env.OPENROUTER_API_KEY) {
+      decryptedKey = process.env.OPENROUTER_API_KEY;
+    } else if (active.provider === 'huggingface' && process.env.HF_TOKEN) {
+      decryptedKey = process.env.HF_TOKEN;
+    }
+  }
+
   return { connection: active, decryptedKey };
 }
 

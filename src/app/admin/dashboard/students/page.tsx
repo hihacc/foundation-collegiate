@@ -284,16 +284,20 @@ export default function AdminStudentsPage() {
       setDynamicClasses(mergedClasses);
 
       try {
-        const { data, error } = await supabase.from('students').select('*').order('created_at', { ascending: false });
-        if (!error && data && data.length > 0) {
-          setStudents(data as Student[]);
-          setStoredData('students', data);
-        } else if (!error && data && data.length === 0) {
-          const stored = getStoredData('students', defaultStudents);
-          setStudents(stored);
+        const res = await fetch('/api/students');
+        const apiData = await res.json();
+        if (apiData.success && Array.isArray(apiData.students) && apiData.students.length > 0) {
+          setStudents(apiData.students as Student[]);
+          setStoredData('students', apiData.students);
         } else {
-          const stored = getStoredData('students', defaultStudents);
-          setStudents(stored);
+          const { data, error } = await supabase.from('students').select('*').order('created_at', { ascending: false });
+          if (!error && data && data.length > 0) {
+            setStudents(data as Student[]);
+            setStoredData('students', data);
+          } else {
+            const stored = getStoredData('students', defaultStudents);
+            setStudents(stored);
+          }
         }
       } catch {
         const stored = getStoredData('students', defaultStudents);

@@ -424,15 +424,40 @@ export default function GrRegisterPage() {
 
       let textToParse = rawOcrText;
 
+      // 1. Try Default Server Cloud Vision AI first
       if (imageToScan && !textToParse) {
-        setScanProgress(25);
+        setScanProgress(20);
+        setScanProgressText('Contacting Default Cloud Vision AI Engine...');
+
+        try {
+          const cloudRes = await fetch('/api/admin/gr-register/scan', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ image_base64: imageToScan })
+          });
+          const cloudJson = await cloudRes.json();
+          if (cloudJson.success && Array.isArray(cloudJson.candidates) && cloudJson.candidates.length > 0) {
+            setScannedCandidates(cloudJson.candidates);
+            setScanProgress(100);
+            setScanProgressText('Scan complete via ' + (cloudJson.engine_used || 'Cloud Vision AI'));
+            toast.success(`✨ Scanned ${cloudJson.candidates.length} entries via ${cloudJson.engine_used || 'Default Cloud Vision AI'}!`);
+            return;
+          }
+        } catch (cloudErr) {
+          console.warn('Cloud scan fallback notice:', cloudErr);
+        }
+      }
+
+      // 2. High-Accuracy Multi-Pass Preprocessor & Local Neural OCR Fallback
+      if (imageToScan && !textToParse) {
+        setScanProgress(30);
         setScanProgressText('Applying Adaptive Local Thresholding & Anti-Glare Equalizer...');
         
         const Tesseract = (await import('tesseract.js')).default;
         
         // Multi-Pass Extraction: Left Page & Right Page for 2-page ledger spreads
         if (splitTwoPageSpread) {
-          setScanProgress(40);
+          setScanProgress(45);
           setScanProgressText('Scanning Left Column / Left Ledger Page...');
 
           // Crop left half
@@ -444,7 +469,7 @@ export default function GrRegisterPage() {
           const leftRes = await Tesseract.recognize(leftImgUrl, 'eng', {
             logger: m => {
               if (m.status === 'recognizing text' && m.progress) {
-                setScanProgress(40 + Math.round(m.progress * 25));
+                setScanProgress(45 + Math.round(m.progress * 22));
               }
             }
           });
