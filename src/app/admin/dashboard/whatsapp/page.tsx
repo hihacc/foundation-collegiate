@@ -1,7 +1,7 @@
 'use client';
 export const dynamic = 'force-dynamic';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo, useRef } from 'react';
 import { supabase } from '@/lib/supabase/client';
 import { toast } from 'sonner';
 import { 
@@ -10,7 +10,7 @@ import {
   ExternalLink, Clock, FileText, Check, X, Loader2, Plus, Copy, KeyRound, 
   Sparkles, Calendar, Play, Download, Search, Filter, Image as ImageIcon,
   Paperclip, MapPin, Bell, Award, UserCheck, Trash2, ChevronRight, Eye,
-  ListPlus, UserPlus, Contact, Share2, ArrowRight, Activity
+  ListPlus, UserPlus, Contact, Share2, ArrowRight, Activity, Upload, FileSpreadsheet
 } from 'lucide-react';
 import { OFFICIAL_CLASSES } from '@/lib/utils/classes';
 import { getStoredData, setStoredData } from '@/lib/utils/storage';
@@ -74,37 +74,9 @@ interface CronJobConfig {
   lastRun?: string;
 }
 
-const DEFAULT_BROADCAST_LISTS: BroadcastList[] = [
-  {
-    id: 'list_premed_toppers',
-    name: 'Pre-Medical High Achievers',
-    description: 'Top academic performers in Biology & Chemistry for special test series',
-    contacts: [
-      { id: 'c1', name: 'Zoya Fatima', phone: '03212655608', role: 'Student (XI-Med)' },
-      { id: 'c2', name: 'Bilal Ahmed', phone: '03001234567', role: 'Student (XII-Med)' }
-    ],
-    createdAt: new Date().toISOString()
-  },
-  {
-    id: 'list_parent_council',
-    name: 'Parent-Teacher Council',
-    description: 'Elected parent representatives for monthly review meetings',
-    contacts: [
-      { id: 'c3', name: 'Tariq Mehmood (Father of Daniyal)', phone: '03331234567', role: 'Parent Rep' },
-      { id: 'c4', name: 'Dr. Samina Khan (Mother of Ayla)', phone: '03451234567', role: 'Parent Rep' }
-    ],
-    createdAt: new Date().toISOString()
-  },
-  {
-    id: 'list_fee_defaulters',
-    name: 'Pending Fee Challans Group',
-    description: 'Students with overdue tuition fees for prompt follow-up',
-    contacts: [
-      { id: 'c5', name: 'Farhan Siddiqui', phone: '03121234567', role: 'Student (X-CS)' }
-    ],
-    createdAt: new Date().toISOString()
-  }
-];
+import { IMPORTED_BROADCAST_LISTS, ALL_IMPORTED_STUDENT_CONTACTS } from '@/lib/whatsapp/importedContacts';
+
+const DEFAULT_BROADCAST_LISTS: BroadcastList[] = IMPORTED_BROADCAST_LISTS;
 
 const TEMPLATE_LIBRARY = [
   {
@@ -201,6 +173,24 @@ export default function WhatsAppCenterPage() {
   const [newContactName, setNewContactName] = useState('');
   const [newContactPhone, setNewContactPhone] = useState('');
   const [newContactRole, setNewContactRole] = useState('');
+
+  // CSV / Phonebook Import State
+  const [csvModalOpen, setCsvModalOpen] = useState(false);
+  const [csvSearchQuery, setCsvSearchQuery] = useState('');
+  const [parsedCsvContacts, setParsedCsvContacts] = useState<BroadcastListContact[]>([]);
+  const [csvTargetListName, setCsvTargetListName] = useState('Imported Contacts Batch');
+  const [csvTargetListId, setCsvTargetListId] = useState<string>('new');
+  const [contactSuggestionsOpen, setContactSuggestionsOpen] = useState(false);
+  const csvFileInputRef = useRef<HTMLInputElement>(null);
+
+  // Filtered contact suggestions for single recipient autocomplete
+  const filteredContactSuggestions = useMemo(() => {
+    if (!recipientPhone.trim() || recipientPhone.length < 2) return [];
+    const q = recipientPhone.toLowerCase().trim();
+    return ALL_IMPORTED_STUDENT_CONTACTS.filter(c => 
+      c.name.toLowerCase().includes(q) || c.phone.includes(q) || (c.role && c.role.toLowerCase().includes(q))
+    ).slice(0, 8);
+  }, [recipientPhone]);
 
   // Scheduled Messages State
   const [scheduledDate, setScheduledDate] = useState('');
@@ -1234,15 +1224,65 @@ export default function WhatsAppCenterPage() {
             
             {/* Target Input by Mode */}
             {targetType === 'single' && (
-              <div className="space-y-1.5">
-                <label className="text-xs font-bold text-slate-700">Recipient WhatsApp Phone Number</label>
-                <input
-                  type="text"
-                  placeholder="e.g. 03212655608 or +923212655608"
-                  value={recipientPhone}
-                  onChange={(e) => setRecipientPhone(e.target.value)}
-                  className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 text-xs sm:text-sm font-medium text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 shadow-2xs"
-                />
+              <div className="space-y-1.5 relative">
+                <div className="flex items-center justify-between">
+                  <label className="text-xs font-bold text-slate-700">Recipient Student / Contact Phone Number</label>
+                  <span className="text-[11px] text-slate-400 font-medium">Type name or number to search 760+ contacts</span>
+                </div>
+
+                <div className="relative">
+                  <input
+                    type="text"
+                    placeholder="Search by student/parent name (e.g. Hamza, Areeba, Wasim) or type number..."
+                    value={recipientPhone}
+                    onChange={(e) => {
+                      setRecipientPhone(e.target.value);
+                      setContactSuggestionsOpen(true);
+                    }}
+                    onFocus={() => setContactSuggestionsOpen(true)}
+                    className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 text-xs sm:text-sm font-medium text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 shadow-2xs"
+                  />
+                  {recipientPhone && (
+                    <button
+                      type="button"
+                      onClick={() => setRecipientPhone('')}
+                      className="absolute right-3 top-3 text-slate-400 hover:text-slate-600"
+                    >
+                      <X size={16} />
+                    </button>
+                  )}
+                </div>
+
+                {/* Autocomplete Suggestions Box */}
+                {contactSuggestionsOpen && filteredContactSuggestions.length > 0 && (
+                  <div className="absolute z-20 left-0 right-0 top-full mt-1 bg-white border border-slate-200 rounded-2xl shadow-xl max-h-56 overflow-y-auto p-1.5 space-y-1 animate-in fade-in">
+                    <div className="px-2 py-1 text-[10px] font-bold uppercase text-slate-400 tracking-wider">
+                      Matching Student &amp; Parent Directory
+                    </div>
+                    {filteredContactSuggestions.map((c) => (
+                      <div
+                        key={c.id}
+                        onClick={() => {
+                          setRecipientPhone(c.phone);
+                          setContactSuggestionsOpen(false);
+                          toast.success(`Selected ${c.name} (${c.phone})`);
+                        }}
+                        className="flex items-center justify-between p-2 rounded-xl hover:bg-emerald-50 text-xs text-slate-800 cursor-pointer transition-colors"
+                      >
+                        <div className="flex items-center gap-2">
+                          <div className="w-6 h-6 rounded-full bg-emerald-100 text-emerald-800 flex items-center justify-center font-bold text-[10px]">
+                            {c.name.charAt(0)}
+                          </div>
+                          <div>
+                            <span className="font-bold text-slate-900 block">{c.name}</span>
+                            <span className="text-[10px] text-slate-400">{c.role || 'Contact'}</span>
+                          </div>
+                        </div>
+                        <span className="font-mono font-bold text-emerald-700 text-xs">+{c.phone}</span>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
             )}
 
@@ -1428,18 +1468,44 @@ export default function WhatsAppCenterPage() {
       {/* TAB 2: BROADCAST LISTS MANAGER */}
       {activeTab === 'lists' && (
         <div className="space-y-6">
-          <div className="bg-white p-5 sm:p-6 rounded-3xl border border-slate-200/90 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div className="bg-white p-5 sm:p-6 rounded-3xl border border-slate-200/90 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div>
-              <h2 className="text-base font-bold text-slate-900">Custom Broadcast Lists</h2>
-              <p className="text-xs text-slate-500">Group students, parents, and faculty into targeted WhatsApp broadcast lists</p>
+              <h2 className="text-base font-bold text-slate-900 flex items-center gap-2">
+                <Contact size={18} className="text-emerald-600" />
+                <span>Student Phonebook &amp; Broadcast Lists</span>
+                <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800">
+                  {ALL_IMPORTED_STUDENT_CONTACTS.length} Total Contacts Loaded
+                </span>
+              </h2>
+              <p className="text-xs text-slate-500 font-medium">Categorized lists by Class (IX, X, XI, XII, ADC/B.Com), Parents, and custom broadcast batches</p>
             </div>
 
-            <button
-              onClick={() => setCreateListModalOpen(true)}
-              className="px-4 py-2.5 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold flex items-center gap-1.5 shadow-xs transition-all cursor-pointer shrink-0"
-            >
-              <ListPlus size={15} /> Create Broadcast List
-            </button>
+            <div className="flex items-center gap-2 flex-wrap">
+              <div className="relative">
+                <Search size={14} className="absolute left-3 top-2.5 text-slate-400" />
+                <input
+                  type="text"
+                  placeholder="Search 760+ contacts / lists..."
+                  value={csvSearchQuery}
+                  onChange={(e) => setCsvSearchQuery(e.target.value)}
+                  className="bg-slate-50 border border-slate-200 rounded-xl pl-8 pr-3 py-1.5 text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                />
+              </div>
+
+              <button
+                onClick={() => setCsvModalOpen(true)}
+                className="px-4 py-2.5 rounded-2xl border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-bold flex items-center gap-1.5 shadow-2xs transition-all cursor-pointer"
+              >
+                <Upload size={14} /> Import CSV / VCF
+              </button>
+
+              <button
+                onClick={() => setCreateListModalOpen(true)}
+                className="px-4 py-2.5 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold flex items-center gap-1.5 shadow-xs transition-all cursor-pointer shrink-0"
+              >
+                <ListPlus size={15} /> Create Broadcast List
+              </button>
+            </div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -1940,7 +2006,143 @@ export default function WhatsAppCenterPage() {
                 <div>Last Verified: <span className="font-bold text-slate-800">Just now</span></div>
               </div>
             </div>
+          </div>
+        </div>
+      )}
 
+      {/* CSV / VCF PHONEBOOK IMPORT MODAL */}
+      {csvModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-xs animate-in fade-in duration-200">
+          <div className="bg-white rounded-3xl max-w-lg w-full border border-slate-200 shadow-2xl p-6 space-y-4 max-h-[90vh] overflow-y-auto">
+            <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 rounded-xl bg-emerald-100 text-emerald-800 flex items-center justify-center font-bold">
+                  <FileSpreadsheet size={16} />
+                </div>
+                <div>
+                  <h3 className="font-bold text-slate-900 text-sm">Import Student Phonebook (.CSV / .VCF)</h3>
+                  <p className="text-[11px] text-slate-500">Upload Google Contacts CSV or raw contact file</p>
+                </div>
+              </div>
+              <button onClick={() => { setCsvModalOpen(false); setParsedCsvContacts([]); }} className="p-1 rounded-lg text-slate-400 hover:text-slate-700">
+                <X size={18} />
+              </button>
+            </div>
+
+            {/* Drag and Drop File Input */}
+            <div 
+              onClick={() => csvFileInputRef.current?.click()}
+              className="border-2 border-dashed border-slate-300 hover:border-emerald-500 bg-slate-50 hover:bg-emerald-50/40 rounded-2xl p-6 text-center cursor-pointer transition-all flex flex-col items-center justify-center gap-2"
+            >
+              <input 
+                type="file" 
+                ref={csvFileInputRef}
+                accept=".csv, .vcf, text/csv, text/plain"
+                onChange={(e) => {
+                  const file = e.target.files?.[0];
+                  if (!file) return;
+                  const reader = new FileReader();
+                  reader.onload = (evt) => {
+                    const text = evt.target?.result as string;
+                    if (!text) return;
+                    const lines = text.split('\n');
+                    const contacts: BroadcastListContact[] = [];
+                    for (let i = 1; i < lines.length; i++) {
+                      const line = lines[i].trim();
+                      if (!line) continue;
+                      const cols = line.split(',');
+                      const fn = (cols[0] || '').trim();
+                      const mn = (cols[1] || '').trim();
+                      const ln = (cols[2] || '').trim();
+                      const nickname = (cols[8] || '').trim();
+                      const phoneVal = (cols[20] || cols[22] || cols[24] || cols[1] || cols[0] || '').trim();
+                      let name = [fn, mn, ln].filter(Boolean).join(' ').trim() || nickname || 'Student Contact';
+                      let phone = phoneVal.split(':::')[0].replace(/[^0-9]/g, '');
+                      if (phone.length >= 10) {
+                        contacts.push({
+                          id: 'imp_' + Date.now() + '_' + i,
+                          name,
+                          phone: phone.startsWith('92') ? '0' + phone.slice(2) : phone,
+                          role: 'Imported Contact'
+                        });
+                      }
+                    }
+                    setParsedCsvContacts(contacts);
+                    toast.success(`Extracted ${contacts.length} contacts from CSV!`);
+                  };
+                  reader.readAsText(file);
+                }}
+                className="hidden" 
+              />
+              <Upload size={24} className="text-emerald-600" />
+              <div className="font-bold text-xs text-slate-800">Click to choose .CSV or .VCF file</div>
+              <span className="text-[10px] text-slate-400">Google Contacts CSV, Apple vCard, or custom spreadsheet</span>
+            </div>
+
+            {/* Target List Selection */}
+            {parsedCsvContacts.length > 0 && (
+              <div className="space-y-3 p-3 bg-emerald-50/60 border border-emerald-200 rounded-2xl">
+                <div className="flex items-center justify-between text-xs">
+                  <span className="font-bold text-emerald-950">Ready to Import:</span>
+                  <span className="px-2 py-0.5 rounded-full font-bold bg-emerald-600 text-white text-[10px]">
+                    {parsedCsvContacts.length} Contacts
+                  </span>
+                </div>
+
+                <div className="space-y-1">
+                  <label className="text-xs font-bold text-slate-700">Target Broadcast List</label>
+                  <select
+                    value={csvTargetListId}
+                    onChange={(e) => setCsvTargetListId(e.target.value)}
+                    className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                  >
+                    <option value="new">➕ Create New Broadcast List...</option>
+                    {broadcastLists.map(l => (
+                      <option key={l.id} value={l.id}>Append to: {l.name} ({l.contacts.length} current)</option>
+                    ))}
+                  </select>
+                </div>
+
+                {csvTargetListId === 'new' && (
+                  <div className="space-y-1">
+                    <label className="text-xs font-bold text-slate-700">New List Name</label>
+                    <input
+                      type="text"
+                      value={csvTargetListName}
+                      onChange={(e) => setCsvTargetListName(e.target.value)}
+                      className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                    />
+                  </div>
+                )}
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (csvTargetListId === 'new') {
+                      const newList: BroadcastList = {
+                        id: 'list_imp_' + Date.now(),
+                        name: csvTargetListName.trim() || 'Imported Contacts Batch',
+                        description: `Imported from CSV (${parsedCsvContacts.length} contacts)`,
+                        contacts: parsedCsvContacts,
+                        createdAt: new Date().toISOString()
+                      };
+                      setBroadcastLists(prev => [newList, ...prev]);
+                    } else {
+                      setBroadcastLists(prev => prev.map(l => l.id === csvTargetListId ? {
+                        ...l,
+                        contacts: [...l.contacts, ...parsedCsvContacts]
+                      } : l));
+                    }
+                    toast.success(`Successfully imported ${parsedCsvContacts.length} contacts!`);
+                    setCsvModalOpen(false);
+                    setParsedCsvContacts([]);
+                  }}
+                  className="w-full py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs flex items-center justify-center gap-1.5 shadow-xs cursor-pointer"
+                >
+                  <Check size={15} /> Save Contacts to WhatsApp Broadcast Center
+                </button>
+              </div>
+            )}
           </div>
         </div>
       )}
