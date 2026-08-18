@@ -1,0 +1,18 @@
+[
+  {
+    "id": "conv_923009988776",
+    "phone": "0300-9988776",
+    "normalized_phone": "923009988776",
+    "contact_name": "Parent of New Student",
+    "relationship": "Inquiry",
+    "status": "open",
+    "priority": "normal",
+    "tags": [
+      "Inquiry"
+    ],
+    "unread_count": 0,
+    "last_message_text": "Wa Alaikum Assalam! The prospectus and admission form have been dispatched.",
+    "last_message_at": "2026-08-18T09:27:09.659Z",
+    "last_message_direction": "outbound"
+  }
+]

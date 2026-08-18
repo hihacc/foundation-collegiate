@@ -1,7 +1,7 @@
 'use client';
 export const dynamic = 'force-dynamic';
 
-import { useState, useEffect, useRef, useMemo } from 'react';
+import { useState, useEffect, useRef, useMemo, useCallback } from 'react';
 import { supabase } from '@/lib/supabase/client';
 import { toast } from 'sonner';
 import { 
@@ -11,7 +11,8 @@ import {
   Download, ExternalLink, ShieldCheck, Tag, MoreVertical, 
   Trash2, UserCheck, BookOpen, DollarSign, Calendar, Flame,
   FileSpreadsheet, Film, Music, ArrowLeft, Plus, Eye, Play,
-  CornerDownRight, Lock, MessageCircle
+  CornerDownRight, Lock, MessageCircle, Activity, Info, Users,
+  CheckCircle2, AlertTriangle
 } from 'lucide-react';
 import { 
   WhatsAppConversationRecord, 
@@ -19,7 +20,7 @@ import {
   formatDisplayPhone, 
   normalizePhone 
 } from '@/lib/whatsapp/enterpriseDb';
-import { getStoredData, setStoredData } from '@/lib/utils/storage';
+import { ALL_IMPORTED_STUDENT_CONTACTS } from '@/lib/whatsapp/importedContacts';
 import Button from '@/components/ui/Button';
 
 export default function WhatsAppInboxPage() {
@@ -28,8 +29,12 @@ export default function WhatsAppInboxPage() {
   const [messages, setMessages] = useState<WhatsAppMessageRecord[]>([]);
   const [loading, setLoading] = useState(true);
   const [messagesLoading, setMessagesLoading] = useState(false);
+  const [syncing, setSyncing] = useState(false);
   const [search, setSearch] = useState('');
   const [filterTab, setFilterTab] = useState<'all' | 'unread' | 'students' | 'parents' | 'inquiries' | 'faculty' | 'unknown' | 'archived'>('all');
+
+  // Mobile View Toggle: 'list' | 'chat' | 'info'
+  const [mobileView, setMobileView] = useState<'list' | 'chat' | 'info'>('list');
 
   // Composer
   const [composerText, setComposerText] = useState('');
@@ -48,7 +53,6 @@ export default function WhatsAppInboxPage() {
 
   // AI Assistant State
   const [aiGenerating, setAiGenerating] = useState(false);
-  const [aiSuggestion, setAiSuggestion] = useState<string | null>(null);
 
   // Student ERP Data for Context Drawer
   const [studentErpData, setStudentErpData] = useState<{
@@ -62,110 +66,60 @@ export default function WhatsAppInboxPage() {
   const [lightboxUrl, setLightboxUrl] = useState<string | null>(null);
   const [pdfPreviewUrl, setPdfPreviewUrl] = useState<string | null>(null);
 
-  // New Chat Modal
+  // Diagnostics Modal State
+  const [diagModalOpen, setDiagModalOpen] = useState(false);
+  const [diagResults, setDiagResults] = useState<any>(null);
+  const [diagLoading, setDiagLoading] = useState(false);
+
+  // New Chat Modal & Student Search State
   const [newChatModalOpen, setNewChatModalOpen] = useState(false);
   const [newChatPhone, setNewChatPhone] = useState('');
   const [newChatName, setNewChatName] = useState('');
+  const [newChatInitialMsg, setNewChatInitialMsg] = useState('');
+  const [newChatStudentSearch, setNewChatStudentSearch] = useState('');
+  const [newChatMatchedStudent, setNewChatMatchedStudent] = useState<any>(null);
+  const [newChatStarting, setNewChatStarting] = useState(false);
 
-  // 1. Fetch Conversations
-  const fetchConversations = async () => {
+  // All Students list for autocomplete in New Chat
+  const [enrolledStudents, setEnrolledStudents] = useState<any[]>([]);
+
+  // 1. Fetch Conversations from Server API
+  const fetchConversations = useCallback(async (autoSelectFirst = false) => {
     try {
       setLoading(true);
-      const { data, error } = await supabase
-        .from('whatsapp_conversations')
-        .select('*')
-        .order('last_message_at', { ascending: false });
+      const res = await fetch('/api/admin/whatsapp/conversations');
+      const data = await res.json();
 
-      if (data && data.length > 0) {
-        setConversations(data);
-        if (!selectedConvId) setSelectedConvId(data[0].id);
-      } else {
-        // Fallback default conversations
-        const local = getStoredData<WhatsAppConversationRecord[]>('tfc_whatsapp_conversations', [
-          {
-            id: 'conv_default_1',
-            phone: '0333-2211445',
-            normalized_phone: '923332211445',
-            contact_name: 'Mr. Tariq Mehmood',
-            student_name: 'Ahmed Tariq',
-            student_roll: 'FC-26-1042',
-            student_class: 'Class XII - Computer Science',
-            relationship: 'Father',
-            status: 'open',
-            priority: 'high',
-            tags: ['Parent', 'FeeInquiry'],
-            unread_count: 2,
-            last_message_text: 'Assalam-o-Alaikum, can you please share the updated tuition fee challan for this month?',
-            last_message_at: new Date(Date.now() - 1000 * 60 * 15).toISOString(),
-            last_message_direction: 'inbound'
-          },
-          {
-            id: 'conv_default_2',
-            phone: '0321-9988776',
-            normalized_phone: '923219988776',
-            contact_name: 'Fatima Noor',
-            student_name: 'Fatima Noor',
-            student_roll: 'FC-26-1099',
-            student_class: 'Class XI - Pre-Medical',
-            relationship: 'Student',
-            status: 'open',
-            priority: 'normal',
-            tags: ['Student', 'Attendance'],
-            unread_count: 0,
-            last_message_text: 'Thank you Sir! I have submitted my medical leave application.',
-            last_message_at: new Date(Date.now() - 1000 * 60 * 180).toISOString(),
-            last_message_direction: 'outbound'
-          },
-          {
-            id: 'conv_default_3',
-            phone: '0300-1234567',
-            normalized_phone: '923001234567',
-            contact_name: 'Prospective Parent (Admission)',
-            student_name: 'Muhammad Saad',
-            student_class: 'Class XI - Pre-Engineering',
-            relationship: 'Inquiry',
-            status: 'waiting_for_tfc',
-            priority: 'normal',
-            tags: ['Inquiry'],
-            unread_count: 1,
-            last_message_text: 'What are the timing schedules and lab facilities for Pre-Engineering?',
-            last_message_at: new Date(Date.now() - 1000 * 60 * 360).toISOString(),
-            last_message_direction: 'inbound'
-          }
-        ]);
-        setConversations(local);
-        if (!selectedConvId && local.length > 0) {
-          setSelectedConvId(local[0].id);
+      if (data.success && Array.isArray(data.data)) {
+        setConversations(data.data);
+        if (autoSelectFirst && data.data.length > 0 && !selectedConvId) {
+          setSelectedConvId(data.data[0].id);
         }
+      } else {
+        setConversations([]);
       }
     } catch (err) {
-      console.warn('Conversations fetch error:', err);
+      console.warn('Conversations fetch notice:', err);
     } finally {
       setLoading(false);
     }
-  };
-
-  useEffect(() => {
-    fetchConversations();
-
-    // Supabase Realtime Subscription for incoming messages
-    const channel = supabase
-      .channel('whatsapp_inbox_realtime')
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'whatsapp_conversations' }, () => {
-        fetchConversations();
-      })
-      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'whatsapp_messages' }, (payload: any) => {
-        if (selectedConvId && payload.new.conversation_id === selectedConvId) {
-          setMessages(prev => [...prev, payload.new as WhatsAppMessageRecord]);
-        }
-        fetchConversations();
-      })
-      .subscribe();
-
-    return () => {
-      supabase.removeChannel(channel);
-    };
   }, [selectedConvId]);
+
+  // Initial Load & Load Enrolled Students for Directory
+  useEffect(() => {
+    fetchConversations(true);
+
+    const loadStudents = async () => {
+      try {
+        const { data } = await supabase.from('students').select('*').order('name');
+        if (data) setEnrolledStudents(data);
+      } catch {}
+    };
+    loadStudents();
+
+    // Auto sync from WhatsApp microservice on load
+    fetch('/api/admin/whatsapp/sync', { method: 'POST' }).catch(() => {});
+  }, [fetchConversations]);
 
   // Selected Conversation Object
   const currentConv = useMemo(() => {
@@ -173,50 +127,31 @@ export default function WhatsAppInboxPage() {
   }, [conversations, selectedConvId]);
 
   // 2. Fetch Messages for Selected Conversation
-  useEffect(() => {
-    if (!selectedConvId) return;
-
-    const fetchMessages = async () => {
-      setMessagesLoading(true);
-      try {
-        const { data } = await supabase
-          .from('whatsapp_messages')
-          .select('*')
-          .eq('conversation_id', selectedConvId)
-          .order('created_at', { ascending: true });
-
-        if (data && data.length > 0) {
-          setMessages(data);
-        } else {
-          // Fallback messages
-          const localMsgs = getStoredData<WhatsAppMessageRecord[]>(`tfc_whatsapp_messages_${selectedConvId}`, [
-            {
-              id: 'msg_1',
-              conversation_id: selectedConvId,
-              direction: 'inbound',
-              sender: currentConv?.normalized_phone || '923332211445',
-              recipient: 'TFC_OFFICIAL',
-              message_type: 'text',
-              content: currentConv?.last_message_text || 'Assalam-o-Alaikum, I need information regarding college academics.',
-              status: 'read',
-              created_at: new Date(Date.now() - 1000 * 60 * 30).toISOString()
-            }
-          ]);
-          setMessages(localMsgs);
-        }
-
-        // Mark unread as 0
-        if (currentConv && currentConv.unread_count > 0) {
-          await supabase.from('whatsapp_conversations').update({ unread_count: 0 }).eq('id', selectedConvId);
-          setConversations(prev => prev.map(c => c.id === selectedConvId ? { ...c, unread_count: 0 } : c));
-        }
-      } catch {}
+  const fetchMessages = useCallback(async (convId: string) => {
+    setMessagesLoading(true);
+    try {
+      const res = await fetch(`/api/admin/whatsapp/messages?conversationId=${convId}`);
+      const data = await res.json();
+      if (data.success && Array.isArray(data.data)) {
+        setMessages(data.data);
+      } else {
+        setMessages([]);
+      }
+    } catch {
+      setMessages([]);
+    } finally {
       setMessagesLoading(false);
       setTimeout(() => messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' }), 100);
-    };
+    }
+  }, []);
 
-    fetchMessages();
-  }, [selectedConvId]);
+  useEffect(() => {
+    if (selectedConvId) {
+      fetchMessages(selectedConvId);
+      // If on mobile, switch to chat view
+      setMobileView('chat');
+    }
+  }, [selectedConvId, fetchMessages]);
 
   // 3. Fetch Context ERP Data for Right Drawer
   useEffect(() => {
@@ -234,16 +169,13 @@ export default function WhatsAppInboxPage() {
         }
 
         if (!student) {
-          const { data: allSt } = await supabase.from('students').select('*');
-          if (allSt) {
-            student = allSt.find((s: any) => {
-              const sp = normalizePhone(s.phone);
-              const pp = normalizePhone(s.parent_phone);
-              const sec = normalizePhone(s.secondary_phone || s.emergency_contact);
-              const last7 = currentConv.normalized_phone.slice(-7);
-              return (sp && sp.endsWith(last7)) || (pp && pp.endsWith(last7)) || (sec && sec.endsWith(last7));
-            });
-          }
+          const last7 = currentConv.normalized_phone.slice(-7);
+          student = enrolledStudents.find(s => {
+            const sp = normalizePhone(s.phone);
+            const pp = normalizePhone(s.parent_phone);
+            const sec = normalizePhone(s.secondary_phone || s.emergency_contact);
+            return (sp && sp.endsWith(last7)) || (pp && pp.endsWith(last7)) || (sec && sec.endsWith(last7));
+          });
         }
 
         if (student) {
@@ -262,7 +194,68 @@ export default function WhatsAppInboxPage() {
     };
 
     fetchStudentErp();
-  }, [currentConv]);
+  }, [currentConv, enrolledStudents]);
+
+  // Live Auto-matching student in New Chat modal when typing phone number
+  useEffect(() => {
+    if (!newChatPhone || newChatPhone.length < 5) {
+      setNewChatMatchedStudent(null);
+      return;
+    }
+    const cleanDigits = newChatPhone.replace(/\D/g, '');
+    const last7 = cleanDigits.slice(-7);
+
+    const match = enrolledStudents.find(s => {
+      const sp = normalizePhone(s.phone);
+      const pp = normalizePhone(s.parent_phone);
+      const sec = normalizePhone(s.secondary_phone || s.emergency_contact);
+      return (sp && sp.endsWith(last7)) || (pp && pp.endsWith(last7)) || (sec && sec.endsWith(last7));
+    });
+
+    if (match) {
+      setNewChatMatchedStudent(match);
+      if (!newChatName) {
+        setNewChatName(`${match.name} (${match.class_name})`);
+      }
+    } else {
+      setNewChatMatchedStudent(null);
+    }
+  }, [newChatPhone, enrolledStudents, newChatName]);
+
+  // Handle Sync from microservice
+  const handleSync = async () => {
+    setSyncing(true);
+    try {
+      const res = await fetch('/api/admin/whatsapp/sync', { method: 'POST' });
+      const data = await res.json();
+      if (data.success) {
+        toast.success(`Synced ${data.syncedCount || 0} messages with WhatsApp service!`);
+        fetchConversations();
+        if (selectedConvId) fetchMessages(selectedConvId);
+      } else {
+        toast.error('Sync failed: ' + (data.error || 'Unknown error'));
+      }
+    } catch (e: any) {
+      toast.error('Sync error: ' + e.message);
+    } finally {
+      setSyncing(false);
+    }
+  };
+
+  // Run System Diagnostics
+  const handleRunDiagnostics = async () => {
+    setDiagLoading(true);
+    setDiagModalOpen(true);
+    try {
+      const res = await fetch('/api/admin/whatsapp/diagnostics');
+      const data = await res.json();
+      setDiagResults(data.results);
+    } catch (e: any) {
+      toast.error('Diagnostics failed: ' + e.message);
+    } finally {
+      setDiagLoading(false);
+    }
+  };
 
   // Handle File Selection
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -278,7 +271,7 @@ export default function WhatsAppInboxPage() {
     toast.success(`Attached file: ${file.name}`);
   };
 
-  // Upload attachment and send
+  // Upload attachment and send message
   const handleSendMessage = async () => {
     if (!currentConv) return;
     if (!composerText.trim() && !attachedFile) {
@@ -291,7 +284,7 @@ export default function WhatsAppInboxPage() {
     let uploadedName: string | undefined = undefined;
     let uploadedSize: number | undefined = undefined;
 
-    // 1. Upload File if present
+    // Upload file if selected
     if (attachedFile) {
       setUploadingAttachment(true);
       try {
@@ -319,86 +312,41 @@ export default function WhatsAppInboxPage() {
       setUploadingAttachment(false);
     }
 
-    // Determine Message Type
-    let msgType: any = 'text';
-    if (uploadedMime?.startsWith('image/')) msgType = 'image';
-    else if (uploadedMime?.startsWith('audio/')) msgType = 'audio';
-    else if (uploadedMime?.startsWith('video/')) msgType = 'video';
-    else if (uploadedUrl) msgType = 'document';
+    try {
+      const res = await fetch('/api/admin/whatsapp/messages', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          conversationId: currentConv.id,
+          content: composerText,
+          isInternalNote,
+          mediaUrl: uploadedUrl,
+          mediaFilename: uploadedName,
+          mediaMimeType: uploadedMime,
+          mediaSize: uploadedSize
+        })
+      });
 
-    const newMsg: WhatsAppMessageRecord = {
-      id: `msg_out_${Date.now()}`,
-      conversation_id: currentConv.id,
-      direction: 'outbound',
-      sender: 'TFC_OFFICIAL',
-      recipient: currentConv.normalized_phone,
-      message_type: msgType,
-      content: composerText || `[${msgType.toUpperCase()}]`,
-      status: isInternalNote ? 'delivered' : 'sending',
-      media_url: uploadedUrl,
-      media_mime_type: uploadedMime,
-      media_filename: uploadedName,
-      media_size: uploadedSize,
-      is_internal_note: isInternalNote,
-      created_at: new Date().toISOString()
-    };
-
-    // Optimistic Append
-    setMessages(prev => [...prev, newMsg]);
-    setComposerText('');
-    setAttachedFile(null);
-
-    // If NOT internal note, dispatch to WhatsApp Microservice
-    if (!isInternalNote) {
-      try {
-        const res = await fetch('/api/admin/whatsapp/proxy', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            action: 'SEND_MESSAGE',
-            payload: {
-              recipient: currentConv.normalized_phone,
-              messageBody: newMsg.content,
-              messageType: msgType === 'text' ? 'TEXT' : 'DOCUMENT',
-              attachmentUrl: uploadedUrl,
-              attachmentName: uploadedName
-            }
-          })
-        });
-        const data = await res.json();
-        if (data.success) {
-          newMsg.status = 'delivered';
-          toast.success('Message delivered via WhatsApp!');
+      const data = await res.json();
+      if (data.success && data.data) {
+        setMessages(prev => [...prev, data.data]);
+        setComposerText('');
+        setAttachedFile(null);
+        if (isInternalNote) {
+          toast.info('Internal staff note saved');
         } else {
-          newMsg.status = 'sent';
+          toast.success('Message sent to WhatsApp!');
         }
-      } catch {
-        newMsg.status = 'sent';
+        fetchConversations();
+      } else {
+        toast.error(data.error || 'Failed to send message');
       }
-    } else {
-      toast.info('Internal staff note recorded (not sent to WhatsApp)');
+    } catch (e: any) {
+      toast.error('Send failed: ' + e.message);
+    } finally {
+      setSendingMessage(false);
+      setTimeout(() => messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' }), 100);
     }
-
-    // Persist to Supabase
-    try {
-      await supabase.from('whatsapp_messages').insert([newMsg]);
-      await supabase.from('whatsapp_conversations').update({
-        last_message_text: newMsg.content,
-        last_message_at: newMsg.created_at,
-        last_message_direction: 'outbound',
-        status: currentConv.status === 'new' ? 'open' : currentConv.status
-      }).eq('id', currentConv.id);
-    } catch {}
-
-    // Persist to LocalStorage
-    try {
-      const local = getStoredData<WhatsAppMessageRecord[]>(`tfc_whatsapp_messages_${currentConv.id}`, []);
-      local.push(newMsg);
-      setStoredData(`tfc_whatsapp_messages_${currentConv.id}`, local);
-    } catch {}
-
-    setSendingMessage(false);
-    setTimeout(() => messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' }), 100);
   };
 
   // AI Smart Reply Trigger
@@ -433,7 +381,51 @@ export default function WhatsAppInboxPage() {
     }
   };
 
-  // Filtered Conversations List
+  // Start New Chat Submit
+  const handleStartNewChat = async () => {
+    if (!newChatPhone.trim()) {
+      return toast.error('Please enter an 11-digit phone number or pick a student');
+    }
+
+    const norm = normalizePhone(newChatPhone);
+    if (!norm) {
+      return toast.error('Please enter a valid Pakistan phone number (e.g. 03331234567)');
+    }
+
+    setNewChatStarting(true);
+    try {
+      const res = await fetch('/api/admin/whatsapp/conversations', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          phone: norm,
+          name: newChatName.trim() || undefined,
+          initialMessage: newChatInitialMsg.trim() || undefined
+        })
+      });
+
+      const data = await res.json();
+      if (data.success && data.data) {
+        toast.success('Conversation started successfully!');
+        setNewChatModalOpen(false);
+        setNewChatPhone('');
+        setNewChatName('');
+        setNewChatInitialMsg('');
+        setNewChatMatchedStudent(null);
+        await fetchConversations();
+        setSelectedConvId(data.data.id);
+        setMobileView('chat');
+      } else {
+        toast.error(data.error || 'Failed to start conversation');
+      }
+    } catch (e: any) {
+      toast.error('Error starting conversation: ' + e.message);
+    } finally {
+      setNewChatStarting(false);
+    }
+  };
+
+  // Filtered Conversations
   const filteredConversations = useMemo(() => {
     return conversations.filter(c => {
       const cleanQ = search.toLowerCase();
@@ -448,10 +440,11 @@ export default function WhatsAppInboxPage() {
       if (!matchesSearch) return false;
 
       if (filterTab === 'unread' && (c.unread_count || 0) === 0) return false;
-      if (filterTab === 'students' && c.relationship !== 'Self' && !c.tags?.includes('Student')) return false;
+      if (filterTab === 'students' && c.relationship !== 'Student' && !c.tags?.includes('Student')) return false;
       if (filterTab === 'parents' && c.relationship !== 'Father' && c.relationship !== 'Mother' && c.relationship !== 'Guardian') return false;
       if (filterTab === 'inquiries' && c.relationship !== 'Inquiry' && !c.tags?.includes('Inquiry')) return false;
       if (filterTab === 'faculty' && c.relationship !== 'Faculty') return false;
+      if (filterTab === 'unknown' && (c.student_name || c.relationship !== 'Inquiry')) return false;
       if (filterTab === 'archived' && c.status !== 'archived') return false;
 
       return true;
@@ -460,36 +453,61 @@ export default function WhatsAppInboxPage() {
 
   return (
     <div className="h-[calc(100vh-5rem)] flex flex-col bg-slate-50 overflow-hidden rounded-3xl border border-slate-200 shadow-sm font-sans">
+      
       {/* 3-Panel Main Layout */}
       <div className="flex-1 flex overflow-hidden">
         
         {/* PANEL 1: CONVERSATIONS LIST (LEFT PANEL) */}
-        <div className="w-full sm:w-80 lg:w-96 border-r border-slate-200 bg-white flex flex-col shrink-0">
-          {/* Header & Search */}
+        <div className={`w-full md:w-80 lg:w-96 border-r border-slate-200 bg-white flex flex-col shrink-0 ${
+          mobileView !== 'list' ? 'hidden md:flex' : 'flex'
+        }`}>
+          {/* Header & Actions */}
           <div className="p-4 border-b border-slate-100 space-y-3">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <div className="w-8 h-8 rounded-xl bg-emerald-600 text-white flex items-center justify-center font-bold">
                   <MessageSquare size={16} />
                 </div>
-                <h2 className="font-bold text-slate-900 text-base">WhatsApp Chats</h2>
+                <div>
+                  <h2 className="font-bold text-slate-900 text-base leading-tight">Live WhatsApp Inbox</h2>
+                  <p className="text-[10px] text-slate-400 font-medium">Real-time ERP Synchronization</p>
+                </div>
               </div>
-              <button
-                onClick={() => setNewChatModalOpen(true)}
-                className="p-2 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-700 font-bold text-xs flex items-center gap-1 transition-colors cursor-pointer"
-                title="Start New WhatsApp Conversation"
-              >
-                <Plus size={15} /> New
-              </button>
+
+              <div className="flex items-center gap-1.5">
+                <button
+                  onClick={handleSync}
+                  disabled={syncing}
+                  className="p-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition-colors cursor-pointer"
+                  title="Sync with WhatsApp Provider"
+                >
+                  <RefreshCw size={14} className={syncing ? 'animate-spin' : ''} />
+                </button>
+                <button
+                  onClick={handleRunDiagnostics}
+                  className="p-2 rounded-xl bg-indigo-50 hover:bg-indigo-100 text-indigo-700 text-xs font-bold transition-colors cursor-pointer"
+                  title="System Diagnostics"
+                >
+                  <Activity size={14} />
+                </button>
+                <button
+                  onClick={() => setNewChatModalOpen(true)}
+                  className="px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs flex items-center gap-1 transition-all shadow-xs cursor-pointer"
+                  title="Start New WhatsApp Conversation"
+                >
+                  <Plus size={14} /> New
+                </button>
+              </div>
             </div>
 
+            {/* Search Input */}
             <div className="relative">
               <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
               <input
                 type="text"
                 value={search}
                 onChange={e => setSearch(e.target.value)}
-                placeholder="Search name, roll, or 11d phone..."
+                placeholder="Search name, roll, or phone..."
                 className="w-full pl-9 pr-4 py-2 bg-slate-50 border border-slate-200 text-slate-900 rounded-xl text-xs outline-none focus:ring-2 focus:ring-emerald-500 font-medium"
               />
               {search && (
@@ -501,7 +519,7 @@ export default function WhatsAppInboxPage() {
 
             {/* Filter Pills */}
             <div className="flex items-center gap-1.5 overflow-x-auto pb-1 text-[11px] font-bold scrollbar-none">
-              {(['all', 'unread', 'students', 'parents', 'inquiries'] as const).map(tab => (
+              {(['all', 'unread', 'students', 'parents', 'inquiries', 'unknown'] as const).map(tab => (
                 <button
                   key={tab}
                   onClick={() => setFilterTab(tab)}
@@ -520,11 +538,18 @@ export default function WhatsAppInboxPage() {
           {/* Conversations List Scroll */}
           <div className="flex-1 overflow-y-auto divide-y divide-slate-100">
             {loading ? (
-              [...Array(5)].map((_, i) => <div key={i} className="h-18 bg-slate-100 animate-pulse m-2 rounded-2xl" />)
+              [...Array(4)].map((_, i) => <div key={i} className="h-16 bg-slate-100 animate-pulse m-2 rounded-2xl" />)
             ) : filteredConversations.length === 0 ? (
-              <div className="p-8 text-center text-slate-400 text-xs space-y-2">
-                <MessageSquare size={28} className="mx-auto text-slate-300" />
-                <p>No conversations found</p>
+              <div className="p-8 text-center text-slate-400 text-xs space-y-3">
+                <MessageSquare size={32} className="mx-auto text-slate-300" />
+                <p className="font-semibold text-slate-600">No conversations found</p>
+                <p className="text-[11px] max-w-xs mx-auto">Click "+ New" above to start messaging a student or parent, or send a WhatsApp message to +92 333 3439458.</p>
+                <Button
+                  onClick={() => setNewChatModalOpen(true)}
+                  className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl mx-auto"
+                >
+                  <Plus size={14} /> Start New Chat
+                </Button>
               </div>
             ) : (
               filteredConversations.map(conv => {
@@ -534,10 +559,13 @@ export default function WhatsAppInboxPage() {
                 return (
                   <button
                     key={conv.id}
-                    onClick={() => setSelectedConvId(conv.id)}
+                    onClick={() => {
+                      setSelectedConvId(conv.id);
+                      setMobileView('chat');
+                    }}
                     className={`w-full text-left p-3.5 flex items-start gap-3 transition-colors cursor-pointer ${
                       isSelected
-                        ? 'bg-emerald-50/80 border-l-4 border-emerald-600'
+                        ? 'bg-emerald-50/90 border-l-4 border-emerald-600'
                         : hasUnread
                         ? 'bg-blue-50/40 hover:bg-blue-50/70'
                         : 'hover:bg-slate-50'
@@ -595,20 +623,37 @@ export default function WhatsAppInboxPage() {
         </div>
 
         {/* PANEL 2: LIVE CHAT STREAM & COMPOSER (CENTER PANEL) */}
-        <div className="flex-1 flex flex-col bg-slate-100/50 min-w-0">
+        <div className={`flex-1 flex flex-col bg-slate-100/50 min-w-0 ${
+          mobileView === 'list' ? 'hidden md:flex' : mobileView === 'info' ? 'hidden xl:flex' : 'flex'
+        }`}>
           {!currentConv ? (
             <div className="flex-1 flex flex-col items-center justify-center text-center p-8 space-y-3">
               <div className="w-16 h-16 rounded-3xl bg-slate-200/80 flex items-center justify-center text-slate-400">
                 <MessageSquare size={32} />
               </div>
-              <h3 className="font-bold text-slate-700 text-base">Select a conversation to start chatting</h3>
+              <h3 className="font-bold text-slate-700 text-base">Select a conversation or click "+ New"</h3>
               <p className="text-xs text-slate-400 max-w-sm">All incoming WhatsApp messages arrive in real-time with full student ERP context.</p>
+              <Button
+                onClick={() => setNewChatModalOpen(true)}
+                className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl"
+              >
+                <Plus size={14} /> Start New Conversation
+              </Button>
             </div>
           ) : (
             <>
               {/* Chat Header */}
               <div className="p-3.5 sm:p-4 bg-white border-b border-slate-200 flex items-center justify-between gap-3 shrink-0">
                 <div className="flex items-center gap-3 min-w-0">
+                  {/* Mobile Back Button */}
+                  <button
+                    onClick={() => setMobileView('list')}
+                    className="md:hidden p-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 transition-colors"
+                    title="Back to Conversations"
+                  >
+                    <ArrowLeft size={16} />
+                  </button>
+
                   <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-emerald-600 to-teal-600 text-white font-bold text-sm flex items-center justify-center shrink-0">
                     {currentConv.contact_name.charAt(0)}
                   </div>
@@ -627,6 +672,15 @@ export default function WhatsAppInboxPage() {
                 </div>
 
                 <div className="flex items-center gap-2 shrink-0">
+                  {/* Info Toggle for Mobile / Tablet */}
+                  <button
+                    onClick={() => setMobileView(mobileView === 'info' ? 'chat' : 'info')}
+                    className="xl:hidden p-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition-colors"
+                    title="Toggle Student Details"
+                  >
+                    <Info size={15} />
+                  </button>
+
                   {/* WhatsApp Web Launch */}
                   <a
                     href={`https://wa.me/${currentConv.normalized_phone}`}
@@ -639,7 +693,7 @@ export default function WhatsAppInboxPage() {
                     <span className="hidden sm:inline">WhatsApp Web</span>
                   </a>
 
-                  {/* Call */}
+                  {/* Direct Phone Call */}
                   <a
                     href={`tel:${currentConv.phone}`}
                     className="p-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition-colors"
@@ -655,7 +709,7 @@ export default function WhatsAppInboxPage() {
                 {messagesLoading ? (
                   <div className="text-center py-10 text-xs text-slate-400">Loading messages...</div>
                 ) : messages.length === 0 ? (
-                  <div className="text-center py-12 text-slate-400 text-xs">No message history with this contact yet.</div>
+                  <div className="text-center py-12 text-slate-400 text-xs">No message history with this contact yet. Type a message below to start chatting!</div>
                 ) : (
                   messages.map((msg, idx) => {
                     const isOutbound = msg.direction === 'outbound';
@@ -874,7 +928,17 @@ export default function WhatsAppInboxPage() {
 
         {/* PANEL 3: TFC STUDENT CONTEXT & CRM DRAWER (RIGHT PANEL) */}
         {currentConv && (
-          <div className="hidden xl:flex w-80 lg:w-88 border-l border-slate-200 bg-white flex-col shrink-0 overflow-y-auto p-5 space-y-5">
+          <div className={`w-full sm:w-80 lg:w-88 border-l border-slate-200 bg-white flex-col shrink-0 overflow-y-auto p-5 space-y-5 ${
+            mobileView === 'info' ? 'flex' : 'hidden xl:flex'
+          }`}>
+            {/* Mobile Close Button */}
+            <div className="xl:hidden flex justify-between items-center pb-2 border-b border-slate-100">
+              <span className="font-bold text-xs text-slate-500">Contact CRM Details</span>
+              <button onClick={() => setMobileView('chat')} className="p-1 text-slate-400 hover:text-slate-700">
+                <X size={18} />
+              </button>
+            </div>
+
             {/* Contact Details */}
             <div className="text-center space-y-2 border-b border-slate-100 pb-4">
               <div className="w-16 h-16 rounded-3xl bg-gradient-to-tr from-emerald-600 to-teal-600 text-white font-bold text-xl flex items-center justify-center mx-auto shadow-md shadow-emerald-600/20">
@@ -904,7 +968,7 @@ export default function WhatsAppInboxPage() {
                 </div>
               ) : (
                 <div className="p-3 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-500 text-center">
-                  No linked enrolled student profile found.
+                  Unknown or prospective admission inquiry.
                 </div>
               )}
             </div>
@@ -959,6 +1023,197 @@ export default function WhatsAppInboxPage() {
         )}
       </div>
 
+      {/* NEW CHAT MODAL WITH FULL STUDENT & DIRECTORY SEARCH */}
+      {newChatModalOpen && (
+        <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-white rounded-3xl max-w-lg w-full p-6 shadow-2xl border border-slate-200 space-y-4 max-h-[90vh] overflow-y-auto">
+            <div className="flex justify-between items-center border-b border-slate-100 pb-3">
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center font-bold">
+                  <Plus size={16} />
+                </div>
+                <h3 className="font-bold text-slate-900 text-base">Start New WhatsApp Chat</h3>
+              </div>
+              <button onClick={() => setNewChatModalOpen(false)} className="p-1 text-slate-400 hover:text-slate-700">
+                <X size={16} />
+              </button>
+            </div>
+
+            <div className="space-y-4">
+              {/* Pick from Enrolled Students or Type */}
+              <div>
+                <label className="text-xs font-bold text-slate-700 uppercase block mb-1">
+                  Search Student Directory or Enter Phone
+                </label>
+                <div className="relative">
+                  <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+                  <input
+                    type="text"
+                    value={newChatStudentSearch}
+                    onChange={e => setNewChatStudentSearch(e.target.value)}
+                    placeholder="Search enrolled student by name, roll number, or class..."
+                    className="w-full pl-9 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs outline-none focus:ring-2 focus:ring-emerald-500 font-medium"
+                  />
+                </div>
+
+                {/* Autocomplete Results */}
+                {newChatStudentSearch.trim().length >= 2 && (
+                  <div className="mt-2 max-h-40 overflow-y-auto border border-slate-200 rounded-xl divide-y divide-slate-100 bg-white shadow-xs">
+                    {enrolledStudents
+                      .filter(s => 
+                        s.name.toLowerCase().includes(newChatStudentSearch.toLowerCase()) ||
+                        (s.roll_number && s.roll_number.toLowerCase().includes(newChatStudentSearch.toLowerCase())) ||
+                        (s.class_name && s.class_name.toLowerCase().includes(newChatStudentSearch.toLowerCase()))
+                      )
+                      .slice(0, 5)
+                      .map(s => (
+                        <button
+                          key={s.id}
+                          type="button"
+                          onClick={() => {
+                            const p = s.phone || s.parent_phone || '';
+                            setNewChatPhone(formatDisplayPhone(p));
+                            setNewChatName(`${s.name} (${s.class_name})`);
+                            setNewChatMatchedStudent(s);
+                            setNewChatStudentSearch('');
+                          }}
+                          className="w-full p-2 text-left hover:bg-emerald-50 text-xs flex justify-between items-center transition-colors cursor-pointer"
+                        >
+                          <div>
+                            <span className="font-bold text-slate-900">{s.name}</span>
+                            <span className="text-[10px] text-blue-700 font-mono ml-2">({s.roll_number})</span>
+                            <div className="text-[10px] text-slate-500">{s.class_name} · Father: {s.father_name || 'N/A'}</div>
+                          </div>
+                          <span className="text-[10px] font-mono font-bold text-emerald-700">{formatDisplayPhone(s.phone || s.parent_phone || '')}</span>
+                        </button>
+                      ))}
+                  </div>
+                )}
+              </div>
+
+              {/* Phone Input */}
+              <div>
+                <label className="text-xs font-bold text-slate-700 uppercase block mb-1">
+                  Recipient Phone Number (11 Digits)
+                </label>
+                <input
+                  type="text"
+                  value={newChatPhone}
+                  onChange={e => setNewChatPhone(e.target.value)}
+                  placeholder="0333-1234567 or +923331234567"
+                  className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-mono font-bold outline-none focus:ring-2 focus:ring-emerald-500"
+                />
+              </div>
+
+              {/* Contact Name */}
+              <div>
+                <label className="text-xs font-bold text-slate-700 uppercase block mb-1">
+                  Contact Name / Label
+                </label>
+                <input
+                  type="text"
+                  value={newChatName}
+                  onChange={e => setNewChatName(e.target.value)}
+                  placeholder="e.g. Asif Khan (Parent) or Inquiry"
+                  className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium outline-none focus:ring-2 focus:ring-emerald-500"
+                />
+              </div>
+
+              {/* Matched Student Preview */}
+              {newChatMatchedStudent && (
+                <div className="p-3 bg-emerald-50 border border-emerald-200 rounded-xl text-xs space-y-1">
+                  <div className="font-bold text-emerald-900 flex items-center gap-1.5">
+                    <CheckCircle2 size={14} /> Linked to Student Profile:
+                  </div>
+                  <div className="text-emerald-800">
+                    {newChatMatchedStudent.name} (Roll: {newChatMatchedStudent.roll_number}, Class: {newChatMatchedStudent.class_name})
+                  </div>
+                </div>
+              )}
+
+              {/* Optional First Message */}
+              <div>
+                <label className="text-xs font-bold text-slate-700 uppercase block mb-1">
+                  Initial Message (Optional)
+                </label>
+                <textarea
+                  rows={2}
+                  value={newChatInitialMsg}
+                  onChange={e => setNewChatInitialMsg(e.target.value)}
+                  placeholder="Type initial message to send immediately..."
+                  className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium outline-none focus:ring-2 focus:ring-emerald-500 resize-none"
+                />
+              </div>
+
+              <div className="pt-2 flex gap-2">
+                <Button
+                  onClick={handleStartNewChat}
+                  disabled={newChatStarting}
+                  className="flex-1 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl flex items-center justify-center gap-1.5"
+                >
+                  <Send size={14} /> {newChatStarting ? 'Starting...' : 'Open Chat'}
+                </Button>
+                <button
+                  onClick={() => setNewChatModalOpen(false)}
+                  className="px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs rounded-xl"
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* SYSTEM DIAGNOSTICS MODAL */}
+      {diagModalOpen && (
+        <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-white rounded-3xl max-w-2xl w-full p-6 shadow-2xl border border-slate-200 space-y-5 max-h-[90vh] overflow-y-auto">
+            <div className="flex justify-between items-center border-b border-slate-100 pb-3">
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 rounded-xl bg-indigo-100 text-indigo-700 flex items-center justify-center font-bold">
+                  <Activity size={16} />
+                </div>
+                <h3 className="font-bold text-slate-900 text-base">WhatsApp System Diagnostics</h3>
+              </div>
+              <button onClick={() => setDiagModalOpen(false)} className="p-1 text-slate-400 hover:text-slate-700">
+                <X size={16} />
+              </button>
+            </div>
+
+            {diagLoading ? (
+              <div className="text-center py-10 text-xs text-slate-500">Probing all subsystem layers...</div>
+            ) : diagResults ? (
+              <div className="space-y-3">
+                {Object.entries(diagResults).map(([layer, info]: [string, any]) => (
+                  <div key={layer} className="p-3.5 rounded-2xl border border-slate-200 bg-slate-50 flex items-start justify-between gap-3">
+                    <div>
+                      <div className="font-bold text-slate-900 text-xs">{layer}</div>
+                      <div className="text-[11px] text-slate-600 mt-0.5">{info.message}</div>
+                    </div>
+                    <span className={`px-2.5 py-1 rounded-lg text-[10px] font-black uppercase shrink-0 ${
+                      info.status === 'PASS'
+                        ? 'bg-emerald-100 text-emerald-800'
+                        : info.status === 'WARNING'
+                        ? 'bg-amber-100 text-amber-800'
+                        : 'bg-rose-100 text-rose-800'
+                    }`}>
+                      {info.status}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            ) : null}
+
+            <div className="pt-2 flex justify-end">
+              <Button onClick={() => setDiagModalOpen(false)} className="px-5 py-2 bg-slate-900 text-white font-bold text-xs rounded-xl">
+                Close
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Image Lightbox Modal */}
       {lightboxUrl && (
         <div
@@ -994,87 +1249,6 @@ export default function WhatsAppInboxPage() {
         </div>
       )}
 
-      {/* New Conversation Modal */}
-      {newChatModalOpen && (
-        <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl border border-slate-200 space-y-4">
-            <div className="flex justify-between items-center border-b border-slate-100 pb-3">
-              <h3 className="font-bold text-slate-900 text-sm">Start New WhatsApp Chat</h3>
-              <button onClick={() => setNewChatModalOpen(false)} className="p-1 text-slate-400 hover:text-slate-700">
-                <X size={16} />
-              </button>
-            </div>
-
-            <div className="space-y-3">
-              <div>
-                <label className="text-xs font-bold text-slate-700 uppercase block mb-1">Phone Number (11 Digits)</label>
-                <input
-                  type="text"
-                  value={newChatPhone}
-                  onChange={e => setNewChatPhone(e.target.value)}
-                  placeholder="0333-1234567"
-                  className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-mono font-bold outline-none"
-                />
-              </div>
-
-              <div>
-                <label className="text-xs font-bold text-slate-700 uppercase block mb-1">Contact Name</label>
-                <input
-                  type="text"
-                  value={newChatName}
-                  onChange={e => setNewChatName(e.target.value)}
-                  placeholder="e.g. Parent of Kamran"
-                  className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium outline-none"
-                />
-              </div>
-
-              <div className="pt-3 flex gap-2">
-                <Button
-                  onClick={async () => {
-                    const norm = normalizePhone(newChatPhone);
-                    if (!norm) return toast.error('Enter a valid 11-digit phone number');
-
-                    const newConv: WhatsAppConversationRecord = {
-                      id: `conv_${norm}_${Date.now()}`,
-                      phone: formatDisplayPhone(newChatPhone),
-                      normalized_phone: norm,
-                      contact_name: newChatName || formatDisplayPhone(newChatPhone),
-                      relationship: 'Contact',
-                      status: 'open',
-                      priority: 'normal',
-                      tags: [],
-                      unread_count: 0,
-                      last_message_text: 'Started chat',
-                      last_message_at: new Date().toISOString(),
-                      last_message_direction: 'outbound'
-                    };
-
-                    try {
-                      await supabase.from('whatsapp_conversations').insert([newConv]);
-                    } catch {}
-
-                    setConversations(prev => [newConv, ...prev]);
-                    setSelectedConvId(newConv.id);
-                    setNewChatModalOpen(false);
-                    setNewChatPhone('');
-                    setNewChatName('');
-                    toast.success('Conversation opened!');
-                  }}
-                  className="flex-1 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl"
-                >
-                  Open Chat
-                </Button>
-                <button
-                  onClick={() => setNewChatModalOpen(false)}
-                  className="px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs rounded-xl"
-                >
-                  Cancel
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 }

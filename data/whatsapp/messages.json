@@ -1,0 +1,24 @@
+[
+  {
+    "id": "msg_in_1787045229661",
+    "conversation_id": "conv_923009988776",
+    "direction": "inbound",
+    "sender": "923009988776",
+    "recipient": "TFC_OFFICIAL",
+    "message_type": "text",
+    "content": "TFC TEST INBOUND 001: Assalam-o-Alaikum, I need prospectus details",
+    "status": "read",
+    "created_at": "2026-08-18T09:27:09.662Z"
+  },
+  {
+    "id": "msg_out_1787045229662",
+    "conversation_id": "conv_923009988776",
+    "direction": "outbound",
+    "sender": "TFC_OFFICIAL",
+    "recipient": "923009988776",
+    "message_type": "text",
+    "content": "Wa Alaikum Assalam! The prospectus and admission form have been dispatched.",
+    "status": "delivered",
+    "created_at": "2026-08-18T09:27:09.662Z"
+  }
+]

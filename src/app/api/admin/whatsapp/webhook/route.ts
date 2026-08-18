@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { processInboundWhatsAppMessage, normalizePhone } from '@/lib/whatsapp/enterpriseDb';
+import { findOrCreateConversation, appendMessage } from '@/lib/whatsapp/persistentStore';
 import { supabase } from '@/lib/supabase/client';
 
 export const dynamic = 'force-dynamic';
@@ -45,7 +46,7 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({ success: true, ignored: true, reason: 'Status broadcast or group message' });
       }
 
-      const messageText = payload.text || payload.body || payload.message?.conversation || payload.message?.extendedTextMessage?.text || '';
+      const rawText = payload.text || payload.body || payload.message?.conversation || payload.message?.extendedTextMessage?.text || '';
       
       // Detect Media Type
       let messageType: any = 'text';
@@ -68,18 +69,51 @@ export async function POST(req: NextRequest) {
         mediaFilename = mediaFilename || `video_${Date.now()}.mp4`;
       }
 
+      const providerId = payload.id || payload.messageId || payload.key?.id || `prov_${Date.now()}`;
+      const normDigits = normalizePhone(String(senderPhone));
+
+      console.log(`[WHATSAPP][INBOUND] provider_message_id=${providerId} phone=${normDigits} type=${messageType}`);
+
+      // 1. Process with Enterprise DB
       const result = await processInboundWhatsAppMessage({
         senderPhone: String(senderPhone),
         senderName: payload.pushName || payload.senderName || payload.name,
-        messageText: messageText || `[${messageType.toUpperCase()}]`,
+        messageText: rawText || `[${messageType.toUpperCase()}]`,
         messageType,
-        providerMessageId: payload.id || payload.messageId || payload.key?.id,
+        providerMessageId: providerId,
         mediaUrl,
         mediaMimeType,
         mediaFilename,
         mediaSize,
         timestamp: payload.timestamp ? new Date(payload.timestamp * 1000).toISOString() : new Date().toISOString()
       });
+
+      console.log(`[WHATSAPP][MATCH] phone=${normDigits} match=${(result as any).match?.role || 'Unknown'}`);
+
+      // 2. Persist to Persistent Store
+      try {
+        const conv = await findOrCreateConversation(normDigits, payload.pushName || payload.senderName);
+        const msgRecord = {
+          id: `msg_in_${Date.now()}`,
+          conversation_id: conv.id,
+          direction: 'inbound' as const,
+          sender: normDigits,
+          recipient: 'TFC_OFFICIAL',
+          message_type: messageType,
+          content: rawText || `[${messageType.toUpperCase()}]`,
+          status: 'read' as const,
+          provider_message_id: providerId,
+          media_url: mediaUrl,
+          media_filename: mediaFilename,
+          media_mime_type: mediaMimeType,
+          media_size: mediaSize,
+          created_at: new Date().toISOString()
+        };
+        appendMessage(msgRecord);
+        console.log(`[WHATSAPP][DB] conversation_id=${conv.id} message_id=${msgRecord.id}`);
+      } catch (e: any) {
+        console.error('[WHATSAPP_WEBHOOK] Persistent store error:', e.message);
+      }
 
       return NextResponse.json({
         event: 'MESSAGE_PROCESSED',

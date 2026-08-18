@@ -22,6 +22,7 @@ export interface WhatsAppConversationRecord {
   phone: string;
   normalized_phone: string;
   contact_name: string;
+  student_id?: string | null;
   student_name?: string | null;
   student_roll?: string | null;
   student_class?: string | null;
