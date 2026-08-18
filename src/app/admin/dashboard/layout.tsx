@@ -12,7 +12,7 @@ import {
   Download, BookOpen, LogOut, Menu, X, Home, ExternalLink, Trophy,
   Settings, BarChart3, UserCog, ClipboardList, ChevronRight, PanelLeftClose, PanelLeftOpen,
   Banknote, Receipt, Wallet, Mail, SlidersHorizontal, UserCheck, HardDrive, Cake, Camera, Sparkles, ShieldCheck, MessageCircle, Lock,
-  ClipboardCheck
+  ClipboardCheck, Clock
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { logAdminActivity } from '@/lib/utils/auditLogger';
@@ -419,15 +419,25 @@ export default function AdminDashboardLayout({ children }: { children: React.Rea
           <div className="flex items-center gap-2 sm:gap-3">
             <button
               onClick={() => setSearchModalOpen(true)}
-              className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200/80 text-slate-500 hover:text-slate-800 text-xs font-semibold border border-slate-200 transition-all cursor-pointer"
+              className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200/80 text-slate-500 hover:text-slate-800 text-xs font-semibold border border-slate-200 transition-all cursor-pointer shadow-2xs"
             >
               <span className="hidden sm:inline">Search modules...</span>
               <kbd className="px-1.5 py-0.5 rounded bg-white text-[10px] font-mono font-bold border border-slate-300 text-slate-600 shadow-2xs">Ctrl K</kbd>
             </button>
 
+            {/* WhatsApp Socket Live Pill */}
+            <Link
+              href="/admin/dashboard/whatsapp/inbox"
+              className="hidden xl:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-900 border border-emerald-200 text-xs font-bold transition-all shadow-2xs"
+              title="View WhatsApp Live Inbox"
+            >
+              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+              <span>WhatsApp Live: +92 333 3439458</span>
+            </Link>
+
             {liveTime && (
-              <div className="hidden lg:flex items-center gap-1.5 px-3 py-1 rounded-xl bg-emerald-50 text-emerald-900 border border-emerald-200 text-xs font-mono font-bold">
-                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+              <div className="hidden lg:flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-100 text-slate-700 border border-slate-200 text-xs font-mono font-bold shadow-2xs">
+                <Clock size={13} className="text-slate-500" />
                 <span>{liveTime}</span>
               </div>
             )}

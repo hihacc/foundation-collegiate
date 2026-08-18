@@ -234,6 +234,20 @@ export default function AdminDashboardPage() {
           </Link>
 
           <Link
+            href="/admin/dashboard/whatsapp/inbox"
+            className="p-4 rounded-2xl bg-gradient-to-br from-emerald-50 via-teal-50 to-emerald-100/70 border border-emerald-300 hover:border-emerald-500 hover:shadow-md transition-all group relative overflow-hidden"
+          >
+            <div className="absolute top-2 right-2 flex items-center gap-1 bg-emerald-600 text-white text-[9px] font-black px-1.5 py-0.5 rounded-full shadow-xs">
+              <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" /> LIVE
+            </div>
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-emerald-600 to-teal-600 text-white flex items-center justify-center font-bold mb-3 shadow-md group-hover:scale-110 transition-transform">
+              <MessageSquare size={20} />
+            </div>
+            <div className="font-bold text-slate-900 text-xs sm:text-sm">💬 WhatsApp Inbox</div>
+            <div className="text-[11px] text-emerald-700 mt-0.5 font-medium">Real-time 2-Way Chat</div>
+          </Link>
+
+          <Link
             href="/admin/dashboard/whatsapp"
             className="p-4 rounded-2xl bg-gradient-to-br from-emerald-50 to-green-100/60 border border-emerald-200 hover:border-emerald-400 hover:shadow-md transition-all group"
           >
