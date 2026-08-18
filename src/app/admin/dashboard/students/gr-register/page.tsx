@@ -1030,14 +1030,28 @@ export default function GrRegisterPage() {
         <div className="space-y-6">
           {/* Header Banner */}
           <div className="p-6 bg-linear-to-r from-indigo-900 via-blue-900 to-slate-900 text-white rounded-3xl shadow-md space-y-2">
-            <div className="flex items-center gap-2">
-              <span className="p-2 rounded-xl bg-white/10 text-indigo-300">
-                <Sparkles size={20} />
-              </span>
-              <h2 className="text-lg font-black tracking-tight">Advanced AI Camera &amp; G.R. Ledger Scanner Hub</h2>
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div className="flex items-center gap-2">
+                <span className="p-2 rounded-xl bg-white/10 text-indigo-300">
+                  <Sparkles size={20} />
+                </span>
+                <div>
+                  <h2 className="text-lg font-black tracking-tight">Dual AI G.R. Ledger Scanner Hub</h2>
+                  <p className="text-xs text-indigo-200">
+                    Hugging Face Vision + OpenRouter Vision + Local Adaptive Preprocessor
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <span className="px-3 py-1 bg-white/10 border border-white/20 rounded-xl text-[11px] font-bold text-white flex items-center gap-1.5">
+                  <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                  🤗 Hugging Face + ⚡ OpenRouter Active
+                </span>
+              </div>
             </div>
-            <p className="text-xs text-indigo-200 max-w-3xl leading-relaxed">
-              Equipped with Local Adaptive Shadow Equalization, Multi-Pass Left/Right Column Decomposition, and Pakistani Name Dictionaries. Snap photos directly with your camera, select filters, review candidate extractions, and commit verified records.
+            <p className="text-xs text-indigo-200/90 max-w-3xl leading-relaxed">
+              Processes ledger spreads with simultaneous AI vision passes, auto-resolves consensus on student names, applies Pakistani name dictionaries, and detects two-column notebook layouts.
             </p>
           </div>
 
