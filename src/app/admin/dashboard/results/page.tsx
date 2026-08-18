@@ -449,7 +449,10 @@ export default function AdminResultsPage() {
   };
 
   // WhatsApp Parent Notification
-  const handleSendWhatsAppNotification = (row: StudentMarkRow) => {
+  const handleSendWhatsAppNotification = async (row: StudentMarkRow) => {
+    const student = students.find(s => s.id === row.student_id);
+    const targetPhone = student?.parent_phone || student?.phone;
+
     const msg = `*THE FOUNDATION COLLEGIATE*
 *Official Examination Result Notification*
 
@@ -465,10 +468,35 @@ export default function AdminResultsPage() {
 
 💬 *Remarks:* ${row.remarks || 'Keep up the consistent effort!'}
 
-_Check complete detailed transcripts online at https://foundationcollegiate.edu.pk/results_`;
+_Check complete detailed transcripts online at https://foundation-collegiate.vercel.app/results_`;
 
+    if (targetPhone) {
+      try {
+        const res = await fetch('/api/admin/whatsapp/proxy', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            action: 'SEND_MESSAGE',
+            payload: {
+              accountId: 'tfc-default-sender',
+              recipient: targetPhone,
+              messageBody: msg,
+              metadata: { type: 'EXAM_RESULT', studentId: row.student_id, roll: row.roll_number }
+            }
+          })
+        });
+        const data = await res.json();
+        if (data.success) {
+          toast.success(`Result transcript sent via WhatsApp to ${row.student_name}'s parent!`);
+          return;
+        }
+      } catch {}
+    }
+
+    const cleanPhone = targetPhone ? targetPhone.replace(/\D/g, '') : '';
     const encoded = encodeURIComponent(msg);
-    window.open(`https://wa.me/?text=${encoded}`, '_blank');
+    window.open(`https://wa.me/${cleanPhone}?text=${encoded}`, '_blank');
+    toast.info('Opened WhatsApp chat');
   };
 
   // Save Single Row

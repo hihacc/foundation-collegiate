@@ -7,7 +7,8 @@ import { toast } from 'sonner';
 import { 
   Search, Printer, Download, Mail, CheckCircle2, FileText, 
   AlertCircle, Plus, Receipt, ShieldCheck, UserCheck, CreditCard,
-  Building2, Phone, Calendar, Sparkles, ArrowRight, X, Check
+  Building2, Phone, Calendar, Sparkles, ArrowRight, X, Check,
+  MessageCircle
 } from 'lucide-react';
 import { getStoredData, setStoredData } from '@/lib/utils/storage';
 import { OFFICIAL_CLASSES } from '@/lib/utils/classes';
@@ -269,6 +270,43 @@ export default function FeeChallansPage() {
     });
   }, [challans, search, statusFilter, students]);
 
+  const handleSendWhatsAppFeeReminder = async (challan: any) => {
+    const s = getStudentInfo(challan.student_id);
+    const targetPhone = s.parent_phone || s.phone;
+    if (!targetPhone) {
+      return toast.error('No parent or student phone number available for this record');
+    }
+
+    const reminderText = `📢 *FEE REMINDER — THE FOUNDATION COLLEGIATE*\n\nDear Parent of *${s.name}* (Roll: *${s.roll_number || 'N/A'}*),\nThis is a gentle reminder that tuition fee for *${challan.month_year}* (Receipt Ref: *${challan.barcode_ref}*) is pending.\n\nAmount Due: *PKR ${(challan.net_payable || challan.total_amount || 0).toLocaleString()}*\nStatus: *UNPAID*\n\nBank Account: *HBL — The Foundation Collegiate*\nAccount No: *0123456789*\n\nKindly submit the fee and share transfer confirmation slip. Thank you.\n\n*TFC Accounts Department*`;
+
+    try {
+      const res = await fetch('/api/admin/whatsapp/proxy', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'SEND_MESSAGE',
+          payload: {
+            accountId: 'tfc-default-sender',
+            recipient: targetPhone,
+            messageBody: reminderText,
+            metadata: { type: 'FEE_REMINDER', challanId: challan.id, studentId: challan.student_id }
+          }
+        })
+      });
+      const data = await res.json();
+      if (data.success) {
+        toast.success(`Fee reminder sent via WhatsApp to ${s.name}'s parent!`);
+      } else {
+        const clean = targetPhone.replace(/\D/g, '');
+        window.open(`https://wa.me/${clean}?text=${encodeURIComponent(reminderText)}`, '_blank');
+        toast.info('Opened direct WhatsApp chat');
+      }
+    } catch {
+      const clean = targetPhone.replace(/\D/g, '');
+      window.open(`https://wa.me/${clean}?text=${encodeURIComponent(reminderText)}`, '_blank');
+    }
+  };
+
   const handlePrint = (challan: any) => {
     setPrintReceipt(challan);
     setTimeout(() => {
@@ -442,12 +480,21 @@ export default function FeeChallansPage() {
                         <td className="py-3.5 px-4 text-right">
                           <div className="flex items-center justify-end gap-1.5">
                             {c.status !== 'Paid' && (
-                              <button
-                                onClick={() => setPayModalChallan(c)}
-                                className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-bold text-xs flex items-center gap-1 shadow-xs cursor-pointer"
-                              >
-                                <CreditCard size={13} /> Collect Fee
-                              </button>
+                              <>
+                                <button
+                                  onClick={() => handleSendWhatsAppFeeReminder(c)}
+                                  title="Send Instant WhatsApp Fee Reminder to Parent"
+                                  className="px-3 py-1.5 bg-emerald-50 text-emerald-700 hover:bg-emerald-600 hover:text-white rounded-xl font-bold text-xs flex items-center gap-1 border border-emerald-200 transition-colors cursor-pointer"
+                                >
+                                  <MessageCircle size={13} /> WhatsApp Reminder
+                                </button>
+                                <button
+                                  onClick={() => setPayModalChallan(c)}
+                                  className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-bold text-xs flex items-center gap-1 shadow-xs cursor-pointer"
+                                >
+                                  <CreditCard size={13} /> Collect Fee
+                                </button>
+                              </>
                             )}
 
                             <button
