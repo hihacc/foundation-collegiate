@@ -556,6 +556,38 @@ export default function WhatsAppInboxPage() {
     }
   };
 
+  // Export Chat History to Text Transcript
+  const handleExportChat = () => {
+    if (!messages || messages.length === 0) {
+      return toast.info('No messages to export for this conversation');
+    }
+    const lines = [
+      `============================================================`,
+      `THE FOUNDATION COLLEGIATE (TFC) — WHATSAPP TRANSCRIPT`,
+      `============================================================`,
+      `Contact Name:     ${currentConv?.contact_name || 'Unknown'}`,
+      `Phone Number:     ${currentConv?.phone || ''}`,
+      `Linked Student:   ${currentConv?.student_name || 'None'} (Roll: ${currentConv?.student_roll || 'N/A'})`,
+      `Export Timestamp: ${new Date().toLocaleString()}`,
+      `Total Messages:   ${messages.length}`,
+      `============================================================\n`,
+      ...messages.map(m => {
+        const time = new Date(m.created_at).toLocaleString();
+        const author = m.direction === 'outbound' ? 'TFC Administration' : currentConv?.contact_name || m.sender;
+        const noteTag = m.is_internal_note ? ' [INTERNAL NOTE]' : '';
+        const mediaTag = m.media_url ? ` [ATTACHMENT: ${m.media_filename || m.media_url}]` : '';
+        return `[${time}] ${author}${noteTag}:\n${m.content}${mediaTag}\n`;
+      })
+    ];
+    const blob = new Blob([lines.join('\n')], { type: 'text/plain;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `tfc_chat_${currentConv?.normalized_phone || 'export'}_${Date.now()}.txt`;
+    a.click();
+    toast.success('Chat transcript exported successfully!');
+  };
+
   // Filtered Conversations
   const filteredConversations = useMemo(() => {
     return conversations.filter(c => {
@@ -879,6 +911,16 @@ export default function WhatsAppInboxPage() {
                     <Phone size={15} />
                   </a>
 
+                  {/* Export Chat Transcript */}
+                  <button
+                    onClick={handleExportChat}
+                    className="p-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 text-xs font-bold flex items-center gap-1 transition-colors cursor-pointer"
+                    title="Export Chat History to Text File"
+                  >
+                    <Download size={15} />
+                    <span className="hidden sm:inline">Export</span>
+                  </button>
+
                   {/* Delete / Clear Conversation */}
                   <button
                     onClick={() => handleDeleteConversation(currentConv.id)}
@@ -1059,6 +1101,29 @@ export default function WhatsAppInboxPage() {
                   </button>
                 </div>
               )}
+
+              {/* Quick Canned Replies Bar */}
+              <div className="px-4 py-1.5 bg-slate-50 border-t border-slate-200/80 flex items-center gap-1.5 overflow-x-auto text-[11px] font-semibold scrollbar-none">
+                <span className="text-slate-400 font-bold shrink-0 flex items-center gap-1">
+                  ⚡ Quick:
+                </span>
+                {[
+                  { label: '💰 Fee Details', text: 'Tuition Fee can be submitted at HBL Account #0123456789 (The Foundation Collegiate) or via Online Transfer. Kindly share the screenshot/slip after payment.' },
+                  { label: '🎓 Admissions', text: 'Admissions for Class XI & XII Pre-Medical, Pre-Engineering & Computer Science are OPEN! Apply online at https://foundation-collegiate.vercel.app/admissions' },
+                  { label: '⏰ Timings', text: 'College Timings: Mon–Thu: 8:00 AM – 1:30 PM | Fri: 8:00 AM – 12:30 PM. Administrative office is open till 2:30 PM.' },
+                  { label: '📍 Location', text: 'The Foundation Collegiate, Main Campus, Gulshan-e-Iqbal, Karachi. Contact: +92 333 3439458.' },
+                  { label: '📊 Results', text: 'Exam transcripts and attendance scores are accessible via the Student Portal. Please contact the Examination Desk for verified copies.' }
+                ].map((qr, i) => (
+                  <button
+                    key={i}
+                    onClick={() => setComposerText(prev => (prev ? prev + ' ' + qr.text : qr.text))}
+                    className="px-2 py-0.5 rounded-md bg-white hover:bg-slate-200 text-slate-700 border border-slate-200 whitespace-nowrap transition-colors cursor-pointer shadow-2xs shrink-0"
+                    title={qr.text}
+                  >
+                    {qr.label}
+                  </button>
+                ))}
+              </div>
 
               {/* Chat Composer */}
               <div className="p-3 sm:p-4 bg-white border-t border-slate-200 space-y-2">
