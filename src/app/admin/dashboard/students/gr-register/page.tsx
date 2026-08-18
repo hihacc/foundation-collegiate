@@ -1,17 +1,20 @@
 'use client';
 export const dynamic = 'force-dynamic';
 
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useRef } from 'react';
 import { 
   BookOpen, Search, Plus, Printer, Download, Save, Trash2, 
   CheckCircle2, X, Edit3, RefreshCw, LayoutGrid, Table, Check, 
   UserCheck, AlertCircle, ArrowUpDown, Sparkles, ChevronLeft, ChevronRight,
   ChevronsLeft, ChevronsRight, Eye, ShieldCheck, FileCheck, Layers,
-  ExternalLink, ZoomIn, ZoomOut, RotateCw, Image as ImageIcon
+  ExternalLink, ZoomIn, ZoomOut, RotateCw, Image as ImageIcon,
+  UploadCloud, FileText, CheckSquare, Square, ArrowRight, ShieldAlert,
+  Sliders, Info, Sparkle
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { GrRecord, INITIAL_GR_RECORDS } from '@/lib/data/grRegisterData';
 import { OFFICIAL_CLASSES } from '@/lib/utils/classes';
+import { ScannedGrCandidate } from '@/lib/utils/grOcrScanner';
 import Link from 'next/link';
 
 interface AuditReport {
@@ -42,7 +45,7 @@ interface AuditReport {
 export default function GrRegisterPage() {
   const [records, setRecords] = useState<GrRecord[]>(INITIAL_GR_RECORDS);
   const [auditReport, setAuditReport] = useState<AuditReport | null>(null);
-  const [activeTab, setActiveTab] = useState<'ledger' | 'sources'>('ledger');
+  const [activeTab, setActiveTab] = useState<'ledger' | 'scanner' | 'sources'>('ledger');
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState<'all' | 'assigned' | 'blank_slot' | 'uncertain' | 'needs_review'>('all');
@@ -71,6 +74,17 @@ export default function GrRegisterPage() {
     student_name: '',
     class_name: 'Class XI - Pre-Medical'
   });
+
+  // --- AI SCANNER STATE ---
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [isScanning, setIsScanning] = useState(false);
+  const [scanProgress, setScanProgress] = useState(0);
+  const [scanProgressText, setScanProgressText] = useState('');
+  const [scannedCandidates, setScannedCandidates] = useState<ScannedGrCandidate[]>([]);
+  const [rawOcrText, setRawOcrText] = useState('');
+  const [isCommitting, setIsCommitting] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const fetchData = async () => {
     try {
@@ -255,6 +269,157 @@ export default function GrRegisterPage() {
     toast.success(`Exported all ${records.length} forensic G.R. records!`);
   };
 
+  // --- AI SCANNER ACTIONS ---
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setSelectedFile(file);
+      setPreviewUrl(URL.createObjectURL(file));
+      setScannedCandidates([]);
+    }
+  };
+
+  const handleSelectSampleImage = (fileName: string) => {
+    setPreviewUrl(`/gr/${encodeURIComponent(fileName)}`);
+    setSelectedFile(null);
+    setScannedCandidates([]);
+    toast.info(`Loaded sample ledger photo: ${fileName}`);
+  };
+
+  const handleRunAiScanner = async () => {
+    if (!previewUrl && !rawOcrText) {
+      toast.error('Please upload a register photo or paste raw OCR text');
+      return;
+    }
+
+    try {
+      setIsScanning(true);
+      setScanProgress(10);
+      setScanProgressText('Initializing OCR neural engine...');
+
+      let textToParse = rawOcrText;
+
+      if (previewUrl && !textToParse) {
+        // Run OCR with Tesseract
+        setScanProgress(30);
+        setScanProgressText('Enhancing image contrast & thresholding...');
+        
+        const Tesseract = (await import('tesseract.js')).default;
+        
+        setScanProgress(50);
+        setScanProgressText('Running OCR multi-pass text detection...');
+
+        const result = await Tesseract.recognize(previewUrl, 'eng', {
+          logger: m => {
+            if (m.status === 'recognizing text' && m.progress) {
+              setScanProgress(50 + Math.round(m.progress * 40));
+              setScanProgressText(`Recognizing handwriting: ${Math.round(m.progress * 100)}%`);
+            }
+          }
+        });
+
+        textToParse = result.data.text;
+        setRawOcrText(textToParse);
+      }
+
+      setScanProgress(92);
+      setScanProgressText('Extracting G.R. numbers, names & academic streams...');
+
+      const res = await fetch('/api/admin/gr-register/scan', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ raw_text: textToParse })
+      });
+
+      const data = await res.json();
+
+      if (data.success && Array.isArray(data.candidates)) {
+        setScannedCandidates(data.candidates);
+        setScanProgress(100);
+        setScanProgressText('Scan complete!');
+        toast.success(`AI scanned & detected ${data.candidates.length} G.R. entries!`);
+      } else {
+        toast.error(data.error || 'Failed to extract ledger entries');
+      }
+    } catch (e: any) {
+      toast.error('Scan error: ' + e.message);
+    } finally {
+      setIsScanning(false);
+    }
+  };
+
+  const handleToggleSelectCandidate = (id: string) => {
+    setScannedCandidates(prev => prev.map(c => c.id === id ? { ...c, selected: !c.selected } : c));
+  };
+
+  const handleToggleSelectAllCandidates = (select: boolean) => {
+    setScannedCandidates(prev => prev.map(c => ({ ...c, selected: select })));
+  };
+
+  const handleUpdateCandidate = (id: string, field: keyof ScannedGrCandidate, value: any) => {
+    setScannedCandidates(prev => prev.map(c => c.id === id ? { ...c, [field]: value } : c));
+  };
+
+  const handleDeleteCandidate = (id: string) => {
+    setScannedCandidates(prev => prev.filter(c => c.id !== id));
+  };
+
+  const handleAddCandidateRow = () => {
+    const nextGr = scannedCandidates.length > 0 ? Math.max(...scannedCandidates.map(c => c.gr_number)) + 1 : 1311;
+    const newCand: ScannedGrCandidate = {
+      id: `scan_manual_${Date.now()}`,
+      gr_number: nextGr,
+      gr_code: `GR-${nextGr}`,
+      student_name: '',
+      class_name: 'Class XI - Pre-Medical',
+      confidence: 100,
+      raw_line: 'Manually added candidate row',
+      selected: true,
+      action_type: 'assign',
+      notes: 'Manually added in confirmation review'
+    };
+    setScannedCandidates(prev => [...prev, newCand]);
+  };
+
+  const handleConfirmAndCommitToGrRegister = async () => {
+    const selected = scannedCandidates.filter(c => c.selected);
+    if (selected.length === 0) {
+      toast.error('Please select at least 1 scanned entry to confirm & insert');
+      return;
+    }
+
+    try {
+      setIsCommitting(true);
+      const res = await fetch('/api/admin/gr-register/bulk', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          items: selected,
+          source_scan_ref: selectedFile?.name || 'AI Scanned Ledger'
+        })
+      });
+
+      const data = await res.json();
+      if (data.success) {
+        toast.success(`Success! Inserted & confirmed ${data.total_committed} records into G.R. Register!`);
+        // Refresh master records
+        await fetchData();
+        // Clear scanner review and go back to ledger
+        setScannedCandidates([]);
+        setSelectedFile(null);
+        setPreviewUrl(null);
+        setRawOcrText('');
+        setActiveTab('ledger');
+      } else {
+        toast.error(data.error || 'Failed to commit records');
+      }
+    } catch (e: any) {
+      toast.error('Commit error: ' + e.message);
+    } finally {
+      setIsCommitting(false);
+    }
+  };
+
   return (
     <div className="space-y-6 pb-12 font-sans">
       
@@ -271,13 +436,24 @@ export default function GrRegisterPage() {
                 <span className="px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 text-xs font-black">Forensic Verified</span>
               </h1>
               <p className="text-xs text-slate-500 font-medium">
-                Authoritative register recovered from 27 physical ledger scans (Range: GR-{stats.minGr} to GR-{stats.maxGr})
+                Authoritative register recovered from physical ledger scans (Range: GR-{stats.minGr} to GR-{stats.maxGr})
               </p>
             </div>
           </div>
         </div>
 
         <div className="flex flex-wrap items-center gap-2">
+          <button
+            onClick={() => setActiveTab('scanner')}
+            className={`px-4 py-2 text-xs font-black rounded-xl flex items-center gap-1.5 shadow-sm transition-colors cursor-pointer ${
+              activeTab === 'scanner'
+                ? 'bg-indigo-600 text-white shadow-indigo-200'
+                : 'bg-indigo-50 hover:bg-indigo-100 text-indigo-700'
+            }`}
+          >
+            <Sparkles size={14} /> AI Ledger Scanner
+          </button>
+
           <button
             onClick={() => window.print()}
             className="px-3.5 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-xl flex items-center gap-1.5 transition-colors cursor-pointer"
@@ -340,7 +516,7 @@ export default function GrRegisterPage() {
         </div>
       </div>
 
-      {/* Main Mode Tabs (Ledger vs Source Audit) */}
+      {/* Main Mode Navigation Tabs */}
       <div className="flex items-center gap-2 border-b border-slate-200 text-xs font-bold">
         <button
           onClick={() => setActiveTab('ledger')}
@@ -351,6 +527,17 @@ export default function GrRegisterPage() {
           }`}
         >
           <BookOpen size={14} /> Master Physical Ledger ({stats.total})
+        </button>
+
+        <button
+          onClick={() => setActiveTab('scanner')}
+          className={`px-4 py-2.5 border-b-2 flex items-center gap-1.5 transition-colors cursor-pointer ${
+            activeTab === 'scanner'
+              ? 'border-indigo-600 text-indigo-600 font-black bg-indigo-50/50'
+              : 'border-transparent text-slate-500 hover:text-slate-900'
+          }`}
+        >
+          <Sparkles size={14} className="text-indigo-600" /> ✨ AI Ledger Scanner &amp; Importer
         </button>
 
         <button
@@ -366,7 +553,7 @@ export default function GrRegisterPage() {
 
         <div className="ml-auto flex items-center gap-3">
           <Link href="/admin/dashboard/students" className="text-slate-500 hover:text-slate-900">Students Roster</Link>
-          <Link href="/admin/dashboard/students/scanner" className="text-slate-500 hover:text-slate-900">AI Scanner</Link>
+          <Link href="/admin/dashboard/students/scanner" className="text-slate-500 hover:text-slate-900">Student Admission Form Scanner</Link>
         </div>
       </div>
 
@@ -650,7 +837,271 @@ export default function GrRegisterPage() {
         </>
       )}
 
-      {/* TAB 2: 27 SOURCE IMAGES FORENSIC AUDIT LOG */}
+      {/* TAB 2: AI LEDGER SCANNER & IMPORTER (NEW) */}
+      {activeTab === 'scanner' && (
+        <div className="space-y-6">
+          {/* Header Banner */}
+          <div className="p-6 bg-linear-to-r from-indigo-900 via-blue-900 to-slate-900 text-white rounded-3xl shadow-md space-y-2">
+            <div className="flex items-center gap-2">
+              <span className="p-2 rounded-xl bg-white/10 text-indigo-300">
+                <Sparkles size={20} />
+              </span>
+              <h2 className="text-lg font-black tracking-tight">AI G.R. Ledger Scanner &amp; Verification Hub</h2>
+            </div>
+            <p className="text-xs text-indigo-200 max-w-3xl leading-relaxed">
+              Upload any handwritten register photo or document. The neural OCR engine detects G.R. numbers, student names, and classes. You can review, edit, and confirm the extracted entries before committing them directly into the official G.R. Register ledger.
+            </p>
+          </div>
+
+          {/* Scanner Input & Workflow Grid */}
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+            
+            {/* Left: Image Upload & Preview (5 cols) */}
+            <div className="lg:col-span-5 space-y-4">
+              <div className="bg-white p-5 rounded-3xl border border-slate-200 shadow-sm space-y-4">
+                <h3 className="font-bold text-slate-900 text-sm flex items-center gap-2">
+                  <UploadCloud size={16} className="text-indigo-600" />
+                  Step 1: Upload or Choose Ledger Photo
+                </h3>
+
+                {/* Upload Dropzone */}
+                <input
+                  type="file"
+                  ref={fileInputRef}
+                  onChange={handleFileSelect}
+                  accept="image/*"
+                  className="hidden"
+                />
+
+                <div
+                  onClick={() => fileInputRef.current?.click()}
+                  className="border-2 border-dashed border-slate-200 hover:border-indigo-500 bg-slate-50/50 hover:bg-indigo-50/30 rounded-2xl p-6 text-center cursor-pointer transition-colors space-y-2"
+                >
+                  <UploadCloud size={32} className="mx-auto text-indigo-500" />
+                  <div>
+                    <p className="text-xs font-black text-slate-800">Click to upload handwritten register photo</p>
+                    <p className="text-[10px] text-slate-400">Supports JPEG, PNG, WebP (High resolution recommended)</p>
+                  </div>
+                </div>
+
+                {/* Quick Sample Selector */}
+                <div className="space-y-2">
+                  <p className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Or select physical register scan:</p>
+                  <div className="grid grid-cols-2 gap-2">
+                    {[
+                      { name: 'GR 116–161 (Two-Page Ledger)', file: 'WhatsApp Image 2026-08-18 at 10.01.31 PM (1).jpeg' },
+                      { name: 'GR 301–317 (Middle Ledger)', file: 'WhatsApp Image 2026-08-18 at 10.01.33 PM.jpeg' },
+                      { name: 'GR 1031–1044 (Senior Ledger)', file: 'WhatsApp Image 2026-08-18 at 10.01.43 PM (1).jpeg' },
+                      { name: 'GR 1224–1240 (Recent Ledger)', file: 'WhatsApp Image 2026-08-18 at 10.01.44 PM (1).jpeg' }
+                    ].map(sample => (
+                      <button
+                        key={sample.name}
+                        onClick={() => handleSelectSampleImage(sample.file)}
+                        className="p-2 bg-slate-50 hover:bg-indigo-50 hover:border-indigo-200 border border-slate-200 rounded-xl text-left text-[11px] font-bold text-slate-700 transition-all cursor-pointer"
+                      >
+                        {sample.name}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Image Preview Box */}
+                {previewUrl && (
+                  <div className="relative rounded-2xl overflow-hidden border border-slate-200 bg-slate-950 max-h-64 flex items-center justify-center">
+                    <img
+                      src={previewUrl}
+                      alt="Ledger Preview"
+                      className="max-h-64 object-contain"
+                    />
+                    <div className="absolute top-2 right-2 px-2 py-1 rounded-lg bg-black/70 text-white text-[10px] font-mono font-bold">
+                      Ready to Scan
+                    </div>
+                  </div>
+                )}
+
+                {/* Action Trigger Button */}
+                <button
+                  onClick={handleRunAiScanner}
+                  disabled={isScanning || (!previewUrl && !rawOcrText)}
+                  className="w-full py-3 bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 text-white font-black text-xs rounded-2xl flex items-center justify-center gap-2 shadow-sm transition-colors cursor-pointer"
+                >
+                  {isScanning ? (
+                    <>
+                      <RefreshCw size={16} className="animate-spin" />
+                      Scanning ({scanProgress}%)...
+                    </>
+                  ) : (
+                    <>
+                      <Sparkles size={16} />
+                      Run AI Ledger Scan &amp; Extract
+                    </>
+                  )}
+                </button>
+
+                {/* Scan Progress Bar */}
+                {isScanning && (
+                  <div className="space-y-1.5 bg-indigo-50 p-3 rounded-2xl border border-indigo-100">
+                    <div className="flex justify-between text-[11px] font-bold text-indigo-900">
+                      <span>{scanProgressText}</span>
+                      <span>{scanProgress}%</span>
+                    </div>
+                    <div className="w-full h-2 bg-indigo-200 rounded-full overflow-hidden">
+                      <div
+                        className="h-full bg-indigo-600 transition-all duration-300 rounded-full"
+                        style={{ width: `${scanProgress}%` }}
+                      />
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Right: AI Results, Review & Confirmation Table (7 cols) */}
+            <div className="lg:col-span-7 space-y-4">
+              <div className="bg-white p-5 rounded-3xl border border-slate-200 shadow-sm space-y-4">
+                
+                {/* Result Header & Confirmation Controls */}
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 pb-4">
+                  <div>
+                    <h3 className="font-bold text-slate-900 text-sm flex items-center gap-2">
+                      <CheckCircle2 size={16} className="text-emerald-600" />
+                      Step 2: Review, Edit &amp; Confirm AI Results
+                    </h3>
+                    <p className="text-xs text-slate-500">
+                      {scannedCandidates.length > 0
+                        ? `${scannedCandidates.filter(c => c.selected).length} of ${scannedCandidates.length} entries selected for insertion`
+                        : 'Upload an image and run scan to see extracted records'}
+                    </p>
+                  </div>
+
+                  {scannedCandidates.length > 0 && (
+                    <div className="flex items-center gap-2">
+                      <button
+                        onClick={() => handleToggleSelectAllCandidates(true)}
+                        className="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-[11px] font-bold cursor-pointer"
+                      >
+                        Select All
+                      </button>
+                      <button
+                        onClick={handleAddCandidateRow}
+                        className="px-2.5 py-1 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 rounded-lg text-[11px] font-bold cursor-pointer flex items-center gap-1"
+                      >
+                        <Plus size={12} /> Add Row
+                      </button>
+                    </div>
+                  )}
+                </div>
+
+                {/* Candidate Results Table */}
+                {scannedCandidates.length === 0 ? (
+                  <div className="p-12 text-center border-2 border-dashed border-slate-200 rounded-2xl space-y-2">
+                    <Sparkles size={36} className="mx-auto text-indigo-300" />
+                    <h4 className="font-bold text-slate-700 text-sm">No Scanned Results Yet</h4>
+                    <p className="text-xs text-slate-400 max-w-sm mx-auto">
+                      Upload a ledger photograph or choose one of the sample ledger scans on the left, then click &quot;Run AI Ledger Scan&quot;.
+                    </p>
+                  </div>
+                ) : (
+                  <div className="space-y-3">
+                    <div className="overflow-x-auto border border-slate-200 rounded-2xl">
+                      <table className="w-full text-xs text-left">
+                        <thead>
+                          <tr className="bg-slate-900 text-white font-black uppercase text-[10px]">
+                            <th className="py-3 px-3 w-10 text-center">✓</th>
+                            <th className="py-3 px-3 w-24">GR No</th>
+                            <th className="py-3 px-3">Student Name</th>
+                            <th className="py-3 px-3">Class / Program</th>
+                            <th className="py-3 px-3 w-20 text-center">Confidence</th>
+                            <th className="py-3 px-3 w-10"></th>
+                          </tr>
+                        </thead>
+                        <tbody className="divide-y divide-slate-100">
+                          {scannedCandidates.map(cand => (
+                            <tr key={cand.id} className={`hover:bg-slate-50/80 transition-colors ${cand.selected ? 'bg-indigo-50/20' : 'opacity-60'}`}>
+                              <td className="py-2.5 px-3 text-center">
+                                <input
+                                  type="checkbox"
+                                  checked={cand.selected}
+                                  onChange={() => handleToggleSelectCandidate(cand.id)}
+                                  className="w-4 h-4 rounded text-indigo-600 focus:ring-indigo-500 cursor-pointer"
+                                />
+                              </td>
+                              <td className="py-2.5 px-3">
+                                <input
+                                  type="number"
+                                  value={cand.gr_number}
+                                  onChange={e => handleUpdateCandidate(cand.id, 'gr_number', Number(e.target.value))}
+                                  className="w-20 px-2 py-1 bg-white border border-slate-200 rounded-lg font-mono font-black text-blue-900 text-xs outline-none focus:ring-1 focus:ring-indigo-500"
+                                />
+                              </td>
+                              <td className="py-2.5 px-3">
+                                <input
+                                  type="text"
+                                  value={cand.student_name}
+                                  onChange={e => handleUpdateCandidate(cand.id, 'student_name', e.target.value)}
+                                  placeholder="Student Name (or blank)"
+                                  className="w-full px-2.5 py-1 bg-white border border-slate-200 rounded-lg font-bold text-slate-900 text-xs outline-none focus:ring-1 focus:ring-indigo-500"
+                                />
+                              </td>
+                              <td className="py-2.5 px-3">
+                                <select
+                                  value={cand.class_name}
+                                  onChange={e => handleUpdateCandidate(cand.id, 'class_name', e.target.value)}
+                                  className="w-full px-2 py-1 bg-white border border-slate-200 rounded-lg font-semibold text-slate-800 text-xs outline-none focus:ring-1 focus:ring-indigo-500"
+                                >
+                                  <option value="">-- No Class / Blank --</option>
+                                  {OFFICIAL_CLASSES.map(c => (
+                                    <option key={c.key} value={c.name}>{c.name}</option>
+                                  ))}
+                                </select>
+                              </td>
+                              <td className="py-2.5 px-3 text-center font-mono">
+                                <span className="px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-800 font-bold text-[10px] border border-emerald-200">
+                                  {cand.confidence}%
+                                </span>
+                              </td>
+                              <td className="py-2.5 px-3 text-right">
+                                <button
+                                  onClick={() => handleDeleteCandidate(cand.id)}
+                                  className="p-1 text-slate-400 hover:text-rose-600 rounded-md transition-colors cursor-pointer"
+                                  title="Remove from review"
+                                >
+                                  <Trash2 size={13} />
+                                </button>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+
+                    {/* Step 3: Confirmation & Commit Button */}
+                    <div className="p-4 bg-indigo-50/60 border border-indigo-100 rounded-2xl flex flex-col sm:flex-row items-center justify-between gap-3">
+                      <div className="text-xs text-indigo-950 font-semibold space-y-0.5">
+                        <p><strong>Ready to Commit:</strong> {scannedCandidates.filter(c => c.selected).length} verified entries.</p>
+                        <p className="text-[11px] text-indigo-800">These will be saved directly into the official G.R. Register database.</p>
+                      </div>
+
+                      <button
+                        onClick={handleConfirmAndCommitToGrRegister}
+                        disabled={isCommitting || scannedCandidates.filter(c => c.selected).length === 0}
+                        className="px-6 py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-black text-xs rounded-xl shadow-md flex items-center gap-2 transition-all cursor-pointer disabled:opacity-50"
+                      >
+                        {isCommitting ? <RefreshCw size={15} className="animate-spin" /> : <CheckCircle2 size={15} />}
+                        Confirm &amp; Insert into G.R. Register
+                      </button>
+                    </div>
+                  </div>
+                )}
+
+              </div>
+            </div>
+
+          </div>
+        </div>
+      )}
+
+      {/* TAB 3: 27 SOURCE IMAGES FORENSIC AUDIT LOG */}
       {activeTab === 'sources' && (
         <div className="space-y-4">
           <div className="p-4 bg-blue-50 border border-blue-200 rounded-2xl flex items-center justify-between">
