@@ -37,7 +37,9 @@ export async function POST(req: NextRequest) {
       { data: notices },
       { data: achievers },
       { data: teachers },
-      { data: courses }
+      { data: courses },
+      { data: whatsappConvs },
+      { data: whatsappMsgs }
     ] = await Promise.all([
       supabase.from('students').select('*').limit(500),
       supabase.from('results').select('id, student_name, roll_number, class_name, exam_name, month, total_marks, obtained_marks, percentage, grade, position').limit(200),
@@ -48,7 +50,9 @@ export async function POST(req: NextRequest) {
       supabase.from('notices').select('id, title, category, is_active, created_at').limit(50),
       supabase.from('achievers').select('id, name, position, board, percentage').limit(50),
       supabase.from('teachers').select('id, name, subject, qualification, is_active').limit(50),
-      supabase.from('courses').select('id, name, duration, fee, is_active').limit(50)
+      supabase.from('courses').select('id, name, duration, fee, is_active').limit(50),
+      supabase.from('whatsapp_conversations').select('*').limit(100),
+      supabase.from('whatsapp_messages').select('*').limit(150)
     ]);
 
     // Merge Supabase students with any client-side cached / newly added students
@@ -136,7 +140,10 @@ export async function POST(req: NextRequest) {
       notices_sample: notices || [],
       achievers_sample: achievers || [],
       teachers_sample: teachers || [],
-      courses_sample: courses || []
+      courses_sample: courses || [],
+      whatsapp_conversations_count: whatsappConvs?.length || 0,
+      whatsapp_conversations_sample: whatsappConvs?.slice(0, 20) || [],
+      whatsapp_recent_messages: whatsappMsgs?.slice(0, 30) || []
     };
 
     // 2. Resolve OpenRouter API Key

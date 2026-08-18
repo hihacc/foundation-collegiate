@@ -103,10 +103,11 @@ interface Message {
 }
 
 const PRESET_PROMPTS = [
-  '🔍 Audit student directory for missing photos, emails, or phone numbers',
+  '💬 Which WhatsApp conversations are currently unanswered or pending review?',
+  '🚨 Find students absent today whose parents haven\'t been sent a WhatsApp alert',
+  '💰 List all students with Unpaid or Overdue fee challans to prepare reminders',
+  '🔍 Audit student directory for missing 13-digit CNIC, parent numbers, or photos',
   '📊 List the top 3 highest mark scorers across all classes',
-  '💰 Find all students with Unpaid or Overdue fee challans',
-  '🎓 Suggest inactive students who can be marked as Graduated / Alumni',
   '📝 Draft an official announcement notice for the upcoming Midterm Examination'
 ];
 

@@ -5,7 +5,7 @@ import { useState, useEffect, useMemo, useRef } from 'react';
 import { supabase } from '@/lib/supabase/client';
 import { toast } from 'sonner';
 import { 
-  MessageCircle, Send, QrCode, Smartphone, RefreshCw, CheckCircle2, 
+  MessageCircle, MessageSquare, Send, QrCode, Smartphone, RefreshCw, CheckCircle2, 
   AlertTriangle, Users, BookOpen, Layers, ShieldCheck, Power, 
   ExternalLink, Clock, FileText, Check, X, Loader2, Plus, Copy, KeyRound, 
   Sparkles, Calendar, Play, Download, Search, Filter, Image as ImageIcon,
@@ -1117,6 +1117,13 @@ export default function WhatsAppCenterPage() {
 
       {/* 3. Navigation Tabs */}
       <div className="flex items-center gap-2 overflow-x-auto pb-1 border-b border-slate-200">
+        <a
+          href="/admin/dashboard/whatsapp/inbox"
+          className="px-4 py-2.5 rounded-2xl text-xs font-bold flex items-center gap-2 transition-all cursor-pointer whitespace-nowrap bg-gradient-to-r from-emerald-600 to-teal-600 text-white shadow-sm shadow-emerald-600/20 hover:opacity-95"
+        >
+          <MessageSquare size={15} /> 💬 Live WhatsApp Inbox (Real-time)
+        </a>
+
         <button
           onClick={() => setActiveTab('broadcast')}
           className={`px-4 py-2.5 rounded-2xl text-xs font-bold flex items-center gap-2 transition-all cursor-pointer whitespace-nowrap ${

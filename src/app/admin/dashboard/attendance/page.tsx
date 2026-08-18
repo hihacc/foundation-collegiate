@@ -314,8 +314,8 @@ export default function AdminAttendancePage() {
       const parentNum = st.parent_phone?.trim() || st.phone?.trim();
       const studentNum = st.phone?.trim();
 
-      const parentMsg = `🚨 *TFC Alert! Student is absent from class*\n\nRespected Parent,\nStudent *${st.name}* (Roll: *${st.roll_number || 'N/A'}*, Class: *${st.class_name || selectedClass}*) is *ABSENT* from class today (*${selectedDate}*).\n\nKindly contact the college administration for any queries.\n\n*The Foundation Collegiate*`;
-      const studentMsg = `🚨 *TFC Alert! You are marked absent from class*\n\nDear *${st.name}* (Roll: *${st.roll_number || 'N/A'}*, Class: *${st.class_name || selectedClass}*),\nYou are marked *ABSENT* from class today (*${selectedDate}*).\n\nPlease submit your leave application or medical certificate to the administration office upon return.\n\n*The Foundation Collegiate*`;
+      const parentMsg = `TFC Alert! ${st.name} is absent from class today.`;
+      const studentMsg = `TFC Alert! ${st.name} is absent from class today.`;
 
       if (parentNum) {
         bulkPayload.push({

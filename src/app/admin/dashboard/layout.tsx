@@ -53,8 +53,9 @@ export const navGroups: NavGroup[] = [
   {
     category: 'WhatsApp & Messaging',
     items: [
-      { name: 'WhatsApp Center', href: '/admin/dashboard/whatsapp', icon: MessageCircle, isHot: true },
-      { name: 'Student Messages', href: '/admin/dashboard/messages', icon: MessageSquare, badgeKey: 'messages' },
+      { name: '💬 WhatsApp Live Inbox', href: '/admin/dashboard/whatsapp/inbox', icon: MessageSquare, isHot: true },
+      { name: 'WhatsApp Hub & Broadcast', href: '/admin/dashboard/whatsapp', icon: MessageCircle },
+      { name: 'Messages & Contacts', href: '/admin/dashboard/messages', icon: Users, badgeKey: 'messages' },
       { name: 'Notice Board', href: '/admin/dashboard/notices', icon: Bell },
       { name: 'Email Control', href: '/admin/dashboard/email-control', icon: Mail }
     ]
