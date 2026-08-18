@@ -48,6 +48,8 @@ export default function WhatsAppInboxPage() {
   } | null>(null);
   const [uploadingAttachment, setUploadingAttachment] = useState(false);
   const [sendingMessage, setSendingMessage] = useState(false);
+  const [loadingOlder, setLoadingOlder] = useState(false);
+  const [hasOlderMessages, setHasOlderMessages] = useState(true);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
@@ -942,13 +944,46 @@ export default function WhatsAppInboxPage() {
                 ) : (
                   <>
                     <div className="text-center py-1">
-                      <button
-                        onClick={() => toast.info('All WhatsApp messages for this thread are synchronized in real-time.')}
-                        className="px-3 py-1 rounded-xl bg-slate-100/90 hover:bg-slate-200 text-slate-600 text-[11px] font-bold border border-slate-200 transition-colors inline-flex items-center gap-1.5 cursor-pointer shadow-2xs"
-                      >
-                        <Clock size={12} className="text-slate-400" />
-                        <span>Load older messages</span>
-                      </button>
+                      {hasOlderMessages ? (
+                        <button
+                          onClick={async () => {
+                            if (!selectedConvId || loadingOlder) return;
+                            try {
+                              setLoadingOlder(true);
+                              const oldestTimestamp = messages[0]?.created_at || '';
+                              const res = await fetch(`/api/admin/whatsapp/messages?conversationId=${selectedConvId}&before=${encodeURIComponent(oldestTimestamp)}&limit=25`);
+                              const data = await res.json();
+                              if (data.success && Array.isArray(data.data) && data.data.length > 0) {
+                                setMessages(prev => {
+                                  const existingIds = new Set(prev.map(m => m.id));
+                                  const newOlder = data.data.filter((m: any) => !existingIds.has(m.id));
+                                  if (newOlder.length === 0) {
+                                    setHasOlderMessages(false);
+                                    toast.info('All older messages for this thread are loaded.');
+                                    return prev;
+                                  }
+                                  return [...newOlder, ...prev];
+                                });
+                                toast.success(`Loaded ${data.data.length} older messages`);
+                              } else {
+                                setHasOlderMessages(false);
+                                toast.info('No older messages found for this contact.');
+                              }
+                            } catch (err: any) {
+                              toast.error('Failed to load older messages: ' + err.message);
+                            } finally {
+                              setLoadingOlder(false);
+                            }
+                          }}
+                          disabled={loadingOlder}
+                          className="px-3.5 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-[11px] font-bold border border-slate-200 transition-colors inline-flex items-center gap-1.5 cursor-pointer shadow-2xs disabled:opacity-50"
+                        >
+                          <Clock size={12} className={loadingOlder ? 'animate-spin text-emerald-600' : 'text-slate-400'} />
+                          <span>{loadingOlder ? 'Loading older messages...' : 'Load older messages'}</span>
+                        </button>
+                      ) : (
+                        <span className="text-[11px] text-slate-400 font-semibold italic">Beginning of message history</span>
+                      )}
                     </div>
                     {messages.map((msg, idx) => {
                     const isOutbound = msg.direction === 'outbound';

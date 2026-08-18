@@ -15,12 +15,28 @@ export async function GET(req: NextRequest) {
   try {
     const { searchParams } = new URL(req.url);
     const conversationId = searchParams.get('conversationId');
+    const before = searchParams.get('before');
+    const limit = parseInt(searchParams.get('limit') || '50', 10);
 
     if (!conversationId) {
       return NextResponse.json({ success: false, error: 'conversationId parameter is required' }, { status: 400 });
     }
 
-    const messages = await getMessagesByConversationId(conversationId);
+    let messages = await getMessagesByConversationId(conversationId);
+
+    if (before) {
+      const beforeTime = new Date(before).getTime();
+      if (!isNaN(beforeTime)) {
+        messages = messages.filter(m => {
+          const t = new Date(m.created_at).getTime();
+          return t < beforeTime;
+        });
+      }
+    }
+
+    if (limit && limit > 0) {
+      messages = messages.slice(-limit);
+    }
 
     // Reset unread count for this conversation
     const convs = await getAllConversations();

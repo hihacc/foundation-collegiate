@@ -122,7 +122,7 @@ Return ONLY valid JSON.`;
 
     // 2. Hugging Face Router Pass
     const hfConn = allConnections.find(c => c.provider === 'huggingface' && c.is_active);
-    const hfKey = (hfConn ? decryptApiKey(hfConn.encrypted_key) : '') || process.env.HF_TOKEN || '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';
+    const hfKey = (hfConn ? decryptApiKey(hfConn.encrypted_key) : '') || process.env.HF_TOKEN || '';
 
     if (hfKey) {
       const modelToUse = hfConn?.model_id || 'meta-llama/Llama-3.3-70B-Instruct-Turbo';

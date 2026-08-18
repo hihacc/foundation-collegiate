@@ -134,7 +134,7 @@ Return ONLY a valid JSON array format:
 
     // 2. HUGGING FACE ROUTER PASS
     const hfConn = connections.find(c => c.provider === 'huggingface' && c.is_active);
-    const hfKey = (hfConn ? decryptApiKey(hfConn.encrypted_key) : '') || process.env.HF_TOKEN || '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';
+    const hfKey = (hfConn ? decryptApiKey(hfConn.encrypted_key) : '') || process.env.HF_TOKEN || '';
 
     if (hfKey) {
       try {
