@@ -9,7 +9,7 @@ import {
   ChevronsLeft, ChevronsRight, Eye, ShieldCheck, FileCheck, Layers,
   ExternalLink, ZoomIn, ZoomOut, RotateCw, Image as ImageIcon,
   UploadCloud, FileText, CheckSquare, Square, ArrowRight, ShieldAlert,
-  Sliders, Info, Sparkle
+  Sliders, Info, Sparkle, Camera, SwitchCamera, VideoOff
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { GrRecord, INITIAL_GR_RECORDS } from '@/lib/data/grRegisterData';
@@ -85,6 +85,15 @@ export default function GrRegisterPage() {
   const [rawOcrText, setRawOcrText] = useState('');
   const [isCommitting, setIsCommitting] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const mobileCameraInputRef = useRef<HTMLInputElement>(null);
+
+  // --- LIVE WEBRTC CAMERA STATE ---
+  const [isCameraActive, setIsCameraActive] = useState(false);
+  const [cameraFacing, setCameraFacing] = useState<'environment' | 'user'>('environment');
+  const [cameraError, setCameraError] = useState<string | null>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const streamRef = useRef<MediaStream | null>(null);
 
   const fetchData = async () => {
     try {
@@ -112,6 +121,13 @@ export default function GrRegisterPage() {
 
   useEffect(() => {
     fetchData();
+  }, []);
+
+  // Cleanup camera stream on unmount
+  useEffect(() => {
+    return () => {
+      stopCamera();
+    };
   }, []);
 
   // Filtered & Sorted Records
@@ -269,6 +285,85 @@ export default function GrRegisterPage() {
     toast.success(`Exported all ${records.length} forensic G.R. records!`);
   };
 
+  // --- LIVE CAMERA CONTROLS ---
+  const startCamera = async () => {
+    stopCamera();
+    setCameraError(null);
+    try {
+      if (!navigator?.mediaDevices?.getUserMedia) {
+        throw new Error('Camera not supported by browser. Tap "Snap with Mobile Camera" below.');
+      }
+
+      let stream: MediaStream | null = null;
+      try {
+        stream = await navigator.mediaDevices.getUserMedia({
+          video: {
+            facingMode: { ideal: cameraFacing },
+            width: { ideal: 1920 },
+            height: { ideal: 1080 }
+          },
+          audio: false
+        });
+      } catch {
+        stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
+      }
+
+      if (!stream) throw new Error('Could not access camera device');
+
+      streamRef.current = stream;
+      if (videoRef.current) {
+        videoRef.current.srcObject = stream;
+        await videoRef.current.play();
+      }
+      setIsCameraActive(true);
+      setCameraError(null);
+      toast.info('Camera viewfinder active! Frame the register page & capture.');
+    } catch (err: any) {
+      console.warn('Camera error:', err.message);
+      setCameraError(err.message || 'Camera permission denied or device unavailable.');
+      setIsCameraActive(false);
+    }
+  };
+
+  const stopCamera = () => {
+    if (streamRef.current) {
+      streamRef.current.getTracks().forEach(track => track.stop());
+      streamRef.current = null;
+    }
+    if (videoRef.current) {
+      videoRef.current.srcObject = null;
+    }
+    setIsCameraActive(false);
+  };
+
+  const flipCamera = () => {
+    const nextFacing = cameraFacing === 'environment' ? 'user' : 'environment';
+    setCameraFacing(nextFacing);
+    if (isCameraActive) {
+      setTimeout(() => startCamera(), 100);
+    }
+  };
+
+  const captureCameraFrame = () => {
+    if (!videoRef.current || !canvasRef.current) return;
+    const video = videoRef.current;
+    const canvas = canvasRef.current;
+
+    canvas.width = video.videoWidth || 1280;
+    canvas.height = video.videoHeight || 720;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+    const dataUrl = canvas.toDataURL('image/jpeg', 0.95);
+
+    setPreviewUrl(dataUrl);
+    setSelectedFile(null);
+    setScannedCandidates([]);
+    stopCamera();
+    toast.success('📸 Ledger photo captured! Ready to run AI Scan.');
+  };
+
   // --- AI SCANNER ACTIONS ---
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -276,6 +371,7 @@ export default function GrRegisterPage() {
       setSelectedFile(file);
       setPreviewUrl(URL.createObjectURL(file));
       setScannedCandidates([]);
+      stopCamera();
     }
   };
 
@@ -283,12 +379,13 @@ export default function GrRegisterPage() {
     setPreviewUrl(`/gr/${encodeURIComponent(fileName)}`);
     setSelectedFile(null);
     setScannedCandidates([]);
+    stopCamera();
     toast.info(`Loaded sample ledger photo: ${fileName}`);
   };
 
   const handleRunAiScanner = async () => {
     if (!previewUrl && !rawOcrText) {
-      toast.error('Please upload a register photo or paste raw OCR text');
+      toast.error('Please upload a register photo, open camera, or paste raw OCR text');
       return;
     }
 
@@ -395,7 +492,7 @@ export default function GrRegisterPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           items: selected,
-          source_scan_ref: selectedFile?.name || 'AI Scanned Ledger'
+          source_scan_ref: selectedFile?.name || 'AI Scanned Ledger Photo'
         })
       });
 
@@ -451,7 +548,7 @@ export default function GrRegisterPage() {
                 : 'bg-indigo-50 hover:bg-indigo-100 text-indigo-700'
             }`}
           >
-            <Sparkles size={14} /> AI Ledger Scanner
+            <Camera size={14} /> Open Camera to Scan
           </button>
 
           <button
@@ -537,7 +634,7 @@ export default function GrRegisterPage() {
               : 'border-transparent text-slate-500 hover:text-slate-900'
           }`}
         >
-          <Sparkles size={14} className="text-indigo-600" /> ✨ AI Ledger Scanner &amp; Importer
+          <Camera size={14} className="text-indigo-600" /> ✨ AI Camera &amp; Ledger Scanner
         </button>
 
         <button
@@ -837,34 +934,57 @@ export default function GrRegisterPage() {
         </>
       )}
 
-      {/* TAB 2: AI LEDGER SCANNER & IMPORTER (NEW) */}
+      {/* TAB 2: AI CAMERA & LEDGER SCANNER (NEW) */}
       {activeTab === 'scanner' && (
         <div className="space-y-6">
           {/* Header Banner */}
           <div className="p-6 bg-linear-to-r from-indigo-900 via-blue-900 to-slate-900 text-white rounded-3xl shadow-md space-y-2">
             <div className="flex items-center gap-2">
               <span className="p-2 rounded-xl bg-white/10 text-indigo-300">
-                <Sparkles size={20} />
+                <Camera size={20} />
               </span>
-              <h2 className="text-lg font-black tracking-tight">AI G.R. Ledger Scanner &amp; Verification Hub</h2>
+              <h2 className="text-lg font-black tracking-tight">Open Camera &amp; AI Ledger Scanner Hub</h2>
             </div>
             <p className="text-xs text-indigo-200 max-w-3xl leading-relaxed">
-              Upload any handwritten register photo or document. The neural OCR engine detects G.R. numbers, student names, and classes. You can review, edit, and confirm the extracted entries before committing them directly into the official G.R. Register ledger.
+              Snap a live photo of a handwritten register book with your device camera or upload an image. The neural OCR engine detects G.R. numbers, student names, and classes. You can review, edit, and confirm the extracted entries before committing them directly into the official G.R. Register ledger.
             </p>
           </div>
 
           {/* Scanner Input & Workflow Grid */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
             
-            {/* Left: Image Upload & Preview (5 cols) */}
+            {/* Left: Image Upload, Live Camera & Preview (5 cols) */}
             <div className="lg:col-span-5 space-y-4">
               <div className="bg-white p-5 rounded-3xl border border-slate-200 shadow-sm space-y-4">
                 <h3 className="font-bold text-slate-900 text-sm flex items-center gap-2">
-                  <UploadCloud size={16} className="text-indigo-600" />
-                  Step 1: Upload or Choose Ledger Photo
+                  <Camera size={16} className="text-indigo-600" />
+                  Step 1: Capture or Upload Ledger Photo
                 </h3>
 
-                {/* Upload Dropzone */}
+                {/* Camera Trigger Buttons */}
+                <div className="grid grid-cols-2 gap-2">
+                  <button
+                    onClick={isCameraActive ? stopCamera : startCamera}
+                    className={`py-3 px-4 rounded-2xl font-black text-xs flex items-center justify-center gap-2 shadow-sm transition-all cursor-pointer ${
+                      isCameraActive 
+                        ? 'bg-rose-600 hover:bg-rose-700 text-white shadow-rose-200' 
+                        : 'bg-indigo-600 hover:bg-indigo-700 text-white shadow-indigo-200'
+                    }`}
+                  >
+                    {isCameraActive ? <VideoOff size={16} /> : <Camera size={16} />}
+                    {isCameraActive ? 'Close Camera' : 'Open Camera to Scan'}
+                  </button>
+
+                  <button
+                    onClick={() => mobileCameraInputRef.current?.click()}
+                    className="py-3 px-4 bg-slate-900 hover:bg-slate-800 text-white rounded-2xl font-black text-xs flex items-center justify-center gap-2 shadow-sm transition-colors cursor-pointer"
+                  >
+                    <Camera size={16} />
+                    Mobile Camera
+                  </button>
+                </div>
+
+                {/* Hidden Native File and Mobile Camera Inputs */}
                 <input
                   type="file"
                   ref={fileInputRef}
@@ -872,17 +992,88 @@ export default function GrRegisterPage() {
                   accept="image/*"
                   className="hidden"
                 />
+                <input
+                  type="file"
+                  ref={mobileCameraInputRef}
+                  onChange={handleFileSelect}
+                  accept="image/*"
+                  capture="environment"
+                  className="hidden"
+                />
 
-                <div
-                  onClick={() => fileInputRef.current?.click()}
-                  className="border-2 border-dashed border-slate-200 hover:border-indigo-500 bg-slate-50/50 hover:bg-indigo-50/30 rounded-2xl p-6 text-center cursor-pointer transition-colors space-y-2"
-                >
-                  <UploadCloud size={32} className="mx-auto text-indigo-500" />
-                  <div>
-                    <p className="text-xs font-black text-slate-800">Click to upload handwritten register photo</p>
-                    <p className="text-[10px] text-slate-400">Supports JPEG, PNG, WebP (High resolution recommended)</p>
+                {/* LIVE CAMERA VIEWFINDER PANEL */}
+                {isCameraActive && (
+                  <div className="relative rounded-2xl overflow-hidden border-2 border-indigo-500 bg-black aspect-4/3 flex items-center justify-center shadow-lg">
+                    <video
+                      ref={videoRef}
+                      playsInline
+                      muted
+                      autoPlay
+                      className="w-full h-full object-cover"
+                    />
+
+                    {/* Viewfinder Target Framing Guides */}
+                    <div className="absolute inset-4 border-2 border-dashed border-white/60 rounded-xl pointer-events-none flex flex-col justify-between p-3">
+                      <div className="flex justify-between text-[10px] font-mono font-bold text-white bg-black/50 px-2 py-0.5 rounded-md w-fit">
+                        LEDGER SCANNER FRAME
+                      </div>
+                      <div className="text-center text-[11px] font-bold text-white/90 bg-black/60 backdrop-blur-xs py-1 px-3 rounded-lg mx-auto">
+                        Hold document steady &amp; click Capture
+                      </div>
+                    </div>
+
+                    {/* Camera Control Overlay */}
+                    <div className="absolute bottom-3 left-0 right-0 flex items-center justify-center gap-3 z-20">
+                      <button
+                        onClick={flipCamera}
+                        className="p-2.5 rounded-full bg-black/60 text-white hover:bg-black/80 transition-colors cursor-pointer"
+                        title="Flip Camera"
+                      >
+                        <SwitchCamera size={18} />
+                      </button>
+
+                      <button
+                        onClick={captureCameraFrame}
+                        className="px-6 py-2.5 rounded-full bg-white text-slate-950 font-black text-xs flex items-center gap-2 hover:bg-slate-100 shadow-xl hover:scale-105 active:scale-95 transition-all cursor-pointer"
+                      >
+                        <Camera size={16} className="text-indigo-600" />
+                        Snap Photo
+                      </button>
+
+                      <button
+                        onClick={stopCamera}
+                        className="p-2.5 rounded-full bg-black/60 text-white hover:bg-black/80 transition-colors cursor-pointer"
+                        title="Cancel"
+                      >
+                        <X size={18} />
+                      </button>
+                    </div>
                   </div>
-                </div>
+                )}
+
+                {/* Hidden Canvas for Frame Grab */}
+                <canvas ref={canvasRef} className="hidden" />
+
+                {cameraError && (
+                  <div className="p-3 bg-rose-50 border border-rose-200 rounded-xl text-rose-800 text-xs font-semibold flex items-center gap-2">
+                    <AlertCircle size={16} className="shrink-0" />
+                    <span>{cameraError}</span>
+                  </div>
+                )}
+
+                {/* Upload Dropzone */}
+                {!isCameraActive && (
+                  <div
+                    onClick={() => fileInputRef.current?.click()}
+                    className="border-2 border-dashed border-slate-200 hover:border-indigo-500 bg-slate-50/50 hover:bg-indigo-50/30 rounded-2xl p-4 text-center cursor-pointer transition-colors space-y-1.5"
+                  >
+                    <UploadCloud size={26} className="mx-auto text-indigo-500" />
+                    <div>
+                      <p className="text-xs font-black text-slate-800">Or click to browse register image file</p>
+                      <p className="text-[10px] text-slate-400">JPEG, PNG, WebP</p>
+                    </div>
+                  </div>
+                )}
 
                 {/* Quick Sample Selector */}
                 <div className="space-y-2">
@@ -906,15 +1097,15 @@ export default function GrRegisterPage() {
                 </div>
 
                 {/* Image Preview Box */}
-                {previewUrl && (
-                  <div className="relative rounded-2xl overflow-hidden border border-slate-200 bg-slate-950 max-h-64 flex items-center justify-center">
+                {previewUrl && !isCameraActive && (
+                  <div className="relative rounded-2xl overflow-hidden border border-slate-200 bg-slate-950 max-h-60 flex items-center justify-center">
                     <img
                       src={previewUrl}
                       alt="Ledger Preview"
-                      className="max-h-64 object-contain"
+                      className="max-h-60 object-contain"
                     />
-                    <div className="absolute top-2 right-2 px-2 py-1 rounded-lg bg-black/70 text-white text-[10px] font-mono font-bold">
-                      Ready to Scan
+                    <div className="absolute top-2 right-2 px-2 py-1 rounded-lg bg-black/70 text-white text-[10px] font-mono font-bold flex items-center gap-1">
+                      <CheckCircle2 size={12} className="text-emerald-400" /> Image Ready
                     </div>
                   </div>
                 )}
@@ -970,7 +1161,7 @@ export default function GrRegisterPage() {
                     <p className="text-xs text-slate-500">
                       {scannedCandidates.length > 0
                         ? `${scannedCandidates.filter(c => c.selected).length} of ${scannedCandidates.length} entries selected for insertion`
-                        : 'Upload an image and run scan to see extracted records'}
+                        : 'Capture photo or upload an image and run scan to see extracted records'}
                     </p>
                   </div>
 
@@ -995,10 +1186,10 @@ export default function GrRegisterPage() {
                 {/* Candidate Results Table */}
                 {scannedCandidates.length === 0 ? (
                   <div className="p-12 text-center border-2 border-dashed border-slate-200 rounded-2xl space-y-2">
-                    <Sparkles size={36} className="mx-auto text-indigo-300" />
+                    <Camera size={36} className="mx-auto text-indigo-300" />
                     <h4 className="font-bold text-slate-700 text-sm">No Scanned Results Yet</h4>
                     <p className="text-xs text-slate-400 max-w-sm mx-auto">
-                      Upload a ledger photograph or choose one of the sample ledger scans on the left, then click &quot;Run AI Ledger Scan&quot;.
+                      Use <strong>Open Camera to Scan</strong> or select a sample ledger photo on the left, then click &quot;Run AI Ledger Scan&quot;.
                     </p>
                   </div>
                 ) : (
