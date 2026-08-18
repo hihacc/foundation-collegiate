@@ -1,13 +1,14 @@
 import fs from 'fs';
 import path from 'path';
 import { WhatsAppConversationRecord, WhatsAppMessageRecord, normalizePhone, matchContactFromDatabase, formatDisplayPhone } from './enterpriseDb';
-import { supabase } from '@/lib/supabase/client';
+import { whatsappSupabase } from './supabaseClient';
+import { supabase as academicSupabase } from '@/lib/supabase/client';
 
 const DATA_DIR = path.join(process.cwd(), 'data', 'whatsapp');
 const CONVERSATIONS_FILE = path.join(DATA_DIR, 'conversations.json');
 const MESSAGES_FILE = path.join(DATA_DIR, 'messages.json');
 
-// Ensure storage directory and files exist
+// Ensure backup storage directory and files exist
 function ensureStorage() {
   try {
     if (!fs.existsSync(DATA_DIR)) {
@@ -20,13 +21,31 @@ function ensureStorage() {
       fs.writeFileSync(MESSAGES_FILE, JSON.stringify([], null, 2), 'utf-8');
     }
   } catch (e) {
-    console.error('[WHATSAPP_STORE] Failed to initialize storage files:', e);
+    console.error('[WHATSAPP_STORE] Storage init:', e);
   }
 }
 
-// Read All Conversations
-export function getAllConversations(): WhatsAppConversationRecord[] {
+// 1. Read All Conversations (Supabase Database Source of Truth)
+export async function getAllConversations(): Promise<WhatsAppConversationRecord[]> {
   ensureStorage();
+  try {
+    const { data, error } = await whatsappSupabase
+      .from('whatsapp_conversations')
+      .select('*')
+      .order('last_message_at', { ascending: false });
+
+    if (!error && Array.isArray(data) && data.length > 0) {
+      // Sync to local cache
+      try {
+        fs.writeFileSync(CONVERSATIONS_FILE, JSON.stringify(data, null, 2), 'utf-8');
+      } catch {}
+      return data;
+    }
+  } catch (e) {
+    console.warn('[WHATSAPP_DB] Supabase query notice, falling back to local store:', e);
+  }
+
+  // Fallback to local cache
   try {
     const raw = fs.readFileSync(CONVERSATIONS_FILE, 'utf-8');
     const convs: WhatsAppConversationRecord[] = JSON.parse(raw);
@@ -36,9 +55,24 @@ export function getAllConversations(): WhatsAppConversationRecord[] {
   }
 }
 
-// Read Messages by Conversation ID
-export function getMessagesByConversationId(conversationId: string): WhatsAppMessageRecord[] {
+// 2. Read Messages by Conversation ID (Supabase Database Source of Truth)
+export async function getMessagesByConversationId(conversationId: string): Promise<WhatsAppMessageRecord[]> {
   ensureStorage();
+  try {
+    const { data, error } = await whatsappSupabase
+      .from('whatsapp_messages')
+      .select('*')
+      .eq('conversation_id', conversationId)
+      .order('created_at', { ascending: true });
+
+    if (!error && Array.isArray(data) && data.length > 0) {
+      return data;
+    }
+  } catch (e) {
+    console.warn('[WHATSAPP_DB] Supabase messages notice, falling back to local store:', e);
+  }
+
+  // Fallback to local cache
   try {
     const raw = fs.readFileSync(MESSAGES_FILE, 'utf-8');
     const allMsgs: WhatsAppMessageRecord[] = JSON.parse(raw);
@@ -50,11 +84,27 @@ export function getMessagesByConversationId(conversationId: string): WhatsAppMes
   }
 }
 
-// Save or Update Conversation
-export function saveConversation(conv: WhatsAppConversationRecord): WhatsAppConversationRecord {
+// 3. Save or Update Conversation in Supabase
+export async function saveConversation(conv: WhatsAppConversationRecord): Promise<WhatsAppConversationRecord> {
   ensureStorage();
   try {
-    const convs = getAllConversations();
+    const { data, error } = await whatsappSupabase
+      .from('whatsapp_conversations')
+      .upsert(conv, { onConflict: 'id' })
+      .select()
+      .maybeSingle();
+
+    if (!error && data) {
+      return data;
+    }
+  } catch (e) {
+    console.error('[WHATSAPP_DB] Save conversation error:', e);
+  }
+
+  // Save to local file
+  try {
+    const raw = fs.readFileSync(CONVERSATIONS_FILE, 'utf-8');
+    const convs: WhatsAppConversationRecord[] = JSON.parse(raw);
     const idx = convs.findIndex(c => c.id === conv.id || c.normalized_phone === conv.normalized_phone);
 
     if (idx >= 0) {
@@ -67,95 +117,89 @@ export function saveConversation(conv: WhatsAppConversationRecord): WhatsAppConv
       return conv;
     }
   } catch (e) {
-    console.error('[WHATSAPP_STORE] Error saving conversation:', e);
+    console.error('[WHATSAPP_STORE] File write notice:', e);
     return conv;
   }
 }
 
-// Append Message and Update Conversation Metadata
-export function appendMessage(msg: WhatsAppMessageRecord): WhatsAppMessageRecord {
+// 4. Append Message and Update Conversation Metadata
+export async function appendMessage(msg: WhatsAppMessageRecord): Promise<WhatsAppMessageRecord> {
   ensureStorage();
+
+  // Save to Supabase
+  try {
+    await whatsappSupabase
+      .from('whatsapp_messages')
+      .upsert(msg, { onConflict: 'id' });
+
+    // Update conversation in Supabase
+    await whatsappSupabase
+      .from('whatsapp_conversations')
+      .update({
+        last_message_text: msg.content,
+        last_message_at: msg.created_at,
+        last_message_direction: msg.direction,
+        updated_at: new Date().toISOString()
+      })
+      .eq('id', msg.conversation_id);
+  } catch (e) {
+    console.error('[WHATSAPP_DB] Append message DB notice:', e);
+  }
+
+  // Save to local cache
   try {
     const raw = fs.readFileSync(MESSAGES_FILE, 'utf-8');
     const allMsgs: WhatsAppMessageRecord[] = JSON.parse(raw);
 
-    // Prevent duplicate provider message ID
-    if (msg.provider_message_id) {
-      const exists = allMsgs.some(m => m.provider_message_id === msg.provider_message_id);
-      if (exists) {
-        console.log(`[WHATSAPP_STORE] Deduplicated message provider ID: ${msg.provider_message_id}`);
-        return msg;
-      }
+    const exists = allMsgs.some(m => m.id === msg.id || (msg.provider_message_id && m.provider_message_id === msg.provider_message_id));
+    if (!exists) {
+      allMsgs.push(msg);
+      fs.writeFileSync(MESSAGES_FILE, JSON.stringify(allMsgs, null, 2), 'utf-8');
     }
-
-    allMsgs.push(msg);
-    fs.writeFileSync(MESSAGES_FILE, JSON.stringify(allMsgs, null, 2), 'utf-8');
-
-    // Update corresponding conversation
-    const convs = getAllConversations();
-    const convIdx = convs.findIndex(c => c.id === msg.conversation_id);
-
-    if (convIdx >= 0) {
-      convs[convIdx].last_message_text = msg.content;
-      convs[convIdx].last_message_at = msg.created_at;
-      convs[convIdx].last_message_direction = msg.direction;
-      if (msg.direction === 'inbound') {
-        convs[convIdx].unread_count = (convs[convIdx].unread_count || 0) + 1;
-        if (convs[convIdx].status === 'resolved' || convs[convIdx].status === 'archived') {
-          convs[convIdx].status = 'open';
-        }
-      }
-      fs.writeFileSync(CONVERSATIONS_FILE, JSON.stringify(convs, null, 2), 'utf-8');
-    }
-
-    return msg;
-  } catch (e) {
-    console.error('[WHATSAPP_STORE] Error appending message:', e);
-    return msg;
-  }
-}
-
-// Find or Create Conversation for a Phone Number with Full Contact/Student Matching
-export async function findOrCreateConversation(rawPhone: string, initialName?: string): Promise<WhatsAppConversationRecord> {
-  const normPhone = normalizePhone(rawPhone);
-  if (!normPhone) {
-    throw new Error('Invalid phone number format');
-  }
-
-  const existingConvs = getAllConversations();
-  const existing = existingConvs.find(c => c.normalized_phone === normPhone);
-  if (existing) {
-    return existing;
-  }
-
-  // Deep match against live student and contact database
-  const match = await matchContactFromDatabase(normPhone);
-
-  const newConv: WhatsAppConversationRecord = {
-    id: `conv_${normPhone}`,
-    phone: formatDisplayPhone(rawPhone),
-    normalized_phone: normPhone,
-    contact_name: match.contactName || initialName || formatDisplayPhone(rawPhone),
-    student_id: match.studentId,
-    student_name: match.studentName,
-    student_roll: match.studentRoll,
-    student_class: match.studentClass,
-    relationship: match.relationship || 'Inquiry',
-    status: 'open',
-    priority: 'normal',
-    tags: match.role ? [match.role] : ['New Contact'],
-    unread_count: 0,
-    last_message_text: 'Started conversation',
-    last_message_at: new Date().toISOString(),
-    last_message_direction: 'outbound'
-  };
-
-  saveConversation(newConv);
-
-  // Attempt Supabase insert in background
-  try {
-    await supabase.from('whatsapp_conversations').insert([newConv]);
   } catch {}
 
+  return msg;
+}
+
+// 5. Find or Create Conversation with Realtime Student Matching
+export async function findOrCreateConversation(rawPhone: string, contactName?: string): Promise<WhatsAppConversationRecord> {
+  const normalized = normalizePhone(rawPhone);
+  const convId = `conv_${normalized}`;
+
+  // Check Supabase
+  try {
+    const { data: existing } = await whatsappSupabase
+      .from('whatsapp_conversations')
+      .select('*')
+      .eq('normalized_phone', normalized)
+      .maybeSingle();
+
+    if (existing) return existing;
+  } catch {}
+
+  // Match student from academic database
+  const match = await matchContactFromDatabase(normalized);
+
+  const newConv: WhatsAppConversationRecord = {
+    id: convId,
+    phone: formatDisplayPhone(rawPhone),
+    normalized_phone: normalized,
+    contact_name: contactName || match?.contactName || (match?.studentName ? `Parent of ${match.studentName}` : 'Unknown WhatsApp Contact'),
+    relationship: match?.relationship || 'Inquiry',
+    student_roll: match?.studentRoll || undefined,
+    student_name: match?.studentName || undefined,
+    student_class: match?.studentClass || undefined,
+    status: 'open',
+    priority: 'normal',
+    tags: match?.studentName ? ['Student', match.relationship] : ['Inquiry'],
+    unread_count: 0,
+    last_message_text: '',
+    last_message_at: new Date().toISOString(),
+    last_message_direction: 'inbound',
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString()
+  };
+
+  await saveConversation(newConv);
   return newConv;
 }

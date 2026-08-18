@@ -37,10 +37,10 @@ export async function GET(req: NextRequest) {
 
   // 2. Persistent Database & Store
   try {
-    const convs = getAllConversations();
+    const convs = await getAllConversations();
     results['Persistent Store'] = {
       status: 'PASS',
-      message: `Server persistent store active (${convs.length} conversations loaded)`
+      message: `Database store active (${convs.length} conversations loaded)`
     };
   } catch (e: any) {
     results['Persistent Store'] = {

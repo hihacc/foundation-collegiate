@@ -20,6 +20,7 @@ import {
   formatDisplayPhone, 
   normalizePhone 
 } from '@/lib/whatsapp/enterpriseDb';
+import { whatsappSupabase } from '@/lib/whatsapp/supabaseClient';
 import Button from '@/components/ui/Button';
 
 export default function WhatsAppInboxPage() {
@@ -138,8 +139,36 @@ export default function WhatsAppInboxPage() {
       .catch(() => {});
   }, [fetchConversations]);
 
-  // Background Polling every 5 seconds without resetting loading spinner
+  // Live Supabase Realtime Subscription + Background Polling Fallback
   useEffect(() => {
+    // 1. Supabase Realtime Channel
+    const channel = whatsappSupabase
+      .channel('whatsapp_live_inbox')
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'whatsapp_messages' },
+        (payload: any) => {
+          if (payload.new && payload.new.conversation_id === selectedConvId) {
+            setMessages(prev => {
+              const exists = prev.some(m => m.id === payload.new.id);
+              if (exists) return prev;
+              return [...prev, payload.new as WhatsAppMessageRecord];
+            });
+            setTimeout(() => messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' }), 100);
+          }
+          fetchConversations(false);
+        }
+      )
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'whatsapp_conversations' },
+        () => {
+          fetchConversations(false);
+        }
+      )
+      .subscribe();
+
+    // 2. Fallback Polling every 5 seconds
     const interval = setInterval(() => {
       fetch('/api/admin/whatsapp/conversations')
         .then(r => r.json())
@@ -165,8 +194,11 @@ export default function WhatsAppInboxPage() {
       }
     }, 5000);
 
-    return () => clearInterval(interval);
-  }, [selectedConvId]);
+    return () => {
+      whatsappSupabase.removeChannel(channel);
+      clearInterval(interval);
+    };
+  }, [selectedConvId, fetchConversations]);
 
   // Selected Conversation Object
   const currentConv = useMemo(() => {

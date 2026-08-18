@@ -18,7 +18,7 @@ export async function GET(req: NextRequest) {
     const search = (searchParams.get('search') || '').toLowerCase().trim();
     const filter = (searchParams.get('filter') || 'all').toLowerCase();
 
-    let convs = getAllConversations();
+    let convs = await getAllConversations();
 
     // Filter by Tab
     if (filter === 'unread') {

@@ -1,4 +1,5 @@
 import { supabase } from '@/lib/supabase/client';
+import { whatsappSupabase } from './supabaseClient';
 import { getStoredData, setStoredData } from '@/lib/utils/storage';
 
 export interface WhatsAppContactRecord {
@@ -240,7 +241,7 @@ export async function processInboundWhatsAppMessage(payload: {
 
   // Try finding existing conversation in Supabase
   try {
-    const { data: convData } = await supabase
+    const { data: convData } = await whatsappSupabase
       .from('whatsapp_conversations')
       .select('*')
       .eq('normalized_phone', normPhone)
@@ -270,7 +271,7 @@ export async function processInboundWhatsAppMessage(payload: {
     };
 
     try {
-      await supabase.from('whatsapp_conversations').update(updatePayload).eq('id', conversationId);
+      await whatsappSupabase.from('whatsapp_conversations').update(updatePayload).eq('id', conversationId);
     } catch {}
   } else {
     // Create new conversation
@@ -296,7 +297,7 @@ export async function processInboundWhatsAppMessage(payload: {
     };
 
     try {
-      await supabase.from('whatsapp_conversations').insert([newConv]);
+      await whatsappSupabase.from('whatsapp_conversations').insert([newConv]);
     } catch {}
   }
 
@@ -322,13 +323,13 @@ export async function processInboundWhatsAppMessage(payload: {
   };
 
   try {
-    await supabase.from('whatsapp_messages').insert([newMsg]);
+    await whatsappSupabase.from('whatsapp_messages').insert([newMsg]);
   } catch {}
 
   // If media exists, insert attachment record
   if (payload.mediaUrl && payload.mediaFilename) {
     try {
-      await supabase.from('whatsapp_attachments').insert([{
+      await whatsappSupabase.from('whatsapp_attachments').insert([{
         id: `att_${Date.now()}`,
         message_id: messageId,
         filename: payload.mediaFilename,

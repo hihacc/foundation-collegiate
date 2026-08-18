@@ -20,14 +20,14 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ success: false, error: 'conversationId parameter is required' }, { status: 400 });
     }
 
-    const messages = getMessagesByConversationId(conversationId);
+    const messages = await getMessagesByConversationId(conversationId);
 
     // Reset unread count for this conversation
-    const convs = getAllConversations();
+    const convs = await getAllConversations();
     const conv = convs.find(c => c.id === conversationId);
     if (conv && conv.unread_count > 0) {
       conv.unread_count = 0;
-      saveConversation(conv);
+      await saveConversation(conv);
     }
 
     return NextResponse.json({
@@ -61,7 +61,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ success: false, error: 'conversationId is required' }, { status: 400 });
     }
 
-    const convs = getAllConversations();
+    const convs = await getAllConversations();
     const conv = convs.find(c => c.id === conversationId);
     if (!conv) {
       return NextResponse.json({ success: false, error: 'Conversation not found' }, { status: 404 });
@@ -96,7 +96,7 @@ export async function POST(req: NextRequest) {
       created_at: new Date().toISOString()
     };
 
-    appendMessage(newMsg);
+    await appendMessage(newMsg);
 
     // If not internal note, dispatch to WhatsApp provider service
     if (!isInternalNote) {

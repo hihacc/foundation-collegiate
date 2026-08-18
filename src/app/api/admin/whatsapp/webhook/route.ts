@@ -109,7 +109,7 @@ export async function POST(req: NextRequest) {
           media_size: mediaSize,
           created_at: new Date().toISOString()
         };
-        appendMessage(msgRecord);
+        await appendMessage(msgRecord);
         console.log(`[WHATSAPP][DB] conversation_id=${conv.id} message_id=${msgRecord.id}`);
       } catch (e: any) {
         console.error('[WHATSAPP_WEBHOOK] Persistent store error:', e.message);

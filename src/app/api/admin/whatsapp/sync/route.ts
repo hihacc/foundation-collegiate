@@ -43,7 +43,7 @@ export async function POST(req: NextRequest) {
           created_at: em.createdAt || em.sentAt || new Date().toISOString()
         };
 
-        appendMessage(msgRecord);
+        await appendMessage(msgRecord);
         syncedCount++;
       } catch (e: any) {
         console.warn('[SYNC] Error syncing individual message:', e.message);
