@@ -12,7 +12,7 @@ import {
   Trash2, UserCheck, BookOpen, DollarSign, Calendar, Flame,
   FileSpreadsheet, Film, Music, ArrowLeft, Plus, Eye, Play,
   CornerDownRight, Lock, MessageCircle, Activity, Info, Users,
-  CheckCircle2, AlertTriangle
+  CheckCircle2, AlertTriangle, UserPlus
 } from 'lucide-react';
 import { 
   WhatsAppConversationRecord, 
@@ -20,7 +20,6 @@ import {
   formatDisplayPhone, 
   normalizePhone 
 } from '@/lib/whatsapp/enterpriseDb';
-import { ALL_IMPORTED_STUDENT_CONTACTS } from '@/lib/whatsapp/importedContacts';
 import Button from '@/components/ui/Button';
 
 export default function WhatsAppInboxPage() {
@@ -31,7 +30,7 @@ export default function WhatsAppInboxPage() {
   const [messagesLoading, setMessagesLoading] = useState(false);
   const [syncing, setSyncing] = useState(false);
   const [search, setSearch] = useState('');
-  const [filterTab, setFilterTab] = useState<'all' | 'unread' | 'students' | 'parents' | 'inquiries' | 'faculty' | 'unknown' | 'archived'>('all');
+  const [filterTab, setFilterTab] = useState<'all' | 'unread' | 'students' | 'parents' | 'inquiries' | 'unknown'>('all');
 
   // Mobile View Toggle: 'list' | 'chat' | 'info'
   const [mobileView, setMobileView] = useState<'list' | 'chat' | 'info'>('list');
@@ -80,32 +79,46 @@ export default function WhatsAppInboxPage() {
   const [newChatMatchedStudent, setNewChatMatchedStudent] = useState<any>(null);
   const [newChatStarting, setNewChatStarting] = useState(false);
 
-  // All Students list for autocomplete in New Chat
+  // All Students list for directory matching
   const [enrolledStudents, setEnrolledStudents] = useState<any[]>([]);
 
   // 1. Fetch Conversations from Server API
-  const fetchConversations = useCallback(async (autoSelectFirst = false) => {
+  const fetchConversations = useCallback(async (autoSelectIfNone = false) => {
     try {
-      setLoading(true);
       const res = await fetch('/api/admin/whatsapp/conversations');
       const data = await res.json();
 
       if (data.success && Array.isArray(data.data)) {
         setConversations(data.data);
-        if (autoSelectFirst && data.data.length > 0 && !selectedConvId) {
-          setSelectedConvId(data.data[0].id);
+        if (autoSelectIfNone && data.data.length > 0) {
+          setSelectedConvId(prev => prev || data.data[0].id);
         }
-      } else {
-        setConversations([]);
       }
     } catch (err) {
       console.warn('Conversations fetch notice:', err);
     } finally {
       setLoading(false);
     }
-  }, [selectedConvId]);
+  }, []);
 
-  // Initial Load & Load Enrolled Students for Directory
+  // 2. Fetch Messages for Selected Conversation
+  const fetchMessages = useCallback(async (convId: string) => {
+    setMessagesLoading(true);
+    try {
+      const res = await fetch(`/api/admin/whatsapp/messages?conversationId=${convId}`);
+      const data = await res.json();
+      if (data.success && Array.isArray(data.data)) {
+        setMessages(data.data);
+      }
+    } catch {
+      setMessages([]);
+    } finally {
+      setMessagesLoading(false);
+      setTimeout(() => messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' }), 100);
+    }
+  }, []);
+
+  // Initial Load + Enrolled Students List + Initial Sync
   useEffect(() => {
     fetchConversations(true);
 
@@ -117,41 +130,44 @@ export default function WhatsAppInboxPage() {
     };
     loadStudents();
 
-    // Auto sync from WhatsApp microservice on load
-    fetch('/api/admin/whatsapp/sync', { method: 'POST' }).catch(() => {});
-  }, [fetchConversations]);
+    // Trigger initial sync with WhatsApp microservice
+    fetch('/api/admin/whatsapp/sync', { method: 'POST' })
+      .then(() => fetchConversations(true))
+      .catch(() => {});
+
+    // Realtime Polling Interval every 5 seconds
+    const interval = setInterval(() => {
+      fetchConversations(false);
+      if (selectedConvId) {
+        fetch(`/api/admin/whatsapp/messages?conversationId=${selectedConvId}`)
+          .then(r => r.json())
+          .then(d => {
+            if (d.success && Array.isArray(d.data)) {
+              setMessages(d.data);
+            }
+          })
+          .catch(() => {});
+      }
+    }, 5000);
+
+    return () => clearInterval(interval);
+  }, [fetchConversations, selectedConvId]);
 
   // Selected Conversation Object
   const currentConv = useMemo(() => {
-    return conversations.find(c => c.id === selectedConvId) || null;
+    if (!selectedConvId) return conversations[0] || null;
+    return conversations.find(c => c.id === selectedConvId) || conversations[0] || null;
   }, [conversations, selectedConvId]);
 
-  // 2. Fetch Messages for Selected Conversation
-  const fetchMessages = useCallback(async (convId: string) => {
-    setMessagesLoading(true);
-    try {
-      const res = await fetch(`/api/admin/whatsapp/messages?conversationId=${convId}`);
-      const data = await res.json();
-      if (data.success && Array.isArray(data.data)) {
-        setMessages(data.data);
-      } else {
-        setMessages([]);
-      }
-    } catch {
-      setMessages([]);
-    } finally {
-      setMessagesLoading(false);
-      setTimeout(() => messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' }), 100);
-    }
-  }, []);
-
+  // When selectedConvId changes, fetch its messages
   useEffect(() => {
     if (selectedConvId) {
       fetchMessages(selectedConvId);
-      // If on mobile, switch to chat view
       setMobileView('chat');
+    } else if (conversations.length > 0) {
+      setSelectedConvId(conversations[0].id);
     }
-  }, [selectedConvId, fetchMessages]);
+  }, [selectedConvId, fetchMessages, conversations]);
 
   // 3. Fetch Context ERP Data for Right Drawer
   useEffect(() => {
@@ -196,6 +212,34 @@ export default function WhatsAppInboxPage() {
     fetchStudentErp();
   }, [currentConv, enrolledStudents]);
 
+  // Direct 1-Click Open Chat for any student from Search
+  const handleOpenChatWithStudent = async (st: any) => {
+    const rawPhone = st.phone || st.parent_phone || st.secondary_phone;
+    const norm = normalizePhone(rawPhone);
+    if (!norm) return toast.error(`No valid phone number registered for ${st.name}`);
+
+    try {
+      const res = await fetch('/api/admin/whatsapp/conversations', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          phone: norm,
+          name: `${st.name} (${st.class_name || 'Student'})`
+        })
+      });
+      const data = await res.json();
+      if (data.success && data.data) {
+        toast.success(`Chat opened with ${st.name}`);
+        setSearch('');
+        await fetchConversations();
+        setSelectedConvId(data.data.id);
+        setMobileView('chat');
+      }
+    } catch (e: any) {
+      toast.error('Could not open chat: ' + e.message);
+    }
+  };
+
   // Live Auto-matching student in New Chat modal when typing phone number
   useEffect(() => {
     if (!newChatPhone || newChatPhone.length < 5) {
@@ -229,11 +273,11 @@ export default function WhatsAppInboxPage() {
       const res = await fetch('/api/admin/whatsapp/sync', { method: 'POST' });
       const data = await res.json();
       if (data.success) {
-        toast.success(`Synced ${data.syncedCount || 0} messages with WhatsApp service!`);
-        fetchConversations();
+        toast.success(`Synced with WhatsApp service!`);
+        await fetchConversations(true);
         if (selectedConvId) fetchMessages(selectedConvId);
       } else {
-        toast.error('Sync failed: ' + (data.error || 'Unknown error'));
+        toast.error('Sync notice: ' + (data.error || 'Sync service responded'));
       }
     } catch (e: any) {
       toast.error('Sync error: ' + e.message);
@@ -335,7 +379,7 @@ export default function WhatsAppInboxPage() {
         if (isInternalNote) {
           toast.info('Internal staff note saved');
         } else {
-          toast.success('Message sent to WhatsApp!');
+          toast.success('Message dispatched to WhatsApp!');
         }
         fetchConversations();
       } else {
@@ -384,7 +428,7 @@ export default function WhatsAppInboxPage() {
   // Start New Chat Submit
   const handleStartNewChat = async () => {
     if (!newChatPhone.trim()) {
-      return toast.error('Please enter an 11-digit phone number or pick a student');
+      return toast.error('Please enter an 11-digit phone number or select a student');
     }
 
     const norm = normalizePhone(newChatPhone);
@@ -428,13 +472,14 @@ export default function WhatsAppInboxPage() {
   // Filtered Conversations
   const filteredConversations = useMemo(() => {
     return conversations.filter(c => {
-      const cleanQ = search.toLowerCase();
+      const cleanQ = search.toLowerCase().trim();
       const matchesSearch = 
         !search ||
         c.contact_name.toLowerCase().includes(cleanQ) ||
         (c.student_name && c.student_name.toLowerCase().includes(cleanQ)) ||
         (c.student_roll && c.student_roll.toLowerCase().includes(cleanQ)) ||
         c.phone.includes(search) ||
+        c.normalized_phone.includes(search) ||
         (c.last_message_text && c.last_message_text.toLowerCase().includes(cleanQ));
 
       if (!matchesSearch) return false;
@@ -443,13 +488,24 @@ export default function WhatsAppInboxPage() {
       if (filterTab === 'students' && c.relationship !== 'Student' && !c.tags?.includes('Student')) return false;
       if (filterTab === 'parents' && c.relationship !== 'Father' && c.relationship !== 'Mother' && c.relationship !== 'Guardian') return false;
       if (filterTab === 'inquiries' && c.relationship !== 'Inquiry' && !c.tags?.includes('Inquiry')) return false;
-      if (filterTab === 'faculty' && c.relationship !== 'Faculty') return false;
       if (filterTab === 'unknown' && (c.student_name || c.relationship !== 'Inquiry')) return false;
-      if (filterTab === 'archived' && c.status !== 'archived') return false;
 
       return true;
     });
   }, [conversations, search, filterTab]);
+
+  // Matching Students from Directory when searching
+  const matchingStudentsFromDirectory = useMemo(() => {
+    if (!search.trim() || search.length < 2) return [];
+    const q = search.toLowerCase().trim();
+    return enrolledStudents.filter(s => 
+      s.name.toLowerCase().includes(q) ||
+      (s.roll_number && s.roll_number.toLowerCase().includes(q)) ||
+      (s.class_name && s.class_name.toLowerCase().includes(q)) ||
+      (s.phone && s.phone.includes(q)) ||
+      (s.parent_phone && s.parent_phone.includes(q))
+    ).slice(0, 5);
+  }, [enrolledStudents, search]);
 
   return (
     <div className="h-[calc(100vh-5rem)] flex flex-col bg-slate-50 overflow-hidden rounded-3xl border border-slate-200 shadow-sm font-sans">
@@ -507,7 +563,7 @@ export default function WhatsAppInboxPage() {
                 type="text"
                 value={search}
                 onChange={e => setSearch(e.target.value)}
-                placeholder="Search name, roll, or phone..."
+                placeholder="Search name, roll, or phone (e.g. Asif)..."
                 className="w-full pl-9 pr-4 py-2 bg-slate-50 border border-slate-200 text-slate-900 rounded-xl text-xs outline-none focus:ring-2 focus:ring-emerald-500 font-medium"
               />
               {search && (
@@ -535,15 +591,42 @@ export default function WhatsAppInboxPage() {
             </div>
           </div>
 
-          {/* Conversations List Scroll */}
+          {/* Conversations List & Directory Search Matches */}
           <div className="flex-1 overflow-y-auto divide-y divide-slate-100">
+            
+            {/* If search active and matched students from directory, show them on top */}
+            {matchingStudentsFromDirectory.length > 0 && (
+              <div className="p-3 bg-emerald-50/70 border-b border-emerald-100 space-y-2">
+                <div className="text-[10px] font-bold uppercase text-emerald-800 tracking-wider flex items-center gap-1">
+                  <Users size={12} /> Students in Directory Matching "{search}":
+                </div>
+                <div className="space-y-1.5">
+                  {matchingStudentsFromDirectory.map(st => (
+                    <button
+                      key={st.id}
+                      onClick={() => handleOpenChatWithStudent(st)}
+                      className="w-full p-2 bg-white hover:bg-emerald-100/60 rounded-xl border border-emerald-200 text-left flex items-center justify-between gap-2 text-xs transition-colors cursor-pointer"
+                    >
+                      <div className="truncate">
+                        <div className="font-bold text-slate-900 truncate">🎓 {st.name}</div>
+                        <div className="text-[10px] text-slate-500">{st.class_name} · Roll: {st.roll_number}</div>
+                      </div>
+                      <span className="px-2 py-1 rounded-lg bg-emerald-600 text-white text-[10px] font-bold shrink-0 flex items-center gap-1">
+                        <MessageSquare size={10} /> Chat
+                      </span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+
             {loading ? (
               [...Array(4)].map((_, i) => <div key={i} className="h-16 bg-slate-100 animate-pulse m-2 rounded-2xl" />)
-            ) : filteredConversations.length === 0 ? (
+            ) : filteredConversations.length === 0 && matchingStudentsFromDirectory.length === 0 ? (
               <div className="p-8 text-center text-slate-400 text-xs space-y-3">
                 <MessageSquare size={32} className="mx-auto text-slate-300" />
-                <p className="font-semibold text-slate-600">No conversations found</p>
-                <p className="text-[11px] max-w-xs mx-auto">Click "+ New" above to start messaging a student or parent, or send a WhatsApp message to +92 333 3439458.</p>
+                <p className="font-semibold text-slate-600">No active conversations found</p>
+                <p className="text-[11px] max-w-xs mx-auto">Click "+ New" above to start messaging a student or parent, or search any student name in the search box.</p>
                 <Button
                   onClick={() => setNewChatModalOpen(true)}
                   className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl mx-auto"
@@ -553,7 +636,7 @@ export default function WhatsAppInboxPage() {
               </div>
             ) : (
               filteredConversations.map(conv => {
-                const isSelected = selectedConvId === conv.id;
+                const isSelected = currentConv?.id === conv.id;
                 const hasUnread = (conv.unread_count || 0) > 0;
 
                 return (
@@ -565,7 +648,7 @@ export default function WhatsAppInboxPage() {
                     }}
                     className={`w-full text-left p-3.5 flex items-start gap-3 transition-colors cursor-pointer ${
                       isSelected
-                        ? 'bg-emerald-50/90 border-l-4 border-emerald-600'
+                        ? 'bg-emerald-50/90 border-l-4 border-emerald-600 shadow-2xs'
                         : hasUnread
                         ? 'bg-blue-50/40 hover:bg-blue-50/70'
                         : 'hover:bg-slate-50'
@@ -655,7 +738,7 @@ export default function WhatsAppInboxPage() {
                   </button>
 
                   <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-emerald-600 to-teal-600 text-white font-bold text-sm flex items-center justify-center shrink-0">
-                    {currentConv.contact_name.charAt(0)}
+                    {currentConv.contact_name ? currentConv.contact_name.charAt(0) : 'W'}
                   </div>
                   <div className="min-w-0">
                     <div className="flex items-center gap-2">
@@ -942,7 +1025,7 @@ export default function WhatsAppInboxPage() {
             {/* Contact Details */}
             <div className="text-center space-y-2 border-b border-slate-100 pb-4">
               <div className="w-16 h-16 rounded-3xl bg-gradient-to-tr from-emerald-600 to-teal-600 text-white font-bold text-xl flex items-center justify-center mx-auto shadow-md shadow-emerald-600/20">
-                {currentConv.contact_name.charAt(0)}
+                {currentConv.contact_name ? currentConv.contact_name.charAt(0) : 'W'}
               </div>
               <div>
                 <h3 className="font-bold text-slate-900 text-base">{currentConv.contact_name}</h3>
