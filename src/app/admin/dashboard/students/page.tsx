@@ -337,9 +337,9 @@ export default function AdminStudentsPage() {
         gender: s.gender || 'Male',
         religion: s.religion || 'Islam',
         nationality: s.nationality || 'Pakistani',
-        cnic: s.cnic || s.cnic_number || '',
+        cnic: s.cnic || (s as any).cnic_number || '',
         address: s.address || '',
-        parent_phone: s.parent_phone || '',
+        parent_phone: s.parent_phone || (s as any).guardian_phone || '',
         father_occupation: s.father_occupation || '',
         previous_school: s.previous_school || '',
       });
@@ -378,7 +378,11 @@ export default function AdminStudentsPage() {
     setSubmitting(true);
 
     const targetRoll = form.roll_number.trim().toUpperCase();
-    const duplicate = students.find(s => s.id !== editing?.id && (s.roll_number || '').trim().toUpperCase() === targetRoll);
+    const duplicate = students.find(s => 
+      s.id !== editing?.id && 
+      (s.roll_number || '').trim().toUpperCase() !== (editing?.roll_number || '').trim().toUpperCase() &&
+      (s.roll_number || '').trim().toUpperCase() === targetRoll
+    );
     if (duplicate) {
       setSubmitting(false);
       return toast.error(`Roll Number "${targetRoll}" is already assigned to ${duplicate.name}! Roll numbers must be unique.`);
@@ -390,20 +394,20 @@ export default function AdminStudentsPage() {
       roll_number: form.roll_number.trim().toUpperCase(),
       class_name: form.class_name.trim(),
       section: form.section.trim() || 'A',
-      phone: form.phone.trim() || null,
-      email: form.email.trim() || null,
-      photo_url: form.photo_url.trim() || null,
-      status: form.status || 'active',
-      date_of_birth: form.date_of_birth || null,
-      gender: form.gender || 'Male',
-      religion: form.religion || 'Islam',
-      nationality: form.nationality || 'Pakistani',
-      cnic: form.cnic.trim() || null,
-      address: form.address.trim() || null,
-      parent_phone: form.parent_phone.trim() || null,
-      father_occupation: form.father_occupation.trim() || null,
-      previous_school: form.previous_school.trim() || null,
-      is_active: true,
+      phone: form.phone.trim() || (editing?.phone ?? null),
+      email: form.email.trim() || (editing?.email ?? null),
+      photo_url: form.photo_url.trim() || (editing?.photo_url ?? null),
+      status: form.status || (editing?.status ?? 'active'),
+      date_of_birth: form.date_of_birth || (editing?.date_of_birth ?? null),
+      gender: form.gender || (editing?.gender ?? 'Male'),
+      religion: form.religion || (editing?.religion ?? 'Islam'),
+      nationality: form.nationality || (editing?.nationality ?? 'Pakistani'),
+      cnic: form.cnic.trim() || (editing?.cnic ?? null),
+      address: form.address.trim() || (editing?.address ?? null),
+      parent_phone: form.parent_phone.trim() || (editing?.parent_phone ?? null),
+      father_occupation: form.father_occupation.trim() || (editing?.father_occupation ?? null),
+      previous_school: form.previous_school.trim() || (editing?.previous_school ?? null),
+      is_active: form.status !== 'inactive',
     };
 
     const corePayload = {
@@ -423,21 +427,26 @@ export default function AdminStudentsPage() {
     };
 
     try {
-      if (editing && editing.id) {
-        if (isUUID(editing.id)) {
+      if (editing && (editing.id || editing.roll_number)) {
+        if (editing.id && isUUID(editing.id)) {
           let { error } = await supabase.from('students').update(payload).eq('id', editing.id);
           if (error) {
             await supabase.from('students').update(corePayload).eq('id', editing.id);
           }
+        } else if (editing.roll_number) {
+          let { error } = await supabase.from('students').update(payload).eq('roll_number', editing.roll_number);
+          if (error) {
+            await supabase.from('students').update(corePayload).eq('roll_number', editing.roll_number);
+          }
         }
-        const updated = students.map(s => s.id === editing.id ? { ...s, ...payload } : s);
+        const updated = students.map(s => (s.id === editing.id || (editing.roll_number && s.roll_number === editing.roll_number)) ? { ...editing, ...s, ...payload } : s);
         updateAndStore(updated);
         toast.success('Student profile updated successfully!');
       } else {
         const newId = crypto.randomUUID();
         let { error } = await supabase.from('students').insert([{ id: newId, ...payload }]);
         if (error) {
-          console.warn('Full payload insert failed, retriving core columns insert:', error.message);
+          console.warn('Full payload insert failed, retrying core columns insert:', error.message);
           const retry = await supabase.from('students').insert([{ id: newId, ...corePayload }]);
           if (retry.error) {
             console.error('Supabase DB Insert Error:', retry.error.message);

@@ -322,7 +322,20 @@ export default function AdminDashboardLayout({ children }: { children: React.Rea
       </nav>
 
       {/* User / Logout */}
-      <div className="p-3 border-t border-slate-100 shrink-0 space-y-1">
+      <div className="p-3 border-t border-slate-100 shrink-0 space-y-2 bg-slate-50/50">
+        {!collapsed && (
+          <div className="flex items-center gap-2.5 px-2.5 py-2 rounded-2xl bg-white border border-slate-200/90 shadow-2xs">
+            <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-600 text-white font-bold text-xs flex items-center justify-center shrink-0 shadow-xs">
+              A
+            </div>
+            <div className="overflow-hidden flex-1">
+              <div className="text-xs font-bold text-slate-800 truncate">Administrator</div>
+              <div className="text-[10px] text-emerald-600 font-bold flex items-center gap-1">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" /> Verified Session
+              </div>
+            </div>
+          </div>
+        )}
         <button
           onClick={handleLogout}
           className={cn(
