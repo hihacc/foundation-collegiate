@@ -3,7 +3,9 @@ import {
   getAllConversations, 
   findOrCreateConversation, 
   saveConversation, 
-  appendMessage 
+  appendMessage,
+  deleteConversation,
+  clearAllConversations
 } from '@/lib/whatsapp/persistentStore';
 import { normalizePhone, formatDisplayPhone } from '@/lib/whatsapp/enterpriseDb';
 import { TfcWhatsAppService } from '@/lib/whatsapp/whatsappService';
@@ -144,6 +146,32 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({
       success: false,
       error: error.message || 'Failed to create conversation'
+    }, { status: 500 });
+  }
+}
+
+// DELETE /api/admin/whatsapp/conversations - Delete a single conversation or clear all
+export async function DELETE(req: NextRequest) {
+  try {
+    const { searchParams } = new URL(req.url);
+    const conversationId = searchParams.get('id');
+    const all = searchParams.get('all') === 'true';
+
+    if (all) {
+      await clearAllConversations();
+      return NextResponse.json({ success: true, message: 'All conversations cleared' });
+    }
+
+    if (!conversationId) {
+      return NextResponse.json({ success: false, error: 'Conversation id is required' }, { status: 400 });
+    }
+
+    const success = await deleteConversation(conversationId);
+    return NextResponse.json({ success, message: success ? 'Conversation deleted' : 'Failed to delete' });
+  } catch (error: any) {
+    return NextResponse.json({
+      success: false,
+      error: error.message || 'Failed to delete conversation'
     }, { status: 500 });
   }
 }

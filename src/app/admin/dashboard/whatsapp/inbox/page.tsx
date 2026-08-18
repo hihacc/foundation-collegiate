@@ -514,6 +514,48 @@ export default function WhatsAppInboxPage() {
     }
   };
 
+  // Delete single conversation
+  const handleDeleteConversation = async (convId: string) => {
+    if (!window.confirm('Are you sure you want to delete this conversation and its entire chat history?')) {
+      return;
+    }
+    try {
+      const res = await fetch(`/api/admin/whatsapp/conversations?id=${convId}`, { method: 'DELETE' });
+      const data = await res.json();
+      if (data.success) {
+        toast.success('Conversation deleted');
+        setMessages([]);
+        setSelectedConvId(null);
+        await fetchConversations(true);
+      } else {
+        toast.error(data.error || 'Failed to delete conversation');
+      }
+    } catch (e: any) {
+      toast.error('Delete failed: ' + e.message);
+    }
+  };
+
+  // Clear all conversations
+  const handleClearAllConversations = async () => {
+    if (!window.confirm('⚠️ WARNING: This will delete ALL conversations and messages on this page. Continue?')) {
+      return;
+    }
+    try {
+      const res = await fetch('/api/admin/whatsapp/conversations?all=true', { method: 'DELETE' });
+      const data = await res.json();
+      if (data.success) {
+        toast.success('All conversations cleared');
+        setConversations([]);
+        setMessages([]);
+        setSelectedConvId(null);
+      } else {
+        toast.error(data.error || 'Failed to clear conversations');
+      }
+    } catch (e: any) {
+      toast.error('Clear failed: ' + e.message);
+    }
+  };
+
   // Filtered Conversations
   const filteredConversations = useMemo(() => {
     return conversations.filter(c => {
@@ -590,6 +632,13 @@ export default function WhatsAppInboxPage() {
                   title="System Diagnostics"
                 >
                   <Activity size={14} />
+                </button>
+                <button
+                  onClick={handleClearAllConversations}
+                  className="p-2 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-600 text-xs font-bold transition-colors cursor-pointer"
+                  title="Clear All Conversations"
+                >
+                  <Trash2 size={14} />
                 </button>
                 <button
                   onClick={() => setNewChatModalOpen(true)}
@@ -829,6 +878,16 @@ export default function WhatsAppInboxPage() {
                   >
                     <Phone size={15} />
                   </a>
+
+                  {/* Delete / Clear Conversation */}
+                  <button
+                    onClick={() => handleDeleteConversation(currentConv.id)}
+                    className="p-2 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 text-xs font-bold flex items-center gap-1 transition-colors cursor-pointer"
+                    title="Delete Conversation and History"
+                  >
+                    <Trash2 size={15} />
+                    <span className="hidden sm:inline">Delete</span>
+                  </button>
                 </div>
               </div>
 
@@ -940,11 +999,11 @@ export default function WhatsAppInboxPage() {
               </div>
 
               {/* AI Quick Assistant Bar */}
-              <div className="px-4 py-2 bg-indigo-50/70 border-t border-indigo-100 flex items-center justify-between gap-2 overflow-x-auto text-xs">
+              <div className="px-4 py-2 bg-indigo-50/70 border-t border-indigo-100 flex flex-wrap items-center justify-between gap-2 text-xs">
                 <span className="font-bold text-indigo-900 flex items-center gap-1 shrink-0">
                   <Sparkles size={14} className="text-indigo-600" /> AI Assistant:
                 </span>
-                <div className="flex items-center gap-1.5 shrink-0">
+                <div className="flex flex-wrap items-center gap-1.5 shrink-0">
                   <button
                     onClick={() => handleAiAssist('GENERATE_REPLY')}
                     disabled={aiGenerating}

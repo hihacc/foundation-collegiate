@@ -203,3 +203,46 @@ export async function findOrCreateConversation(rawPhone: string, contactName?: s
   await saveConversation(newConv);
   return newConv;
 }
+
+// 6. Delete Single Conversation
+export async function deleteConversation(conversationId: string): Promise<boolean> {
+  ensureStorage();
+  try {
+    await whatsappSupabase.from('whatsapp_messages').delete().eq('conversation_id', conversationId);
+    await whatsappSupabase.from('whatsapp_conversations').delete().eq('id', conversationId);
+  } catch (e) {
+    console.error('[WHATSAPP_DB] Delete conversation notice:', e);
+  }
+
+  try {
+    const convs = (await getAllConversations()).filter(c => c.id !== conversationId);
+    fs.writeFileSync(CONVERSATIONS_FILE, JSON.stringify(convs, null, 2), 'utf-8');
+
+    const rawMsgs = fs.readFileSync(MESSAGES_FILE, 'utf-8');
+    const allMsgs: WhatsAppMessageRecord[] = JSON.parse(rawMsgs).filter((m: any) => m.conversation_id !== conversationId);
+    fs.writeFileSync(MESSAGES_FILE, JSON.stringify(allMsgs, null, 2), 'utf-8');
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+// 7. Clear All Conversations & Messages
+export async function clearAllConversations(): Promise<boolean> {
+  ensureStorage();
+  try {
+    await whatsappSupabase.from('whatsapp_messages').delete().neq('id', '___keep___');
+    await whatsappSupabase.from('whatsapp_conversations').delete().neq('id', '___keep___');
+  } catch (e) {
+    console.error('[WHATSAPP_DB] Clear all notice:', e);
+  }
+
+  try {
+    fs.writeFileSync(CONVERSATIONS_FILE, JSON.stringify([], null, 2), 'utf-8');
+    fs.writeFileSync(MESSAGES_FILE, JSON.stringify([], null, 2), 'utf-8');
+    return true;
+  } catch {
+    return false;
+  }
+}
+
