@@ -244,9 +244,16 @@ export default function AdminLoginPage() {
       const twelveHours = Date.now() + 12 * 60 * 60 * 1000;
       localStorage.setItem('tfc_session_expires', String(twelveHours));
       document.cookie = `tfc_admin_auth=true; path=/; max-age=43200; SameSite=Lax`;
+
+      // Pre-warm WhatsApp automation service and sync recent conversations in background
+      try {
+        fetch('/api/admin/whatsapp/sync', { method: 'POST' }).catch(() => {});
+        fetch('/api/admin/whatsapp/conversations').catch(() => {});
+        fetch('/api/admin/whatsapp/diagnostics').catch(() => {});
+      } catch {}
     }
     setStoredData('admin_login_attempts', 0);
-    toast.success('Welcome back, Administrator! Opening portal...');
+    toast.success('Welcome back, Administrator! Loading portal & WhatsApp services...');
     setTimeout(() => {
       router.push('/admin/dashboard');
     }, 300);

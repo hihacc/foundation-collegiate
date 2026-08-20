@@ -155,6 +155,11 @@ export default function AdminDashboardLayout({ children }: { children: React.Rea
         const { count: admCount } = await supabase.from('admissions').select('*', { count: 'exact', head: true }).eq('status', 'pending');
         if (admCount !== null && admCount !== undefined) setPendingAdmissions(admCount);
       } catch {}
+
+      // Background WhatsApp sync on dashboard load
+      try {
+        fetch('/api/admin/whatsapp/sync', { method: 'POST' }).catch(() => {});
+      } catch {}
     };
     fetchCounts();
 
