@@ -17,14 +17,13 @@ const ALLOWED_MIME_TYPES = new Set([
 
 const MAX_FILE_SIZE = 15 * 1024 * 1024; // 15MB per image
 
-// POST /api/admin/gallery/upload - Multi-file image uploader for bulk gallery
+// POST /api/admin/gallery/upload - Multi-file image uploader with serverless fallback
 export async function POST(req: NextRequest) {
   try {
     const formData = await req.formData();
     const files = formData.getAll('files') as File[];
 
     if (!files || files.length === 0) {
-      // Check if single file was sent as 'file'
       const singleFile = formData.get('file') as File | null;
       if (singleFile) {
         files.push(singleFile);
@@ -35,9 +34,17 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ success: false, error: 'No files provided' }, { status: 400 });
     }
 
+    let canWriteToDisk = false;
     const uploadDir = join(process.cwd(), 'public', 'uploads', 'gallery');
-    if (!existsSync(uploadDir)) {
-      await mkdir(uploadDir, { recursive: true });
+
+    // Test if filesystem is writable (fails gracefully on Vercel /var/task)
+    try {
+      if (!existsSync(uploadDir)) {
+        await mkdir(uploadDir, { recursive: true });
+      }
+      canWriteToDisk = true;
+    } catch {
+      canWriteToDisk = false;
     }
 
     const uploadedResults = [];
@@ -64,20 +71,32 @@ export async function POST(req: NextRequest) {
       try {
         const bytes = await file.arrayBuffer();
         const buffer = Buffer.from(bytes);
-        const filePath = join(uploadDir, uniqueFilename);
-        await writeFile(filePath, buffer);
 
-        const publicUrl = `/uploads/gallery/${uniqueFilename}`;
+        let finalUrl = '';
+
+        if (canWriteToDisk) {
+          try {
+            const filePath = join(uploadDir, uniqueFilename);
+            await writeFile(filePath, buffer);
+            finalUrl = `/uploads/gallery/${uniqueFilename}`;
+          } catch {
+            // Fallback to data URL if disk write fails
+            finalUrl = `data:${mimeType};base64,${buffer.toString('base64')}`;
+          }
+        } else {
+          // Serverless environment (e.g. Vercel) -> Base64 data URL
+          finalUrl = `data:${mimeType};base64,${buffer.toString('base64')}`;
+        }
 
         uploadedResults.push({
           originalName,
           filename: uniqueFilename,
-          url: publicUrl,
+          url: finalUrl,
           size: file.size,
           mimeType
         });
       } catch (err: any) {
-        errors.push({ filename: file.name, error: err.message || 'Write failed' });
+        errors.push({ filename: file.name, error: err.message || 'Processing failed' });
       }
     }
 
@@ -87,6 +106,7 @@ export async function POST(req: NextRequest) {
       uploaded_count: uploadedResults.length,
       failed_count: errors.length,
       files: uploadedResults,
+      storage_type: canWriteToDisk ? 'DISK' : 'DATA_URL',
       errors: errors.length > 0 ? errors : undefined
     });
 

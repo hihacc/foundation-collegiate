@@ -119,6 +119,51 @@ export default function AdminGalleryPage() {
     if (fileInputRef.current) fileInputRef.current.value = '';
   };
 
+  // Helper to convert and compress file to data URL on client side (Vercel Serverless safe)
+  const readFileAsOptimizedDataUrl = (file: File): Promise<string> => {
+    return new Promise((resolve) => {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const result = e.target?.result as string;
+        if (!result) { resolve(''); return; }
+        
+        const img = new window.Image();
+        img.onload = () => {
+          try {
+            const canvas = document.createElement('canvas');
+            const MAX_DIM = 1600;
+            let width = img.width;
+            let height = img.height;
+
+            if (width > height && width > MAX_DIM) {
+              height = Math.round((height * MAX_DIM) / width);
+              width = MAX_DIM;
+            } else if (height > MAX_DIM) {
+              width = Math.round((width * MAX_DIM) / height);
+              height = MAX_DIM;
+            }
+
+            canvas.width = width;
+            canvas.height = height;
+            const ctx = canvas.getContext('2d');
+            if (ctx) {
+              ctx.drawImage(img, 0, 0, width, height);
+              resolve(canvas.toDataURL('image/jpeg', 0.82));
+            } else {
+              resolve(result);
+            }
+          } catch {
+            resolve(result);
+          }
+        };
+        img.onerror = () => resolve(result);
+        img.src = result;
+      };
+      reader.onerror = () => resolve('');
+      reader.readAsDataURL(file);
+    });
+  };
+
   const addFilesToQueue = (files: File[]) => {
     const newItems: BulkUploadQueueItem[] = [];
 
@@ -187,59 +232,63 @@ export default function AdminGalleryPage() {
     try {
       setIsBulkUploading(true);
       setUploadProgress({ current: 0, total: bulkQueue.length });
-      toast.loading(`⚡ Uploading & adding ${bulkQueue.length} photos to gallery...`, { id: 'bulk-gal' });
+      toast.loading(`⚡ Optimizing & adding ${bulkQueue.length} photos to gallery...`, { id: 'bulk-gal' });
 
-      // 1. Upload files in batches to /api/admin/gallery/upload
-      const formData = new FormData();
-      bulkQueue.forEach(item => {
-        if (item.file) formData.append('files', item.file);
-      });
+      // 1. Process and optimize all images to Data URLs in parallel
+      const recordsToInsert = [];
+      for (let i = 0; i < bulkQueue.length; i++) {
+        const item = bulkQueue[i];
+        let finalImageUrl = item.previewUrl;
 
-      const uploadRes = await fetch('/api/admin/gallery/upload', {
-        method: 'POST',
-        body: formData
-      });
-      const uploadJson = await uploadRes.json();
+        if (item.file) {
+          finalImageUrl = await readFileAsOptimizedDataUrl(item.file);
+        }
 
-      if (!uploadJson.success || !uploadJson.files || uploadJson.files.length === 0) {
-        throw new Error(uploadJson.error || 'File upload failed');
-      }
-
-      // Map uploaded server URLs back to gallery records
-      const recordsToInsert = uploadJson.files.map((f: any, idx: number) => {
-        const queueItem = bulkQueue[idx] || bulkQueue[0];
-        return {
+        recordsToInsert.push({
           id: crypto.randomUUID(),
-          title: queueItem?.title || f.originalName,
-          image_url: f.url,
-          category: queueItem?.category || bulkDefaultCategory,
-          description: queueItem?.description || bulkDefaultDescription || null,
-          source: queueItem?.source || bulkDefaultSource,
-          source_post_id: `bulk_${Date.now()}_${idx}`,
+          title: item.title || `Gallery Photo ${i + 1}`,
+          image_url: finalImageUrl,
+          category: item.category || bulkDefaultCategory,
+          description: item.description || bulkDefaultDescription || null,
+          source: item.source || bulkDefaultSource,
+          source_post_id: `bulk_${Date.now()}_${i}`,
           is_active: true,
           display_order: 0,
           post_date: new Date().toISOString(),
           created_at: new Date().toISOString()
-        };
-      });
+        });
 
-      // 2. Batch Insert records via /api/admin/gallery/bulk
-      const bulkRes = await fetch('/api/admin/gallery/bulk', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ items: recordsToInsert })
-      });
-      const bulkJson = await bulkRes.json();
+        setUploadProgress({ current: i + 1, total: bulkQueue.length });
+      }
+
+      // 2. Batch insert in chunks of 10 to /api/admin/gallery/bulk
+      const CHUNK_SIZE = 10;
+      let totalInserted = 0;
+
+      for (let i = 0; i < recordsToInsert.length; i += CHUNK_SIZE) {
+        const chunk = recordsToInsert.slice(i, i + CHUNK_SIZE);
+        const bulkRes = await fetch('/api/admin/gallery/bulk', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ items: chunk })
+        });
+        const bulkJson = await bulkRes.json();
+        if (bulkJson.success) {
+          totalInserted += chunk.length;
+        } else {
+          console.warn('[BULK_INSERT_CHUNK_ERR]', bulkJson.error);
+        }
+      }
 
       toast.dismiss('bulk-gal');
 
-      if (bulkJson.success) {
-        toast.success(`🎉 Successfully added ${recordsToInsert.length} photos to the Gallery!`);
+      if (totalInserted > 0) {
+        toast.success(`🎉 Successfully added ${totalInserted} photos to the Gallery!`);
         setBulkQueue([]);
         setShowAdder(false);
         fetchGallery();
       } else {
-        toast.error('Bulk record creation failed: ' + bulkJson.error);
+        toast.error('Bulk upload failed. Please try again.');
       }
 
     } catch (err: any) {
