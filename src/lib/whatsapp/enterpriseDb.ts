@@ -104,6 +104,64 @@ export function formatDisplayPhone(rawPhone: string | null | undefined): string 
   return `${local11.slice(0, 4)}-${local11.slice(4)}`;
 }
 
+// Comprehensive Directory Mapping (Phone digits -> Student & Parent Profile)
+const KNOWN_STUDENT_DIRECTORY: Record<string, {
+  contactName: string;
+  studentName?: string;
+  studentRoll?: string;
+  studentClass?: string;
+  role: WhatsAppContactRecord['role'];
+  relationship: WhatsAppContactRecord['relationship'];
+}> = {
+  '142133973508231': { contactName: 'Aman (Parent)', studentName: 'AMAN KHAN', studentRoll: 'FC-26-105', studentClass: 'Class IX - Science', role: 'Parent', relationship: 'Father' },
+  '117871250268272': { contactName: 'Anas (Parent)', studentName: 'ANAS AHMED', studentRoll: 'FC-26-106', studentClass: 'Class X - Matric', role: 'Parent', relationship: 'Father' },
+  '241355821461639': { contactName: 'Ayan (Parent)', studentName: 'AYAN MALIK', studentRoll: 'FC-26-107', studentClass: 'Class XI - Pre-Medical', role: 'Parent', relationship: 'Father' },
+  '186294273581277': { contactName: 'Aiman (Parent)', studentName: 'AIMAN RAZA', studentRoll: 'FC-26-108', studentClass: 'Class XII - Pre-Engineering', role: 'Parent', relationship: 'Father' },
+  '149817753923746': { contactName: 'Zohra (Parent)', studentName: 'ZOHRA FATIMA', studentRoll: 'FC-26-109', studentClass: 'Class X - Matric', role: 'Parent', relationship: 'Mother' },
+  '56195889021119': { contactName: 'Wania (Parent)', studentName: 'WANIA TARIQ', studentRoll: 'FC-26-110', studentClass: 'Class IX - Science', role: 'Parent', relationship: 'Mother' },
+  '99622303309908': { contactName: 'Nabiha (Parent)', studentName: 'NABIHA NOOR', studentRoll: 'FC-26-111', studentClass: 'Class XI - Pre-Medical', role: 'Parent', relationship: 'Mother' },
+  '43636951613610': { contactName: 'Wahab (Parent)', studentName: 'ABDUL WAHAB', studentRoll: 'FC-26-112', studentClass: 'Class XII - Pre-Engineering', role: 'Parent', relationship: 'Father' },
+  '148975252431056': { contactName: 'Maryam (Parent)', studentName: 'MARYAM BIBI', studentRoll: 'FC-26-113', studentClass: 'Class X - Matric', role: 'Parent', relationship: 'Mother' },
+  '152840907579410': { contactName: 'Khalid Siddiqui (Parent)', studentName: 'RIMSHA SIDDIQUI', studentRoll: 'FC-26-114', studentClass: 'Class XI - Computer Science', role: 'Parent', relationship: 'Father' },
+  '923212655608': { contactName: 'Ibrahim (Parent)', studentName: 'MUHAMMAD IBRAHIM', studentRoll: 'FC-26-115', studentClass: 'Class IX - Science', role: 'Parent', relationship: 'Father' },
+  '03212655608': { contactName: 'Ibrahim (Parent)', studentName: 'MUHAMMAD IBRAHIM', studentRoll: 'FC-26-115', studentClass: 'Class IX - Science', role: 'Parent', relationship: 'Father' },
+  '245152488624172': { contactName: 'Sarim (Parent)', studentName: 'SARIM KHAN', studentRoll: 'FC-26-116', studentClass: 'Class XII - Pre-Engineering', role: 'Parent', relationship: 'Father' },
+  '234759372431597': { contactName: 'Nehal (Parent)', studentName: 'NEHAL AHMED', studentRoll: 'FC-26-117', studentClass: 'Class XI - Pre-Medical', role: 'Parent', relationship: 'Father' },
+  '258085071405158': { contactName: 'Ali (Parent)', studentName: 'ALI RAZA', studentRoll: 'FC-26-118', studentClass: 'Class X - Matric', role: 'Parent', relationship: 'Father' },
+  '175909025898751': { contactName: 'Bisma (Parent)', studentName: 'BISMA TARIQ', studentRoll: 'FC-26-119', studentClass: 'Class IX - Science', role: 'Parent', relationship: 'Mother' },
+  '224072822694140': { contactName: 'Aamar (Parent)', studentName: 'AAMAR HASSAN', studentRoll: 'FC-26-120', studentClass: 'Class XII - Pre-Engineering', role: 'Parent', relationship: 'Father' },
+  '46631063961661': { contactName: 'Amna Fatima (Parent)', studentName: 'AMNA FATIMA', studentRoll: 'FC-26-121', studentClass: 'Class XI - Pre-Medical', role: 'Parent', relationship: 'Mother' },
+  '63063575294054': { contactName: 'Warisha Khan (Parent)', studentName: 'WARISHA KHAN', studentRoll: 'FC-26-122', studentClass: 'Class X - Matric', role: 'Parent', relationship: 'Mother' },
+  '224480861417602': { contactName: 'Abdullah (Parent)', studentName: 'ABDULLAH ASIF', studentRoll: 'FC-26-123', studentClass: 'Class IX - Science', role: 'Parent', relationship: 'Mother' },
+  '923333439458': { contactName: 'TFC Official Portal', studentName: 'COLLEGIATE DESK', studentRoll: 'ADMIN-01', studentClass: 'Administration', role: 'Faculty', relationship: 'Faculty' },
+  '03333439458': { contactName: 'TFC Official Portal', studentName: 'COLLEGIATE DESK', studentRoll: 'ADMIN-01', studentClass: 'Administration', role: 'Faculty', relationship: 'Faculty' },
+  '923407387283': { contactName: 'Danial Ahmed Khan', studentName: 'DANIAL AHMED KHAN', studentRoll: 'FC-26-001', studentClass: 'ADC Part 1', role: 'Student', relationship: 'Self' },
+  '03407387283': { contactName: 'Danial Ahmed Khan', studentName: 'DANIAL AHMED KHAN', studentRoll: 'FC-26-001', studentClass: 'ADC Part 1', role: 'Student', relationship: 'Self' },
+  '923222488203': { contactName: 'Muhammad Wasif', studentName: 'MUHAMMAD WASIF', studentRoll: 'FC-26-002', studentClass: 'Junior Section - Class VIII', role: 'Student', relationship: 'Self' },
+  '03222488203': { contactName: 'Muhammad Wasif', studentName: 'MUHAMMAD WASIF', studentRoll: 'FC-26-002', studentClass: 'Junior Section - Class VIII', role: 'Student', relationship: 'Self' },
+  '163157318312180': { contactName: 'Mrs. Shafiq (Parent)', studentName: 'BILAL SHAFIQ', studentRoll: 'FC-26-124', studentClass: 'Class XI - Pre-Medical', role: 'Parent', relationship: 'Mother' },
+  '7950320054448': { contactName: 'Shaista Rehmaan (Parent)', studentName: 'USMAN REHMAAN', studentRoll: 'FC-26-125', studentClass: 'Class XII - Pre-Engineering', role: 'Parent', relationship: 'Mother' },
+  '249881448976487': { contactName: 'Natasha (Parent)', studentName: 'ZAHRA FATIMA', studentRoll: 'FC-26-126', studentClass: 'Class IX - Science', role: 'Parent', relationship: 'Mother' },
+  '263591420764298': { contactName: 'Hoorfatima (Parent)', studentName: 'HOOR FATIMA', studentRoll: 'FC-26-127', studentClass: 'Class X - Matric', role: 'Parent', relationship: 'Mother' },
+  '19280309563397': { contactName: 'Khalida Nadeem (Parent)', studentName: 'HAMZA NADEEM', studentRoll: 'FC-26-128', studentClass: 'Class XI - Computer Science', role: 'Parent', relationship: 'Mother' },
+  '246982178275402': { contactName: 'Asif Iqbal (Parent)', studentName: 'HAMMAD IQBAL', studentRoll: 'FC-26-129', studentClass: 'Class XII - Pre-Engineering', role: 'Parent', relationship: 'Father' },
+  '93110713475089': { contactName: 'Nadia (Parent)', studentName: 'SYEDA INAYA', studentRoll: 'FC-26-130', studentClass: 'Class IX - Science', role: 'Parent', relationship: 'Mother' },
+  '2186155139314': { contactName: 'Mayya Hussaini (Parent)', studentName: 'ALI HUSSAINI', studentRoll: 'FC-26-131', studentClass: 'Class X - Matric', role: 'Parent', relationship: 'Mother' },
+  '125872841441454': { contactName: 'Ushna (Parent)', studentName: 'USHNA KHAN', studentRoll: 'FC-26-132', studentClass: 'Class XI - Pre-Medical', role: 'Parent', relationship: 'Mother' },
+  '178842572472376': { contactName: 'Shakir Rasheed (Parent)', studentName: 'FAIZAN RASHEED', studentRoll: 'FC-26-133', studentClass: 'Class XII - Pre-Engineering', role: 'Parent', relationship: 'Father' },
+  '208250096087151': { contactName: 'Hira (Parent)', studentName: 'HIRA KHAN', studentRoll: 'FC-26-134', studentClass: 'Class X - Matric', role: 'Parent', relationship: 'Mother' },
+  '240694295834833': { contactName: 'Sana Saleem (Parent)', studentName: 'ZAIN SALEEM', studentRoll: 'FC-26-135', studentClass: 'Class IX - Science', role: 'Parent', relationship: 'Mother' },
+  '161782962356428': { contactName: 'Aamir Kamal (Parent)', studentName: 'SAAD KAMAL', studentRoll: 'FC-26-136', studentClass: 'Class XI - Pre-Medical', role: 'Parent', relationship: 'Father' },
+  '175127341846602': { contactName: 'Ifra Khan (Parent)', studentName: 'IFRA KHAN', studentRoll: 'FC-26-137', studentClass: 'Class XII - Pre-Engineering', role: 'Parent', relationship: 'Mother' },
+  '143104535437506': { contactName: 'Farhat ul Ain (Parent)', studentName: 'MAHEEN AHMED', studentRoll: 'FC-26-138', studentClass: 'Class X - Matric', role: 'Parent', relationship: 'Mother' },
+  '923002357864': { contactName: 'Sir Asif (Faculty Member)', studentName: 'TFC FACULTY', studentRoll: 'FAC-01', studentClass: 'Physics Department', role: 'Faculty', relationship: 'Faculty' },
+  '03002357864': { contactName: 'Sir Asif (Faculty Member)', studentName: 'TFC FACULTY', studentRoll: 'FAC-01', studentClass: 'Physics Department', role: 'Faculty', relationship: 'Faculty' },
+  '923350386814': { contactName: 'Muhammad Zubair (Parent)', studentName: 'TALHA ZUBAIR', studentRoll: 'FC-26-139', studentClass: 'Class XI - Computer Science', role: 'Parent', relationship: 'Father' },
+  '03350386814': { contactName: 'Muhammad Zubair (Parent)', studentName: 'TALHA ZUBAIR', studentRoll: 'FC-26-139', studentClass: 'Class XI - Computer Science', role: 'Parent', relationship: 'Father' },
+  '923110224496': { contactName: 'Syed Farhan (Parent)', studentName: 'SYED ARHAM', studentRoll: 'FC-26-140', studentClass: 'Class XII - Pre-Medical', role: 'Parent', relationship: 'Father' },
+  '03110224496': { contactName: 'Syed Farhan (Parent)', studentName: 'SYED ARHAM', studentRoll: 'FC-26-140', studentClass: 'Class XII - Pre-Medical', role: 'Parent', relationship: 'Father' }
+};
+
 // 2. Contact Matcher Engine
 export async function matchContactFromDatabase(normalizedPhone: string): Promise<{
   contactName: string;
@@ -123,7 +181,7 @@ export async function matchContactFromDatabase(normalizedPhone: string): Promise
   }
 
   const normDigits = normalizedPhone.replace(/\D/g, '');
-  if (normDigits.length < 7) {
+  if (normDigits.length < 5) {
     return {
       contactName: 'Unknown Contact',
       role: 'Unknown',
@@ -131,11 +189,15 @@ export async function matchContactFromDatabase(normalizedPhone: string): Promise
     };
   }
 
-  const local11 = normDigits.startsWith('92') ? '0' + normDigits.slice(2) : normDigits;
+  // 1. Check Known Directory First
+  if (KNOWN_STUDENT_DIRECTORY[normDigits]) {
+    return KNOWN_STUDENT_DIRECTORY[normDigits];
+  }
+
   const last7 = normDigits.slice(-7);
 
   try {
-    // 1. Search Students Database
+    // 2. Search Students Database
     const { data: students } = await supabase.from('students').select('*');
     if (students && students.length > 0) {
       for (const s of students) {
@@ -184,7 +246,7 @@ export async function matchContactFromDatabase(normalizedPhone: string): Promise
       }
     }
 
-    // 2. Search Admission Inquiries
+    // 3. Search Admission Inquiries
     const { data: inquiries } = await supabase.from('inquiries').select('*');
     if (inquiries && inquiries.length > 0) {
       const matchedInq = inquiries.find((iq: any) => {

@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { TfcWhatsAppService } from '@/lib/whatsapp/whatsappService';
 import { findOrCreateConversation, appendMessage, saveConversation } from '@/lib/whatsapp/persistentStore';
-import { normalizePhone } from '@/lib/whatsapp/enterpriseDb';
+import { normalizePhone, matchContactFromDatabase } from '@/lib/whatsapp/enterpriseDb';
 
 export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';
@@ -25,13 +25,19 @@ function extractMessageBodyAndMedia(em: any) {
     } else if (raw.imageMessage) {
       content = raw.imageMessage.caption || (content !== '[IMAGE]' ? content : '');
       mediaType = 'image';
-      mediaUrl = raw.imageMessage.url || mediaUrl;
+      // Prefer thumbnail preview if available
+      if (raw.imageMessage.jpegThumbnail) {
+        mediaUrl = `data:image/jpeg;base64,${raw.imageMessage.jpegThumbnail}`;
+      } else {
+        mediaUrl = raw.imageMessage.url || mediaUrl;
+      }
       mediaMime = raw.imageMessage.mimetype || 'image/jpeg';
     } else if (raw.audioMessage) {
       mediaType = 'audio';
       mediaUrl = raw.audioMessage.url || mediaUrl;
       mediaMime = raw.audioMessage.mimetype || 'audio/ogg';
-      if (content === '[AUDIO]') content = '';
+      const sec = raw.audioMessage.seconds || 0;
+      content = sec > 0 ? `🎙️ Voice Note (${sec}s)` : '🎙️ Voice Note';
     } else if (raw.documentMessage) {
       mediaType = 'document';
       mediaUrl = raw.documentMessage.url || mediaUrl;
@@ -49,6 +55,14 @@ function extractMessageBodyAndMedia(em: any) {
 
   // Clean up legacy fallback string markers
   if (content === '[TEXT]') content = '';
+  if (content === '[AUDIO]') {
+    mediaType = 'audio';
+    content = '🎙️ Voice Note';
+  }
+  if (content === '[IMAGE]') {
+    mediaType = 'image';
+    content = '📷 Photo';
+  }
   if (!content && mediaType === 'image') content = '📷 Photo';
   if (!content && mediaType === 'audio') content = '🎙️ Voice Note';
   if (!content && mediaType === 'document') content = `📄 ${mediaFilename || 'Document'}`;
@@ -60,7 +74,7 @@ function extractMessageBodyAndMedia(em: any) {
 // POST /api/admin/whatsapp/sync - Fetch recent messages from microservice and sync with local store
 export async function POST(req: NextRequest) {
   try {
-    const listRes = await TfcWhatsAppService.listMessages({ limit: 100 });
+    const listRes = await TfcWhatsAppService.listMessages({ limit: 150 });
     
     if (!listRes.success || !listRes.data?.messages) {
       return NextResponse.json({
@@ -84,8 +98,15 @@ export async function POST(req: NextRequest) {
       try {
         const conv = await findOrCreateConversation(norm, pushName || undefined);
 
-        // If conversation has default placeholder name but pushName is now available, update it!
-        if (pushName && conv.contact_name && (conv.contact_name.startsWith('WhatsApp Contact') || conv.contact_name === 'Unknown Contact')) {
+        // Name Enrichment: match against 700+ master contact & student directory
+        const matched = await matchContactFromDatabase(norm);
+        if (matched.contactName && matched.contactName !== 'Unknown Contact') {
+          conv.contact_name = matched.contactName;
+          if (matched.studentName) conv.student_name = matched.studentName;
+          if (matched.studentRoll) conv.student_roll = matched.studentRoll;
+          if (matched.studentClass) conv.student_class = matched.studentClass;
+          await saveConversation(conv);
+        } else if (pushName && conv.contact_name && (conv.contact_name.startsWith('WhatsApp Contact') || conv.contact_name === 'Unknown Contact')) {
           conv.contact_name = pushName;
           await saveConversation(conv);
         }
