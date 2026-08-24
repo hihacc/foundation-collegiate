@@ -22,7 +22,7 @@
     "last_message_direction": "outbound",
     "metadata": {},
     "created_at": "2026-08-20T08:41:34.622+00:00",
-    "updated_at": "2026-08-20T14:17:02.435+00:00"
+    "updated_at": "2026-08-20T14:19:50.805+00:00"
   },
   {
     "id": "conv_163157318312180_1787231564194",
@@ -44,7 +44,7 @@
     "last_message_direction": "outbound",
     "metadata": {},
     "created_at": "2026-08-20T13:12:41+00:00",
-    "updated_at": "2026-08-20T14:17:03.539+00:00"
+    "updated_at": "2026-08-20T14:19:51.842+00:00"
   },
   {
     "id": "conv_7950320054448_1787229581204",
@@ -66,7 +66,7 @@
     "last_message_direction": "outbound",
     "metadata": {},
     "created_at": "2026-08-20T12:39:37+00:00",
-    "updated_at": "2026-08-20T14:17:04.585+00:00"
+    "updated_at": "2026-08-20T14:19:52.8+00:00"
   },
   {
     "id": "conv_142133973508231",
@@ -90,7 +90,7 @@
     "last_message_direction": "outbound",
     "metadata": {},
     "created_at": "2026-08-20T14:05:31.987+00:00",
-    "updated_at": "2026-08-20T14:17:05.074+00:00"
+    "updated_at": "2026-08-20T14:19:53.273+00:00"
   },
   {
     "id": "conv_249881448976487_1787229639035",
@@ -136,31 +136,7 @@
     "last_message_direction": "outbound",
     "metadata": {},
     "created_at": "2026-08-20T14:05:33.827+00:00",
-    "updated_at": "2026-08-20T14:17:05.574+00:00"
-  },
-  {
-    "id": "conv_141283033100406",
-    "contact_id": null,
-    "phone": "141283033100406",
-    "normalized_phone": "141283033100406",
-    "contact_name": "WhatsApp Contact (141283033100406)",
-    "relationship": "Unknown",
-    "student_roll": null,
-    "student_name": null,
-    "student_class": null,
-    "status": "open",
-    "priority": "normal",
-    "assigned_to": null,
-    "tags": [
-      "Inquiry"
-    ],
-    "unread_count": 0,
-    "last_message_text": "TFC Alert",
-    "last_message_at": "2026-08-20T12:38:39+00:00",
-    "last_message_direction": "outbound",
-    "metadata": {},
-    "created_at": "2026-08-20T14:05:35.425+00:00",
-    "updated_at": "2026-08-20T14:17:06.699+00:00"
+    "updated_at": "2026-08-20T14:19:53.803+00:00"
   },
   {
     "id": "conv_241355821461639",
@@ -184,7 +160,7 @@
     "last_message_direction": "outbound",
     "metadata": {},
     "created_at": "2026-08-20T14:05:40.378+00:00",
-    "updated_at": "2026-08-20T14:17:07.185+00:00"
+    "updated_at": "2026-08-20T14:19:55.731+00:00"
   },
   {
     "id": "conv_186294273581277",
@@ -208,7 +184,7 @@
     "last_message_direction": "outbound",
     "metadata": {},
     "created_at": "2026-08-20T14:05:41.413+00:00",
-    "updated_at": "2026-08-20T14:17:07.688+00:00"
+    "updated_at": "2026-08-20T14:19:56.241+00:00"
   },
   {
     "id": "conv_149817753923746",
@@ -232,7 +208,7 @@
     "last_message_direction": "outbound",
     "metadata": {},
     "created_at": "2026-08-20T14:05:43.764+00:00",
-    "updated_at": "2026-08-20T14:17:08.309+00:00"
+    "updated_at": "2026-08-20T14:19:56.879+00:00"
   },
   {
     "id": "conv_56195889021119",
@@ -256,7 +232,7 @@
     "last_message_direction": "outbound",
     "metadata": {},
     "created_at": "2026-08-20T14:05:45.105+00:00",
-    "updated_at": "2026-08-20T14:17:08.924+00:00"
+    "updated_at": "2026-08-20T14:19:57.449+00:00"
   },
   {
     "id": "conv_99622303309908_1787230498097",
@@ -278,7 +254,7 @@
     "last_message_direction": "outbound",
     "metadata": {},
     "created_at": "2026-08-20T12:54:55+00:00",
-    "updated_at": "2026-08-20T14:17:09.454+00:00"
+    "updated_at": "2026-08-20T14:19:57.964+00:00"
   },
   {
     "id": "conv_130867770978468_1787228293006",
@@ -340,33 +316,11 @@
     "tags": [],
     "unread_count": 0,
     "last_message_text": "📷 Photo",
-    "last_message_at": "2026-08-20T11:27:50+00:00",
+    "last_message_at": "2026-08-20T11:26:57+00:00",
     "last_message_direction": "outbound",
     "metadata": {},
     "created_at": "2026-08-20T10:19:40+00:00",
-    "updated_at": "2026-08-20T14:17:15.651+00:00"
-  },
-  {
-    "id": "conv_152840907579410_1787218517445",
-    "contact_id": null,
-    "phone": "152840907579410",
-    "normalized_phone": "152840907579410",
-    "contact_name": "Khalid Siddiqui",
-    "relationship": "Unknown",
-    "student_roll": null,
-    "student_name": null,
-    "student_class": null,
-    "status": "new",
-    "priority": "normal",
-    "assigned_to": null,
-    "tags": [],
-    "unread_count": 3,
-    "last_message_text": "TFC Alert \nRimsha was absent from class today",
-    "last_message_at": "2026-08-20T10:39:15+00:00",
-    "last_message_direction": "inbound",
-    "metadata": {},
-    "created_at": "2026-08-20T09:35:12+00:00",
-    "updated_at": "2026-08-20T14:14:31.851+00:00"
+    "updated_at": "2026-08-20T14:20:07.328+00:00"
   },
   {
     "id": "conv_43636951613610",
@@ -387,10 +341,78 @@
     "unread_count": 0,
     "last_message_text": "TFC Alert \nWahab was absent from class today",
     "last_message_at": "2026-08-20T10:38:08+00:00",
-    "last_message_direction": "inbound",
+    "last_message_direction": "outbound",
     "metadata": {},
     "created_at": "2026-08-20T14:06:08.118+00:00",
-    "updated_at": "2026-08-20T14:14:32.371+00:00"
+    "updated_at": "2026-08-20T14:20:10.97+00:00"
+  },
+  {
+    "id": "conv_141283033100406",
+    "contact_id": null,
+    "phone": "141283033100406",
+    "normalized_phone": "141283033100406",
+    "contact_name": "WhatsApp Contact (141283033100406)",
+    "relationship": "Unknown",
+    "student_roll": null,
+    "student_name": null,
+    "student_class": null,
+    "status": "open",
+    "priority": "normal",
+    "assigned_to": null,
+    "tags": [
+      "Inquiry"
+    ],
+    "unread_count": 0,
+    "last_message_text": "[Message]",
+    "last_message_at": "2026-08-20T10:37:26+00:00",
+    "last_message_direction": "outbound",
+    "metadata": {},
+    "created_at": "2026-08-20T14:05:35.425+00:00",
+    "updated_at": "2026-08-20T14:20:11.941+00:00"
+  },
+  {
+    "id": "conv_148975252431056_1787220571382",
+    "contact_id": null,
+    "phone": "148975252431056",
+    "normalized_phone": "148975252431056",
+    "contact_name": "Here!!",
+    "relationship": "Unknown",
+    "student_roll": null,
+    "student_name": null,
+    "student_class": null,
+    "status": "new",
+    "priority": "normal",
+    "assigned_to": null,
+    "tags": [],
+    "unread_count": 1,
+    "last_message_text": "Tfc Alert \nMaryam was absent from today class",
+    "last_message_at": "2026-08-20T10:14:51+00:00",
+    "last_message_direction": "outbound",
+    "metadata": {},
+    "created_at": "2026-08-20T10:09:27+00:00",
+    "updated_at": "2026-08-20T14:20:14.002+00:00"
+  },
+  {
+    "id": "conv_152840907579410_1787218517445",
+    "contact_id": null,
+    "phone": "152840907579410",
+    "normalized_phone": "152840907579410",
+    "contact_name": "Khalid Siddiqui",
+    "relationship": "Unknown",
+    "student_roll": null,
+    "student_name": null,
+    "student_class": null,
+    "status": "new",
+    "priority": "normal",
+    "assigned_to": null,
+    "tags": [],
+    "unread_count": 3,
+    "last_message_text": "[Message]",
+    "last_message_at": "2026-08-20T09:44:01+00:00",
+    "last_message_direction": "outbound",
+    "metadata": {},
+    "created_at": "2026-08-20T09:35:12+00:00",
+    "updated_at": "2026-08-20T14:20:15.905+00:00"
   },
   {
     "id": "conv_923333439458",
@@ -409,34 +431,36 @@
       "Inquiry"
     ],
     "unread_count": 0,
-    "last_message_text": "[TEXT]",
-    "last_message_at": "2026-08-20T10:37:31+00:00",
-    "last_message_direction": "inbound",
+    "last_message_text": "[Message]",
+    "last_message_at": "2026-08-20T09:08:32+00:00",
+    "last_message_direction": "outbound",
     "metadata": {},
     "created_at": "2026-08-18T15:10:54.488+00:00",
-    "updated_at": "2026-08-20T14:14:32.844+00:00"
+    "updated_at": "2026-08-20T14:20:16.382+00:00"
   },
   {
-    "id": "conv_148975252431056_1787220571382",
+    "id": "conv_923212655608",
     "contact_id": null,
-    "phone": "148975252431056",
-    "normalized_phone": "148975252431056",
-    "contact_name": "Here!!",
+    "phone": "0321-2655608",
+    "normalized_phone": "923212655608",
+    "contact_name": "WhatsApp Contact (0321-2655608)",
     "relationship": "Unknown",
     "student_roll": null,
     "student_name": null,
     "student_class": null,
-    "status": "new",
+    "status": "open",
     "priority": "normal",
     "assigned_to": null,
-    "tags": [],
-    "unread_count": 1,
-    "last_message_text": "[AUDIO]",
-    "last_message_at": "2026-08-20T10:09:33.265+00:00",
-    "last_message_direction": "inbound",
+    "tags": [
+      "Inquiry"
+    ],
+    "unread_count": 0,
+    "last_message_text": "hi",
+    "last_message_at": "2026-08-20T08:45:12+00:00",
+    "last_message_direction": "outbound",
     "metadata": {},
-    "created_at": "2026-08-20T10:09:27+00:00",
-    "updated_at": "2026-08-20T10:09:33.905+00:00"
+    "created_at": "2026-08-18T15:21:16.437+00:00",
+    "updated_at": "2026-08-20T14:20:17.397+00:00"
   },
   {
     "id": "conv_172469243641868_1787203668470",
@@ -455,10 +479,10 @@
     "unread_count": 0,
     "last_message_text": "Wa alaikum as Salam",
     "last_message_at": "2026-08-20T06:45:17+00:00",
-    "last_message_direction": "inbound",
+    "last_message_direction": "outbound",
     "metadata": {},
     "created_at": "2026-08-20T05:27:42+00:00",
-    "updated_at": "2026-08-20T08:41:53.321+00:00"
+    "updated_at": "2026-08-20T14:20:18.862+00:00"
   },
   {
     "id": "conv_220061256151088_1787206999163",
@@ -499,12 +523,12 @@
       "Inquiry"
     ],
     "unread_count": 0,
-    "last_message_text": "[IMAGE]",
+    "last_message_text": "📷 Photo",
     "last_message_at": "2026-08-20T06:07:07+00:00",
-    "last_message_direction": "inbound",
+    "last_message_direction": "outbound",
     "metadata": {},
     "created_at": "2026-08-20T08:40:21.2+00:00",
-    "updated_at": "2026-08-20T08:41:57.498+00:00"
+    "updated_at": "2026-08-20T14:20:20.921+00:00"
   },
   {
     "id": "conv_246982178275402_1787127520999",
@@ -521,56 +545,12 @@
     "assigned_to": null,
     "tags": [],
     "unread_count": 0,
-    "last_message_text": "[IMAGE]",
+    "last_message_text": "📷 Photo",
     "last_message_at": "2026-08-20T05:47:42+00:00",
-    "last_message_direction": "inbound",
+    "last_message_direction": "outbound",
     "metadata": {},
     "created_at": "2026-08-19T08:18:35+00:00",
-    "updated_at": "2026-08-20T08:41:58.116+00:00"
-  },
-  {
-    "id": "conv_2186155139314_1787164095309",
-    "contact_id": null,
-    "phone": "2186155139314",
-    "normalized_phone": "2186155139314",
-    "contact_name": "Mayya Hussaini",
-    "relationship": "Unknown",
-    "student_roll": null,
-    "student_name": null,
-    "student_class": null,
-    "status": "new",
-    "priority": "normal",
-    "assigned_to": null,
-    "tags": [],
-    "unread_count": 0,
-    "last_message_text": "Kindly text",
-    "last_message_at": "2026-08-19T18:26:08+00:00",
-    "last_message_direction": "inbound",
-    "metadata": {},
-    "created_at": "2026-08-19T18:28:12+00:00",
-    "updated_at": "2026-08-20T08:42:05.616+00:00"
-  },
-  {
-    "id": "conv_83605967638672_1787137509237",
-    "contact_id": null,
-    "phone": "83605967638672",
-    "normalized_phone": "83605967638672",
-    "contact_name": "MUHAMMAD",
-    "relationship": "Unknown",
-    "student_roll": null,
-    "student_name": null,
-    "student_class": null,
-    "status": "new",
-    "priority": "normal",
-    "assigned_to": null,
-    "tags": [],
-    "unread_count": 3,
-    "last_message_text": "Wa alaikum as Salam",
-    "last_message_at": "2026-08-19T17:31:56+00:00",
-    "last_message_direction": "inbound",
-    "metadata": {},
-    "created_at": "2026-08-19T11:05:03+00:00",
-    "updated_at": "2026-08-20T08:42:08.631+00:00"
+    "updated_at": "2026-08-20T14:20:21.432+00:00"
   },
   {
     "id": "conv_93110713475089_1787146773172",
@@ -587,12 +567,56 @@
     "assigned_to": null,
     "tags": [],
     "unread_count": 0,
-    "last_message_text": "Wa alaikum as Salam",
-    "last_message_at": "2026-08-19T17:28:59+00:00",
-    "last_message_direction": "inbound",
+    "last_message_text": "We don't need any sample",
+    "last_message_at": "2026-08-19T18:28:09+00:00",
+    "last_message_direction": "outbound",
     "metadata": {},
     "created_at": "2026-08-19T13:39:28+00:00",
-    "updated_at": "2026-08-20T08:42:10.581+00:00"
+    "updated_at": "2026-08-20T14:20:25.261+00:00"
+  },
+  {
+    "id": "conv_2186155139314_1787164095309",
+    "contact_id": null,
+    "phone": "2186155139314",
+    "normalized_phone": "2186155139314",
+    "contact_name": "Mayya Hussaini",
+    "relationship": "Unknown",
+    "student_roll": null,
+    "student_name": null,
+    "student_class": null,
+    "status": "new",
+    "priority": "normal",
+    "assigned_to": null,
+    "tags": [],
+    "unread_count": 0,
+    "last_message_text": "As Salam alaikum",
+    "last_message_at": "2026-08-19T18:26:14+00:00",
+    "last_message_direction": "outbound",
+    "metadata": {},
+    "created_at": "2026-08-19T18:28:12+00:00",
+    "updated_at": "2026-08-20T14:20:25.761+00:00"
+  },
+  {
+    "id": "conv_83605967638672_1787137509237",
+    "contact_id": null,
+    "phone": "83605967638672",
+    "normalized_phone": "83605967638672",
+    "contact_name": "MUHAMMAD",
+    "relationship": "Unknown",
+    "student_roll": null,
+    "student_name": null,
+    "student_class": null,
+    "status": "new",
+    "priority": "normal",
+    "assigned_to": null,
+    "tags": [],
+    "unread_count": 3,
+    "last_message_text": "😂",
+    "last_message_at": "2026-08-19T17:33:02+00:00",
+    "last_message_direction": "outbound",
+    "metadata": {},
+    "created_at": "2026-08-19T11:05:03+00:00",
+    "updated_at": "2026-08-20T14:17:36.806+00:00"
   },
   {
     "id": "conv_125872841441454_1787131582089",
@@ -1044,30 +1068,6 @@
     "metadata": {},
     "created_at": "2026-08-18T15:29:34.397+00:00",
     "updated_at": "2026-08-18T19:16:54.713+00:00"
-  },
-  {
-    "id": "conv_923212655608",
-    "contact_id": null,
-    "phone": "0321-2655608",
-    "normalized_phone": "923212655608",
-    "contact_name": "WhatsApp Contact (0321-2655608)",
-    "relationship": "Unknown",
-    "student_roll": null,
-    "student_name": null,
-    "student_class": null,
-    "status": "open",
-    "priority": "normal",
-    "assigned_to": null,
-    "tags": [
-      "Inquiry"
-    ],
-    "unread_count": 0,
-    "last_message_text": "TFC Alert! Ibrahim is absent from class today.",
-    "last_message_at": "2026-08-18T15:16:49+00:00",
-    "last_message_direction": "inbound",
-    "metadata": {},
-    "created_at": "2026-08-18T15:21:16.437+00:00",
-    "updated_at": "2026-08-18T19:16:56.742+00:00"
   },
   {
     "id": "conv_923002357864",

@@ -1,24 +1,61 @@
 'use client';
 export const dynamic = 'force-dynamic';
 
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { supabase } from '@/lib/supabase/client';
 import { toast } from 'sonner';
-import { ImageIcon, Trash2, Plus, Eye, EyeOff, Clock, Filter, Loader2, Link as LinkIcon } from 'lucide-react';
+import { 
+  ImageIcon, Trash2, Plus, Eye, EyeOff, Clock, Filter, 
+  Loader2, Link as LinkIcon, UploadCloud, Layers, CheckSquare, 
+  Square, X, Check, RefreshCw, ZoomIn, Download, ExternalLink,
+  Edit3, Sparkles, FolderPlus, Tag, ShieldCheck, AlertCircle
+} from 'lucide-react';
 import Button from '@/components/ui/Button';
 import { m, AnimatePresence } from 'framer-motion';
 import { getStoredData, setStoredData } from '@/lib/utils/storage';
 
-const isUUID = (str: any) => typeof str === 'string' && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(str);
+const CATEGORIES = [
+  { id: 'Campus', label: 'Campus Life' },
+  { id: 'Classroom', label: 'Classroom & Labs' },
+  { id: 'Events', label: 'Campus Events & Sports' },
+  { id: 'Achievements', label: 'Awards & High Achievers' },
+  { id: 'Social Media', label: 'Social Media Updates' }
+];
+
+interface BulkUploadQueueItem {
+  id: string;
+  file?: File;
+  previewUrl: string;
+  title: string;
+  category: string;
+  description: string;
+  source: string;
+  size?: number;
+  status: 'pending' | 'uploading' | 'done' | 'error';
+  errorMessage?: string;
+}
 
 export default function AdminGalleryPage() {
   const [images, setImages] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const [showForm, setShowForm] = useState(false);
-  const [submitting, setSubmitting] = useState(false);
+  const [showAdder, setShowAdder] = useState(false);
+  const [adderMode, setAdderMode] = useState<'bulk-files' | 'bulk-urls' | 'single'>('bulk-files');
+  
+  // Filtering & Search
   const [filterSource, setFilterSource] = useState<'all' | 'admin' | 'instagram' | 'facebook'>('all');
+  const [filterCategory, setFilterCategory] = useState<string>('all');
+  const [filterStatus, setFilterStatus] = useState<'all' | 'active' | 'hidden'>('all');
+  const [searchQuery, setSearchQuery] = useState('');
 
-  const [form, setForm] = useState({ 
+  // Multi-Selection State
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+  const [bulkActionLoading, setBulkActionLoading] = useState(false);
+
+  // Lightbox State
+  const [lightboxUrl, setLightboxUrl] = useState<string | null>(null);
+
+  // --- 1. SINGLE PHOTO FORM STATE ---
+  const [singleForm, setSingleForm] = useState({ 
     title: '', 
     image_url: '', 
     category: 'Campus', 
@@ -26,6 +63,24 @@ export default function AdminGalleryPage() {
     source: 'admin',
     postUrl: '' 
   });
+  const [singleSubmitting, setSingleSubmitting] = useState(false);
+
+  // --- 2. BULK FILES QUEUE STATE ---
+  const [bulkQueue, setBulkQueue] = useState<BulkUploadQueueItem[]>([]);
+  const [bulkDefaultCategory, setBulkDefaultCategory] = useState('Campus');
+  const [bulkTitlePrefix, setBulkTitlePrefix] = useState('');
+  const [bulkDefaultSource, setBulkDefaultSource] = useState('admin');
+  const [bulkDefaultDescription, setBulkDefaultDescription] = useState('');
+  const [isBulkUploading, setIsBulkUploading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState({ current: 0, total: 0 });
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // --- 3. BULK URL IMPORT STATE ---
+  const [urlRawText, setUrlRawText] = useState('');
+  const [urlDefaultCategory, setUrlDefaultCategory] = useState('Campus');
+  const [urlTitlePrefix, setUrlTitlePrefix] = useState('');
+  const [urlDefaultSource, setUrlDefaultSource] = useState('admin');
+  const [urlImporting, setUrlImporting] = useState(false);
 
   const fetchGallery = async () => {
     setLoading(true);
@@ -36,12 +91,17 @@ export default function AdminGalleryPage() {
         .order('post_date', { ascending: false })
         .order('created_at', { ascending: false });
         
-      if (!error && data) {
+      if (!error && data && data.length > 0) {
         setImages(data);
+        setStoredData('gallery', data);
+      } else {
+        const local = getStoredData<any[]>('gallery', []);
+        setImages(local);
       }
     } catch (err) {
       console.error(err);
-      toast.error('Failed to fetch gallery from database.');
+      const local = getStoredData<any[]>('gallery', []);
+      setImages(local);
     } finally {
       setLoading(false);
     }
@@ -49,304 +109,1092 @@ export default function AdminGalleryPage() {
 
   useEffect(() => { fetchGallery(); }, []);
 
-  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
+  // -------------------------------------------------------------
+  // HANDLERS: MULTI-FILE BULK QUEUE
+  // -------------------------------------------------------------
+  const handleBulkFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
+    addFilesToQueue(Array.from(files));
+    if (fileInputRef.current) fileInputRef.current.value = '';
+  };
 
-    if (file.size > 5 * 1024 * 1024) {
-      toast.error('File size must be under 5MB');
+  const addFilesToQueue = (files: File[]) => {
+    const newItems: BulkUploadQueueItem[] = [];
+
+    files.forEach((file, idx) => {
+      if (!file.type.startsWith('image/')) {
+        toast.error(`Skipped "${file.name}" (not an image file)`);
+        return;
+      }
+      if (file.size > 15 * 1024 * 1024) {
+        toast.error(`Skipped "${file.name}" (exceeds 15MB)`);
+        return;
+      }
+
+      // Generate a readable title from filename
+      const cleanBaseName = file.name
+        .replace(/\.[^/.]+$/, '')
+        .replace(/[_-]+/g, ' ')
+        .replace(/\b\w/g, l => l.toUpperCase())
+        .trim();
+
+      const previewUrl = URL.createObjectURL(file);
+      newItems.push({
+        id: `queue_${Date.now()}_${idx}_${Math.random().toString(36).slice(2, 6)}`,
+        file,
+        previewUrl,
+        title: bulkTitlePrefix ? `${bulkTitlePrefix.trim()} ${cleanBaseName}` : cleanBaseName,
+        category: bulkDefaultCategory,
+        description: bulkDefaultDescription,
+        source: bulkDefaultSource,
+        size: file.size,
+        status: 'pending'
+      });
+    });
+
+    if (newItems.length > 0) {
+      setBulkQueue(prev => [...prev, ...newItems]);
+      toast.success(`Added ${newItems.length} photos to the upload queue!`);
+    }
+  };
+
+  const removeQueueItem = (id: string) => {
+    setBulkQueue(prev => prev.filter(item => item.id !== id));
+  };
+
+  const applyGlobalCategoryToQueue = (category: string) => {
+    setBulkDefaultCategory(category);
+    setBulkQueue(prev => prev.map(item => ({ ...item, category })));
+    toast.info(`Updated all queue items to "${category}"`);
+  };
+
+  const applyGlobalPrefixToQueue = (prefix: string) => {
+    setBulkTitlePrefix(prefix);
+    if (!prefix.trim()) return;
+    setBulkQueue(prev => prev.map(item => {
+      const base = item.file?.name.replace(/\.[^/.]+$/, '').replace(/[_-]+/g, ' ').trim() || 'Photo';
+      return { ...item, title: `${prefix.trim()} ${base}` };
+    }));
+  };
+
+  const handleBulkUploadSubmit = async () => {
+    if (bulkQueue.length === 0) {
+      toast.error('No photos in upload queue.');
       return;
     }
 
-    const reader = new FileReader();
-    reader.onload = (event) => {
-      if (event.target?.result) {
-        setForm(p => ({ ...p, image_url: event.target!.result as string }));
-        toast.success('Image loaded for preview!');
+    try {
+      setIsBulkUploading(true);
+      setUploadProgress({ current: 0, total: bulkQueue.length });
+      toast.loading(`⚡ Uploading & adding ${bulkQueue.length} photos to gallery...`, { id: 'bulk-gal' });
+
+      // 1. Upload files in batches to /api/admin/gallery/upload
+      const formData = new FormData();
+      bulkQueue.forEach(item => {
+        if (item.file) formData.append('files', item.file);
+      });
+
+      const uploadRes = await fetch('/api/admin/gallery/upload', {
+        method: 'POST',
+        body: formData
+      });
+      const uploadJson = await uploadRes.json();
+
+      if (!uploadJson.success || !uploadJson.files || uploadJson.files.length === 0) {
+        throw new Error(uploadJson.error || 'File upload failed');
       }
-    };
-    reader.readAsDataURL(file);
+
+      // Map uploaded server URLs back to gallery records
+      const recordsToInsert = uploadJson.files.map((f: any, idx: number) => {
+        const queueItem = bulkQueue[idx] || bulkQueue[0];
+        return {
+          id: crypto.randomUUID(),
+          title: queueItem?.title || f.originalName,
+          image_url: f.url,
+          category: queueItem?.category || bulkDefaultCategory,
+          description: queueItem?.description || bulkDefaultDescription || null,
+          source: queueItem?.source || bulkDefaultSource,
+          source_post_id: `bulk_${Date.now()}_${idx}`,
+          is_active: true,
+          display_order: 0,
+          post_date: new Date().toISOString(),
+          created_at: new Date().toISOString()
+        };
+      });
+
+      // 2. Batch Insert records via /api/admin/gallery/bulk
+      const bulkRes = await fetch('/api/admin/gallery/bulk', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ items: recordsToInsert })
+      });
+      const bulkJson = await bulkRes.json();
+
+      toast.dismiss('bulk-gal');
+
+      if (bulkJson.success) {
+        toast.success(`🎉 Successfully added ${recordsToInsert.length} photos to the Gallery!`);
+        setBulkQueue([]);
+        setShowAdder(false);
+        fetchGallery();
+      } else {
+        toast.error('Bulk record creation failed: ' + bulkJson.error);
+      }
+
+    } catch (err: any) {
+      toast.dismiss('bulk-gal');
+      toast.error('Bulk upload error: ' + err.message);
+    } finally {
+      setIsBulkUploading(false);
+    }
   };
 
-  const handleAdd = async (e: React.FormEvent) => {
+  // -------------------------------------------------------------
+  // HANDLERS: BULK URL IMPORTER
+  // -------------------------------------------------------------
+  const handleBulkUrlImport = async () => {
+    const urls = urlRawText
+      .split(/[\n,]+/)
+      .map(u => u.trim())
+      .filter(u => u.startsWith('http://') || u.startsWith('https://') || u.startsWith('/'));
+
+    if (urls.length === 0) {
+      toast.error('Please enter at least one valid image URL');
+      return;
+    }
+
+    try {
+      setUrlImporting(true);
+      toast.loading(`Importing ${urls.length} image URLs...`, { id: 'url-import' });
+
+      const items = urls.map((url, idx) => {
+        const autoTitle = urlTitlePrefix ? `${urlTitlePrefix.trim()} Photo ${idx + 1}` : `Gallery Photo ${idx + 1}`;
+        return {
+          id: crypto.randomUUID(),
+          title: autoTitle,
+          image_url: url,
+          category: urlDefaultCategory,
+          description: null,
+          source: urlDefaultSource,
+          is_active: true,
+          post_date: new Date().toISOString()
+        };
+      });
+
+      const res = await fetch('/api/admin/gallery/bulk', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ items })
+      });
+      const json = await res.json();
+      toast.dismiss('url-import');
+
+      if (json.success) {
+        toast.success(`🎉 Successfully imported ${items.length} photos!`);
+        setUrlRawText('');
+        setShowAdder(false);
+        fetchGallery();
+      } else {
+        toast.error('Import failed: ' + json.error);
+      }
+    } catch (err: any) {
+      toast.dismiss('url-import');
+      toast.error('URL import error: ' + err.message);
+    } finally {
+      setUrlImporting(false);
+    }
+  };
+
+  // -------------------------------------------------------------
+  // HANDLERS: SINGLE PHOTO SUBMIT
+  // -------------------------------------------------------------
+  const handleSingleAdd = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!form.title.trim()) { toast.error('Please enter a title'); return; }
-    if (!form.image_url.trim()) { toast.error('Please provide an image'); return; }
+    if (!singleForm.title.trim()) { toast.error('Please enter a title'); return; }
+    if (!singleForm.image_url.trim()) { toast.error('Please provide an image'); return; }
     
-    setSubmitting(true);
+    setSingleSubmitting(true);
     const newId = crypto.randomUUID();
     const payload = {
       id: newId,
-      title: form.title.trim(),
-      image_url: form.image_url.trim(),
-      category: form.category || 'Campus',
-      description: form.description.trim() || null,
-      source: form.source,
-      source_post_id: form.postUrl.trim() || `manual_${newId}`,
+      title: singleForm.title.trim(),
+      image_url: singleForm.image_url.trim(),
+      category: singleForm.category || 'Campus',
+      description: singleForm.description.trim() || null,
+      source: singleForm.source,
+      source_post_id: singleForm.postUrl.trim() || `manual_${newId}`,
       is_active: true,
       post_date: new Date().toISOString(),
       created_at: new Date().toISOString(),
     };
 
-    const { error } = await supabase.from('gallery').insert([payload]);
+    const res = await fetch('/api/admin/gallery/bulk', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ items: [payload] })
+    });
+    const json = await res.json();
     
-    if (error) {
-      toast.error('Database Error', { description: error.message });
-      setSubmitting(false);
-      return;
+    if (json.success) {
+      setImages([payload, ...images]);
+      toast.success('Picture added to Gallery!');
+      setShowAdder(false);
+      setSingleForm({ title: '', image_url: '', category: 'Campus', description: '', source: 'admin', postUrl: '' });
+    } else {
+      toast.error('Failed to add picture: ' + json.error);
     }
-
-    setImages([payload, ...images]);
-    toast.success('Picture added to Gallery!');
-    setShowForm(false);
-    setForm({ title: '', image_url: '', category: 'Campus', description: '', source: 'admin', postUrl: '' });
-    setSubmitting(false);
+    setSingleSubmitting(false);
   };
 
-  const handleDelete = async (id: string) => {
+  // -------------------------------------------------------------
+  // MULTI-SELECTION BATCH ACTIONS
+  // -------------------------------------------------------------
+  const toggleSelectAll = () => {
+    if (selectedIds.size === filteredImages.length && filteredImages.length > 0) {
+      setSelectedIds(new Set());
+    } else {
+      setSelectedIds(new Set(filteredImages.map(img => img.id)));
+    }
+  };
+
+  const toggleSelectOne = (id: string) => {
+    const next = new Set(selectedIds);
+    if (next.has(id)) next.delete(id);
+    else next.add(id);
+    setSelectedIds(next);
+  };
+
+  const handleBulkDelete = async () => {
+    const ids = Array.from(selectedIds);
+    if (ids.length === 0) return;
+    if (!confirm(`Are you sure you want to permanently delete all ${ids.length} selected photos?`)) return;
+
+    try {
+      setBulkActionLoading(true);
+      const res = await fetch('/api/admin/gallery/bulk', {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ids })
+      });
+      const json = await res.json();
+      if (json.success) {
+        toast.success(`Deleted ${ids.length} photos!`);
+        setImages(images.filter(img => !selectedIds.has(img.id)));
+        setSelectedIds(new Set());
+      } else {
+        toast.error('Bulk delete failed: ' + json.error);
+      }
+    } catch (e: any) {
+      toast.error('Error: ' + e.message);
+    } finally {
+      setBulkActionLoading(false);
+    }
+  };
+
+  const handleBulkVisibility = async (makeActive: boolean) => {
+    const ids = Array.from(selectedIds);
+    if (ids.length === 0) return;
+
+    try {
+      setBulkActionLoading(true);
+      const res = await fetch('/api/admin/gallery/bulk', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ids, updates: { is_active: makeActive } })
+      });
+      const json = await res.json();
+      if (json.success) {
+        toast.success(`Updated ${ids.length} photos to ${makeActive ? 'Published' : 'Hidden'}!`);
+        setImages(images.map(img => selectedIds.has(img.id) ? { ...img, is_active: makeActive } : img));
+        setSelectedIds(new Set());
+      } else {
+        toast.error('Bulk update failed: ' + json.error);
+      }
+    } catch (e: any) {
+      toast.error('Error: ' + e.message);
+    } finally {
+      setBulkActionLoading(false);
+    }
+  };
+
+  const handleBulkCategoryChange = async (category: string) => {
+    const ids = Array.from(selectedIds);
+    if (ids.length === 0 || !category) return;
+
+    try {
+      setBulkActionLoading(true);
+      const res = await fetch('/api/admin/gallery/bulk', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ids, updates: { category } })
+      });
+      const json = await res.json();
+      if (json.success) {
+        toast.success(`Moved ${ids.length} photos to "${category}"!`);
+        setImages(images.map(img => selectedIds.has(img.id) ? { ...img, category } : img));
+        setSelectedIds(new Set());
+      } else {
+        toast.error('Category change failed: ' + json.error);
+      }
+    } catch (e: any) {
+      toast.error('Error: ' + e.message);
+    } finally {
+      setBulkActionLoading(false);
+    }
+  };
+
+  const handleDeleteSingle = async (id: string) => {
     if (!confirm('Permanently delete this picture?')) return;
     try {
-      if (isUUID(id)) {
-        await supabase.from('gallery').delete().eq('id', id);
-      } else {
-        const target = images.find(g => g.id === id);
-        if (target?.title) {
-          await supabase.from('gallery').delete().eq('title', target.title);
-        }
-      }
-    } catch {}
-    const updated = images.filter(img => img.id !== id);
-    setImages(updated);
-    setStoredData('gallery', updated);
-    toast.success('Picture deleted successfully!');
-  };
-
-  const toggleVisibility = async (id: string, currentState: boolean) => {
-    try {
-      const { error } = await supabase.from('gallery').update({ is_active: !currentState }).eq('id', id);
-      if (error) throw error;
-      setImages(images.map(img => img.id === id ? { ...img, is_active: !currentState } : img));
-      toast.success(currentState ? 'Image hidden from public view' : 'Image published to gallery');
-    } catch (err: any) {
-      toast.error('Failed to update visibility', { description: err.message });
+      await fetch('/api/admin/gallery/bulk', {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ids: [id] })
+      });
+      setImages(images.filter(img => img.id !== id));
+      toast.success('Picture deleted successfully!');
+    } catch {
+      toast.error('Delete failed');
     }
   };
 
-  const filteredImages = images.filter(img => filterSource === 'all' || img.source === filterSource);
+  const toggleVisibilitySingle = async (id: string, currentState: boolean) => {
+    try {
+      await fetch('/api/admin/gallery/bulk', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ids: [id], updates: { is_active: !currentState } })
+      });
+      setImages(images.map(img => img.id === id ? { ...img, is_active: !currentState } : img));
+      toast.success(currentState ? 'Image hidden' : 'Image published');
+    } catch {
+      toast.error('Visibility update failed');
+    }
+  };
+
+  // Filtered List
+  const filteredImages = images.filter(img => {
+    if (filterSource !== 'all' && img.source !== filterSource) return false;
+    if (filterCategory !== 'all' && img.category !== filterCategory) return false;
+    if (filterStatus === 'active' && !img.is_active) return false;
+    if (filterStatus === 'hidden' && img.is_active) return false;
+    if (searchQuery.trim()) {
+      const q = searchQuery.toLowerCase();
+      return (
+        img.title?.toLowerCase().includes(q) ||
+        img.category?.toLowerCase().includes(q) ||
+        img.description?.toLowerCase().includes(q)
+      );
+    }
+    return true;
+  });
 
   return (
-    <div className="space-y-6 max-w-7xl mx-auto">
-      {/* Header */}
-      <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex flex-col md:flex-row items-center justify-between">
-        <div>
-          <h1 className="text-2xl sm:text-3xl font-display font-bold text-slate-800">Gallery Management</h1>
-          <p className="text-slate-500 text-sm mt-1">Upload photos or link social media posts directly to the gallery.</p>
+    <div className="space-y-6 max-w-7xl mx-auto font-sans px-2 sm:px-4">
+      
+      {/* Header Banner */}
+      <div className="bg-linear-to-r from-slate-900 via-blue-950 to-indigo-950 rounded-3xl p-6 sm:p-8 text-white shadow-xl border border-blue-900/40 relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl pointer-events-none" />
+
+        <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
+          <div className="space-y-2">
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="px-3 py-1 rounded-full bg-white/10 text-blue-200 text-xs font-bold border border-white/15 flex items-center gap-1.5 backdrop-blur-xs">
+                <ImageIcon size={14} className="text-blue-400" /> Gallery Content Manager
+              </span>
+              <span className="px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-300 text-xs font-bold border border-emerald-500/30 flex items-center gap-1.5">
+                <Sparkles size={13} className="text-emerald-400" />
+                Bulk Multi-Upload Ready
+              </span>
+            </div>
+
+            <h1 className="text-2xl sm:text-4xl font-display font-black tracking-tight text-white">
+              Campus Photo Gallery
+            </h1>
+            <p className="text-slate-300 text-xs sm:text-sm max-w-2xl leading-relaxed">
+              Upload multiple photos simultaneously in bulk, drag &amp; drop event galleries, or import image links directly into the college gallery.
+            </p>
+          </div>
+
+          <div className="flex flex-wrap items-center gap-3">
+            <button
+              onClick={() => { setShowAdder(!showAdder); setAdderMode('bulk-files'); }}
+              className="px-5 py-3 rounded-2xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-black text-xs sm:text-sm transition-all shadow-lg shadow-blue-900/40 flex items-center gap-2 cursor-pointer"
+            >
+              <UploadCloud size={18} />
+              <span>⚡ Bulk Add Photos</span>
+            </button>
+
+            <button
+              onClick={fetchGallery}
+              className="px-4 py-3 rounded-2xl bg-white/10 hover:bg-white/20 text-white border border-white/20 font-bold text-xs sm:text-sm transition-all flex items-center gap-2 cursor-pointer backdrop-blur-xs"
+            >
+              <RefreshCw size={15} className={loading ? 'animate-spin' : ''} /> Refresh
+            </button>
+          </div>
         </div>
-        <Button size="sm" onClick={() => setShowForm(!showForm)} className="mt-4 md:mt-0 bg-blue-600 hover:bg-blue-700">
-          <Plus size={16} className="mr-1.5" /> Add New Photo
-        </Button>
       </div>
 
-      {/* Upload Form */}
+      {/* ======================================================== */}
+      {/* BULK ADDER PANEL (Multi-File / URLs / Single)           */}
+      {/* ======================================================== */}
       <AnimatePresence>
-        {showForm && (
+        {showAdder && (
           <m.div 
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
-            exit={{ opacity: 0, height: 0 }}
-            className="overflow-hidden"
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            className="bg-white border-2 border-blue-200 rounded-3xl p-6 sm:p-7 shadow-xl space-y-6 relative overflow-hidden"
           >
-            <div className="bg-white border border-blue-200 rounded-2xl p-5 sm:p-6 shadow-md mb-6 ring-1 ring-blue-100">
-              <h2 className="text-lg font-bold text-slate-800 mb-6 flex items-center gap-2">
-                <ImageIcon size={20} className="text-blue-600" /> Add to Gallery
-              </h2>
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-100 pb-4">
+              <div className="flex items-center gap-2.5">
+                <span className="p-2 rounded-2xl bg-blue-100 text-blue-700">
+                  <Layers size={20} />
+                </span>
+                <div>
+                  <h3 className="font-bold text-slate-900 text-base">Add Photos to Gallery</h3>
+                  <p className="text-xs text-slate-500">Choose your preferred upload method below.</p>
+                </div>
+              </div>
 
-              <form onSubmit={handleAdd} className="space-y-5">
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                  <div>
-                    <label className="text-sm font-bold text-slate-700 block mb-1.5">Photo Title <span className="text-red-500">*</span></label>
-                    <input
-                      required
-                      type="text"
-                      placeholder="e.g. Science Exhibition 2026"
-                      value={form.title}
-                      onChange={e => setForm(prev => ({ ...prev, title: e.target.value }))}
-                      className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 text-slate-800 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm"
-                    />
+              {/* Adder Mode Tabs */}
+              <div className="flex items-center gap-1.5 p-1 bg-slate-100 rounded-2xl text-xs font-bold">
+                <button
+                  onClick={() => setAdderMode('bulk-files')}
+                  className={`px-3.5 py-1.5 rounded-xl transition-all cursor-pointer flex items-center gap-1.5 ${
+                    adderMode === 'bulk-files' 
+                      ? 'bg-blue-600 text-white shadow-xs' 
+                      : 'text-slate-600 hover:text-slate-900'
+                  }`}
+                >
+                  <UploadCloud size={14} /> Bulk Multi-File Upload
+                </button>
+
+                <button
+                  onClick={() => setAdderMode('bulk-urls')}
+                  className={`px-3.5 py-1.5 rounded-xl transition-all cursor-pointer flex items-center gap-1.5 ${
+                    adderMode === 'bulk-urls' 
+                      ? 'bg-blue-600 text-white shadow-xs' 
+                      : 'text-slate-600 hover:text-slate-900'
+                  }`}
+                >
+                  <LinkIcon size={14} /> Bulk URLs Import
+                </button>
+
+                <button
+                  onClick={() => setAdderMode('single')}
+                  className={`px-3.5 py-1.5 rounded-xl transition-all cursor-pointer flex items-center gap-1.5 ${
+                    adderMode === 'single' 
+                      ? 'bg-blue-600 text-white shadow-xs' 
+                      : 'text-slate-600 hover:text-slate-900'
+                  }`}
+                >
+                  <Plus size={14} /> Single Photo
+                </button>
+              </div>
+            </div>
+
+            {/* --- TAB 1: MULTI-FILE BULK UPLOAD --- */}
+            {adderMode === 'bulk-files' && (
+              <div className="space-y-6">
+                
+                {/* Drag & Drop Box */}
+                <div 
+                  onDragOver={e => e.preventDefault()}
+                  onDrop={e => {
+                    e.preventDefault();
+                    if (e.dataTransfer.files) addFilesToQueue(Array.from(e.dataTransfer.files));
+                  }}
+                  onClick={() => fileInputRef.current?.click()}
+                  className="border-2 border-dashed border-blue-300 hover:border-blue-500 bg-blue-50/40 hover:bg-blue-50/80 rounded-3xl p-8 text-center transition-all cursor-pointer space-y-3 group"
+                >
+                  <input
+                    type="file"
+                    multiple
+                    ref={fileInputRef}
+                    onChange={handleBulkFileSelect}
+                    accept="image/jpeg,image/png,image/webp,image/gif"
+                    className="hidden"
+                  />
+                  <div className="w-16 h-16 rounded-2xl bg-blue-100 group-hover:scale-110 text-blue-600 flex items-center justify-center mx-auto transition-transform shadow-xs">
+                    <UploadCloud size={32} />
                   </div>
-
                   <div>
-                    <label className="text-sm font-bold text-slate-700 block mb-1.5">Category</label>
-                    <select
-                      value={form.category}
-                      onChange={e => setForm(prev => ({ ...prev, category: e.target.value }))}
-                      className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 text-slate-800 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm cursor-pointer"
+                    <p className="font-bold text-slate-800 text-sm sm:text-base">
+                      Drag &amp; drop multiple images here, or <span className="text-blue-600 underline">browse files</span>
+                    </p>
+                    <p className="text-xs text-slate-500 mt-1">
+                      Select 5, 10, 50, or 100+ images at once (JPG, PNG, WEBP, GIF up to 15MB each).
+                    </p>
+                  </div>
+                </div>
+
+                {/* Batch Common Configuration Controls */}
+                {bulkQueue.length > 0 && (
+                  <div className="bg-slate-50 p-4 rounded-2xl border border-slate-200 space-y-3">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs font-black text-slate-800 uppercase tracking-wider flex items-center gap-1.5">
+                        <Sparkles size={14} className="text-blue-600" /> Apply Default Settings to All Queued Photos ({bulkQueue.length}):
+                      </span>
+                      <button
+                        onClick={() => setBulkQueue([])}
+                        className="text-xs text-red-600 hover:underline font-bold cursor-pointer"
+                      >
+                        Clear All Queue
+                      </button>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                      <div>
+                        <label className="text-[11px] font-bold text-slate-600 block mb-1">Default Category:</label>
+                        <select
+                          value={bulkDefaultCategory}
+                          onChange={e => applyGlobalCategoryToQueue(e.target.value)}
+                          className="w-full p-2 bg-white border border-slate-200 rounded-xl text-xs font-semibold text-slate-800 outline-none focus:ring-2 focus:ring-blue-500"
+                        >
+                          {CATEGORIES.map(c => (
+                            <option key={c.id} value={c.id}>{c.label}</option>
+                          ))}
+                        </select>
+                      </div>
+
+                      <div>
+                        <label className="text-[11px] font-bold text-slate-600 block mb-1">Title Prefix / Event Name:</label>
+                        <input
+                          type="text"
+                          value={bulkTitlePrefix}
+                          onChange={e => applyGlobalPrefixToQueue(e.target.value)}
+                          placeholder="e.g. Sports Gala 2026 -"
+                          className="w-full p-2 bg-white border border-slate-200 rounded-xl text-xs font-medium text-slate-800 outline-none focus:ring-2 focus:ring-blue-500"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="text-[11px] font-bold text-slate-600 block mb-1">Source Tag:</label>
+                        <select
+                          value={bulkDefaultSource}
+                          onChange={e => {
+                            setBulkDefaultSource(e.target.value);
+                            setBulkQueue(prev => prev.map(item => ({ ...item, source: e.target.value })));
+                          }}
+                          className="w-full p-2 bg-white border border-slate-200 rounded-xl text-xs font-semibold text-slate-800 outline-none focus:ring-2 focus:ring-blue-500"
+                        >
+                          <option value="admin">Manual Upload (Website)</option>
+                          <option value="instagram">Instagram Post</option>
+                          <option value="facebook">Facebook Post</option>
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* Queue Cards Grid */}
+                {bulkQueue.length > 0 && (
+                  <div className="space-y-3">
+                    <h4 className="font-bold text-xs text-slate-700">Photos in Queue ({bulkQueue.length}):</h4>
+                    <div className="max-h-80 overflow-y-auto divide-y divide-slate-100 border border-slate-200 rounded-2xl">
+                      {bulkQueue.map((item, idx) => (
+                        <div key={item.id} className="p-3 bg-white hover:bg-slate-50 flex items-center justify-between gap-3 text-xs">
+                          <div className="flex items-center gap-3 min-w-0">
+                            {/* eslint-disable-next-line @next/next/no-img-element */}
+                            <img src={item.previewUrl} alt="Preview" className="w-12 h-12 rounded-xl object-cover shrink-0 border border-slate-200" />
+                            <div className="min-w-0 space-y-1">
+                              <input
+                                type="text"
+                                value={item.title}
+                                onChange={e => {
+                                  const val = e.target.value;
+                                  setBulkQueue(prev => prev.map(p => p.id === item.id ? { ...p, title: val } : p));
+                                }}
+                                className="font-bold text-slate-800 text-xs bg-transparent border-b border-transparent hover:border-slate-300 focus:border-blue-500 outline-none w-full max-w-sm truncate"
+                              />
+                              <div className="flex items-center gap-2 text-[10px] text-slate-500">
+                                <span>{item.size ? `${(item.size / 1024).toFixed(0)} KB` : ''}</span>
+                                <span>•</span>
+                                <span className="font-semibold text-blue-600">{item.category}</span>
+                              </div>
+                            </div>
+                          </div>
+
+                          <div className="flex items-center gap-2 shrink-0">
+                            <select
+                              value={item.category}
+                              onChange={e => {
+                                const val = e.target.value;
+                                setBulkQueue(prev => prev.map(p => p.id === item.id ? { ...p, category: val } : p));
+                              }}
+                              className="px-2 py-1 bg-slate-100 rounded-lg text-[11px] font-semibold text-slate-700 outline-none"
+                            >
+                              {CATEGORIES.map(c => (
+                                <option key={c.id} value={c.id}>{c.label}</option>
+                              ))}
+                            </select>
+
+                            <button
+                              onClick={() => removeQueueItem(item.id)}
+                              className="p-1.5 rounded-lg text-slate-400 hover:text-red-600 hover:bg-red-50 cursor-pointer"
+                              title="Remove from queue"
+                            >
+                              <X size={15} />
+                            </button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Bulk Actions Button */}
+                {bulkQueue.length > 0 && (
+                  <div className="flex items-center justify-end gap-3 pt-2">
+                    <button
+                      onClick={() => setBulkQueue([])}
+                      className="px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold cursor-pointer"
                     >
-                      <option value="Classroom">Classroom & Labs</option>
-                      <option value="Events">Campus Events & Sports</option>
-                      <option value="Achievements">Awards & High Achievers</option>
-                      <option value="Campus">Campus Life</option>
-                      <option value="Social Media">Social Media</option>
+                      Cancel
+                    </button>
+                    <button
+                      onClick={handleBulkUploadSubmit}
+                      disabled={isBulkUploading}
+                      className="px-6 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold transition-all shadow-md flex items-center gap-2 cursor-pointer disabled:opacity-50"
+                    >
+                      {isBulkUploading ? <RefreshCw size={15} className="animate-spin" /> : <UploadCloud size={15} />}
+                      <span>Upload &amp; Add All to Gallery ({bulkQueue.length} Photos)</span>
+                    </button>
+                  </div>
+                )}
+
+              </div>
+            )}
+
+            {/* --- TAB 2: BULK URLS IMPORT --- */}
+            {adderMode === 'bulk-urls' && (
+              <div className="space-y-4">
+                <div>
+                  <label className="text-xs font-bold text-slate-700 block mb-1.5">
+                    Paste Image URLs (One URL per line):
+                  </label>
+                  <textarea
+                    rows={6}
+                    value={urlRawText}
+                    onChange={e => setUrlRawText(e.target.value)}
+                    placeholder="https://example.com/photo1.jpg&#10;https://example.com/photo2.png&#10;https://images.unsplash.com/photo-..."
+                    className="w-full p-3.5 bg-slate-50 border border-slate-200 rounded-2xl text-xs font-mono text-slate-800 focus:ring-2 focus:ring-blue-500 outline-none leading-relaxed"
+                  />
+                  <p className="text-[11px] text-slate-400 mt-1">Paste image URLs from cloud storage, CDN, Instagram CDN, or external drives.</p>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                  <div>
+                    <label className="text-[11px] font-bold text-slate-600 block mb-1">Category:</label>
+                    <select
+                      value={urlDefaultCategory}
+                      onChange={e => setUrlDefaultCategory(e.target.value)}
+                      className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-800 outline-none focus:ring-2 focus:ring-blue-500"
+                    >
+                      {CATEGORIES.map(c => (
+                        <option key={c.id} value={c.id}>{c.label}</option>
+                      ))}
                     </select>
                   </div>
 
                   <div>
-                    <label className="text-sm font-bold text-slate-700 block mb-1.5">Source Type</label>
+                    <label className="text-[11px] font-bold text-slate-600 block mb-1">Title Prefix:</label>
+                    <input
+                      type="text"
+                      value={urlTitlePrefix}
+                      onChange={e => setUrlTitlePrefix(e.target.value)}
+                      placeholder="e.g. Science Fair 2026"
+                      className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium text-slate-800 outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="text-[11px] font-bold text-slate-600 block mb-1">Source:</label>
                     <select
-                      value={form.source}
-                      onChange={e => setForm(prev => ({ ...prev, source: e.target.value }))}
-                      className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 text-slate-800 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm cursor-pointer"
+                      value={urlDefaultSource}
+                      onChange={e => setUrlDefaultSource(e.target.value)}
+                      className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-800 outline-none focus:ring-2 focus:ring-blue-500"
+                    >
+                      <option value="admin">Manual URL</option>
+                      <option value="instagram">Instagram</option>
+                      <option value="facebook">Facebook</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div className="flex items-center justify-end gap-3 pt-2">
+                  <button
+                    onClick={() => setShowAdder(false)}
+                    className="px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold cursor-pointer"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={handleBulkUrlImport}
+                    disabled={urlImporting || !urlRawText.trim()}
+                    className="px-6 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold transition-all shadow-md flex items-center gap-2 cursor-pointer disabled:opacity-50"
+                  >
+                    {urlImporting ? <RefreshCw size={15} className="animate-spin" /> : <LinkIcon size={15} />}
+                    <span>Import All URLs to Gallery</span>
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {/* --- TAB 3: SINGLE PHOTO --- */}
+            {adderMode === 'single' && (
+              <form onSubmit={handleSingleAdd} className="space-y-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label className="text-xs font-bold text-slate-700 block mb-1">Photo Title <span className="text-red-500">*</span></label>
+                    <input
+                      required
+                      type="text"
+                      placeholder="e.g. Science Exhibition 2026"
+                      value={singleForm.title}
+                      onChange={e => setSingleForm(prev => ({ ...prev, title: e.target.value }))}
+                      className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium text-slate-800 focus:ring-2 focus:ring-blue-500 outline-none"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="text-xs font-bold text-slate-700 block mb-1">Category</label>
+                    <select
+                      value={singleForm.category}
+                      onChange={e => setSingleForm(prev => ({ ...prev, category: e.target.value }))}
+                      className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-800 focus:ring-2 focus:ring-blue-500 outline-none cursor-pointer"
+                    >
+                      {CATEGORIES.map(c => (
+                        <option key={c.id} value={c.id}>{c.label}</option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="text-xs font-bold text-slate-700 block mb-1">Image URL or Upload</label>
+                    <input
+                      type="text"
+                      placeholder="https://... or /uploads/..."
+                      value={singleForm.image_url}
+                      onChange={e => setSingleForm(prev => ({ ...prev, image_url: e.target.value }))}
+                      className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium text-slate-800 focus:ring-2 focus:ring-blue-500 outline-none"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="text-xs font-bold text-slate-700 block mb-1">Source</label>
+                    <select
+                      value={singleForm.source}
+                      onChange={e => setSingleForm(prev => ({ ...prev, source: e.target.value }))}
+                      className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-800 focus:ring-2 focus:ring-blue-500 outline-none cursor-pointer"
                     >
                       <option value="admin">Manual Upload (Website)</option>
                       <option value="instagram">Instagram Post</option>
                       <option value="facebook">Facebook Post</option>
                     </select>
                   </div>
-
-                  <div>
-                    <label className="text-sm font-bold text-slate-700 block mb-1.5">Link to Original Post (Optional)</label>
-                    <div className="relative">
-                      <LinkIcon size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
-                      <input
-                        type="url"
-                        placeholder="https://instagram.com/p/..."
-                        value={form.postUrl}
-                        onChange={e => setForm(prev => ({ ...prev, postUrl: e.target.value }))}
-                        className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 text-slate-800 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm"
-                      />
-                    </div>
-                  </div>
-
-                  <div className="sm:col-span-2">
-                    <label className="text-sm font-bold text-slate-700 block mb-1.5">Description / Caption (Optional)</label>
-                    <textarea
-                      rows={2}
-                      placeholder="Add details about this photo..."
-                      value={form.description}
-                      onChange={e => setForm(prev => ({ ...prev, description: e.target.value }))}
-                      className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 text-slate-800 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm resize-none"
-                    />
-                  </div>
-
-                  <div className="sm:col-span-2">
-                    <label className="text-sm font-bold text-slate-700 block mb-1.5">Upload Image <span className="text-red-500">*</span></label>
-                    <div className="flex items-center justify-center w-full">
-                      <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-slate-300 border-dashed rounded-xl cursor-pointer bg-slate-50 hover:bg-slate-100 transition-colors">
-                        <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                          <ImageIcon className="w-8 h-8 mb-3 text-slate-400" />
-                          <p className="mb-2 text-sm text-slate-500"><span className="font-bold">Click to upload</span> JPG, PNG, or WEBP (Max 5MB)</p>
-                        </div>
-                        <input type="file" className="hidden" accept="image/jpeg, image/png, image/webp" onChange={handleFileUpload} />
-                      </label>
-                    </div>
-                  </div>
                 </div>
 
-                {form.image_url && (
-                  <div className="mt-4 relative w-32 h-32 rounded-xl overflow-hidden border border-slate-200">
-                    <img src={form.image_url} alt="Preview" className="w-full h-full object-cover" />
-                    <button type="button" onClick={() => setForm(p => ({ ...p, image_url: '' }))} className="absolute top-1 right-1 bg-white rounded-full p-1 shadow-sm text-red-500 hover:bg-red-50">
-                      <Trash2 size={14} />
-                    </button>
-                  </div>
-                )}
-
-                <div className="flex justify-end pt-4 border-t border-slate-100">
-                  <Button type="button" variant="outline" className="mr-3" onClick={() => setShowForm(false)}>Cancel</Button>
-                  <Button type="submit" isLoading={submitting} className="bg-blue-600 hover:bg-blue-700">Add to Gallery</Button>
+                <div className="flex justify-end pt-3 border-t border-slate-100 gap-2">
+                  <button type="button" onClick={() => setShowAdder(false)} className="px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold cursor-pointer">
+                    Cancel
+                  </button>
+                  <button type="submit" disabled={singleSubmitting} className="px-6 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold transition-all shadow-md flex items-center gap-1.5 cursor-pointer disabled:opacity-50">
+                    {singleSubmitting ? <RefreshCw size={14} className="animate-spin" /> : <Plus size={14} />}
+                    <span>Add Photo</span>
+                  </button>
                 </div>
               </form>
-            </div>
+            )}
+
           </m.div>
         )}
       </AnimatePresence>
 
-      {/* Gallery Database View */}
-      <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
-        <div className="flex flex-col sm:flex-row items-center justify-between mb-6 pb-4 border-b border-slate-100 gap-4">
-          <h2 className="text-lg font-bold text-slate-800">Database Images ({filteredImages.length})</h2>
+      {/* ======================================================== */}
+      {/* FILTER & BATCH SELECTION CONTROL BAR                    */}
+      {/* ======================================================== */}
+      <div className="bg-white rounded-3xl border border-slate-200 shadow-xs p-4 sm:p-5 space-y-4">
+        <div className="flex flex-col lg:flex-row gap-3 items-stretch lg:items-center justify-between">
           
-          <div className="flex items-center gap-2">
-            <Filter size={16} className="text-slate-400" />
-            <select 
-              value={filterSource} 
+          {/* Search Box */}
+          <div className="relative flex-1">
+            <Filter size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={e => setSearchQuery(e.target.value)}
+              placeholder="Search by photo title, category, event..."
+              className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-2xl text-xs font-medium text-slate-800 placeholder-slate-400 focus:ring-2 focus:ring-blue-500 outline-none"
+            />
+          </div>
+
+          {/* Filters Row */}
+          <div className="flex flex-wrap items-center gap-2">
+            <select
+              value={filterCategory}
+              onChange={e => setFilterCategory(e.target.value)}
+              className="px-3 py-2 bg-slate-50 border border-slate-200 text-slate-700 rounded-xl text-xs font-semibold focus:ring-2 focus:ring-blue-500 outline-none cursor-pointer"
+            >
+              <option value="all">All Categories</option>
+              {CATEGORIES.map(c => (
+                <option key={c.id} value={c.id}>{c.label}</option>
+              ))}
+            </select>
+
+            <select
+              value={filterSource}
               onChange={e => setFilterSource(e.target.value as any)}
-              className="text-sm border border-slate-200 rounded-lg px-3 py-1.5 bg-slate-50 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="px-3 py-2 bg-slate-50 border border-slate-200 text-slate-700 rounded-xl text-xs font-semibold focus:ring-2 focus:ring-blue-500 outline-none cursor-pointer"
             >
               <option value="all">All Sources</option>
               <option value="admin">Manual Uploads</option>
               <option value="instagram">Instagram</option>
               <option value="facebook">Facebook</option>
             </select>
+
+            <select
+              value={filterStatus}
+              onChange={e => setFilterStatus(e.target.value as any)}
+              className="px-3 py-2 bg-slate-50 border border-slate-200 text-slate-700 rounded-xl text-xs font-semibold focus:ring-2 focus:ring-blue-500 outline-none cursor-pointer"
+            >
+              <option value="all">All Statuses</option>
+              <option value="active">Published Only</option>
+              <option value="hidden">Hidden Only</option>
+            </select>
+
+            <button
+              onClick={toggleSelectAll}
+              className={`px-3 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
+                selectedIds.size > 0 && selectedIds.size === filteredImages.length
+                  ? 'bg-blue-600 text-white'
+                  : 'bg-slate-100 hover:bg-slate-200 text-slate-700'
+              }`}
+            >
+              <CheckSquare size={14} />
+              <span>{selectedIds.size === filteredImages.length && filteredImages.length > 0 ? 'Deselect All' : 'Select All'}</span>
+            </button>
           </div>
+        </div>
+
+        {/* Multi-Select Action Sticky Bar */}
+        {selectedIds.size > 0 && (
+          <div className="bg-blue-50 border border-blue-200 rounded-2xl p-3.5 flex flex-wrap items-center justify-between gap-3 text-xs">
+            <div className="flex items-center gap-2 font-bold text-blue-900">
+              <span className="w-2 h-2 rounded-full bg-blue-600" />
+              <span>{selectedIds.size} Photo{selectedIds.size > 1 ? 's' : ''} Selected</span>
+            </div>
+
+            <div className="flex flex-wrap items-center gap-2">
+              <button
+                onClick={() => handleBulkVisibility(true)}
+                disabled={bulkActionLoading}
+                className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl transition-all flex items-center gap-1 cursor-pointer"
+              >
+                <Eye size={13} /> Publish Selected
+              </button>
+
+              <button
+                onClick={() => handleBulkVisibility(false)}
+                disabled={bulkActionLoading}
+                className="px-3 py-1.5 bg-slate-700 hover:bg-slate-800 text-white font-bold rounded-xl transition-all flex items-center gap-1 cursor-pointer"
+              >
+                <EyeOff size={13} /> Hide Selected
+              </button>
+
+              <select
+                onChange={e => {
+                  if (e.target.value) handleBulkCategoryChange(e.target.value);
+                }}
+                defaultValue=""
+                className="px-3 py-1.5 bg-white border border-blue-200 text-slate-700 font-bold rounded-xl outline-none cursor-pointer"
+              >
+                <option value="" disabled>Move Category to...</option>
+                {CATEGORIES.map(c => (
+                  <option key={c.id} value={c.id}>{c.label}</option>
+                ))}
+              </select>
+
+              <button
+                onClick={handleBulkDelete}
+                disabled={bulkActionLoading}
+                className="px-3 py-1.5 bg-red-600 hover:bg-red-700 text-white font-bold rounded-xl transition-all flex items-center gap-1 cursor-pointer"
+              >
+                <Trash2 size={13} /> Delete Selected ({selectedIds.size})
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* ======================================================== */}
+      {/* GALLERY GRID VIEW                                        */}
+      {/* ======================================================== */}
+      <div className="bg-white rounded-3xl shadow-sm border border-slate-200 p-6">
+        <div className="flex items-center justify-between mb-6 pb-4 border-b border-slate-100">
+          <h2 className="text-base font-bold text-slate-800 flex items-center gap-2">
+            <span>Gallery Database</span>
+            <span className="px-2 py-0.5 rounded-full bg-slate-100 text-slate-600 text-xs font-mono">
+              {filteredImages.length} photo{filteredImages.length !== 1 ? 's' : ''}
+            </span>
+          </h2>
         </div>
 
         {loading ? (
           <div className="py-20 flex flex-col items-center justify-center text-slate-400">
             <Loader2 className="w-8 h-8 animate-spin mb-4 text-blue-500" />
-            <p>Loading database...</p>
+            <p className="text-xs font-bold">Loading gallery photos...</p>
           </div>
         ) : filteredImages.length === 0 ? (
-          <div className="py-20 text-center text-slate-400 flex flex-col items-center">
-            <ImageIcon className="w-12 h-12 mb-4 opacity-50" />
-            <p className="text-lg font-medium text-slate-600">No images found in the database.</p>
-            <p className="text-sm mt-1">Upload a photo to see it in the gallery.</p>
+          <div className="py-20 text-center text-slate-400 flex flex-col items-center space-y-2">
+            <ImageIcon className="w-12 h-12 mb-2 opacity-50" />
+            <p className="text-sm font-bold text-slate-700">No photos match your filters</p>
+            <p className="text-xs text-slate-500">Click &quot;⚡ Bulk Add Photos&quot; above to upload gallery photos.</p>
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-            {filteredImages.map((img) => (
-              <div key={img.id} className={`group relative bg-white border ${img.is_active ? 'border-slate-200' : 'border-red-200 opacity-70'} rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all`}>
-                <div className="relative aspect-video bg-slate-100">
-                  <img src={img.image_url} alt={img.title} className="w-full h-full object-cover" />
-                  
-                  {/* Source Indicator */}
-                  <div className="absolute top-2 left-2 bg-white/90 backdrop-blur-sm px-2 py-1 rounded-md shadow-sm flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider text-slate-700">
-                    {img.source === 'instagram' && <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-pink-600"><rect width="20" height="20" x="2" y="2" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/></svg>}
-                    {img.source === 'facebook' && <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-blue-600"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>}
-                    {img.source === 'admin' && <ImageIcon size={12} className="text-blue-600" />}
-                    {img.source}
-                  </div>
-                  
-                  {/* Visibility Indicator */}
-                  {!img.is_active && (
-                    <div className="absolute top-2 right-2 bg-red-100 text-red-600 px-2 py-0.5 rounded text-[10px] font-bold">
-                      HIDDEN
-                    </div>
-                  )}
-                </div>
-                
-                <div className="p-3">
-                  <h4 className="font-bold text-sm text-slate-800 truncate" title={img.title}>{img.title}</h4>
-                  <p className="text-xs text-slate-500 mt-1 flex items-center gap-1">
-                    <Clock size={10} /> 
-                    {new Date(img.post_date || img.created_at).toLocaleDateString()}
-                  </p>
-                  
-                  <div className="flex items-center gap-2 mt-4 pt-3 border-t border-slate-100">
+            {filteredImages.map((img) => {
+              const isSelected = selectedIds.has(img.id);
+
+              return (
+                <div 
+                  key={img.id} 
+                  className={`group relative bg-white border-2 rounded-2xl overflow-hidden transition-all shadow-2xs hover:shadow-md ${
+                    isSelected
+                      ? 'border-blue-500 ring-2 ring-blue-400 bg-blue-50/20'
+                      : img.is_active 
+                      ? 'border-slate-200 hover:border-blue-300' 
+                      : 'border-amber-300 bg-amber-50/20 opacity-80'
+                  }`}
+                >
+                  {/* Photo Container */}
+                  <div className="relative aspect-video bg-slate-100 overflow-hidden">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img 
+                      src={img.image_url} 
+                      alt={img.title} 
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300 cursor-pointer"
+                      onClick={() => setLightboxUrl(img.image_url)}
+                    />
+                    
+                    {/* Selection Checkbox (Top Left) */}
                     <button
-                      onClick={() => toggleVisibility(img.id, img.is_active)}
-                      className={`flex-1 flex justify-center items-center gap-1.5 py-1.5 rounded-lg text-xs font-bold transition-colors ${
-                        img.is_active 
-                          ? 'bg-slate-50 text-slate-600 hover:bg-slate-100' 
-                          : 'bg-emerald-50 text-emerald-600 hover:bg-emerald-100'
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        toggleSelectOne(img.id);
+                      }}
+                      className={`absolute top-2.5 left-2.5 w-6 h-6 rounded-lg flex items-center justify-center transition-all cursor-pointer shadow-sm ${
+                        isSelected 
+                          ? 'bg-blue-600 text-white' 
+                          : 'bg-white/90 text-slate-600 hover:bg-white'
                       }`}
                     >
-                      {img.is_active ? <><EyeOff size={14} /> Hide</> : <><Eye size={14} /> Publish</>}
+                      {isSelected ? <Check size={14} className="stroke-[3]" /> : <Square size={14} className="opacity-40" />}
                     </button>
-                    <button
-                      onClick={() => handleDelete(img.id)}
-                      className="p-1.5 rounded-lg bg-red-50 text-red-600 hover:bg-red-100 transition-colors"
-                      title="Delete permanently"
-                    >
-                      <Trash2 size={14} />
-                    </button>
+
+                    {/* Source & Status Pill (Top Right) */}
+                    <div className="absolute top-2.5 right-2.5 flex items-center gap-1">
+                      {!img.is_active && (
+                        <span className="bg-amber-500 text-white px-2 py-0.5 rounded-md text-[10px] font-black tracking-wider shadow-sm">
+                          HIDDEN
+                        </span>
+                      )}
+                      <span className="bg-black/60 backdrop-blur-xs text-white px-2 py-0.5 rounded-md text-[10px] font-bold shadow-sm">
+                        {img.category || 'Campus'}
+                      </span>
+                    </div>
+
+                    {/* Quick Lightbox Action Overlay */}
+                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center pointer-events-none">
+                      <span className="p-2 rounded-full bg-white/90 text-slate-900 shadow-md">
+                        <ZoomIn size={18} />
+                      </span>
+                    </div>
+                  </div>
+                  
+                  {/* Details Card */}
+                  <div className="p-3.5 space-y-2">
+                    <h4 className="font-bold text-xs text-slate-900 truncate" title={img.title}>
+                      {img.title}
+                    </h4>
+
+                    <div className="flex items-center justify-between text-[10px] text-slate-500">
+                      <span className="flex items-center gap-1">
+                        <Clock size={11} /> 
+                        {new Date(img.post_date || img.created_at).toLocaleDateString()}
+                      </span>
+                      <span className="font-semibold text-slate-600 capitalize">
+                        {img.source || 'admin'}
+                      </span>
+                    </div>
+                    
+                    {/* Card Actions */}
+                    <div className="flex items-center gap-1.5 pt-2 border-t border-slate-100">
+                      <button
+                        onClick={() => toggleVisibilitySingle(img.id, img.is_active)}
+                        className={`flex-1 flex justify-center items-center gap-1 py-1.5 rounded-xl text-[11px] font-bold transition-colors cursor-pointer ${
+                          img.is_active 
+                            ? 'bg-slate-100 text-slate-700 hover:bg-slate-200' 
+                            : 'bg-emerald-100 text-emerald-800 hover:bg-emerald-200'
+                        }`}
+                      >
+                        {img.is_active ? <><EyeOff size={13} /> Hide</> : <><Eye size={13} /> Publish</>}
+                      </button>
+
+                      <button
+                        onClick={() => handleDeleteSingle(img.id)}
+                        className="p-1.5 rounded-xl bg-red-50 text-red-600 hover:bg-red-100 transition-colors cursor-pointer"
+                        title="Delete permanently"
+                      >
+                        <Trash2 size={14} />
+                      </button>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         )}
       </div>
+
+      {/* ======================================================== */}
+      {/* LIGHTBOX VIEWER MODAL                                    */}
+      {/* ======================================================== */}
+      {lightboxUrl && (
+        <div 
+          className="fixed inset-0 z-50 bg-black/85 backdrop-blur-xs flex items-center justify-center p-4"
+          onClick={() => setLightboxUrl(null)}
+        >
+          <div className="relative max-w-4xl max-h-[90vh] flex flex-col items-center gap-3">
+            <button
+              onClick={() => setLightboxUrl(null)}
+              className="absolute -top-10 right-0 text-white hover:text-slate-300 p-1 cursor-pointer"
+            >
+              <X size={24} />
+            </button>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={lightboxUrl}
+              alt="Lightbox View"
+              className="max-h-[80vh] w-auto object-contain rounded-2xl shadow-2xl border border-white/10"
+              onClick={e => e.stopPropagation()}
+            />
+            <div className="flex items-center gap-2">
+              <a
+                href={lightboxUrl}
+                download="gallery-photo.jpg"
+                className="px-4 py-2 bg-white text-slate-900 font-bold text-xs rounded-xl flex items-center gap-1.5 shadow-md cursor-pointer"
+                onClick={e => e.stopPropagation()}
+              >
+                <Download size={14} /> Download Original
+              </a>
+            </div>
+          </div>
+        </div>
+      )}
+
     </div>
   );
 }
