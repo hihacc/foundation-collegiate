@@ -3,7 +3,7 @@ export const dynamic = 'force-dynamic';
 
 import { useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabase/client';
-import { Users, Search, GraduationCap, Plus, Pencil, Trash2, Loader2, Upload, Filter, UserCheck, Download, Printer, Mail, X, FileSpreadsheet, RotateCcw, Sparkles, BookOpen } from 'lucide-react';
+import { Users, Search, GraduationCap, Plus, Pencil, Trash2, Loader2, Upload, Filter, UserCheck, Download, Printer, Mail, X, FileSpreadsheet, RotateCcw, Sparkles, BookOpen, AlertCircle } from 'lucide-react';
 import { m, AnimatePresence } from 'framer-motion';
 import Button from '@/components/ui/Button';
 import { toast } from 'sonner';
@@ -71,11 +71,11 @@ export default function AdminStudentsPage() {
   const [bulkImporting, setBulkImporting] = useState(false);
 
   const handleDownloadSampleCSV = () => {
-    const sampleHeaders = ['Roll Number', 'Student Name', 'Father Name', 'Class Name', 'Section', 'Phone', 'Email', 'Gender', 'Address'];
+    const sampleHeaders = ['Roll Number', 'Student Name', 'Father Name', 'Date of Birth (YYYY-MM-DD)', 'Class Name', 'Section', 'Phone', 'Email', 'Gender', 'Address'];
     const sampleRows = [
-      ['FC-2026-201', 'Muhammad Ali', 'Tariq Ali', 'Class IX', 'A', '0333-1112233', 'ali@gmail.com', 'Male', 'Sector 11-B, North Karachi'],
-      ['FC-2026-202', 'Fatima Raza', 'Raza Hussain', 'Class X', 'A', '0321-4445566', 'fatima@gmail.com', 'Female', 'North Karachi'],
-      ['FC-2026-203', 'Hamza Sheikh', 'Kamran Sheikh', 'XI Pre-Medical', 'A', '0300-7778899', 'hamza@gmail.com', 'Male', 'Karachi']
+      ['FC-2026-201', 'Muhammad Ali', 'Tariq Ali', '2008-05-14', 'Class IX', 'A', '0333-1112233', 'ali@gmail.com', 'Male', 'Sector 11-B, North Karachi'],
+      ['FC-2026-202', 'Fatima Raza', 'Raza Hussain', '2007-11-20', 'Class X', 'A', '0321-4445566', 'fatima@gmail.com', 'Female', 'North Karachi'],
+      ['FC-2026-203', 'Hamza Sheikh', 'Kamran Sheikh', '2006-03-09', 'XI Pre-Medical', 'A', '0300-7778899', 'hamza@gmail.com', 'Male', 'Karachi']
     ];
     const csvContent = 'data:text/csv;charset=utf-8,' + [sampleHeaders.join(','), ...sampleRows.map(r => r.map(c => `"${c}"`).join(','))].join('\n');
     const encodedUri = encodeURI(csvContent);
@@ -85,7 +85,62 @@ export default function AdminStudentsPage() {
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
-    toast.success('Downloaded sample CSV import template!');
+    toast.success('Downloaded sample CSV import template (with Date of Birth)!');
+  };
+
+  const parseDateOfBirth = (input?: string | null): string | null => {
+    if (!input) return null;
+    const val = input.trim().replace(/^["']|["']$/g, '');
+    if (!val) return null;
+
+    // 1. Check YYYY-MM-DD or YYYY/MM/DD
+    const ymdMatch = val.match(/^(\d{4})[-/.](\d{1,2})[-/.](\d{1,2})$/);
+    if (ymdMatch) {
+      const y = parseInt(ymdMatch[1], 10);
+      const m = parseInt(ymdMatch[2], 10);
+      const d = parseInt(ymdMatch[3], 10);
+      if (y >= 1950 && y <= 2026 && m >= 1 && m <= 12 && d >= 1 && d <= 31) {
+        return `${y}-${String(m).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+      }
+    }
+
+    // 2. Check DD-MM-YYYY or DD/MM/YYYY or DD.MM.YYYY
+    const dmyMatch = val.match(/^(\d{1,2})[-/.](\d{1,2})[-/.](\d{4})$/);
+    if (dmyMatch) {
+      const p1 = parseInt(dmyMatch[1], 10);
+      const p2 = parseInt(dmyMatch[2], 10);
+      const y = parseInt(dmyMatch[3], 10);
+      if (y >= 1950 && y <= 2026) {
+        let d = p1;
+        let m = p2;
+        if (p1 > 12 && p2 <= 12) {
+          d = p1;
+          m = p2;
+        } else if (p1 <= 12 && p2 > 12) {
+          m = p1;
+          d = p2;
+        } else {
+          d = p1;
+          m = p2;
+        }
+        if (m >= 1 && m <= 12 && d >= 1 && d <= 31) {
+          return `${y}-${String(m).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+        }
+      }
+    }
+
+    // 3. Fallback: Native date parsing
+    const parsed = new Date(val);
+    if (!isNaN(parsed.getTime())) {
+      const y = parsed.getFullYear();
+      const m = parsed.getMonth() + 1;
+      const d = parsed.getDate();
+      if (y >= 1950 && y <= 2026 && m >= 1 && m <= 12 && d >= 1 && d <= 31) {
+        return `${y}-${String(m).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+      }
+    }
+
+    return null;
   };
 
   const parseBulkInputText = (text: string) => {
@@ -124,35 +179,96 @@ export default function AdminStudentsPage() {
     };
 
     const firstRowCols = splitRow(lines[0]);
-    const isHeader = firstRowCols.some(c => 
-      c.toLowerCase().includes('name') || 
-      c.toLowerCase().includes('roll') || 
-      c.toLowerCase().includes('father') ||
-      c.toLowerCase().includes('class')
-    );
+    const isHeader = firstRowCols.some(c => {
+      const lc = c.toLowerCase();
+      return (
+        lc.includes('name') || 
+        lc.includes('roll') || 
+        lc.includes('father') ||
+        lc.includes('class') ||
+        lc.includes('birth') ||
+        lc.includes('dob')
+      );
+    });
+
+    let rollIdx = -1;
+    let nameIdx = -1;
+    let fatherIdx = -1;
+    let dobIdx = -1;
+    let classIdx = -1;
+    let sectionIdx = -1;
+    let phoneIdx = -1;
+    let emailIdx = -1;
+    let genderIdx = -1;
+    let addressIdx = -1;
+
+    if (isHeader) {
+      firstRowCols.forEach((col, idx) => {
+        const lc = col.toLowerCase().trim();
+        if (lc.includes('roll')) rollIdx = idx;
+        else if (lc.includes('birth') || lc.includes('dob') || lc.includes('bday')) dobIdx = idx;
+        else if (lc.includes('father') || lc.includes('parent') || lc.includes('guardian')) fatherIdx = idx;
+        else if (lc.includes('class') || lc.includes('grade') || lc.includes('program')) classIdx = idx;
+        else if (lc.includes('section') || lc.includes('sec')) sectionIdx = idx;
+        else if (lc.includes('phone') || lc.includes('mobile') || lc.includes('cell') || lc.includes('contact')) phoneIdx = idx;
+        else if (lc.includes('email') || lc.includes('mail')) emailIdx = idx;
+        else if (lc.includes('gender') || lc.includes('sex')) genderIdx = idx;
+        else if (lc.includes('address') || lc.includes('city') || lc.includes('location')) addressIdx = idx;
+        else if (lc.includes('name') || lc.includes('student')) nameIdx = idx;
+      });
+    }
+
+    // Default indices if not mapped from header
+    rollIdx = rollIdx !== -1 ? rollIdx : 0;
+    nameIdx = nameIdx !== -1 ? nameIdx : 1;
+    fatherIdx = fatherIdx !== -1 ? fatherIdx : 2;
+    dobIdx = dobIdx !== -1 ? dobIdx : 3;
+    classIdx = classIdx !== -1 ? classIdx : 4;
+    sectionIdx = sectionIdx !== -1 ? sectionIdx : 5;
+    phoneIdx = phoneIdx !== -1 ? phoneIdx : 6;
+    emailIdx = emailIdx !== -1 ? emailIdx : 7;
+    genderIdx = genderIdx !== -1 ? genderIdx : 8;
+    addressIdx = addressIdx !== -1 ? addressIdx : 9;
 
     const dataRows = isHeader ? lines.slice(1) : lines;
     const items: Partial<Student>[] = [];
 
     dataRows.forEach((line, index) => {
       const cols = splitRow(line);
-      if (cols.length === 0) return;
+      if (cols.length === 0 || cols.every(c => !c.trim())) return;
 
-      const roll = cols[0] || `FC-2026-B${100 + index}`;
-      const name = cols[1] || '';
-      const father = cols[2] || 'Parent / Guardian';
-      const className = cols[3] || fallbackClassOptions[0];
-      const section = cols[4] || 'A';
-      const phone = cols[5] || '';
-      const email = cols[6] || '';
-      const gender = cols[7] || '';
-      const address = cols[8] || '';
+      const roll = cols[rollIdx] || `FC-2026-B${100 + index}`;
+      const name = cols[nameIdx] || '';
+      const father = cols[fatherIdx] || 'Parent / Guardian';
+
+      let rawDob = cols[dobIdx] || '';
+      let parsedDob = parseDateOfBirth(rawDob);
+
+      // Smart fallback: if rawDob didn't parse, scan other non-name columns in the row
+      if (!parsedDob) {
+        for (let i = 0; i < cols.length; i++) {
+          if (i === rollIdx || i === nameIdx || i === fatherIdx) continue;
+          const candidate = parseDateOfBirth(cols[i]);
+          if (candidate) {
+            parsedDob = candidate;
+            break;
+          }
+        }
+      }
+
+      const className = cols[classIdx] || fallbackClassOptions[0];
+      const section = cols[sectionIdx] || 'A';
+      const phone = cols[phoneIdx] || '';
+      const email = cols[emailIdx] || '';
+      const gender = cols[genderIdx] || '';
+      const address = cols[addressIdx] || '';
 
       if (name.trim()) {
         items.push({
           roll_number: roll.trim(),
           name: name.trim(),
           father_name: father.trim(),
+          date_of_birth: parsedDob,
           class_name: className.trim(),
           section: section.trim(),
           phone: phone.trim(),
@@ -187,6 +303,15 @@ export default function AdminStudentsPage() {
       return toast.error('No valid student rows to import.');
     }
 
+    // Required Date of Birth validation
+    const missingDobList = parsedBulk.filter(s => !s.date_of_birth || !s.date_of_birth.trim());
+    if (missingDobList.length > 0) {
+      const sampleNames = missingDobList.slice(0, 3).map(s => s.name || s.roll_number).join(', ');
+      return toast.error(
+        `Date of Birth is required for all students! ${missingDobList.length} record(s) (${sampleNames}${missingDobList.length > 3 ? '...' : ''}) are missing a valid Date of Birth (format: YYYY-MM-DD).`
+      );
+    }
+
     setBulkImporting(true);
 
     try {
@@ -195,6 +320,7 @@ export default function AdminStudentsPage() {
         name: s.name!,
         father_name: s.father_name || 'Parent / Guardian',
         roll_number: s.roll_number || `FC-2026-${Math.floor(100 + idx)}`,
+        date_of_birth: s.date_of_birth!,
         class_name: s.class_name || fallbackClassOptions[0],
         section: s.section || 'A',
         phone: s.phone || '',
@@ -208,13 +334,24 @@ export default function AdminStudentsPage() {
 
       // Insert batch into Supabase
       const { error } = await supabase.from('students').insert(newRecords);
-      if (error) console.warn('Supabase bulk insert notice:', error.message);
+      if (error) {
+        console.warn('Supabase bulk insert notice:', error.message);
+        try {
+          await fetch('/api/students', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ students: newRecords })
+          });
+        } catch (apiErr) {
+          console.warn('API sync fallback error:', apiErr);
+        }
+      }
 
       // Merge with current state and store locally
       const updatedList = [...newRecords as Student[], ...students];
       updateAndStore(updatedList);
 
-      toast.success(`Successfully imported ${newRecords.length} students into the directory!`);
+      toast.success(`Successfully imported ${newRecords.length} students with Date of Birth into the directory!`);
       setShowBulkModal(false);
       setBulkInputText('');
       setParsedBulk([]);
@@ -1289,7 +1426,15 @@ export default function AdminStudentsPage() {
                         )}
                         <div>
                           <div className="font-bold text-slate-800 group-hover:text-blue-600 transition-colors">{s.name}</div>
-                          <div className="text-xs text-slate-500">Father: {s.father_name || 'N/A'}</div>
+                          <div className="text-xs text-slate-500 flex items-center gap-1.5 flex-wrap">
+                            <span>Father: {s.father_name || 'N/A'}</span>
+                            {s.date_of_birth && (
+                              <>
+                                <span>•</span>
+                                <span className="font-medium text-slate-600">DOB: {s.date_of_birth}</span>
+                              </>
+                            )}
+                          </div>
                         </div>
                       </div>
                     </td>
@@ -1543,10 +1688,12 @@ export default function AdminStudentsPage() {
                 rows={6}
                 value={bulkInputText}
                 onChange={(e) => parseBulkInputText(e.target.value)}
-                placeholder={`Roll Number, Student Name, Father Name, Class Name, Section, Phone, Email\nFC-2026-201, Muhammad Ali, Tariq Ali, Class IX, A, 0333-1112233, ali@gmail.com\nFC-2026-202, Fatima Raza, Raza Hussain, Class X, A, 0321-4445566, fatima@gmail.com`}
+                placeholder={`Roll Number, Student Name, Father Name, Date of Birth, Class Name, Section, Phone, Email\nFC-2026-201, Muhammad Ali, Tariq Ali, 2008-05-14, Class IX, A, 0333-1112233, ali@gmail.com\nFC-2026-202, Fatima Raza, Raza Hussain, 2007-11-20, Class X, A, 0321-4445566, fatima@gmail.com`}
                 className="w-full font-mono text-xs p-3.5 rounded-2xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 bg-slate-50/50"
               />
-              <p className="text-[11px] text-slate-400">Columns order: Roll Number, Student Name, Father Name, Class Name, Section, Phone, Email, Gender, Address</p>
+              <p className="text-[11px] text-slate-400">
+                Columns order: Roll Number, Student Name, Father Name, <span className="font-bold text-indigo-700">Date of Birth (Required, YYYY-MM-DD)</span>, Class Name, Section, Phone, Email, Gender, Address
+              </p>
             </div>
 
             {/* Preview Table */}
@@ -1554,10 +1701,17 @@ export default function AdminStudentsPage() {
               <div className="space-y-3 pt-2">
                 <div className="flex items-center justify-between text-xs font-bold text-slate-700">
                   <span>Detected Records Preview ({parsedBulk.length} Students)</span>
-                  <span className="text-emerald-600 font-semibold">✓ Ready for Batch Import</span>
+                  {parsedBulk.some(r => !r.date_of_birth) ? (
+                    <span className="text-rose-600 font-semibold flex items-center gap-1">
+                      <AlertCircle size={14} className="shrink-0" />
+                      {parsedBulk.filter(r => !r.date_of_birth).length} Missing Date of Birth (Required)
+                    </span>
+                  ) : (
+                    <span className="text-emerald-600 font-semibold">✓ Ready for Batch Import (All DOBs Provided)</span>
+                  )}
                 </div>
 
-                <div className="border border-slate-200 rounded-2xl overflow-hidden max-h-48 overflow-y-auto">
+                <div className="border border-slate-200 rounded-2xl overflow-hidden max-h-52 overflow-y-auto">
                   <table className="w-full text-left text-xs divide-y divide-slate-100">
                     <thead className="bg-slate-50 font-bold text-slate-500 uppercase tracking-wider text-[10px]">
                       <tr>
@@ -1565,17 +1719,27 @@ export default function AdminStudentsPage() {
                         <th className="p-2.5">Roll No.</th>
                         <th className="p-2.5">Student Name</th>
                         <th className="p-2.5">Father Name</th>
+                        <th className="p-2.5 text-indigo-700">Date of Birth *</th>
                         <th className="p-2.5">Class Name</th>
                         <th className="p-2.5">Phone</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-100 text-slate-700">
                       {parsedBulk.slice(0, 15).map((row, idx) => (
-                        <tr key={idx} className="hover:bg-slate-50">
+                        <tr key={idx} className={`hover:bg-slate-50 ${!row.date_of_birth ? 'bg-rose-50/40' : ''}`}>
                           <td className="p-2.5 text-slate-400 font-mono">{idx + 1}</td>
                           <td className="p-2.5 font-mono font-bold text-indigo-600">{row.roll_number}</td>
                           <td className="p-2.5 font-bold text-slate-800">{row.name}</td>
                           <td className="p-2.5 text-slate-500">{row.father_name}</td>
+                          <td className="p-2.5 font-mono">
+                            {row.date_of_birth ? (
+                              <span className="font-semibold text-slate-800">{row.date_of_birth}</span>
+                            ) : (
+                              <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-rose-100 text-rose-700 border border-rose-200">
+                                Missing (Required)
+                              </span>
+                            )}
+                          </td>
                           <td className="p-2.5 font-semibold text-slate-700">{row.class_name}</td>
                           <td className="p-2.5 font-mono text-slate-500">{row.phone || '-'}</td>
                         </tr>
@@ -1587,6 +1751,19 @@ export default function AdminStudentsPage() {
                       + {parsedBulk.length - 15} more records ready to import...
                     </div>
                   )}
+                </div>
+              </div>
+            )}
+
+            {/* Warning when DOB missing */}
+            {parsedBulk.length > 0 && parsedBulk.some(r => !r.date_of_birth) && (
+              <div className="p-3.5 bg-rose-50 border border-rose-200 rounded-2xl text-rose-800 text-xs flex items-start gap-2.5">
+                <AlertCircle size={18} className="shrink-0 text-rose-600 mt-0.5" />
+                <div>
+                  <p className="font-bold text-rose-900">Date of Birth is required for all students</p>
+                  <p className="text-rose-700 text-[11px] mt-0.5">
+                    {parsedBulk.filter(r => !r.date_of_birth).length} record(s) are missing a valid Date of Birth. Please include Date of Birth in column 4 (e.g. <code className="bg-rose-100 px-1.5 py-0.5 rounded font-mono text-[10px] text-rose-800 font-bold">2008-05-14</code>) before importing.
+                  </p>
                 </div>
               </div>
             )}
@@ -1603,8 +1780,8 @@ export default function AdminStudentsPage() {
               <button
                 type="button"
                 onClick={handleExecuteBulkImport}
-                disabled={parsedBulk.length === 0 || bulkImporting}
-                className="px-6 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 text-white font-bold text-xs shadow-md shadow-indigo-500/20 flex items-center gap-2 transition-all"
+                disabled={parsedBulk.length === 0 || bulkImporting || parsedBulk.some(r => !r.date_of_birth)}
+                className="px-6 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold text-xs shadow-md shadow-indigo-500/20 flex items-center gap-2 transition-all"
               >
                 {bulkImporting ? (
                   <>

@@ -87,6 +87,9 @@ export async function POST(req: NextRequest) {
         phone: s.phone || s.parent_phone || '',
         parent_phone: s.parent_phone || '',
         email: s.email || s.parent_email || undefined,
+        date_of_birth: s.date_of_birth || undefined,
+        gender: s.gender || undefined,
+        address: s.address || undefined,
         status: s.status || 'active',
         is_active: s.status !== 'inactive',
         created_at: new Date().toISOString()
@@ -115,6 +118,9 @@ export async function POST(req: NextRequest) {
       phone: body.phone || body.parent_phone || '',
       parent_phone: body.parent_phone || '',
       email: body.email || body.parent_email || undefined,
+      date_of_birth: body.date_of_birth || undefined,
+      gender: body.gender || undefined,
+      address: body.address || undefined,
       status: body.status || 'active',
       is_active: body.status !== 'inactive',
       created_at: new Date().toISOString()
