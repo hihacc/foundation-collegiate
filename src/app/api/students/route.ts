@@ -190,7 +190,7 @@ export async function POST(req: NextRequest) {
       // Sync local server file cache if supported
       try {
         const current = getStoredStudents();
-        const updated = [...preparedItems, ...current.filter(c => !preparedItems.some(p => p.roll_number === c.roll_number))];
+        const updated = [...preparedItems, ...current.filter(c => !preparedItems.some((p: { roll_number: string }) => p.roll_number === c.roll_number))];
         saveStoredStudents(updated);
       } catch {}
 
