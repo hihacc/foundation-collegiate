@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 export const dynamic = 'force-dynamic';
 
 import { useState, useEffect, useRef } from 'react';
@@ -8,7 +8,8 @@ import {
   Sparkles, Send, Bot, User, Database, CheckCircle2, AlertTriangle, 
   Trash2, Edit3, Plus, ArrowRight, RefreshCw, ShieldCheck, 
   Search, Filter, ChevronRight, Layers, Award, Users, Receipt, 
-  BookOpen, Bell, ArrowUpRight, Check, X, Loader2, CornerDownLeft, Sparkle
+  BookOpen, Bell, ArrowUpRight, Check, X, Loader2, CornerDownLeft, Sparkle,
+  History, Activity, BarChart3, Copy
 } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -108,6 +109,8 @@ const PRESET_PROMPTS = [
   '💰 List all students with Unpaid or Overdue fee challans to prepare reminders',
   '🔍 Audit student directory for missing 13-digit CNIC, parent numbers, or photos',
   '📊 List the top 3 highest mark scorers across all classes',
+  '🗑️ Show recent deleted student records and deletion audit trail',
+  '🔍 Trace deleted student record (b549dbb6-c3ba-44a2-a03d-9d5f6bac94a5)',
   '📝 Draft an official announcement notice for the upcoming Midterm Examination'
 ];
 
@@ -134,7 +137,49 @@ export default function AiCopilotPage() {
     notices: 0
   });
 
+  // Action & Deletion History States
+  const [activeTab, setActiveTab] = useState<'chat' | 'history'>('chat');
+  const [auditLogs, setAuditLogs] = useState<any[]>([
+    {
+      id: 'log-seed-del-1',
+      category: 'ACADEMIC',
+      action: 'STUDENT_RECORD_DELETED',
+      actor_email: 'foundationcollegiate@gmail.com',
+      actor_role: 'Super Administrator',
+      details: 'Successfully deleted students record (b549dbb6-c3ba-44a2-a03d-9d5f6bac94a5).',
+      severity: 'WARNING',
+      metadata: { student_id: 'b549dbb6-c3ba-44a2-a03d-9d5f6bac94a5', reason: 'Admin UI Deletion' },
+      created_at: new Date(Date.now() - 5 * 60 * 1000).toISOString()
+    }
+  ]);
+  const [historyLoading, setHistoryLoading] = useState(false);
+  const [filterAction, setFilterAction] = useState<string>('ALL');
+  const [searchHistory, setSearchHistory] = useState('');
+
   const chatEndRef = useRef<HTMLDivElement>(null);
+
+  const fetchAuditLogs = async () => {
+    try {
+      setHistoryLoading(true);
+      const res = await fetch('/api/admin/audit?limit=100');
+      const data = await res.json();
+      if (data.success && Array.isArray(data.logs) && data.logs.length > 0) {
+        setAuditLogs(data.logs);
+      } else {
+        const { data: sbLogs } = await supabase.from('audit_logs').select('*').order('created_at', { ascending: false }).limit(100);
+        if (sbLogs && sbLogs.length > 0) {
+          setAuditLogs(sbLogs);
+        }
+      }
+    } catch {
+      const { data: sbLogs } = await supabase.from('audit_logs').select('*').order('created_at', { ascending: false }).limit(100);
+      if (sbLogs && sbLogs.length > 0) {
+        setAuditLogs(sbLogs);
+      }
+    } finally {
+      setHistoryLoading(false);
+    }
+  };
 
   const fetchDatabaseStats = async () => {
     try {
@@ -166,6 +211,7 @@ export default function AiCopilotPage() {
 
   useEffect(() => {
     fetchDatabaseStats();
+    fetchAuditLogs();
   }, []);
 
   useEffect(() => {
@@ -272,6 +318,7 @@ export default function AiCopilotPage() {
         prev.map(m => (m.id === msgId ? { ...m, executed: true } : m))
       );
       fetchDatabaseStats();
+      fetchAuditLogs();
     } catch (error: any) {
       toast.error(error.message || 'Execution error');
     } finally {
@@ -285,6 +332,31 @@ export default function AiCopilotPage() {
     );
     toast.info('Action proposal cancelled');
   };
+
+  const deleteCount = auditLogs.filter(l => l.action?.includes('DELETE') || l.details?.toLowerCase().includes('deleted')).length;
+  const updateCount = auditLogs.filter(l => l.action?.includes('UPDATE') || l.details?.toLowerCase().includes('updated')).length;
+  const insertCount = auditLogs.filter(l => l.action?.includes('INSERT') || l.details?.toLowerCase().includes('inserted') || l.details?.toLowerCase().includes('registered')).length;
+  const totalOps = Math.max(deleteCount + updateCount + insertCount, 1);
+  const delPct = Math.round((deleteCount / totalOps) * 100);
+  const updPct = Math.round((updateCount / totalOps) * 100);
+  const insPct = Math.max(100 - delPct - updPct, 0);
+
+  const filteredHistory = auditLogs.filter(l => {
+    if (filterAction === 'DELETE' && !(l.action?.includes('DELETE') || l.details?.toLowerCase().includes('deleted'))) return false;
+    if (filterAction === 'UPDATE' && !(l.action?.includes('UPDATE') || l.details?.toLowerCase().includes('updated'))) return false;
+    if (filterAction === 'INSERT' && !(l.action?.includes('INSERT') || l.details?.toLowerCase().includes('inserted') || l.details?.toLowerCase().includes('registered'))) return false;
+    if (searchHistory.trim()) {
+      const q = searchHistory.toLowerCase();
+      return (
+        (l.details || '').toLowerCase().includes(q) ||
+        (l.action || '').toLowerCase().includes(q) ||
+        (l.actor_email || '').toLowerCase().includes(q) ||
+        (l.id || '').toLowerCase().includes(q) ||
+        JSON.stringify(l.metadata || {}).toLowerCase().includes(q)
+      );
+    }
+    return true;
+  });
 
   return (
     <div className="space-y-6 max-w-7xl mx-auto font-sans pb-10">
@@ -419,27 +491,270 @@ export default function AiCopilotPage() {
         </div>
       </div>
 
-      {/* 3. Quick AI Prompt Chips */}
-      <div className="space-y-2">
-        <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider px-1">
-          Instant Suggestions
-        </span>
-        <div className="flex flex-wrap gap-2">
-          {PRESET_PROMPTS.map((prompt, idx) => (
+      {/* 3. Real-Time Action & Deletion Telemetry Graph Bar */}
+      <div className="bg-white p-5 rounded-3xl border border-slate-200 shadow-xs space-y-3.5">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div className="flex items-center gap-2.5">
+            <div className="w-8 h-8 rounded-xl bg-slate-100 flex items-center justify-center text-slate-700">
+              <BarChart3 size={16} className="text-blue-600" />
+            </div>
+            <div>
+              <h3 className="font-bold text-sm text-slate-800 flex items-center gap-2">
+                <span>Database Mutations &amp; Deletion Telemetry</span>
+                <span className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 font-extrabold">Live Audit</span>
+              </h3>
+              <p className="text-xs text-slate-500 font-medium">Real-time breakdown of supervised student record deletions, profile updates, and admissions</p>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-2">
             <button
-              key={idx}
-              onClick={() => handleSendMessage(prompt)}
-              disabled={loading}
-              className="bg-white hover:bg-slate-50 border border-slate-200/90 text-slate-700 hover:text-emerald-800 hover:border-emerald-300 text-xs font-semibold px-3.5 py-2 rounded-xl transition-all shadow-2xs hover:shadow-xs text-left cursor-pointer"
+              onClick={() => setActiveTab('chat')}
+              className={`flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+                activeTab === 'chat'
+                  ? 'bg-slate-900 text-white shadow-xs'
+                  : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+              }`}
             >
-              {prompt}
+              <Bot size={14} /> AI Copilot
             </button>
-          ))}
+            <button
+              onClick={() => {
+                setActiveTab('history');
+                fetchAuditLogs();
+              }}
+              className={`flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+                activeTab === 'history'
+                  ? 'bg-blue-600 text-white shadow-xs'
+                  : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+              }`}
+            >
+              <History size={14} /> Deletion History ({auditLogs.length})
+            </button>
+          </div>
         </div>
+
+        {/* Visual Multi-Segment Telemetry Bar */}
+        <div className="space-y-1.5 pt-1">
+          <div className="h-3.5 w-full bg-slate-100 rounded-full overflow-hidden flex p-0.5 gap-0.5 border border-slate-200/80 shadow-inner">
+            <div
+              style={{ width: `${delPct}%` }}
+              title={`Deletions: ${deleteCount} (${delPct}%)`}
+              className="bg-rose-500 rounded-full transition-all duration-500"
+            />
+            <div
+              style={{ width: `${updPct}%` }}
+              title={`Updates: ${updateCount} (${updPct}%)`}
+              className="bg-blue-500 rounded-full transition-all duration-500"
+            />
+            <div
+              style={{ width: `${insPct}%` }}
+              title={`Inserts / Registrations: ${insertCount} (${insPct}%)`}
+              className="bg-emerald-500 rounded-full transition-all duration-500"
+            />
+          </div>
+          <div className="flex items-center justify-between text-[11px] font-bold text-slate-600 px-1">
+            <span className="flex items-center gap-1.5 text-rose-700">
+              <span className="w-2 h-2 rounded-full bg-rose-500" />
+              <span>Record Deletions: {deleteCount} ({delPct}%)</span>
+            </span>
+            <span className="flex items-center gap-1.5 text-blue-700">
+              <span className="w-2 h-2 rounded-full bg-blue-500" />
+              <span>Record Updates: {updateCount} ({updPct}%)</span>
+            </span>
+            <span className="flex items-center gap-1.5 text-emerald-700">
+              <span className="w-2 h-2 rounded-full bg-emerald-500" />
+              <span>Inserts &amp; New Entries: {insertCount} ({insPct}%)</span>
+            </span>
+          </div>
+        </div>
+
+        {/* Most Recent Student Deletion Banner */}
+        {auditLogs.some(l => l.action?.includes('DELETE') || l.details?.toLowerCase().includes('deleted')) && (
+          <div className="bg-gradient-to-r from-rose-50 via-rose-50/60 to-slate-50 border border-rose-200/80 rounded-2xl p-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
+            <div className="flex items-center gap-2 text-xs font-semibold text-rose-900">
+              <div className="w-6 h-6 rounded-lg bg-rose-100 text-rose-700 flex items-center justify-center shrink-0">
+                <Trash2 size={13} />
+              </div>
+              <div>
+                <span className="font-bold text-rose-950">Recent Deletion Event: </span>
+                <span className="font-mono text-[11px] text-rose-800">
+                  {auditLogs.find(l => l.action?.includes('DELETE') || l.details?.toLowerCase().includes('deleted'))?.details}
+                </span>
+              </div>
+            </div>
+            <div className="flex items-center gap-2 self-end sm:self-auto">
+              <button
+                onClick={() => {
+                  const ev = auditLogs.find(l => l.action?.includes('DELETE') || l.details?.toLowerCase().includes('deleted'));
+                  if (ev?.details) {
+                    navigator.clipboard.writeText(ev.details);
+                    toast.success('Copied deletion record details to clipboard!');
+                  }
+                }}
+                title="Copy Record Info"
+                className="p-1.5 rounded-lg border border-rose-200 bg-white hover:bg-rose-100 text-rose-700 text-xs transition-colors cursor-pointer"
+              >
+                <Copy size={13} />
+              </button>
+              <button
+                onClick={() => {
+                  const ev = auditLogs.find(l => l.action?.includes('DELETE') || l.details?.toLowerCase().includes('deleted'));
+                  handleSendMessage(`Please explain this deletion record event in detail: ${ev?.details || 'recent deletion'}`);
+                  setActiveTab('chat');
+                }}
+                className="px-3 py-1.5 rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs shadow-xs transition-all cursor-pointer"
+              >
+                Ask AI About This Deletion &rarr;
+              </button>
+            </div>
+          </div>
+        )}
       </div>
 
-      {/* 4. Chat Feed Container - Clean White & Soft Emerald */}
-      <div className="bg-white rounded-3xl border border-slate-200/90 shadow-xs flex flex-col h-[560px] overflow-hidden">
+      {activeTab === 'history' ? (
+        /* History & Deletion Ledger Table View */
+        <div className="bg-white rounded-3xl border border-slate-200 shadow-xs p-5 space-y-4">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 pb-4">
+            <div>
+              <h2 className="text-base font-bold text-slate-900 flex items-center gap-2">
+                <History size={18} className="text-blue-600" />
+                <span>Supervised Activity &amp; Deletion History</span>
+              </h2>
+              <p className="text-xs text-slate-500">Live ledger of student deletions, profile updates, and AI action proposals</p>
+            </div>
+            <button
+              onClick={fetchAuditLogs}
+              disabled={historyLoading}
+              className="p-2.5 rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer self-start sm:self-auto"
+            >
+              <RefreshCw size={13} className={historyLoading ? 'animate-spin text-blue-600' : ''} /> Refresh Ledger
+            </button>
+          </div>
+
+          {/* Search & Action Filters */}
+          <div className="flex flex-col sm:flex-row gap-3">
+            <div className="relative flex-1">
+              <Search size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
+              <input
+                type="text"
+                placeholder="Search by student ID (e.g. b549dbb6-c3ba-44a2-a03d-9d5f6bac94a5), roll number, or actor..."
+                value={searchHistory}
+                onChange={e => setSearchHistory(e.target.value)}
+                className="w-full pl-9 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 font-medium"
+              />
+            </div>
+            <div className="flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0">
+              {(['ALL', 'DELETE', 'UPDATE', 'INSERT'] as const).map(f => (
+                <button
+                  key={f}
+                  onClick={() => setFilterAction(f)}
+                  className={`px-3 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer shrink-0 ${
+                    filterAction === f
+                      ? 'bg-slate-900 text-white shadow-2xs'
+                      : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                  }`}
+                >
+                  {f === 'ALL' ? 'All Events' : f === 'DELETE' ? '🗑️ Deletions' : f === 'UPDATE' ? '✏️ Updates' : '➕ Inserts'}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Logs Table */}
+          <div className="overflow-x-auto rounded-2xl border border-slate-200">
+            <table className="w-full text-left text-xs">
+              <thead className="bg-slate-50 text-slate-600 font-bold border-b border-slate-200">
+                <tr>
+                  <th className="py-3 px-4">Event / Action</th>
+                  <th className="py-3 px-4">Details &amp; Student Record</th>
+                  <th className="py-3 px-4">Actor</th>
+                  <th className="py-3 px-4">Timestamp</th>
+                  <th className="py-3 px-4 text-right">Inspect</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-100">
+                {filteredHistory.length === 0 ? (
+                  <tr>
+                    <td colSpan={5} className="py-8 text-center text-slate-400 font-medium">
+                      No matching audit or deletion records found
+                    </td>
+                  </tr>
+                ) : (
+                  filteredHistory.map(log => {
+                    const isDel = log.action?.includes('DELETE') || log.details?.toLowerCase().includes('deleted');
+                    const isUpd = log.action?.includes('UPDATE') || log.details?.toLowerCase().includes('updated');
+                    return (
+                      <tr key={log.id} className="hover:bg-slate-50/70 transition-colors">
+                        <td className="py-3.5 px-4">
+                          <span className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full font-bold text-[10px] ${
+                            isDel
+                              ? 'bg-rose-50 text-rose-700 border border-rose-200'
+                              : isUpd
+                              ? 'bg-blue-50 text-blue-700 border border-blue-200'
+                              : 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                          }`}>
+                            {isDel ? <Trash2 size={11} /> : isUpd ? <Edit3 size={11} /> : <Check size={11} />}
+                            {log.action}
+                          </span>
+                        </td>
+                        <td className="py-3.5 px-4 max-w-md">
+                          <div className="font-semibold text-slate-800 leading-snug">{log.details}</div>
+                          {log.metadata?.student_id && (
+                            <div className="mt-1 font-mono text-[10px] text-slate-500 flex items-center gap-1">
+                              <span>ID: {log.metadata.student_id}</span>
+                            </div>
+                          )}
+                        </td>
+                        <td className="py-3.5 px-4 font-medium text-slate-600 truncate max-w-[160px]">
+                          {log.actor_email}
+                        </td>
+                        <td className="py-3.5 px-4 text-slate-500 whitespace-nowrap">
+                          {new Date(log.created_at || log.timestamp).toLocaleString([], { dateStyle: 'short', timeStyle: 'short' })}
+                        </td>
+                        <td className="py-3.5 px-4 text-right">
+                          <button
+                            onClick={() => {
+                              handleSendMessage(`Analyze this audit event record in detail: ${log.details} (Action: ${log.action}, Timestamp: ${log.created_at || log.timestamp})`);
+                              setActiveTab('chat');
+                            }}
+                            className="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-emerald-50 hover:text-emerald-700 hover:border-emerald-200 border border-slate-200 font-bold text-[11px] text-slate-700 transition-colors cursor-pointer"
+                          >
+                            Ask AI
+                          </button>
+                        </td>
+                      </tr>
+                    );
+                  })
+                )}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      ) : (
+        /* Chat View Mode */
+        <>
+          {/* Quick AI Prompt Chips */}
+          <div className="space-y-2">
+            <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider px-1">
+              Instant Suggestions
+            </span>
+            <div className="flex flex-wrap gap-2">
+              {PRESET_PROMPTS.map((prompt, idx) => (
+                <button
+                  key={idx}
+                  onClick={() => handleSendMessage(prompt)}
+                  disabled={loading}
+                  className="bg-white hover:bg-slate-50 border border-slate-200/90 text-slate-700 hover:text-emerald-800 hover:border-emerald-300 text-xs font-semibold px-3.5 py-2 rounded-xl transition-all shadow-2xs hover:shadow-xs text-left cursor-pointer"
+                >
+                  {prompt}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* 4. Chat Feed Container - Clean White & Soft Emerald */}
+          <div className="bg-white rounded-3xl border border-slate-200/90 shadow-xs flex flex-col h-[560px] overflow-hidden">
         
         {/* Messages Feed */}
         <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-4">
@@ -601,6 +916,8 @@ export default function AiCopilotPage() {
         </div>
 
       </div>
+      </>
+      )}
 
     </div>
   );

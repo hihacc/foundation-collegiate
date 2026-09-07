@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server';
+﻿import { NextRequest, NextResponse } from 'next/server';
 import { supabase } from '@/lib/supabase/client';
 
 export const dynamic = 'force-dynamic';
@@ -37,6 +37,21 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({ error: error.message }, { status: 500 });
       }
 
+      // Record in audit_logs
+      try {
+        await supabase.from('audit_logs').insert({
+          id: `log-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`,
+          category: 'AI_COPILOT',
+          action: 'AI_RECORD_UPDATED',
+          actor_email: 'foundationcollegiate@gmail.com',
+          actor_role: 'Super Administrator',
+          details: `Successfully updated ${table} record (${record_id}). ${description || ''}`.trim(),
+          severity: 'SUCCESS',
+          metadata: { table, record_id, changes, description },
+          created_at: new Date().toISOString()
+        });
+      } catch {}
+
       return NextResponse.json({
         success: true,
         message: `Successfully updated ${table} record (${record_id}).`,
@@ -64,6 +79,21 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({ error: error.message }, { status: 500 });
       }
 
+      // Record in audit_logs
+      try {
+        await supabase.from('audit_logs').insert({
+          id: `log-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`,
+          category: 'AI_COPILOT',
+          action: 'AI_RECORD_DELETED',
+          actor_email: 'foundationcollegiate@gmail.com',
+          actor_role: 'Super Administrator',
+          details: `Successfully deleted ${table} record (${record_id}). ${description || ''}`.trim(),
+          severity: 'WARNING',
+          metadata: { table, record_id, description },
+          created_at: new Date().toISOString()
+        });
+      } catch {}
+
       return NextResponse.json({
         success: true,
         message: `Successfully deleted ${table} record (${record_id}).`
@@ -85,6 +115,21 @@ export async function POST(req: NextRequest) {
       if (error) {
         return NextResponse.json({ error: error.message }, { status: 500 });
       }
+
+      // Record in audit_logs
+      try {
+        await supabase.from('audit_logs').insert({
+          id: `log-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`,
+          category: 'AI_COPILOT',
+          action: 'AI_RECORD_INSERTED',
+          actor_email: 'foundationcollegiate@gmail.com',
+          actor_role: 'Super Administrator',
+          details: `Successfully inserted new record into ${table}. ${description || ''}`.trim(),
+          severity: 'SUCCESS',
+          metadata: { table, inserted_id: payload.id, description },
+          created_at: new Date().toISOString()
+        });
+      } catch {}
 
       return NextResponse.json({
         success: true,

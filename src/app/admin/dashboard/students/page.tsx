@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 export const dynamic = 'force-dynamic';
 
 import { useEffect, useState } from 'react';
@@ -63,6 +63,10 @@ export default function AdminStudentsPage() {
   const [editing, setEditing] = useState<Student | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [printStudent, setPrintStudent] = useState<Student | null>(null);
+
+  // Selected Students for Batch Deletion
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
+  const [isDeletingBatch, setIsDeletingBatch] = useState(false);
 
   // Bulk Student Import State
   const [showBulkModal, setShowBulkModal] = useState(false);
@@ -762,6 +766,34 @@ export default function AdminStudentsPage() {
     }
   };
 
+  const handleBatchDelete = async () => {
+    if (selectedIds.length === 0) return;
+    if (!confirm(`Are you sure you want to permanently delete ${selectedIds.length} selected student records?`)) return;
+
+    setIsDeletingBatch(true);
+    try {
+      const res = await fetch('/api/students', {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ids: selectedIds })
+      });
+      const data = await res.json();
+
+      if (data.success) {
+        const updated = students.filter(s => !selectedIds.includes(s.id));
+        updateAndStore(updated);
+        setSelectedIds([]);
+        toast.success(`Successfully deleted ${data.count || selectedIds.length} students record(s)!`);
+      } else {
+        toast.error(data.error || 'Failed to delete students');
+      }
+    } catch (err: any) {
+      toast.error(err.message || 'Batch delete error');
+    } finally {
+      setIsDeletingBatch(false);
+    }
+  };
+
   const handleDelete = async (id: string) => {
     if (!confirm('Are you sure you want to delete this student record?')) return;
     try {
@@ -781,13 +813,18 @@ export default function AdminStudentsPage() {
         try { await supabase.from('pins').delete().eq('roll_number', targetRoll); } catch {}
       }
 
+      // Sync server API route and audit logs
+      fetch(`/api/students?id=${id}`, { method: 'DELETE' }).catch(() => {});
+
       const updated = students.filter(s => s.id !== id && (targetRoll ? s.roll_number !== targetRoll : true));
       updateAndStore(updated);
-      toast.success('Student record deleted successfully!');
+      setSelectedIds(prev => prev.filter(sid => sid !== id));
+      toast.success(`Successfully deleted students record (${id}).`);
     } catch (err: any) {
       const updated = students.filter(s => s.id !== id);
       updateAndStore(updated);
-      toast.success('Student record deleted successfully!');
+      setSelectedIds(prev => prev.filter(sid => sid !== id));
+      toast.success(`Successfully deleted students record (${id}).`);
     }
   };
 
@@ -946,6 +983,15 @@ export default function AdminStudentsPage() {
           >
             <FileSpreadsheet size={16} /> Export CSV
           </button>
+          {selectedIds.length > 0 && (
+            <button
+              onClick={handleBatchDelete}
+              disabled={isDeletingBatch}
+              className="flex items-center gap-2 bg-rose-600 hover:bg-rose-700 text-white px-4 py-2.5 rounded-xl font-bold text-xs shadow-md shadow-rose-500/20 transition-all active:scale-95 cursor-pointer"
+            >
+              <Trash2 size={16} /> Delete Selected ({selectedIds.length})
+            </button>
+          )}
           <button
             onClick={() => setShowBulkModal(true)}
             className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2.5 rounded-xl font-bold text-xs shadow-md shadow-indigo-500/20 transition-all active:scale-95"
@@ -1475,6 +1521,21 @@ export default function AdminStudentsPage() {
             <table className="admin-table w-full text-sm">
               <thead>
                 <tr className="bg-slate-50 text-slate-600 border-b border-slate-200">
+                  <th className="py-3.5 px-3 font-bold text-center w-10">
+                    <input
+                      type="checkbox"
+                      checked={filtered.length > 0 && filtered.every(s => selectedIds.includes(s.id))}
+                      onChange={e => {
+                        if (e.target.checked) {
+                          setSelectedIds(Array.from(new Set([...selectedIds, ...filtered.map(s => s.id)])));
+                        } else {
+                          const filteredIds = new Set(filtered.map(s => s.id));
+                          setSelectedIds(selectedIds.filter(id => !filteredIds.has(id)));
+                        }
+                      }}
+                      className="rounded border-slate-300 text-blue-600 focus:ring-blue-500 w-4 h-4 cursor-pointer"
+                    />
+                  </th>
                   <th className="py-3.5 px-4 font-bold text-left">Student Profile</th>
                   <th className="py-3.5 px-4 font-bold text-left">Roll No.</th>
                   <th className="py-3.5 px-4 font-bold text-left">Assigned Class</th>
@@ -1484,7 +1545,21 @@ export default function AdminStudentsPage() {
               </thead>
               <tbody className="divide-y divide-slate-100">
                 {filtered.map((s) => (
-                  <tr key={s.id} className="group hover:bg-slate-50/80 transition-colors">
+                  <tr key={s.id} className={`group hover:bg-slate-50/80 transition-colors ${selectedIds.includes(s.id) ? 'bg-blue-50/40' : ''}`}>
+                    <td className="py-4 px-3 text-center">
+                      <input
+                        type="checkbox"
+                        checked={selectedIds.includes(s.id)}
+                        onChange={e => {
+                          if (e.target.checked) {
+                            setSelectedIds(prev => [...prev, s.id]);
+                          } else {
+                            setSelectedIds(prev => prev.filter(id => id !== s.id));
+                          }
+                        }}
+                        className="rounded border-slate-300 text-blue-600 focus:ring-blue-500 w-4 h-4 cursor-pointer"
+                      />
+                    </td>
                     <td className="py-4 px-4">
                       <div className="flex items-center gap-3">
                         {s.photo_url ? (

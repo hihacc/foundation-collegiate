@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server';
+﻿import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { Student } from '@/types';
 import fs from 'fs';
@@ -303,248 +303,76 @@ export async function PUT(req: NextRequest) {
 
     return NextResponse.json({ success: true, student: body });
   } catch (error: any) {
-        return {
-          id: s.id && typeof s.id === 'string' && /^[0-9a-f-]{36}$/i.test(s.id) ? s.id : crypto.randomUUID(),
-          name,
-          father_name: father,
-          roll_number: roll,
-          class_name: className,
-          section,
-          date_of_birth: dob,
-          phone,
-          parent_phone: parentPhone,
-          email,
-          gender,
-          address,
-          status,
-          is_active: status !== 'inactive',
-          created_at: s.created_at || new Date().toISOString()
-        };
-      });
-
-      let dbInserted = 0;
-      let dbError: string | null = null;
-
-      if (db) {
-        // Step 1: Batch upsert with roll_number conflict handling
-        const { data, error } = await db
-          .from('students')
-          .upsert(preparedItems, { onConflict: 'roll_number', ignoreDuplicates: false })
-          .select('id, roll_number');
-
-        if (!error && data) {
-          dbInserted = data.length;
-        } else {
-          if (error) {
-            console.warn('[API Bulk Students] Batch upsert warning:', error.message);
-            dbError = error.message;
-          }
-
-          // Step 2: Row-by-row fallback if batch was rejected (e.g. schema or constraint mismatch)
-          let successCount = 0;
-          for (const item of preparedItems) {
-            const { error: itemErr } = await db
-              .from('students')
-              .upsert(item, { onConflict: 'roll_number' });
-
-            if (!itemErr) {
-              successCount++;
-            } else {
-              // Retry with core database columns only
-              const coreItem = {
-                name: item.name,
-                father_name: item.father_name,
-                roll_number: item.roll_number,
-                class_name: item.class_name,
-                section: item.section,
-                date_of_birth: item.date_of_birth,
-                phone: item.phone,
-                email: item.email,
-                gender: item.gender,
-                address: item.address,
-                status: item.status,
-                is_active: item.is_active
-              };
-              const { error: coreErr } = await db
-                .from('students')
-                .upsert(coreItem, { onConflict: 'roll_number' });
-
-              if (!coreErr) {
-                successCount++;
-              } else {
-                console.error(`[API Student Upsert Failed for ${item.roll_number}]:`, coreErr.message);
-                dbError = coreErr.message;
-              }
-            }
-          }
-          dbInserted = successCount;
-        }
-      }
-
-      // Sync local server file cache if supported
-      try {
-        const current = getStoredStudents();
-        const updated = [...preparedItems, ...current.filter(c => !preparedItems.some((p: { roll_number: string }) => p.roll_number === c.roll_number))];
-        saveStoredStudents(updated);
-      } catch {}
-
-      if (dbInserted === 0 && dbError) {
-        return NextResponse.json({
-          success: false,
-          error: `Database insertion failed: ${dbError}`,
-          count: 0
-        }, { status: 500 });
-      }
-
-      return NextResponse.json({
-        success: true,
-        count: dbInserted || preparedItems.length,
-        students: preparedItems
-      });
-    }
-
-    // Single student enroll
-    const roll = (body.roll_number || `FC-26-${Math.floor(1000 + Math.random() * 9000)}`).toString().trim().toUpperCase();
-    const newStudent: Student = {
-      id: body.id && typeof body.id === 'string' && /^[0-9a-f-]{36}$/i.test(body.id) ? body.id : crypto.randomUUID(),
-      name: (body.name || body.student_name || '').toString().trim().toUpperCase(),
-      father_name: (body.father_name || 'Parent / Guardian').toString().trim(),
-      roll_number: roll,
-      class_name: (body.class_name || 'Class IX - Science').toString().trim(),
-      section: (body.section || 'A').toString().trim(),
-      phone: body.phone ? body.phone.toString().trim() : null,
-      parent_phone: body.parent_phone ? body.parent_phone.toString().trim() : (body.phone ? body.phone.toString().trim() : null),
-      email: body.email ? body.email.toString().trim() : null,
-      date_of_birth: body.date_of_birth ? body.date_of_birth.toString().trim() : null,
-      gender: body.gender || 'Male',
-      address: body.address ? body.address.toString().trim() : null,
-      status: body.status || 'active',
-      is_active: body.status !== 'inactive',
-      created_at: new Date().toISOString()
-    };
-
-    let singleDbError = null;
-    if (db) {
-      const { error: insertErr } = await db
-        .from('students')
-        .upsert(newStudent, { onConflict: 'roll_number' });
-
-      if (insertErr) {
-        const coreItem = {
-          name: newStudent.name,
-          father_name: newStudent.father_name,
-          roll_number: newStudent.roll_number,
-          class_name: newStudent.class_name,
-          section: newStudent.section,
-          date_of_birth: newStudent.date_of_birth,
-          phone: newStudent.phone,
-          email: newStudent.email,
-          gender: newStudent.gender,
-          address: newStudent.address,
-          status: newStudent.status,
-          is_active: newStudent.is_active
-        };
-        const { error: coreErr } = await db.from('students').upsert(coreItem, { onConflict: 'roll_number' });
-        if (coreErr) singleDbError = coreErr.message;
-      }
-    }
-
-    try {
-      const current = getStoredStudents();
-      const updated = [newStudent, ...current.filter(s => s.id !== newStudent.id && s.roll_number !== newStudent.roll_number)];
-      saveStoredStudents(updated);
-    } catch {}
-
-    if (singleDbError) {
-      return NextResponse.json({ success: false, error: singleDbError }, { status: 500 });
-    }
-
-    return NextResponse.json({ success: true, student: newStudent });
-  } catch (error: any) {
     return NextResponse.json({ success: false, error: error.message }, { status: 500 });
   }
 }
 
-// PUT /api/students - Update student
-export async function PUT(req: NextRequest) {
-  try {
-    const body = await req.json();
-    if (!body.id && !body.roll_number) {
-      return NextResponse.json({ success: false, error: 'Student ID or roll_number is required' }, { status: 400 });
-    }
-
-    const db = getDbClient();
-    if (db) {
-      if (body.id) {
-        await db.from('students').update(body).eq('id', body.id);
-      } else if (body.roll_number) {
-        await db.from('students').update(body).eq('roll_number', body.roll_number);
-      }
-    }
-
-    const students = getStoredStudents();
-    const idx = students.findIndex(s => s.id === body.id || (body.roll_number && s.roll_number === body.roll_number));
-
-    if (idx !== -1) {
-      students[idx] = {
-        ...students[idx],
-        ...body,
-        name: body.name ? body.name.trim().toUpperCase() : students[idx].name,
-        is_active: body.status !== 'inactive'
-      };
-      saveStoredStudents(students);
-    }
-
-    return NextResponse.json({ success: true, student: body });
-  } catch (error: any) {
-    return NextResponse.json({ success: false, error: error.message }, { status: 500 });
-  }
-}
-
-// DELETE /api/students - Delete student
+// DELETE /api/students - Delete student (supports single or batch deletion)
 export async function DELETE(req: NextRequest) {
   try {
     const db = getDbClient();
     const contentType = req.headers.get('content-type') || '';
+    let idsToDelete: string[] = [];
+
     if (contentType.includes('application/json')) {
-      const { ids } = await req.json();
-      if (!Array.isArray(ids) || ids.length === 0) {
-        return NextResponse.json({ success: false, error: 'No IDs provided' }, { status: 400 });
+      const body = await req.json().catch(() => ({}));
+      if (Array.isArray(body.ids)) {
+        idsToDelete = body.ids.filter(Boolean);
+      } else if (body.id) {
+        idsToDelete = [body.id];
       }
-      const { error: deleteError } = await db?.from('students').delete().in('id', ids) ?? {};
-      // Delete students in batch
-      const { error: deleteError } = await db?.from('students').delete().in('id', ids) ?? {};
-      if (deleteError) {
-        console.error('Batch delete error:', deleteError);
-        return NextResponse.json({ success: false, error: deleteError.message }, { status: 500 });
+    }
+
+    if (idsToDelete.length === 0) {
+      const { searchParams } = new URL(req.url);
+      const queryId = searchParams.get('id');
+      if (queryId) {
+        idsToDelete = queryId.split(',').map(s => s.trim()).filter(Boolean);
       }
-      // Log deletions
-      const logs = ids.map((id: string) => ({ student_id: id, deleted_by: 'system', reason: 'Batch deletion via admin UI' }));
-      await db?.from('deletion_logs').insert(logs).catch(() => {});
-      // Update local cache
-      try {
-        const current = getStoredStudents();
-        const filtered = current.filter(s => !ids.includes(s.id));
-        saveStoredStudents(filtered);
-      } catch {}
-      return NextResponse.json({ success: true, count: ids.length });
     }
-    // Fallback: single deletion via query param
-    const { searchParams } = new URL(req.url);
-    const id = searchParams.get('id');
-    if (!id) {
-      return NextResponse.json({ success: false, error: 'Student ID is required' }, { status: 400 });
+
+    if (idsToDelete.length === 0) {
+      return NextResponse.json({ success: false, error: 'Student ID or ids array is required' }, { status: 400 });
     }
+
+    // 1. Delete from database
     if (db) {
-      await db.from('students').delete().eq('id', id);
+      const { error: delError } = await db.from('students').delete().in('id', idsToDelete);
+      if (delError) {
+        console.warn('[API Delete Students] Supabase error:', delError.message);
+      }
+
+      // Record in audit_logs
+      try {
+        const auditEntries = idsToDelete.map(id => ({
+          id: `log-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`,
+          category: 'ACADEMIC',
+          action: 'STUDENT_RECORD_DELETED',
+          actor_email: 'foundationcollegiate@gmail.com',
+          actor_role: 'Super Administrator',
+          details: `Successfully deleted student record (${id})`,
+          path: '/admin/dashboard/students',
+          severity: 'WARNING',
+          metadata: { student_id: id },
+          created_at: new Date().toISOString()
+        }));
+        await db.from('audit_logs').insert(auditEntries);
+      } catch {}
     }
-    // Update local cache
+
+    // 2. Delete from local cache
     try {
       const current = getStoredStudents();
-      const filtered = current.filter(s => s.id !== id);
-      saveStoredStudents(filtered);
+      const updated = current.filter(s => !idsToDelete.includes(s.id));
+      saveStoredStudents(updated);
     } catch {}
-    return NextResponse.json({ success: true, deleted_id: id });
+
+    return NextResponse.json({
+      success: true,
+      count: idsToDelete.length,
+      deleted_ids: idsToDelete,
+      message: `Successfully deleted ${idsToDelete.length} student record${idsToDelete.length > 1 ? 's' : ''}`
+    });
   } catch (error: any) {
     return NextResponse.json({ success: false, error: error.message }, { status: 500 });
   }

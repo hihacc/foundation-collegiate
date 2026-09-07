@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server';
+﻿import { NextRequest, NextResponse } from 'next/server';
 import { supabase } from '@/lib/supabase/client';
 import { getAllAiConnections } from '@/lib/ai/aiConnectionService';
 import { decryptApiKey } from '@/lib/utils/encryption';
@@ -39,7 +39,8 @@ export async function POST(req: NextRequest) {
       { data: teachers },
       { data: courses },
       { data: whatsappConvs },
-      { data: whatsappMsgs }
+      { data: whatsappMsgs },
+      { data: auditLogs }
     ] = await Promise.all([
       supabase.from('students').select('*').limit(500),
       supabase.from('results').select('id, student_name, roll_number, class_name, exam_name, month, total_marks, obtained_marks, percentage, grade, position').limit(200),
@@ -52,7 +53,8 @@ export async function POST(req: NextRequest) {
       supabase.from('teachers').select('id, name, subject, qualification, is_active').limit(50),
       supabase.from('courses').select('id, name, duration, fee, is_active').limit(50),
       supabase.from('whatsapp_conversations').select('*').limit(100),
-      supabase.from('whatsapp_messages').select('*').limit(150)
+      supabase.from('whatsapp_messages').select('*').limit(150),
+      supabase.from('audit_logs').select('id, category, action, details, actor_email, severity, created_at, metadata').order('created_at', { ascending: false }).limit(60)
     ]);
 
     // Merge Supabase students with any client-side cached / newly added students
@@ -143,7 +145,8 @@ export async function POST(req: NextRequest) {
       courses_sample: courses || [],
       whatsapp_conversations_count: whatsappConvs?.length || 0,
       whatsapp_conversations_sample: whatsappConvs?.slice(0, 20) || [],
-      whatsapp_recent_messages: whatsappMsgs?.slice(0, 30) || []
+      whatsapp_recent_messages: whatsappMsgs?.slice(0, 30) || [],
+      recent_audit_and_deletion_history: auditLogs || []
     };
 
     // 2. Resolve OpenRouter API Key
@@ -169,7 +172,8 @@ export async function POST(req: NextRequest) {
 
     // 3. System Prompt for Institutional AI Copilot
     const systemPrompt = `You are "TFC AI Copilot & Data Manager" for The Foundation Collegiate administrative dashboard (Karachi, Pakistan).
-You have real-time visibility into the college database: Students, Exam Results, Fee Challans, Admissions, Notices, Achievers, Teachers, and Courses.
+You have real-time visibility into the college database: Students, Exam Results, Fee Challans, Admissions, Notices, Achievers, Teachers, Courses, and Live Audit & Deletion History.
+You have direct knowledge of all recently deleted student records, deletion timestamps, actors, and IDs (e.g. b549dbb6-c3ba-44a2-a03d-9d5f6bac94a5 or any batch deletion). When an admin asks about student deletion history or audit events, accurately explain what was deleted, when, and by whom.
 
 Your Capabilities:
 1. QUERY & SEARCH: Provide exact answers and find records even with typos or slight spelling variations (e.g., "abddull asif" vs "Abdullah Asif", roll "FC-26-160").
