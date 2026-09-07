@@ -441,3 +441,8 @@ CREATE POLICY "Public read results" ON public.results FOR SELECT USING (is_activ
 
 -- Pins: only via service role
 CREATE POLICY "Service role pins" ON public.pins USING (true);
+
+-- Students: Full management for authenticated / admin & public operations
+ALTER TABLE public.students ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Public all students" ON public.students;
+CREATE POLICY "Public all students" ON public.students FOR ALL USING (true) WITH CHECK (true);

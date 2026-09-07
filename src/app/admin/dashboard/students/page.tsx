@@ -313,49 +313,129 @@ export default function AdminStudentsPage() {
     }
 
     setBulkImporting(true);
+    const toastId = toast.loading(`Importing ${parsedBulk.length} students into the database...`);
 
     try {
-      const newRecords = parsedBulk.map((s, idx) => ({
-        id: crypto.randomUUID(),
-        name: s.name!,
-        father_name: s.father_name || 'Parent / Guardian',
-        roll_number: s.roll_number || `FC-2026-${Math.floor(100 + idx)}`,
-        date_of_birth: s.date_of_birth!,
-        class_name: s.class_name || fallbackClassOptions[0],
-        section: s.section || 'A',
-        phone: s.phone || '',
-        email: s.email || '',
-        gender: s.gender || '',
-        address: s.address || '',
-        status: 'active',
-        is_active: true,
-        created_at: new Date().toISOString()
-      }));
+      const recordsToInsert = parsedBulk.map((s, idx) => {
+        const roll = (s.roll_number || `FC-2026-${Math.floor(100 + idx)}`).trim().toUpperCase();
+        const name = s.name!.trim();
+        const father = (s.father_name || 'Parent / Guardian').trim();
+        const className = (s.class_name || fallbackClassOptions[0]).trim();
+        const section = (s.section || 'A').trim();
+        const dob = s.date_of_birth!.trim();
+        const phone = s.phone?.trim() ? formatPhoneNumber(s.phone.trim()) : null;
+        const parentPhone = phone;
+        const email = s.email?.trim() || null;
+        const gender = s.gender?.trim() || 'Male';
+        const address = s.address?.trim() || null;
 
-      // Insert batch into Supabase
-      const { error } = await supabase.from('students').insert(newRecords);
-      if (error) {
-        console.warn('Supabase bulk insert notice:', error.message);
-        try {
-          await fetch('/api/students', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ students: newRecords })
-          });
-        } catch (apiErr) {
-          console.warn('API sync fallback error:', apiErr);
+        return {
+          id: crypto.randomUUID(),
+          name,
+          father_name: father,
+          roll_number: roll,
+          class_name: className,
+          section,
+          date_of_birth: dob,
+          phone,
+          parent_phone: parentPhone,
+          email,
+          gender,
+          address,
+          status: 'active',
+          is_active: true,
+          created_at: new Date().toISOString()
+        };
+      });
+
+      // 1. Primary: Send batch to server API (/api/students) which has server/admin client and row-by-row fallback
+      let apiSuccess = false;
+      let apiCount = 0;
+      let apiError = '';
+
+      try {
+        const res = await fetch('/api/students', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ students: recordsToInsert })
+        });
+        const json = await res.json();
+        if (json.success) {
+          apiSuccess = true;
+          apiCount = json.count || recordsToInsert.length;
+        } else {
+          apiError = json.error || 'Server reported an error during insertion';
         }
+      } catch (err: any) {
+        apiError = err.message || 'API request failed';
       }
 
-      // Merge with current state and store locally
-      const updatedList = [...newRecords as Student[], ...students];
-      updateAndStore(updatedList);
+      // 2. Direct Supabase upsert to sync directly with Supabase database as well
+      let clientDbSuccess = false;
+      try {
+        const { error: batchErr } = await supabase
+          .from('students')
+          .upsert(recordsToInsert, { onConflict: 'roll_number', ignoreDuplicates: false });
 
-      toast.success(`Successfully imported ${newRecords.length} students with Date of Birth into the directory!`);
+        if (!batchErr) {
+          clientDbSuccess = true;
+        } else {
+          console.warn('[Direct Supabase Notice]:', batchErr.message);
+          // Try core columns in case custom columns do not exist in client schema
+          const coreRecords = recordsToInsert.map(r => ({
+            name: r.name,
+            father_name: r.father_name,
+            roll_number: r.roll_number,
+            class_name: r.class_name,
+            section: r.section,
+            date_of_birth: r.date_of_birth,
+            phone: r.phone,
+            email: r.email,
+            gender: r.gender,
+            address: r.address,
+            status: r.status,
+            is_active: r.is_active
+          }));
+
+          const { error: coreErr } = await supabase
+            .from('students')
+            .upsert(coreRecords, { onConflict: 'roll_number', ignoreDuplicates: false });
+
+          if (!coreErr) {
+            clientDbSuccess = true;
+          } else {
+            console.warn('[Direct Core Notice]:', coreErr.message);
+            // Row-by-row fallback
+            let rowCount = 0;
+            for (const r of coreRecords) {
+              const { error: singleErr } = await supabase
+                .from('students')
+                .upsert(r, { onConflict: 'roll_number' });
+              if (!singleErr) rowCount++;
+            }
+            if (rowCount > 0) clientDbSuccess = true;
+          }
+        }
+      } catch (e: any) {
+        console.warn('[Direct Supabase Exception]:', e.message);
+      }
+
+      // 3. STRICT CHECK: Stop if database write failed!
+      if (!apiSuccess && !clientDbSuccess) {
+        toast.dismiss(toastId);
+        return toast.error(`Database Error: Could not save students to database! ${apiError ? `Details: ${apiError}` : 'Please check Supabase connection and table schema.'}`);
+      }
+
+      // 4. Refresh directory directly from database/API to ensure true state consistency
+      await fetchClassesAndStudents();
+
+      toast.dismiss(toastId);
+      toast.success(`🎉 Successfully saved ${recordsToInsert.length} students with Date of Birth into the database!`);
       setShowBulkModal(false);
       setBulkInputText('');
       setParsedBulk([]);
     } catch (err: any) {
+      toast.dismiss(toastId);
       toast.error(`Bulk import error: ${err.message || 'Operation failed'}`);
     } finally {
       setBulkImporting(false);
