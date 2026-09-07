@@ -1,11 +1,11 @@
-'use client';
+﻿'use client';
 export const dynamic = 'force-dynamic';
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { supabase } from '@/lib/supabase/client';
 import { toast } from 'sonner';
-import { Save, Settings, KeyRound, UserPlus, Shield, Trash2, Eye, EyeOff, Loader2, RefreshCw, BookOpen, X, Award, UserCheck, Database, Download, Upload, CheckCircle2, Bot } from 'lucide-react';
+import { Save, Settings, KeyRound, UserPlus, Shield, Trash2, Eye, EyeOff, Loader2, RefreshCw, BookOpen, X, Award, UserCheck, Database, Download, Upload, CheckCircle2, Bot, AlertTriangle } from 'lucide-react';
 import Button from '@/components/ui/Button';
 import { getStoredData, setStoredData } from '@/lib/utils/storage';
 
@@ -62,6 +62,14 @@ export default function AdminSettingsPage() {
   const [isExporting, setIsExporting] = useState(false);
   const [isImporting, setIsImporting] = useState(false);
   const [importStatus, setImportStatus] = useState<string>('');
+
+  // Clean Database State
+  const [showCleanModal, setShowCleanModal] = useState(false);
+  const [cleanConfirmInput, setCleanConfirmInput] = useState('');
+  const [isCleaning, setIsCleaning] = useState(false);
+  const [cleanScope, setCleanScope] = useState<string[]>([
+    'students', 'results', 'fee_challans', 'admissions', 'inquiries', 'attendance', 'whatsapp_messages', 'deletion_logs'
+  ]);
 
   const [saving, setSaving] = useState(false);
 
@@ -196,6 +204,47 @@ export default function AdminSettingsPage() {
     setRestoreConfirmInput('');
     // Reset file input value so re-selecting same file triggers onChange
     e.target.value = '';
+  };
+
+  const handleCleanDatabase = async () => {
+    if (cleanConfirmInput.trim() !== 'CLEAN') {
+      toast.error('You must type CLEAN in all capital letters to confirm database reset.');
+      return;
+    }
+
+    setIsCleaning(true);
+    try {
+      const res = await fetch('/api/admin/clean-database', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          confirmation: 'CLEAN',
+          tablesToClean: cleanScope
+        })
+      });
+
+      const data = await res.json();
+
+      if (data.success) {
+        // Clear browser local storage keys
+        try {
+          if (typeof window !== 'undefined') {
+            const keysToClear = ['students', 'results', 'fee_challans', 'admissions', 'inquiries', 'attendance', 'tfc_system_audit_logs'];
+            keysToClear.forEach(k => localStorage.removeItem(k));
+          }
+        } catch {}
+
+        toast.success(data.message || 'Database cleaned successfully! Starting fresh.');
+        setShowCleanModal(false);
+        setCleanConfirmInput('');
+      } else {
+        toast.error(data.error || 'Failed to clean database.');
+      }
+    } catch (err: any) {
+      toast.error(err.message || 'Error occurred while cleaning database.');
+    } finally {
+      setIsCleaning(false);
+    }
   };
 
   const handleConfirmAndRunImport = () => {
@@ -473,6 +522,134 @@ export default function AdminSettingsPage() {
                 </label>
               </div>
             </div>
+
+            {/* Danger Zone: Clean Database Card */}
+            <div className="p-6 bg-rose-50/70 border-2 border-rose-200 rounded-2xl space-y-4">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div className="flex items-start gap-3.5">
+                  <div className="w-12 h-12 bg-rose-100 text-rose-600 rounded-2xl flex items-center justify-center shrink-0 border border-rose-300 shadow-xs">
+                    <Trash2 size={24} />
+                  </div>
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <h3 className="font-bold text-rose-950 text-base">Clean Database &amp; Start From New</h3>
+                      <span className="px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-rose-200 text-rose-800 uppercase tracking-wider">
+                        Danger Zone
+                      </span>
+                    </div>
+                    <p className="text-xs text-rose-800 mt-1 leading-relaxed max-w-xl">
+                      Permanently wipe operational data (Students, Exam Results, Fee Challans, Admissions, Inquiries, Attendance, WhatsApp logs, and Deletion logs) so you can start with a completely fresh, empty system. Admin login accounts and site settings will remain safe.
+                    </p>
+                  </div>
+                </div>
+
+                <button
+                  onClick={() => {
+                    setShowCleanModal(true);
+                    setCleanConfirmInput('');
+                  }}
+                  className="px-5 py-3 bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs rounded-xl shadow-md shadow-rose-600/20 transition-all flex items-center justify-center gap-2 shrink-0 cursor-pointer self-start sm:self-center"
+                >
+                  <Trash2 size={16} /> Clean Database &amp; Start New
+                </button>
+              </div>
+            </div>
+
+            {/* Clean Database Confirmation Modal */}
+            {showCleanModal && (
+              <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+                <div className="bg-white rounded-3xl p-6 sm:p-8 max-w-lg w-full shadow-2xl space-y-5 border border-rose-300">
+                  <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+                    <div className="flex items-center gap-3">
+                      <div className="w-11 h-11 bg-rose-100 text-rose-600 rounded-2xl flex items-center justify-center shrink-0">
+                        <AlertTriangle size={22} />
+                      </div>
+                      <div>
+                        <h3 className="text-lg font-bold text-slate-900">Clean Database &amp; Start Fresh</h3>
+                        <p className="text-xs text-rose-600 font-semibold">Irreversible action &bull; All selected records will be wiped</p>
+                      </div>
+                    </div>
+                    <button
+                      onClick={() => setShowCleanModal(false)}
+                      className="p-2 rounded-xl text-slate-400 hover:text-slate-600 hover:bg-slate-100"
+                    >
+                      <X size={18} />
+                    </button>
+                  </div>
+
+                  <p className="text-xs text-slate-600 leading-relaxed">
+                    This will delete all student profiles, exam marks, fee receipts, applicant submissions, and activity history from both Supabase and server cache. Admin credentials will <strong>not</strong> be removed.
+                  </p>
+
+                  <div className="bg-slate-50 p-3.5 rounded-2xl border border-slate-200 space-y-2">
+                    <span className="text-[11px] font-bold text-slate-700 block uppercase tracking-wider">
+                      Tables Included in Reset:
+                    </span>
+                    <div className="grid grid-cols-2 gap-2 text-xs text-slate-600">
+                      <label className="flex items-center gap-2 cursor-pointer font-medium">
+                        <input type="checkbox" checked={cleanScope.includes('students')} onChange={e => setCleanScope(prev => e.target.checked ? [...prev, 'students'] : prev.filter(x => x !== 'students'))} className="rounded text-rose-600" />
+                        <span>Students Roster</span>
+                      </label>
+                      <label className="flex items-center gap-2 cursor-pointer font-medium">
+                        <input type="checkbox" checked={cleanScope.includes('results')} onChange={e => setCleanScope(prev => e.target.checked ? [...prev, 'results'] : prev.filter(x => x !== 'results'))} className="rounded text-rose-600" />
+                        <span>Exam Marksheets</span>
+                      </label>
+                      <label className="flex items-center gap-2 cursor-pointer font-medium">
+                        <input type="checkbox" checked={cleanScope.includes('fee_challans')} onChange={e => setCleanScope(prev => e.target.checked ? [...prev, 'fee_challans'] : prev.filter(x => x !== 'fee_challans'))} className="rounded text-rose-600" />
+                        <span>Fee Challans</span>
+                      </label>
+                      <label className="flex items-center gap-2 cursor-pointer font-medium">
+                        <input type="checkbox" checked={cleanScope.includes('admissions')} onChange={e => setCleanScope(prev => e.target.checked ? [...prev, 'admissions'] : prev.filter(x => x !== 'admissions'))} className="rounded text-rose-600" />
+                        <span>Admissions Queue</span>
+                      </label>
+                      <label className="flex items-center gap-2 cursor-pointer font-medium">
+                        <input type="checkbox" checked={cleanScope.includes('inquiries')} onChange={e => setCleanScope(prev => e.target.checked ? [...prev, 'inquiries'] : prev.filter(x => x !== 'inquiries'))} className="rounded text-rose-600" />
+                        <span>Inquiries &amp; Contacts</span>
+                      </label>
+                      <label className="flex items-center gap-2 cursor-pointer font-medium">
+                        <input type="checkbox" checked={cleanScope.includes('deletion_logs')} onChange={e => setCleanScope(prev => e.target.checked ? [...prev, 'deletion_logs'] : prev.filter(x => x !== 'deletion_logs'))} className="rounded text-rose-600" />
+                        <span>Deletion History Logs</span>
+                      </label>
+                    </div>
+                  </div>
+
+                  <div className="space-y-2">
+                    <label className="text-xs font-bold text-rose-700 block uppercase tracking-wider">
+                      Type <span className="underline font-mono">CLEAN</span> to confirm:
+                    </label>
+                    <input
+                      type="text"
+                      value={cleanConfirmInput}
+                      onChange={e => setCleanConfirmInput(e.target.value)}
+                      placeholder="CLEAN"
+                      className="w-full px-4 py-2.5 bg-rose-50/50 border border-rose-300 rounded-xl font-mono text-sm font-bold text-rose-900 focus:ring-2 focus:ring-rose-500 focus:outline-none uppercase"
+                    />
+                  </div>
+
+                  <div className="flex gap-3 pt-2">
+                    <button
+                      onClick={() => setShowCleanModal(false)}
+                      disabled={isCleaning}
+                      className="flex-1 py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs rounded-xl transition-colors cursor-pointer"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      onClick={handleCleanDatabase}
+                      disabled={cleanConfirmInput.trim() !== 'CLEAN' || isCleaning}
+                      className={`flex-1 py-3 text-white font-bold text-xs rounded-xl flex items-center justify-center gap-1.5 transition-all ${
+                        cleanConfirmInput.trim() === 'CLEAN' && !isCleaning
+                          ? 'bg-rose-600 hover:bg-rose-700 shadow-md shadow-rose-600/20 cursor-pointer'
+                          : 'bg-slate-300 cursor-not-allowed'
+                      }`}
+                    >
+                      {isCleaning ? <Loader2 size={15} className="animate-spin" /> : <Trash2 size={15} />}
+                      <span>{isCleaning ? 'Cleaning Database...' : 'Permanently Clean Database'}</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
 
             {/* RESTORE Confirmation Modal */}
             {pendingRestoreFile && (
